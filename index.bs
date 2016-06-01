@@ -1,17 +1,20 @@
 <pre class="metadata">
+Shortname: webvr
 Title: WebVR
 Status: ED
-ED: https://github.com/mozvr/webvr-spec/
-Shortname: webvr
+ED: https://w3c.github.io/webvr/
+Repository: w3c/webvr
 Level: 1
+Mailing List Archives: https://lists.w3.org/Archives/Public/public-webvr/
+Mailing List: public-webvr@mozilla.org
+
+!Participate: <a href="https://github.com/w3c/webvr/issues/new">File an issue</a> (<a href="https://github.com/w3c/webvr/issues">open issues</a>)
+
 Editor: Vladimir Vukicevic, Mozilla https://mozilla.org/, vladimir@mozilla.com
 Editor: Brandon Jones, Google http://google.com/, bajones@google.com
 Editor: Kearwood Gilbert, Mozilla https://mozilla.org/, kgilbert@mozilla.com
 Editor: Chris Van Wiemeersch, Mozilla https://mozilla.org/, cvan@mozilla.com
-Abstract: This specification describes support for accessing virtual reality devices, including sensors and head-mounted displays on the Web.
-Repository: mozvr/webvr-spec
-Mailing List: web-vr-discuss@mozilla.org
-Mailing List Archives: https://mail.mozilla.org/pipermail/web-vr-discuss/
+Abstract: This specification describes support for accessing virtual reality (VR) devices, including sensors and head-mounted displays on the Web.
 </pre>
 
 <pre class="anchors">
