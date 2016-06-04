@@ -64,7 +64,9 @@ interface VRDisplay : EventTarget {
    */
   readonly attribute VRStageParameters? stageParameters;
 
-  /* Return the current VREyeParameters for the given eye. */
+  /**
+   * Return the current VREyeParameters for the given eye.
+   */
   VREyeParameters getEyeParameters(VREye whichEye);
 
   /**
