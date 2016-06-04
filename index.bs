@@ -382,9 +382,9 @@ acceleration. When not NULL MUST be a three-element array.
 Orientation of the sensor at {{timestamp}} as a quaternion. The orientation yaw
 (rotation around the Y axis) is relative to the initial yaw of the sensor when
 it was first read or the yaw of the sensor at the point that {{resetPose()}} was
-last called. An orientation of {x: 0, y: 0, z: 0, w: 1} is considered to be
-"forward." MAY be NULL if the sensor is incapable of providing orientation data.
-When not NULL MUST be a four-element array.
+last called. An orientation of [0, 0, 0, 1] is considered to be "forward". MAY
+be NULL if the sensor is incapable of providing orientation data. When not NULL
+MUST be a four-element array.
 
 <dfn attribute for="VRPose">angularVelocity</dfn>
 Angular velocity of the sensor at {{timestamp}} given in radians per second. MAY
