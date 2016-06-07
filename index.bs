@@ -64,7 +64,9 @@ interface VRDisplay : EventTarget {
    */
   readonly attribute VRStageParameters? stageParameters;
 
-  /* Return the current VREyeParameters for the given eye. */
+  /**
+   * Return the current VREyeParameters for the given eye.
+   */
   VREyeParameters getEyeParameters(VREye whichEye);
 
   /**
@@ -372,17 +374,17 @@ the sensor is incapable of providing linear velocity. When not NULL MUST be a
 three-element array.
 
 <dfn attribute for="VRPose">linearAcceleration</dfn>
-Linear acceleration of the sensor at {{timestamp}} given in meters per second.
-MAY be NULL if the sensor is incapable of providing linear acceleration. When
-not NULL MUST be a three-element array.
+Linear acceleration of the sensor at {{timestamp}} given in meters per second
+squared. MAY be NULL if the sensor is incapable of providing linear
+acceleration. When not NULL MUST be a three-element array.
 
 <dfn attribute for="VRPose">orientation</dfn>
 Orientation of the sensor at {{timestamp}} as a quaternion. The orientation yaw
 (rotation around the Y axis) is relative to the initial yaw of the sensor when
 it was first read or the yaw of the sensor at the point that {{resetPose()}} was
-last called. An orientation of {x: 0, y: 0, z: 0, w: 1} is considered to be
-"forward." MAY be NULL if the sensor is incapable of providing orientation data.
-When not NULL MUST be a four-element array.
+last called. An orientation of [0, 0, 0, 1] is considered to be "forward". MAY
+be NULL if the sensor is incapable of providing orientation data. When not NULL
+MUST be a four-element array.
 
 <dfn attribute for="VRPose">angularVelocity</dfn>
 Angular velocity of the sensor at {{timestamp}} given in radians per second. MAY
@@ -390,9 +392,9 @@ be NULL if the sensor is incapable of providing angular velocity. When not NULL
 MUST be a three-element array.
 
 <dfn attribute for="VRPose">angularAcceleration</dfn>
-Angular acceleration of the sensor at {{timestamp}} given in radians per second.
-MAY be NULL if the sensor is incapable of providing angular acceleration. When
-not NULL MUST be a three-element array.
+Angular acceleration of the sensor at {{timestamp}} given in radians per second
+squared. MAY be NULL if the sensor is incapable of providing angular
+acceleration. When not NULL MUST be a three-element array.
 
 <div class="example">
 The following code snippet creates a WebGL-compatible matrix from a
