@@ -2,10 +2,7 @@
  <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <meta content="ED" name="w3c-status">
   <title>WebVR</title>
-  <link href="styles/styles-html.css" rel="stylesheet" type="text/css">
-  <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet" type="text/css">
 <style data-fill-with="stylesheet">/******************************************************************************
  *                   Style sheet for the W3C specifications                   *
  *
@@ -52,9 +49,9 @@
  *   - ::before styled for CSS-generated issue/example/figure numbers:
  *     -> Documents wishing to use this only need to add
  *        figcaption::before,
- *        .caption::before { content: "Figure "  counter(figure);  }
- *        .example::before { content: "Example " counter(example); }
- *        .issue::before   { content: "Issue "   counter(issue);   }
+ *        .caption::before { content: "Figure "  counter(figure) " ";  }
+ *        .example::before { content: "Example " counter(example) " "; }
+ *        .issue::before   { content: "Issue "   counter(issue) " ";   }
  *
  * Header Stuff (ignore, just don't conflict with these classes)
  *   - .head for the header
@@ -649,7 +646,7 @@
 		padding-right: 1em;
 		text-transform: uppercase;
 	}
-	/* Add .issue::before { content: "Issue " counter(issue); } for autogen numbers,
+	/* Add .issue::before { content: "Issue " counter(issue) " "; } for autogen numbers,
 	   or use class="marker" to mark up the issue number in source. */
 
 /** Example *******************************************************************/
@@ -667,7 +664,7 @@
 		min-width: 7.5em;
 		display: block;
 	}
-	/* Add .example::before { content: "Example " counter(example); } for autogen numbers,
+	/* Add .example::before { content: "Example " counter(example) " "; } for autogen numbers,
 	   or use class="marker" to mark up the example number in source. */
 
 /** Non-normative Note ********************************************************/
@@ -1409,11 +1406,9 @@ pre.idl.highlight { color: #708090; }
         </style>
  <body class="h-entry">
   <div class="head">
-   <header>
-    <p data-fill-with="logo"><a href="http://www.w3.org/"><img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"></a></p>
-    <h1 class="p-name no-ref" id="title">WebVR</h1>
-    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-07-27">27 July 2016</time></span></h2>
-   </header>
+   <p data-fill-with="logo"></p>
+   <h1 class="p-name no-ref" id="title">WebVR</h1>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-08-02">2 August 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1431,7 +1426,8 @@ pre.idl.highlight { color: #708090; }
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2016 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2016 the Contributors to the WebVR Specification, published by the <a href="https://www.w3.org/community/webvr/">WebVR Community Group</a> under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>.
+A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/">summary</a> is available. </p>
    <hr title="Separator for header">
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
@@ -1440,23 +1436,14 @@ pre.idl.highlight { color: #708090; }
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="status"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
-   <p> <em>This section describes the status of this document at the time of its publication. Other
-    documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision of this
-    technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical
-    reports index</a> at http://www.w3.org/TR/.</em> </p>
-   <p> This document was published by the <a href="https://www.w3.org/WebPlatform/WG/">Web Platform Working Group</a> as a Editors Draft. This document is intended to become a W3C Recommendation.
+   <p> This specification was published by the <a href="https://www.w3.org/community/webvr/">WebVR Community Group</a>.
+  It is not a W3C Standard nor is it on the W3C Standards Track.
 
-    Feedback and comments on this specification are welcome. Please use <a href="https://github.com/w3c/html/issues">Github issues</a>.
-    Historical discussions can be found in the <a href="http://lists.w3.org/Archives/Public/public-html/">public-html@w3.org archives</a>. </p>
-   <p> Publication as a Editors Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership. This is a draft document and may
-    be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite
-    this document as other than work in progress. </p>
-   <p> This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any
-    patent disclosures</a> made in connection with the deliverables of the group; that page also
-    includes instructions for disclosing a patent. An individual who has actual knowledge of a
-    patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
-    Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
-   <p> This document is governed by the <a href="http://www.w3.org/2015/Process-20150901/" id="w3c_process_revision">1 September 2015 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>. </p>
+  Please note that under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a> there is a limited opt-out and other conditions apply.
+
+  Learn more about <a href="http://www.w3.org/community/">W3C Community and Business Groups</a>. </p>
+   <p> Changes to this document may be tracked at <a href="https://github.com/w3c/webvr/commits/gh-pages">https://github.com/w3c/webvr/commits/gh-pages</a>. </p>
+   <p>If you wish to make comments regarding this document, please send them to <a href="mailto:public-webvr@w3.org">public-webvr@w3.org</a> (<a href="mailto:public-webvr-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-webvr/">archives</a>).</p>
    <p></p>
   </div>
   <div data-fill-with="at-risk"></div>
@@ -1523,6 +1510,7 @@ pre.idl.highlight { color: #708090; }
      </ol>
     <li><a href="#security"><span class="secno">3</span> <span class="content">Security Considerations</span></a>
     <li><a href="#ack"><span class="secno">4</span> <span class="content">Acknowledgements</span></a>
+    <li><a href="#conformance"><span class="secno"></span> <span class="content"> Conformance</span></a>
     <li>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
      <ol class="toc">
@@ -1554,7 +1542,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
   /**
    * Dictionary of capabilities describing the VRDisplay.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities" id="ref-for-vrdisplaycapabilities-1">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities" id="ref-for-dom-vrdisplay-capabilities-1">capabilities</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities" id="ref-for-vrdisplaycapabilities-1">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities" id="ref-for-dom-vrdisplay-capabilities-1">capabilities</a>;
 
   /**
    * If this VRDisplay supports room-scale experiences, the optional
@@ -1571,12 +1559,12 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
    * An identifier for this distinct VRDisplay. Used as an
    * association point in the Gamepad API.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" data-readonly="" data-type="unsigned long" id="dom-vrdisplay-displayid">displayId</dfn>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" data-readonly="" data-type="unsigned long" id="dom-vrdisplay-displayid">displayId</dfn>;
 
   /**
    * A display name, a user-readable name identifying it.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">DOMString</span> <dfn class="nv idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" data-readonly="" data-type="DOMString" id="dom-vrdisplay-displayname">displayName<a class="self-link" href="#dom-vrdisplay-displayname"></a></dfn>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">DOMString</span> <dfn class="nv idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" data-readonly="" data-type="DOMString" id="dom-vrdisplay-displayname">displayName<a class="self-link" href="#dom-vrdisplay-displayname"></a></dfn>;
 
   /**
    * Return a VRPose containing the future predicted pose of the VRDisplay
@@ -1626,13 +1614,13 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
    * make no assumptions of frame rate or vsync behavior as the HMD runs
    * asynchronously from other displays and at differing refresh rates.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Throws</a>] <span class="kt">long</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-requestanimationframe" id="ref-for-dom-vrdisplay-requestanimationframe-1">requestAnimationFrame</a>(<a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/browsers.html#framerequestcallback">FrameRequestCallback</a> <dfn class="nv idl-code" data-dfn-for="VRDisplay/requestAnimationFrame(callback)" data-dfn-type="argument" data-export="" id="dom-vrdisplay-requestanimationframe-callback-callback">callback<a class="self-link" href="#dom-vrdisplay-requestanimationframe-callback-callback"></a></dfn>);
+  <span class="kt">long</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-requestanimationframe" id="ref-for-dom-vrdisplay-requestanimationframe-1">requestAnimationFrame</a>(<a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/browsers.html#framerequestcallback">FrameRequestCallback</a> <dfn class="nv idl-code" data-dfn-for="VRDisplay/requestAnimationFrame(callback)" data-dfn-type="argument" data-export="" id="dom-vrdisplay-requestanimationframe-callback-callback">callback<a class="self-link" href="#dom-vrdisplay-requestanimationframe-callback-callback"></a></dfn>);
 
   /**
    * Passing the value returned by `requestAnimationFrame` to
    * `cancelAnimationFrame` will unregister the callback.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Throws</a>] <span class="kt">void</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-cancelanimationframe" id="ref-for-dom-vrdisplay-cancelanimationframe-1">cancelAnimationFrame</a>(<span class="kt">long</span> <dfn class="nv idl-code" data-dfn-for="VRDisplay/cancelAnimationFrame(handle)" data-dfn-type="argument" data-export="" id="dom-vrdisplay-cancelanimationframe-handle-handle">handle<a class="self-link" href="#dom-vrdisplay-cancelanimationframe-handle-handle"></a></dfn>);
+  <span class="kt">void</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-cancelanimationframe" id="ref-for-dom-vrdisplay-cancelanimationframe-1">cancelAnimationFrame</a>(<span class="kt">long</span> <dfn class="nv idl-code" data-dfn-for="VRDisplay/cancelAnimationFrame(handle)" data-dfn-type="argument" data-export="" id="dom-vrdisplay-cancelanimationframe-handle-handle">handle<a class="self-link" href="#dom-vrdisplay-cancelanimationframe-handle-handle"></a></dfn>);
 
   /**
    * Begin presenting to the VRDisplay. Must be called in response to a user gesture.
@@ -1854,12 +1842,12 @@ acceleration. When not NULL MUST be a three-element array.</p>
    <h3 class="heading settled" data-level="2.7" id="interface-vreyeparameters"><span class="secno">2.7. </span><span class="content">VREyeParameters</span><a class="self-link" href="#interface-vreyeparameters"></a></h3>
    <p>The <code class="idl"><a data-link-type="idl" href="#vreyeparameters" id="ref-for-vreyeparameters-3">VREyeParameters</a></code> interface represents all the information required to correctly render a scene for a given eye.</p>
 <pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vreyeparameters">VREyeParameters</dfn> {
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset" id="ref-for-dom-vreyeparameters-offset-1">offset</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset" id="ref-for-dom-vreyeparameters-offset-1">offset</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview" id="ref-for-vrfieldofview-3">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview" id="ref-for-dom-vreyeparameters-fieldofview-1">fieldOfView</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview" id="ref-for-vrfieldofview-3">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview" id="ref-for-dom-vreyeparameters-fieldofview-1">fieldOfView</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-1">renderWidth</a>;
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight" id="ref-for-dom-vreyeparameters-renderheight-1">renderHeight</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-1">renderWidth</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight" id="ref-for-dom-vreyeparameters-renderheight-1">renderHeight</a>;
 };
 </pre>
    <h4 class="heading settled" data-level="2.7.1" id="vreyeparameters-attributes"><span class="secno">2.7.1. </span><span class="content">Attributes</span><a class="self-link" href="#vreyeparameters-attributes"></a></h4>
@@ -1955,7 +1943,7 @@ acceleration. When not NULL MUST be a three-element array.</p>
    <p><dfn class="idl-code" data-dfn-for="Window" data-dfn-type="event" data-export="" id="window-vrdisplaypresentchange-event">onvrdisplaypresentchange<a class="self-link" href="#window-vrdisplaypresentchange-event"></a></dfn> A user agent MUST dispatch this event type to indicate that a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-52">VRDisplay</a></code> has begun or ended VR presentation. This event should not fire on subsequent calls to <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-requestpresent" id="ref-for-dom-vrdisplay-requestpresent-8">requestPresent()</a></code> after the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-53">VRDisplay</a></code> has already begun VR presentation.</p>
    <h3 class="heading settled" data-level="2.13" id="interface-gamepad"><span class="secno">2.13. </span><span class="content">Gamepad Interface extension</span><a class="self-link" href="#interface-gamepad"></a></h3>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a> {
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute" id="ref-for-gamepad-getvrdisplays-attribute-1">displayId</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute" id="ref-for-gamepad-getvrdisplays-attribute-1">displayId</a>;
 };
 </pre>
    <h4 class="heading settled" data-level="2.13.1" id="gamepad-attributes"><span class="secno">2.13.1. </span><span class="content">Attributes</span><a class="self-link" href="#gamepad-attributes"></a></h4>
@@ -1988,7 +1976,152 @@ acceleration. When not NULL MUST be a three-element array.</p>
    </ul>
    <h2 class="heading settled" data-level="4" id="ack"><span class="secno">4. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
   </main>
-<script src="https://www.w3.org/scripts/TR/2016/fixup.js"></script>
+  <div data-fill-with="conformance">
+   <h2 class="no-ref no-num heading settled" id="conformance"><span class="content"> Conformance</span><a class="self-link" href="#conformance"></a></h2>
+   <p> Conformance requirements are expressed with a combination of descriptive assertions and RFC 2119 terminology.
+            The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+            in the normative parts of this document
+            are to be interpreted as described in RFC 2119.
+            However, for readability,
+            these words do not appear in all uppercase letters in this specification. </p>
+   <p> All of the text of this specification is normative
+            except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119">[RFC2119]</a> </p>
+   <p> Examples in this specification are introduced with the words “for example”
+            or are set apart from the normative text with <code>class="example"</code>, like this: </p>
+   <div class="example" id="example-ae2b6bc0"><a class="self-link" href="#example-ae2b6bc0"></a> This is an example of an informative example. </div>
+   <p> Informative notes begin with the word “Note”
+            and are set apart from the normative text with <code>class="note"</code>, like this: </p>
+   <p class="note" role="note"> Note, this is an informative note. </p>
+  </div>
+<script>
+(function() {
+  "use strict";
+  var collapseSidebarText = '<span aria-hidden="true">←</span> '
+                          + '<span>Collapse Sidebar</span>';
+  var expandSidebarText   = '<span aria-hidden="true">→</span> '
+                          + '<span>Pop Out Sidebar</span>';
+  var tocJumpText         = '<span aria-hidden="true">↑</span> '
+                          + '<span>Jump to Table of Contents</span>';
+
+  var sidebarMedia = window.matchMedia('screen and (min-width: 78em)');
+  var autoToggle   = function(e){ toggleSidebar(e.matches) };
+  if(sidebarMedia.addListener) {
+    sidebarMedia.addListener(autoToggle);
+  }
+
+  function toggleSidebar(on) {
+    if (on == undefined) {
+      on = !document.body.classList.contains('toc-sidebar');
+    }
+
+    /* Don’t scroll to compensate for the ToC if we’re above it already. */
+    var headY = 0;
+    var head = document.querySelector('.head');
+    if (head) {
+      // terrible approx of "top of ToC"
+      headY += head.offsetTop + head.offsetHeight;
+    }
+    var skipScroll = window.scrollY < headY;
+
+    var toggle = document.getElementById('toc-toggle');
+    var tocNav = document.getElementById('toc');
+    if (on) {
+      var tocHeight = tocNav.offsetHeight;
+      document.body.classList.add('toc-sidebar');
+      document.body.classList.remove('toc-inline');
+      toggle.innerHTML = collapseSidebarText;
+      if (!skipScroll) {
+        window.scrollBy(0, 0 - tocHeight);
+      }
+      tocNav.focus();
+      sidebarMedia.addListener(autoToggle); // auto-collapse when out of room
+    }
+    else {
+      document.body.classList.add('toc-inline');
+      document.body.classList.remove('toc-sidebar');
+      toggle.innerHTML = expandSidebarText;
+      if (!skipScroll) {
+        window.scrollBy(0, tocNav.offsetHeight);
+      }
+      if (toggle.matches(':hover')) {
+        /* Unfocus button when not using keyboard navigation,
+           because I don’t know where else to send the focus. */
+        toggle.blur();
+      }
+    }
+  }
+
+  function createSidebarToggle() {
+    /* Create the sidebar toggle in JS; it shouldn’t exist when JS is off. */
+    var toggle = document.createElement('a');
+      /* This should probably be a button, but appearance isn’t standards-track.*/
+    toggle.id = 'toc-toggle';
+    toggle.class = 'toc-toggle';
+    toggle.href = '#toc';
+    toggle.innerHTML = collapseSidebarText;
+
+    sidebarMedia.addListener(autoToggle);
+    var toggler = function(e) {
+      e.preventDefault();
+      sidebarMedia.removeListener(autoToggle); // persist explicit off states
+      toggleSidebar();
+      return false;
+    }
+    toggle.addEventListener('click', toggler, false);
+
+
+    /* Get <nav id=toc-nav>, or make it if we don’t have one. */
+    var tocNav = document.getElementById('toc-nav');
+    if (!tocNav) {
+      tocNav = document.createElement('p');
+      tocNav.id = 'toc-nav';
+      /* Prepend for better keyboard navigation */
+      document.body.insertBefore(tocNav, document.body.firstChild);
+    }
+    /* While we’re at it, make sure we have a Jump to Toc link. */
+    var tocJump = document.getElementById('toc-jump');
+    if (!tocJump) {
+      tocJump = document.createElement('a');
+      tocJump.id = 'toc-jump';
+      tocJump.href = '#toc';
+      tocJump.innerHTML = tocJumpText;
+      tocNav.appendChild(tocJump);
+    }
+
+    tocNav.appendChild(toggle);
+  }
+
+  var toc = document.getElementById('toc');
+  if (toc) {
+    createSidebarToggle();
+    toggleSidebar(sidebarMedia.matches);
+
+    /* If the sidebar has been manually opened and is currently overlaying the text
+       (window too small for the MQ to add the margin to body),
+       then auto-close the sidebar once you click on something in there. */
+    toc.addEventListener('click', function(e) {
+      if(e.target.tagName.toLowerCase() == "a" && document.body.classList.contains('toc-sidebar') && !sidebarMedia.matches) {
+        toggleSidebar(false);
+      }
+    }, false);
+  }
+  else {
+    console.warn("Can’t find Table of Contents. Please use <nav id='toc'> around the ToC.");
+  }
+
+  /* Wrap tables in case they overflow */
+  var tables = document.querySelectorAll(':not(.overlarge) > table.data, :not(.overlarge) > table.index');
+  var numTables = tables.length;
+  for (var i = 0; i < numTables; i++) {
+    var table = tables[i];
+    var wrapper = document.createElement('div');
+    wrapper.className = 'overlarge';
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  }
+
+})();
+</script>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
@@ -2131,6 +2264,8 @@ acceleration. When not NULL MUST be a three-element array.</p>
   <dl>
    <dt id="biblio-html">[HTML]
    <dd>Ian Hickson. <a href="https://html.spec.whatwg.org/multipage/">HTML Standard</a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-whatwg-dom">[WHATWG-DOM]
    <dd>Anne van Kesteren. <a href="https://dom.spec.whatwg.org/">DOM Standard</a>. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
   </dl>
@@ -2142,7 +2277,7 @@ acceleration. When not NULL MUST be a three-element array.</p>
   /**
    * Dictionary of capabilities describing the VRDisplay.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities">capabilities</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities">capabilities</a>;
 
   /**
    * If this VRDisplay supports room-scale experiences, the optional
@@ -2159,12 +2294,12 @@ acceleration. When not NULL MUST be a three-element array.</p>
    * An identifier for this distinct VRDisplay. Used as an
    * association point in the Gamepad API.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv" data-readonly="" data-type="unsigned long" href="#dom-vrdisplay-displayid">displayId</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv" data-readonly="" data-type="unsigned long" href="#dom-vrdisplay-displayid">displayId</a>;
 
   /**
    * A display name, a user-readable name identifying it.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">DOMString</span> <a class="nv" data-readonly="" data-type="DOMString" href="#dom-vrdisplay-displayname">displayName</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">DOMString</span> <a class="nv" data-readonly="" data-type="DOMString" href="#dom-vrdisplay-displayname">displayName</a>;
 
   /**
    * Return a VRPose containing the future predicted pose of the VRDisplay
@@ -2214,13 +2349,13 @@ acceleration. When not NULL MUST be a three-element array.</p>
    * make no assumptions of frame rate or vsync behavior as the HMD runs
    * asynchronously from other displays and at differing refresh rates.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Throws</a>] <span class="kt">long</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-requestanimationframe">requestAnimationFrame</a>(<a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/browsers.html#framerequestcallback">FrameRequestCallback</a> <a class="nv" href="#dom-vrdisplay-requestanimationframe-callback-callback">callback</a>);
+  <span class="kt">long</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-requestanimationframe">requestAnimationFrame</a>(<a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/browsers.html#framerequestcallback">FrameRequestCallback</a> <a class="nv" href="#dom-vrdisplay-requestanimationframe-callback-callback">callback</a>);
 
   /**
    * Passing the value returned by `requestAnimationFrame` to
    * `cancelAnimationFrame` will unregister the callback.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Throws</a>] <span class="kt">void</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-cancelanimationframe">cancelAnimationFrame</a>(<span class="kt">long</span> <a class="nv" href="#dom-vrdisplay-cancelanimationframe-handle-handle">handle</a>);
+  <span class="kt">void</span> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-cancelanimationframe">cancelAnimationFrame</a>(<span class="kt">long</span> <a class="nv" href="#dom-vrdisplay-cancelanimationframe-handle-handle">handle</a>);
 
   /**
    * Begin presenting to the VRDisplay. Must be called in response to a user gesture.
@@ -2290,12 +2425,12 @@ acceleration. When not NULL MUST be a three-element array.</p>
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vreyeparameters">VREyeParameters</a> {
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset">offset</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset">offset</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview">fieldOfView</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview">fieldOfView</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth">renderWidth</a>;
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>, <a class="nv idl-code" data-link-type="extended-attribute">Cached</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight">renderHeight</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth">renderWidth</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight">renderHeight</a>;
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vrstageparameters">VRStageParameters</a> {
@@ -2336,7 +2471,7 @@ acceleration. When not NULL MUST be a three-element array.</p>
 };
 
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a> {
-  [<a class="nv idl-code" data-link-type="extended-attribute">Constant</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute">displayId</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute">displayId</a>;
 };
 
 </pre>
