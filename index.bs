@@ -1,7 +1,7 @@
 <pre class="metadata">
 Shortname: webvr
 Title: WebVR
-Group: html
+Group: webvr
 Status: ED
 ED: https://w3c.github.io/webvr/
 Repository: w3c/webvr
