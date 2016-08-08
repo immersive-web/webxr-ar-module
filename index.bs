@@ -57,7 +57,7 @@ interface VRDisplay : EventTarget {
   /**
    * Dictionary of capabilities describing the VRDisplay.
    */
-  [Constant] readonly attribute VRDisplayCapabilities capabilities;
+  [SameObject] readonly attribute VRDisplayCapabilities capabilities;
 
   /**
    * If this VRDisplay supports room-scale experiences, the optional
@@ -74,12 +74,12 @@ interface VRDisplay : EventTarget {
    * An identifier for this distinct VRDisplay. Used as an
    * association point in the Gamepad API.
    */
-  [Constant] readonly attribute unsigned long displayId;
+  readonly attribute unsigned long displayId;
 
   /**
    * A display name, a user-readable name identifying it.
    */
-  [Constant] readonly attribute DOMString displayName;
+  readonly attribute DOMString displayName;
 
   /**
    * Return a VRPose containing the future predicted pose of the VRDisplay
@@ -129,13 +129,13 @@ interface VRDisplay : EventTarget {
    * make no assumptions of frame rate or vsync behavior as the HMD runs
    * asynchronously from other displays and at differing refresh rates.
    */
-  [Throws] long requestAnimationFrame(FrameRequestCallback callback);
+  long requestAnimationFrame(FrameRequestCallback callback);
 
   /**
    * Passing the value returned by `requestAnimationFrame` to
    * `cancelAnimationFrame` will unregister the callback.
    */
-  [Throws] void cancelAnimationFrame(long handle);
+  void cancelAnimationFrame(long handle);
 
   /**
    * Begin presenting to the VRDisplay. Must be called in response to a user gesture.
@@ -453,12 +453,12 @@ The {{VREyeParameters}} interface represents all the information required to cor
 
 <pre class="idl">
 interface VREyeParameters {
-  [Constant, Cached] readonly attribute Float32Array offset;
+  readonly attribute Float32Array offset;
 
-  [Constant, Cached] readonly attribute VRFieldOfView fieldOfView;
+  [SameObject] readonly attribute VRFieldOfView fieldOfView;
 
-  [Constant, Cached] readonly attribute unsigned long renderWidth;
-  [Constant, Cached] readonly attribute unsigned long renderHeight;
+  readonly attribute unsigned long renderWidth;
+  readonly attribute unsigned long renderHeight;
 };
 </pre>
 
@@ -627,7 +627,7 @@ A user agent MUST dispatch this event type to indicate that a {{VRDisplay}} has 
 
 <pre class="idl">
 partial interface Gamepad {
-  [Constant] readonly attribute unsigned long displayId;
+  readonly attribute unsigned long displayId;
 };
 </pre>
 
