@@ -505,7 +505,7 @@ interface VRStageParameters {
 ### Attributes ### {#vrstageparameters-attributes}
 
 <dfn attribute for="VRStageParameters">sittingToStandingTransform</dfn>
-The {{sittingToStandingTransform}} attribute is a 16-element array containing the components of a 4×4 transform matrix. This matrix transforms the sitting-space position returned by {{getPose()}}/{{getImmediatePose()}} to a standing-space position.
+The {{sittingToStandingTransform}} attribute is a 16-element array containing the components of a 4x4 affine transformation matrix in column-major order. This matrix transforms the sitting-space position returned by {{getPose()}}/{{getImmediatePose()}} to a standing-space position.
 
 <dfn attribute for="VRStageParameters">sizeX</dfn>
 Width of the play-area bounds in meters. The bounds are defined as an axis-aligned rectangle on the floor. The center of the rectangle is at (0,0,0) in standing-space coordinates. These bounds are defined for safety purposes. Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of this rectangle.
