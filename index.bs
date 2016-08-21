@@ -140,7 +140,9 @@ interface VRDisplay : EventTarget {
   /**
    * Begin presenting to the VRDisplay. Must be called in response to a user gesture.
    * Repeat calls while already presenting will update the VRLayers being displayed.
+   * If the number of values in the leftBounds/rightBounds arrays is not 0 or 4 for any of the passed layers requestPresent throws an Error
    */
+  [Throws]
   Promise&lt;void&gt; requestPresent(sequence&lt;VRLayer&gt; layers);
 
   /**
@@ -215,8 +217,8 @@ typedef (HTMLCanvasElement or
 dictionary VRLayer {
   VRSource? source = null;
 
-  sequence&lt;float&gt;? leftBounds = null;
-  sequence&lt;float&gt;? rightBounds = null;
+  sequence&lt;float&gt;? leftBounds = [ ];
+  sequence&lt;float&gt;? rightBounds = [ ];
 };
 </pre>
 
