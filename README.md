@@ -4,7 +4,7 @@ This is the repository for the [WebVR Community Group](https://www.w3.org/commun
 
 WebVR is driving support for accessing virtual reality (VR) devices, including sensors and head-mounted displays on the Web.
 
-** For a high-level overview of WebVR see the [Explainer Doc](https://github.com/w3c/webvr/blob/gh-pages/explainer.md) **
+**For a high-level overview of WebVR see the [Explainer Doc](https://github.com/w3c/webvr/blob/gh-pages/explainer.md)**
 
 
 ## Relevant Links
