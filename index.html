@@ -1408,7 +1408,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebVR</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-08-25">25 August 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-08-30">30 August 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1547,6 +1547,11 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
   /**
    * If this VRDisplay supports room-scale experiences, the optional
    * stage attribute contains details on the room-scale parameters.
+   * The stageParameters attribute can not change between null
+   * and non-null once the VRDisplay is enumerated; however,
+   * the values within VRStageParameters may change after
+   * any call to VRDisplay.submitFrame as the user may re-configure
+   * their environment at any time.
    */
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrstageparameters" id="ref-for-vrstageparameters-1">VRStageParameters</a>? <dfn class="nv idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" data-readonly="" data-type="VRStageParameters?" id="dom-vrdisplay-stageparameters">stageParameters<a class="self-link" href="#dom-vrdisplay-stageparameters"></a></dfn>;
 
@@ -2284,6 +2289,11 @@ acceleration. When not NULL MUST be a three-element array.</p>
   /**
    * If this VRDisplay supports room-scale experiences, the optional
    * stage attribute contains details on the room-scale parameters.
+   * The stageParameters attribute can not change between null
+   * and non-null once the VRDisplay is enumerated; however,
+   * the values within VRStageParameters may change after
+   * any call to VRDisplay.submitFrame as the user may re-configure
+   * their environment at any time.
    */
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrstageparameters">VRStageParameters</a>? <a class="nv" data-readonly="" data-type="VRStageParameters?" href="#dom-vrdisplay-stageparameters">stageParameters</a>;
 
