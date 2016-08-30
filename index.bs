@@ -62,6 +62,11 @@ interface VRDisplay : EventTarget {
   /**
    * If this VRDisplay supports room-scale experiences, the optional
    * stage attribute contains details on the room-scale parameters.
+   * The stageParameters attribute can not change between null
+   * and non-null once the VRDisplay is enumerated; however,
+   * the values within VRStageParameters may change after
+   * any call to VRDisplay.submitFrame as the user may re-configure
+   * their environment at any time.
    */
   readonly attribute VRStageParameters? stageParameters;
 
