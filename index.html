@@ -1421,7 +1421,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebVR</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-09-08">8 September 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-09-12">12 September 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1520,10 +1520,11 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
         <li><a href="#vrdisplayevent-attributes"><span class="secno">2.12.1</span> <span class="content">Attributes</span></a>
        </ol>
       <li><a href="#interface-window"><span class="secno">2.13</span> <span class="content">Window Interface extension</span></a>
+      <li><a href="#allowvr-attribute"><span class="secno">2.14</span> <span class="content">allowvr iframe attribute</span></a>
       <li>
-       <a href="#interface-gamepad"><span class="secno">2.14</span> <span class="content">Gamepad Interface extension</span></a>
+       <a href="#interface-gamepad"><span class="secno">2.15</span> <span class="content">Gamepad Interface extension</span></a>
        <ol class="toc">
-        <li><a href="#gamepad-attributes"><span class="secno">2.14.1</span> <span class="content">Attributes</span></a>
+        <li><a href="#gamepad-attributes"><span class="secno">2.15.1</span> <span class="content">Attributes</span></a>
        </ol>
      </ol>
     <li><a href="#security"><span class="secno">3</span> <span class="content">Security Considerations</span></a>
@@ -1560,7 +1561,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
   /**
    * Dictionary of capabilities describing the VRDisplay.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities" id="ref-for-vrdisplaycapabilities-1">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities" id="ref-for-dom-vrdisplay-capabilities-1">capabilities</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities" id="ref-for-vrdisplaycapabilities-1">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities" id="ref-for-dom-vrdisplay-capabilities-1">capabilities</a>;
 
   /**
    * If this VRDisplay supports room-scale experiences, the optional
@@ -1603,7 +1604,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
    * The VRPose will contain the position, orientation, velocity,
    * and acceleration of each of these properties.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose" id="ref-for-vrpose-1">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose" id="ref-for-dom-vrdisplay-getpose-1">getPose</a>();
+  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#NewObject">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose" id="ref-for-vrpose-1">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose" id="ref-for-dom-vrdisplay-getpose-1">getPose</a>();
 
   /**
    * Reset the pose for this display, treating its current position and
@@ -1689,38 +1690,39 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="method" data-export="" id="dom-vrdisplay-submitframe">submitFrame()</dfn> Captures the current state of the <code class="idl"><a data-link-type="idl" href="#dictdef-vrlayer" id="ref-for-dictdef-vrlayer-8">VRLayer</a></code> currently being presented and displays it on the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-23">VRDisplay</a></code>. It is assumed that the frame was rendered using the <code class="idl"><a data-link-type="idl" href="#vrpose" id="ref-for-vrpose-6">VRPose</a></code> and matrices provided by the last call to <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-getframedata" id="ref-for-dom-vrdisplay-getframedata-5">getFrameData()</a></code>. If <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-getframedata" id="ref-for-dom-vrdisplay-getframedata-6">getFrameData()</a></code> was not called prior to calling <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-submitframe" id="ref-for-dom-vrdisplay-submitframe-4">submitFrame()</a></code> the user agent MAY warn the user of potentially malformed visuals or prevent the frame from being shown at all.</p>
    <div class="example" id="example-471f1826">
     <a class="self-link" href="#example-471f1826"></a> The following code demonstrates presenting a simple rendering loop to a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-24">VRDisplay</a></code>. 
-<pre class="lang-js highlight"><span></span><span class="kd">var</span> <span class="nx">frameData</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VRFrameData</span><span class="p">();</span>
+<pre class="lang-js highlight"><span class="kd">var</span> frameData <span class="o">=</span> <span class="k">new</span> VRFrameData<span class="p">(</span><span class="p">)</span><span class="p">;</span>
 
-<span class="c1">// Render a single frame of VR data.</span>
-<span class="kd">function</span> <span class="nx">onVRFrame</span><span class="p">()</span> <span class="p">{</span>
-  <span class="c1">// Schedule the next frame’s callback</span>
-  <span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">onVRFrame</span><span class="p">);</span>
+<span class="c1">// Render a single frame of VR data.
+</span><span class="kd">function</span> onVRFrame<span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Schedule the next frame’s callback
+</span>  vrDisplay<span class="p">.</span>requestAnimationFrame<span class="p">(</span>onVRFrame<span class="p">)</span><span class="p">;</span>
 
-  <span class="c1">// Poll the VRDisplay for the current frame’s matrices and pose</span>
-  <span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">getFrameData</span><span class="p">(</span><span class="nx">frameData</span><span class="p">);</span>
+  <span class="c1">// Poll the VRDisplay for the current frame’s matrices and pose
+</span>  vrDisplay<span class="p">.</span>getFrameData<span class="p">(</span>frameData<span class="p">)</span><span class="p">;</span>
 
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="nx">gl</span><span class="p">.</span><span class="nx">COLOR_BUFFER_BIT</span> <span class="o">|</span> <span class="nx">gl</span><span class="p">.</span><span class="nx">DEPTH_BUFFER_BIT</span><span class="p">);</span>
+  gl<span class="p">.</span>clear<span class="p">(</span>gl<span class="p">.</span>COLOR_BUFFER_BIT <span class="o">|</span> gl<span class="p">.</span>DEPTH_BUFFER_BIT<span class="p">)</span><span class="p">;</span>
 
-  <span class="c1">// Render to the left eye’s view to the left half of the canvas</span>
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">viewport</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">uniformMatrix4fv</span><span class="p">(</span><span class="nx">projectionMatrixLocation</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">frameData</span><span class="p">.</span><span class="nx">leftProjectionMatrix</span><span class="p">);</span>
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">uniformMatrix4fv</span><span class="p">(</span><span class="nx">viewMatrixLocation</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">frameData</span><span class="p">.</span><span class="nx">leftViewMatrix</span><span class="p">);</span>
-  <span class="nx">drawGeometry</span><span class="p">();</span>
+  <span class="c1">// Render to the left eye’s view to the left half of the canvas
+</span>  gl<span class="p">.</span>viewport<span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> canvas<span class="p">.</span>width <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> canvas<span class="p">.</span>height<span class="p">)</span><span class="p">;</span>
+  gl<span class="p">.</span>uniformMatrix4fv<span class="p">(</span>projectionMatrixLocation<span class="p">,</span> <span class="kc">false</span><span class="p">,</span> frameData<span class="p">.</span>leftProjectionMatrix<span class="p">)</span><span class="p">;</span>
+  gl<span class="p">.</span>uniformMatrix4fv<span class="p">(</span>viewMatrixLocation<span class="p">,</span> <span class="kc">false</span><span class="p">,</span> frameData<span class="p">.</span>leftViewMatrix<span class="p">)</span><span class="p">;</span>
+  drawGeometry<span class="p">(</span><span class="p">)</span><span class="p">;</span>
 
-  <span class="c1">// Render to the right eye’s view to the right half of the canvas</span>
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">viewport</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">uniformMatrix4fv</span><span class="p">(</span><span class="nx">projectionMatrixLocation</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">frameData</span><span class="p">.</span><span class="nx">rightProjectionMatrix</span><span class="p">);</span>
-  <span class="nx">gl</span><span class="p">.</span><span class="nx">uniformMatrix4fv</span><span class="p">(</span><span class="nx">viewMatrixLocation</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">frameData</span><span class="p">.</span><span class="nx">rightViewMatrix</span><span class="p">);</span>
-  <span class="nx">drawGeometry</span><span class="p">();</span>
+  <span class="c1">// Render to the right eye’s view to the right half of the canvas
+</span>  gl<span class="p">.</span>viewport<span class="p">(</span>canvas<span class="p">.</span>width <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> canvas<span class="p">.</span>width <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> canvas<span class="p">.</span>height<span class="p">)</span><span class="p">;</span>
+  gl<span class="p">.</span>uniformMatrix4fv<span class="p">(</span>projectionMatrixLocation<span class="p">,</span> <span class="kc">false</span><span class="p">,</span> frameData<span class="p">.</span>rightProjectionMatrix<span class="p">)</span><span class="p">;</span>
+  gl<span class="p">.</span>uniformMatrix4fv<span class="p">(</span>viewMatrixLocation<span class="p">,</span> <span class="kc">false</span><span class="p">,</span> frameData<span class="p">.</span>rightViewMatrix<span class="p">)</span><span class="p">;</span>
+  drawGeometry<span class="p">(</span><span class="p">)</span><span class="p">;</span>
 
-  <span class="c1">// Indicate that we are ready to present the rendered frame to the VRDisplay</span>
-  <span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">submitFrame</span><span class="p">();</span>
+  <span class="c1">// Indicate that we are ready to present the rendered frame to the VRDisplay
+</span>  vrDisplay<span class="p">.</span>submitFrame<span class="p">(</span><span class="p">)</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="c1">// Begin presentation (must be called within a user gesture)</span>
-<span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">requestPresent</span><span class="p">([{</span> <span class="nx">source</span><span class="o">:</span> <span class="nx">canvas</span> <span class="p">}]).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">onVRFrame</span><span class="p">);</span>
-<span class="p">});</span></pre>
+<span class="c1">// Begin presentation (must be called within a user gesture)
+</span>vrDisplay<span class="p">.</span>requestPresent<span class="p">(</span><span class="p">[</span><span class="p">{</span> source<span class="o">:</span> canvas <span class="p">}</span><span class="p">]</span><span class="p">)</span><span class="p">.</span>then<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+  vrDisplay<span class="p">.</span>requestAnimationFrame<span class="p">(</span>onVRFrame<span class="p">)</span><span class="p">;</span>
+<span class="p">}</span><span class="p">)</span><span class="p">;</span>
+</pre>
    </div>
    <h3 class="heading settled" data-level="2.2" id="interface-vrlayer"><span class="secno">2.2. </span><span class="content">VRLayer</span><a class="self-link" href="#interface-vrlayer"></a></h3>
    <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-vrlayer" id="ref-for-dictdef-vrlayer-9">VRLayer</a></code> interface is provided to a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-25">VRDisplay</a></code> and presented in the HMD.</p>
@@ -1821,47 +1823,48 @@ null if the sensor is incapable of providing angular acceleration. When not null
 MUST be a three-element array.</p>
    <div class="example" id="example-eea85aeb">
     <a class="self-link" href="#example-eea85aeb"></a> The following code snippet creates a WebGL-compatible matrix from a <code class="idl"><a data-link-type="idl" href="#vrpose" id="ref-for-vrpose-7">VRPose</a></code>: 
-<pre class="lang-js highlight"><span></span><span class="kd">function</span> <span class="nx">poseToMatrix</span> <span class="p">(</span><span class="nx">pose</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Float32Array</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span>
+<pre class="lang-js highlight"><span class="kd">function</span> poseToMatrix <span class="p">(</span>pose<span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> out <span class="o">=</span> <span class="k">new</span> Float32Array<span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="p">;</span>
 
-    <span class="c1">// If the orientation or position are null, provide defaults.</span>
-    <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">pose</span><span class="p">.</span><span class="nx">orientation</span> <span class="o">?</span> <span class="nx">pose</span><span class="p">.</span><span class="nx">orientation</span> <span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">];</span>
-    <span class="kd">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="nx">pose</span><span class="p">.</span><span class="nx">position</span> <span class="o">?</span> <span class="nx">pose</span><span class="p">.</span><span class="nx">position</span> <span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">];</span>
+    <span class="c1">// If the orientation or position are null, provide defaults.
+</span>    <span class="kd">var</span> q <span class="o">=</span> pose<span class="p">.</span>orientation <span class="o">?</span> pose<span class="p">.</span>orientation <span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="p">;</span>
+    <span class="kd">var</span> v <span class="o">=</span> pose<span class="p">.</span>position <span class="o">?</span> pose<span class="p">.</span>position <span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="p">;</span>
 
-    <span class="c1">// Compute some values for the quaternion math.</span>
-    <span class="kd">var</span> <span class="nx">x2</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-    <span class="kd">var</span> <span class="nx">y2</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">q</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-    <span class="kd">var</span> <span class="nx">z2</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="nx">q</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="c1">// Compute some values for the quaternion math.
+</span>    <span class="kd">var</span> x2 <span class="o">=</span> q<span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> q<span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">;</span>
+    <span class="kd">var</span> y2 <span class="o">=</span> q<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> q<span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">;</span>
+    <span class="kd">var</span> z2 <span class="o">=</span> q<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> q<span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">xx</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">x2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">y2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">xz</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nx">z2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">yy</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">y2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">yz</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nx">z2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">zz</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="nx">z2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">wx</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="nx">x2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">wy</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="nx">y2</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">wz</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="nx">z2</span><span class="p">;</span>
+    <span class="kd">var</span> xx <span class="o">=</span> q<span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> x2<span class="p">;</span>
+    <span class="kd">var</span> xy <span class="o">=</span> q<span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> y2<span class="p">;</span>
+    <span class="kd">var</span> xz <span class="o">=</span> q<span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> z2<span class="p">;</span>
+    <span class="kd">var</span> yy <span class="o">=</span> q<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> y2<span class="p">;</span>
+    <span class="kd">var</span> yz <span class="o">=</span> q<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> z2<span class="p">;</span>
+    <span class="kd">var</span> zz <span class="o">=</span> q<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> z2<span class="p">;</span>
+    <span class="kd">var</span> wx <span class="o">=</span> q<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> x2<span class="p">;</span>
+    <span class="kd">var</span> wy <span class="o">=</span> q<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> y2<span class="p">;</span>
+    <span class="kd">var</span> wz <span class="o">=</span> q<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> z2<span class="p">;</span>
 
-    <span class="nx">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="nx">yy</span> <span class="o">+</span> <span class="nx">zz</span><span class="p">);</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">xy</span> <span class="o">+</span> <span class="nx">wz</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">xz</span> <span class="o">-</span> <span class="nx">wy</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="nx">xy</span> <span class="o">-</span> <span class="nx">wz</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="nx">xx</span> <span class="o">+</span> <span class="nx">zz</span><span class="p">);</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="nx">yz</span> <span class="o">+</span> <span class="nx">wx</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="nx">xz</span> <span class="o">+</span> <span class="nx">wy</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="nx">yz</span> <span class="o">-</span> <span class="nx">wx</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="nx">xx</span> <span class="o">+</span> <span class="nx">yy</span><span class="p">);</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-    <span class="nx">out</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>yy <span class="o">+</span> zz<span class="p">)</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> xy <span class="o">+</span> wz<span class="p">;</span>
+    out<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> xz <span class="o">-</span> wy<span class="p">;</span>
+    out<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> xy <span class="o">-</span> wz<span class="p">;</span>
+    out<span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>xx <span class="o">+</span> zz<span class="p">)</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> yz <span class="o">+</span> wx<span class="p">;</span>
+    out<span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> xz <span class="o">+</span> wy<span class="p">;</span>
+    out<span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> yz <span class="o">-</span> wx<span class="p">;</span>
+    out<span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>xx <span class="o">+</span> yy<span class="p">)</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> v<span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="o">=</span> v<span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> v<span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="p">;</span>
+    out<span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
-<span class="p">}</span></pre>
+    <span class="k">return</span> out<span class="p">;</span>
+<span class="p">}</span>
+</pre>
    </div>
    <h3 class="heading settled" data-level="2.7" id="interface-vrframedata"><span class="secno">2.7. </span><span class="content">VRFrameData</span><a class="self-link" href="#interface-vrframedata"></a></h3>
    <p>The VRFrameData interface represents all the information needed to render a single frame of a VR scene.</p>
@@ -1894,7 +1897,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
 <pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vreyeparameters">VREyeParameters</dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset" id="ref-for-dom-vreyeparameters-offset-1">offset</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview" id="ref-for-vrfieldofview-2">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview" id="ref-for-dom-vreyeparameters-fieldofview-1">fieldOfView</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview" id="ref-for-vrfieldofview-2">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview" id="ref-for-dom-vreyeparameters-fieldofview-1">fieldOfView</a>;
 
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-1">renderWidth</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight" id="ref-for-dom-vreyeparameters-renderheight-1">renderHeight</a>;
@@ -1907,11 +1910,12 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VREyeParameters" data-dfn-type="attribute" data-export="" id="dom-vreyeparameters-renderheight">renderHeight</dfn> Describes the recommended render target height of each eye viewport, in pixels. If multiple eyes are rendered in a single render target, then the render target should be made large enough to fit both viewports. The <code class="idl"><a data-link-type="idl" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-5">renderWidth</a></code> for the left eye and right eye MUST NOT overlap, and the <code class="idl"><a data-link-type="idl" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-6">renderWidth</a></code> for the right eye MUST be to the right of the <code class="idl"><a data-link-type="idl" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-7">renderWidth</a></code> for the left eye.</p>
    <div class="example" id="example-f1db69f5">
     <a class="self-link" href="#example-f1db69f5"></a> Many HMDs will distort the rendered image to counteract undesired effects introduced by the headset optics. Because of this the optimal resolution of the canvas will often be larger than the HMD’s physical resolution to ensure that the final image presented to the user has a 1:1 pixel ratio at the center of the user’s view. The optimal canvas resolution can be calculated from the <code class="idl"><a data-link-type="idl" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-8">renderWidth</a></code> and <code class="idl"><a data-link-type="idl" href="#dom-vreyeparameters-renderheight" id="ref-for-dom-vreyeparameters-renderheight-2">renderHeight</a></code> for both eyes as follows: 
-<pre class="lang-js highlight"><span></span><span class="kd">var</span> <span class="nx">leftEye</span> <span class="o">=</span> <span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">getEyeParameters</span><span class="p">(</span><span class="s2">"left"</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">rightEye</span> <span class="o">=</span> <span class="nx">vrDisplay</span><span class="p">.</span><span class="nx">getEyeParameters</span><span class="p">(</span><span class="s2">"right"</span><span class="p">);</span>
+<pre class="lang-js highlight"><span class="kd">var</span> leftEye <span class="o">=</span> vrDisplay<span class="p">.</span>getEyeParameters<span class="p">(</span><span class="s2">"left"</span><span class="p">)</span><span class="p">;</span>
+<span class="kd">var</span> rightEye <span class="o">=</span> vrDisplay<span class="p">.</span>getEyeParameters<span class="p">(</span><span class="s2">"right"</span><span class="p">)</span><span class="p">;</span>
 
-<span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">leftEye</span><span class="p">.</span><span class="nx">renderWidth</span><span class="p">,</span> <span class="nx">rightEye</span><span class="p">.</span><span class="nx">renderWidth</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
-<span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">leftEye</span><span class="p">.</span><span class="nx">renderHeight</span><span class="p">,</span> <span class="nx">rightEye</span><span class="p">.</span><span class="nx">renderHeight</span><span class="p">);</span></pre>
+canvas<span class="p">.</span>width <span class="o">=</span> Math<span class="p">.</span>max<span class="p">(</span>leftEye<span class="p">.</span>renderWidth<span class="p">,</span> rightEye<span class="p">.</span>renderWidth<span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+canvas<span class="p">.</span>height <span class="o">=</span> Math<span class="p">.</span>max<span class="p">(</span>leftEye<span class="p">.</span>renderHeight<span class="p">,</span> rightEye<span class="p">.</span>renderHeight<span class="p">)</span><span class="p">;</span>
+</pre>
    </div>
    <h3 class="heading settled" data-level="2.9" id="interface-vrstageparameters"><span class="secno">2.9. </span><span class="content">VRStageParameters</span><a class="self-link" href="#interface-vrstageparameters"></a></h3>
    <p>The <code class="idl"><a data-link-type="idl" href="#vrstageparameters" id="ref-for-vrstageparameters-3">VRStageParameters</a></code> interface represents the values describing the the stage/play area for devices that support room-scale experiences.</p>
@@ -1933,20 +1937,21 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
 };
 </pre>
    <h4 class="heading settled" data-level="2.10.1" id="navigator-attributes"><span class="secno">2.10.1. </span><span class="content">Attributes</span><a class="self-link" href="#navigator-attributes"></a></h4>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="method" data-export="" id="navigator-getvrdisplays-attribute">getVRDisplays()</dfn> Return a Promise which resolves to a list of available <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-42">VRDisplay</a></code>s.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="method" data-export="" id="navigator-getvrdisplays-attribute">getVRDisplays()</dfn> Return a Promise which resolves to a list of available <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-42">VRDisplay</a></code>s. If the Document object is inside an iframe that does not have the <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-1">allowvr</a></code> attribute set the returned Promise MUST be rejected.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" id="navigator-activevrdisplays-attribute">activeVRDisplays</dfn> <code class="idl"><a data-link-type="idl" href="#navigator-activevrdisplays-attribute" id="ref-for-navigator-activevrdisplays-attribute-2">activeVRDisplays</a></code> includes every <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-43">VRDisplay</a></code> that is currently presenting.</p>
    <div class="example" id="example-008f898a">
     <a class="self-link" href="#example-008f898a"></a> The following code finds the first available <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-44">VRDisplay</a></code>. 
-<pre class="lang-js highlight"><span></span><span class="kd">var</span> <span class="nx">vrDisplay</span><span class="p">;</span>
+<pre class="lang-js highlight"><span class="kd">var</span> vrDisplay<span class="p">;</span>
 
-<span class="nx">navigator</span><span class="p">.</span><span class="nx">getVRDisplays</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">displays</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// Use the first display in the array if one is available. If multiple</span>
-  <span class="c1">// displays are present, you may want to present the user with a way to</span>
-  <span class="c1">// select which display to use.</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">displays</span><span class="p">.</span><span class="nx">length</span> <span class="o">></span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">vrDisplay</span> <span class="o">=</span> <span class="nx">displays</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span class="p">)</span><span class="p">.</span>then<span class="p">(</span><span class="kd">function</span> <span class="p">(</span>displays<span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Use the first display in the array if one is available. If multiple
+</span>  <span class="c1">// displays are present, you may want to present the user with a way to
+</span>  <span class="c1">// select which display to use.
+</span>  <span class="k">if</span> <span class="p">(</span>displays<span class="p">.</span>length <span class="o">></span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    vrDisplay <span class="o">=</span> displays<span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">});</span></pre>
+<span class="p">}</span><span class="p">)</span><span class="p">;</span>
+</pre>
    </div>
    <h3 class="heading settled" data-level="2.11" id="interface-vrdisplayeventreason"><span class="secno">2.11. </span><span class="content">VRDisplayEventReason</span><a class="self-link" href="#interface-vrdisplayeventreason"></a></h3>
 <pre class="idl highlight def"><span class="kt">enum</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="enum" data-export="" id="enumdef-vrdisplayeventreason">VRDisplayEventReason</dfn> {
@@ -1989,12 +1994,26 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
    <p><dfn class="idl-code" data-dfn-for="Window" data-dfn-type="event" data-export="" id="window-vrdisplayactivate-event">onvrdisplayactivate<a class="self-link" href="#window-vrdisplayactivate-event"></a></dfn> A user agent MAY dispatch this event type to indicate that something has occured which suggests the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-52">VRDisplay</a></code> should be presented to. For example, if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-53">VRDisplay</a></code> is capable of detecting when the user has put it on, this event SHOULD fire when they do so with the reason "mounted".</p>
    <p><dfn class="idl-code" data-dfn-for="Window" data-dfn-type="event" data-export="" id="window-vrdisplaydeactivate-event">onvrdisplaydeactivate<a class="self-link" href="#window-vrdisplaydeactivate-event"></a></dfn> A user agent MAY dispatch this event type to indicate that something has occured which suggests the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-54">VRDisplay</a></code> should exit presentation. For example, if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-55">VRDisplay</a></code> is capable of detecting when the user has taken it off, this event SHOULD fire when they do so with the reason "unmounted".</p>
    <p><dfn class="idl-code" data-dfn-for="Window" data-dfn-type="event" data-export="" id="window-vrdisplaypresentchange-event">onvrdisplaypresentchange<a class="self-link" href="#window-vrdisplaypresentchange-event"></a></dfn> A user agent MUST dispatch this event type to indicate that a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-56">VRDisplay</a></code> has begun or ended VR presentation. This event should not fire on subsequent calls to <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-requestpresent" id="ref-for-dom-vrdisplay-requestpresent-9">requestPresent()</a></code> after the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-57">VRDisplay</a></code> has already begun VR presentation.</p>
-   <h3 class="heading settled" data-level="2.14" id="interface-gamepad"><span class="secno">2.14. </span><span class="content">Gamepad Interface extension</span><a class="self-link" href="#interface-gamepad"></a></h3>
+   <h3 class="heading settled" data-level="2.14" id="allowvr-attribute"><span class="secno">2.14. </span><span class="content">allowvr iframe attribute</span><a class="self-link" href="#allowvr-attribute"></a></h3>
+<pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/embedded-content.html#htmliframeelement">HTMLIFrameElement</a> {
+  <span class="kt">attribute</span> <span class="kt">boolean</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="HTMLIFrameElement" data-dfn-type="attribute" data-export="" data-type="boolean" id="dom-htmliframeelement-allowvr">allowvr</dfn>;
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-2">allowvr</a></code> attribute is a boolean attribute. When specified, it indicates that Document objects in the iframe element’s browsing context are to be allowed to access VR devices (if it’s not blocked for other reasons, e.g. there is another ancestor iframe without this attribute set). Document objects in an iframe element without this attribute should reject calls to <code class="idl"><a data-link-type="idl" href="#navigator-getvrdisplays-attribute" id="ref-for-navigator-getvrdisplays-attribute-2">getVRDisplays()</a></code> and should not fire any <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-2">VRDisplayEvent</a></code>.</p>
+   <div class="example" id="example-5c12ea46">
+    <a class="self-link" href="#example-5c12ea46"></a> Example of declaring an iframe which is allowed to access VR features. 
+<pre class="lang-js highlight"><span class="o">&lt;</span>body<span class="o">></span>
+  <span class="o">&lt;</span>p<span class="o">></span>This iframe is allowed to use VR features<span class="o">&lt;</span>/p>
+  <span class="o">&lt;</span>iframe src<span class="o">=</span><span class="s2">"https://vr.example.com/embed?id=67445"</span> allowvr<span class="o">></span><span class="o">&lt;</span>/iframe>
+<span class="o">&lt;</span>/body>
+</pre>
+   </div>
+   <h3 class="heading settled" data-level="2.15" id="interface-gamepad"><span class="secno">2.15. </span><span class="content">Gamepad Interface extension</span><a class="self-link" href="#interface-gamepad"></a></h3>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute" id="ref-for-gamepad-getvrdisplays-attribute-1">displayId</a>;
 };
 </pre>
-   <h4 class="heading settled" data-level="2.14.1" id="gamepad-attributes"><span class="secno">2.14.1. </span><span class="content">Attributes</span><a class="self-link" href="#gamepad-attributes"></a></h4>
+   <h4 class="heading settled" data-level="2.15.1" id="gamepad-attributes"><span class="secno">2.15.1. </span><span class="content">Attributes</span><a class="self-link" href="#gamepad-attributes"></a></h4>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="Gamepad" data-dfn-type="attribute" data-export="" id="gamepad-getvrdisplays-attribute">displayId</dfn> Return the <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-displayid" id="ref-for-dom-vrdisplay-displayid-1">displayId</a></code> for the associated <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-58">VRDisplay</a></code>.</p>
    <h2 class="heading settled" data-level="3" id="security"><span class="secno">3. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
    <p>While not directly affecting the API interface and Web IDL, WebVR implementations should maintains the user’s expectations of privacy, security, and comfort on the Web by adhering to the following guidelines:</p>
@@ -2168,6 +2187,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
    <li><a href="#navigator-activevrdisplays-attribute">activeVRDisplays</a><span>, in §2.10.1</span>
+   <li><a href="#dom-htmliframeelement-allowvr">allowvr</a><span>, in §2.14</span>
    <li><a href="#dom-vrpose-angularacceleration">angularAcceleration</a><span>, in §2.6.1</span>
    <li><a href="#dom-vrpose-angularvelocity">angularVelocity</a><span>, in §2.6.1</span>
    <li><a href="#dom-vrdisplay-cancelanimationframe">cancelAnimationFrame(handle)</a><span>, in §2.1.1</span>
@@ -2185,7 +2205,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
     displayId
     <ul>
      <li><a href="#dom-vrdisplay-displayid">attribute for VRDisplay</a><span>, in §2.1</span>
-     <li><a href="#gamepad-getvrdisplays-attribute">attribute for Gamepad</a><span>, in §2.14.1</span>
+     <li><a href="#gamepad-getvrdisplays-attribute">attribute for Gamepad</a><span>, in §2.15.1</span>
     </ul>
    <li><a href="#dom-vrdisplay-displayname">displayName</a><span>, in §2.1</span>
    <li><a href="#dom-vrfieldofview-downdegrees">downDegrees</a><span>, in §2.5</span>
@@ -2303,8 +2323,15 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
      <li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#framerequestcallback">FrameRequestCallback</a>
      <li><a href="https://html.spec.whatwg.org/multipage/scripting.html#htmlcanvaselement">HTMLCanvasElement</a>
+     <li><a href="https://html.spec.whatwg.org/multipage/embedded-content.html#htmliframeelement">HTMLIFrameElement</a>
      <li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#navigator">Navigator</a>
      <li><a href="https://html.spec.whatwg.org/multipage/browsers.html#window">Window</a>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WebIDL-1]</a> defines the following terms:
+    <ul>
+     <li><a href="https://heycam.github.io/webidl/#NewObject">NewObject</a>
+     <li><a href="https://heycam.github.io/webidl/#SameObject">SameObject</a>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -2314,6 +2341,8 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
    <dd>Ian Hickson. <a href="https://html.spec.whatwg.org/multipage/">HTML Standard</a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
+   <dt id="biblio-webidl-1">[WebIDL-1]
+   <dd>Cameron McCormack; Boris Zbarsky. <a href="https://heycam.github.io/webidl/">WebIDL Level 1</a>. 8 March 2016. CR. URL: <a href="https://heycam.github.io/webidl/">https://heycam.github.io/webidl/</a>
    <dt id="biblio-whatwg-dom">[WHATWG-DOM]
    <dd>Anne van Kesteren. <a href="https://dom.spec.whatwg.org/">DOM Standard</a>. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
   </dl>
@@ -2325,7 +2354,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
   /**
    * Dictionary of capabilities describing the VRDisplay.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities">capabilities</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplaycapabilities">VRDisplayCapabilities</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplayCapabilities" href="#dom-vrdisplay-capabilities">capabilities</a>;
 
   /**
    * If this VRDisplay supports room-scale experiences, the optional
@@ -2368,7 +2397,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
    * The VRPose will contain the position, orientation, velocity,
    * and acceleration of each of these properties.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose">getPose</a>();
+  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#NewObject">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose">getPose</a>();
 
   /**
    * Reset the pose for this display, treating its current position and
@@ -2494,7 +2523,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
 <span class="kt">interface</span> <a class="nv" href="#vreyeparameters">VREyeParameters</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset">offset</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview">fieldOfView</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview">fieldOfView</a>;
 
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth">renderWidth</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight">renderHeight</a>;
@@ -2537,6 +2566,10 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a> <a class="nv" data-type="EventHandler" href="#dom-window-onvrdisplaypresentchange">onvrdisplaypresentchange</a>;
 };
 
+<span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/embedded-content.html#htmliframeelement">HTMLIFrameElement</a> {
+  <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv" data-type="boolean" href="#dom-htmliframeelement-allowvr">allowvr</a>;
+};
+
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute">displayId</a>;
 };
@@ -2560,14 +2593,14 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
     <li><a href="#ref-for-vrdisplay-47">2.12. VRDisplayEvent</a> <a href="#ref-for-vrdisplay-48">(2)</a>
     <li><a href="#ref-for-vrdisplay-49">2.12.1. Attributes</a>
     <li><a href="#ref-for-vrdisplay-50">2.13. Window Interface extension</a> <a href="#ref-for-vrdisplay-51">(2)</a> <a href="#ref-for-vrdisplay-52">(3)</a> <a href="#ref-for-vrdisplay-53">(4)</a> <a href="#ref-for-vrdisplay-54">(5)</a> <a href="#ref-for-vrdisplay-55">(6)</a> <a href="#ref-for-vrdisplay-56">(7)</a> <a href="#ref-for-vrdisplay-57">(8)</a>
-    <li><a href="#ref-for-vrdisplay-58">2.14.1. Attributes</a>
+    <li><a href="#ref-for-vrdisplay-58">2.15.1. Attributes</a>
     <li><a href="#ref-for-vrdisplay-59">3. Security Considerations</a> <a href="#ref-for-vrdisplay-60">(2)</a> <a href="#ref-for-vrdisplay-61">(3)</a> <a href="#ref-for-vrdisplay-62">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-displayid">
    <b><a href="#dom-vrdisplay-displayid">#dom-vrdisplay-displayid</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplay-displayid-1">2.14.1. Attributes</a>
+    <li><a href="#ref-for-dom-vrdisplay-displayid-1">2.15.1. Attributes</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-isconnected">
@@ -2919,6 +2952,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
    <b><a href="#navigator-getvrdisplays-attribute">#navigator-getvrdisplays-attribute</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-navigator-getvrdisplays-attribute-1">2.10. Navigator Interface extension</a>
+    <li><a href="#ref-for-navigator-getvrdisplays-attribute-2">2.14. allowvr iframe attribute</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="navigator-activevrdisplays-attribute">
@@ -2957,6 +2991,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
    <b><a href="#vrdisplayevent">#vrdisplayevent</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-vrdisplayevent-1">2.13. Window Interface extension</a>
+    <li><a href="#ref-for-vrdisplayevent-2">2.14. allowvr iframe attribute</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dictdef-vrdisplayeventinit">
@@ -2977,10 +3012,17 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
     <li><a href="#ref-for-dom-vrdisplayevent-reason-1">2.12. VRDisplayEvent</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="dom-htmliframeelement-allowvr">
+   <b><a href="#dom-htmliframeelement-allowvr">#dom-htmliframeelement-allowvr</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-htmliframeelement-allowvr-1">2.10.1. Attributes</a>
+    <li><a href="#ref-for-dom-htmliframeelement-allowvr-2">2.14. allowvr iframe attribute</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="gamepad-getvrdisplays-attribute">
    <b><a href="#gamepad-getvrdisplays-attribute">#gamepad-getvrdisplays-attribute</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-gamepad-getvrdisplays-attribute-1">2.14. Gamepad Interface extension</a>
+    <li><a href="#ref-for-gamepad-getvrdisplays-attribute-1">2.15. Gamepad Interface extension</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */

@@ -573,7 +573,7 @@ partial interface Navigator {
 ### Attributes ### {#navigator-attributes}
 
 <dfn method for="Navigator" id="navigator-getvrdisplays-attribute">getVRDisplays()</dfn>
-Return a Promise which resolves to a list of available {{VRDisplay}}s.
+Return a Promise which resolves to a list of available {{VRDisplay}}s. If the Document object is inside an iframe that does not have the {{allowvr}} attribute set the returned Promise MUST be rejected.
 
 <dfn attribute for="Navigator" id="navigator-activevrdisplays-attribute">activeVRDisplays</dfn>
 {{activeVRDisplays}} includes every {{VRDisplay}} that is currently presenting.
@@ -669,6 +669,27 @@ A user agent MAY dispatch this event type to indicate that something has occured
 <dfn event for="Window" id="window-vrdisplaypresentchange-event">onvrdisplaypresentchange</dfn>
 A user agent MUST dispatch this event type to indicate that a {{VRDisplay}} has begun or ended VR presentation. This event should not fire on subsequent calls to {{requestPresent()}} after the {{VRDisplay}} has already begun VR presentation.
 
+
+## allowvr iframe attribute ## {#allowvr-attribute}
+
+<pre class="idl">
+partial interface HTMLIFrameElement {
+  attribute boolean allowvr;
+};
+</pre>
+
+The {{allowvr}} attribute is a boolean attribute. When specified, it indicates that Document objects in the iframe element's browsing context are to be allowed to access VR devices (if it's not blocked for other reasons, e.g. there is another ancestor iframe without this attribute set). Document objects in an iframe element without this attribute should reject calls to {{getVRDisplays()}} and should not fire any {{VRDisplayEvent}}.
+
+<div class="example">
+Example of declaring an iframe which is allowed to access VR features.
+
+<pre class="lang-js">
+  &lt;body&gt;
+    &lt;p&gt;This iframe is allowed to use VR features&lt;/p&gt;
+    &lt;iframe src="https://vr.example.com/embed?id=67445" allowvr&gt;&lt;/iframe&gt;
+  &lt;/body&gt;
+</pre>
+</div>
 
 ## Gamepad Interface extension ## {#interface-gamepad}
 
