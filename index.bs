@@ -567,6 +567,7 @@ Depth of the play-area bounds in meters. The bounds are defined as an axis-align
 partial interface Navigator {
   Promise&lt;sequence&lt;VRDisplay&gt;&gt; getVRDisplays();
   readonly attribute FrozenArray&lt;VRDisplay&gt; activeVRDisplays;
+  readonly attribute boolean vrEnabled;
 };
 </pre>
 
@@ -577,6 +578,9 @@ Return a Promise which resolves to a list of available {{VRDisplay}}s. The Promi
 
 <dfn attribute for="Navigator" id="navigator-activevrdisplays-attribute">activeVRDisplays</dfn>
 {{activeVRDisplays}} includes every {{VRDisplay}} that is currently presenting.
+
+<dfn attribute for="Navigator" id="navigator-vrenabled-attribute">vrEnabled</dfn>
+The {{vrEnabled}} attribute's getter must return true if the context object is allowed to use the feature indicated by attribute name {{allowvr}} and VR is supported, and false otherwise.
 
 <div class="example">
 The following code finds the first available {{VRDisplay}}.
@@ -690,16 +694,6 @@ Example of declaring an iframe that is allowed to access VR features.
   &lt;/body&gt;
 </pre>
 </div>
-
-## vrEnabled Document attribute ## {#vrenabled-attribute}
-
-<pre class="idl">
-partial interface Document {
-  attribute boolean vrEnabled;
-};
-</pre>
-
-The {{vrEnabled}} attribute's getter must return true if the context object is allowed to use the feature indicated by attribute name {{allowvr}} and VR is supported, and false otherwise.
 
 ## Gamepad Interface extension ## {#interface-gamepad}
 

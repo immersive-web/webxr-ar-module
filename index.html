@@ -1521,11 +1521,10 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
        </ol>
       <li><a href="#interface-window"><span class="secno">2.13</span> <span class="content">Window Interface extension</span></a>
       <li><a href="#allowvr-attribute"><span class="secno">2.14</span> <span class="content">allowvr iframe attribute</span></a>
-      <li><a href="#vrenabled-attribute"><span class="secno">2.15</span> <span class="content">vrEnabled Document attribute</span></a>
       <li>
-       <a href="#interface-gamepad"><span class="secno">2.16</span> <span class="content">Gamepad Interface extension</span></a>
+       <a href="#interface-gamepad"><span class="secno">2.15</span> <span class="content">Gamepad Interface extension</span></a>
        <ol class="toc">
-        <li><a href="#gamepad-attributes"><span class="secno">2.16.1</span> <span class="content">Attributes</span></a>
+        <li><a href="#gamepad-attributes"><span class="secno">2.15.1</span> <span class="content">Attributes</span></a>
        </ol>
      </ol>
     <li><a href="#security"><span class="secno">3</span> <span class="content">Security Considerations</span></a>
@@ -1935,11 +1934,13 @@ canvas<span class="p">.</span>height <span class="o">=</span> Math<span class="p
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/webappapis.html#navigator">Navigator</a> {
   <span class="kt">Promise</span>&lt;<span class="kt">sequence</span>&lt;<a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-40">VRDisplay</a>>> <a class="nv idl-code" data-link-type="method" href="#navigator-getvrdisplays-attribute" id="ref-for-navigator-getvrdisplays-attribute-1">getVRDisplays</a>();
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">FrozenArray</span>&lt;<a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-41">VRDisplay</a>> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="FrozenArray<VRDisplay>" href="#navigator-activevrdisplays-attribute" id="ref-for-navigator-activevrdisplays-attribute-1">activeVRDisplays</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#navigator-vrenabled-attribute" id="ref-for-navigator-vrenabled-attribute-1">vrEnabled</a>;
 };
 </pre>
    <h4 class="heading settled" data-level="2.10.1" id="navigator-attributes"><span class="secno">2.10.1. </span><span class="content">Attributes</span><a class="self-link" href="#navigator-attributes"></a></h4>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="method" data-export="" id="navigator-getvrdisplays-attribute">getVRDisplays()</dfn> Return a Promise which resolves to a list of available <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-42">VRDisplay</a></code>s. The Promise MUST be rejected if the Document object is inside an iframe that does not have the <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-1">allowvr</a></code> attribute set.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="method" data-export="" id="navigator-getvrdisplays-attribute">getVRDisplays()</dfn> Return a Promise which resolves to a list of available <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-42">VRDisplay</a></code>s. The Promise MUST be rejected if the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#document">Document</a></code> object is inside an iframe that does not have the <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-1">allowvr</a></code> attribute set.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" id="navigator-activevrdisplays-attribute">activeVRDisplays</dfn> <code class="idl"><a data-link-type="idl" href="#navigator-activevrdisplays-attribute" id="ref-for-navigator-activevrdisplays-attribute-2">activeVRDisplays</a></code> includes every <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-43">VRDisplay</a></code> that is currently presenting.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" id="navigator-vrenabled-attribute">vrEnabled</dfn> The <code class="idl"><a data-link-type="idl" href="#navigator-vrenabled-attribute" id="ref-for-navigator-vrenabled-attribute-2">vrEnabled</a></code> attribute’s getter must return true if the context object is allowed to use the feature indicated by attribute name <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-2">allowvr</a></code> and VR is supported, and false otherwise.</p>
    <div class="example" id="example-008f898a">
     <a class="self-link" href="#example-008f898a"></a> The following code finds the first available <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-44">VRDisplay</a></code>. 
 <pre class="lang-js highlight"><span class="kd">var</span> vrDisplay<span class="p">;</span>
@@ -2000,7 +2001,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
   <span class="kt">attribute</span> <span class="kt">boolean</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="HTMLIFrameElement" data-dfn-type="attribute" data-export="" data-type="boolean" id="dom-htmliframeelement-allowvr">allowvr</dfn>;
 };
 </pre>
-   <p>The <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-2">allowvr</a></code> attribute is a boolean attribute. When specified, it indicates that <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#document">Document</a></code> objects in the iframe element’s browsing context are to be allowed to access VR devices (if it’s not blocked for other reasons, e.g. there is another ancestor iframe without this attribute set). Document objects in an iframe element without this attribute should reject calls to <code class="idl"><a data-link-type="idl" href="#navigator-getvrdisplays-attribute" id="ref-for-navigator-getvrdisplays-attribute-2">getVRDisplays()</a></code> and should not fire any <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-2">VRDisplayEvent</a></code>.</p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-3">allowvr</a></code> attribute is a boolean attribute. When specified, it indicates that <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#document">Document</a></code> objects in the iframe element’s browsing context are to be allowed to access VR devices (if it’s not blocked for other reasons, e.g. there is another ancestor iframe without this attribute set). <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/dom.html#document">Document</a></code> objects in an iframe element without this attribute should reject calls to <code class="idl"><a data-link-type="idl" href="#navigator-getvrdisplays-attribute" id="ref-for-navigator-getvrdisplays-attribute-2">getVRDisplays()</a></code> and should not fire any <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-2">VRDisplayEvent</a></code>.</p>
    <div class="example" id="example-9fa4da2d">
     <a class="self-link" href="#example-9fa4da2d"></a> Example of declaring an iframe that is allowed to access VR features. 
 <pre class="lang-js highlight"><span class="o">&lt;</span>body<span class="o">></span>
@@ -2009,18 +2010,12 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
 <span class="o">&lt;</span>/body>
 </pre>
    </div>
-   <h3 class="heading settled" data-level="2.15" id="vrenabled-attribute"><span class="secno">2.15. </span><span class="content">vrEnabled Document attribute</span><a class="self-link" href="#vrenabled-attribute"></a></h3>
-<pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/dom.html#document">Document</a> {
-  <span class="kt">attribute</span> <span class="kt">boolean</span> <dfn class="nv dfn-paneled idl-code" data-dfn-for="Document" data-dfn-type="attribute" data-export="" data-type="boolean" id="dom-document-vrenabled">vrEnabled</dfn>;
-};
-</pre>
-   <p>The <code class="idl"><a data-link-type="idl" href="#dom-document-vrenabled" id="ref-for-dom-document-vrenabled-1">vrEnabled</a></code> attribute’s getter must return true if the context object is allowed to use the feature indicated by attribute name <code class="idl"><a data-link-type="idl" href="#dom-htmliframeelement-allowvr" id="ref-for-dom-htmliframeelement-allowvr-3">allowvr</a></code> and VR is supported, and false otherwise.</p>
-   <h3 class="heading settled" data-level="2.16" id="interface-gamepad"><span class="secno">2.16. </span><span class="content">Gamepad Interface extension</span><a class="self-link" href="#interface-gamepad"></a></h3>
+   <h3 class="heading settled" data-level="2.15" id="interface-gamepad"><span class="secno">2.15. </span><span class="content">Gamepad Interface extension</span><a class="self-link" href="#interface-gamepad"></a></h3>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute" id="ref-for-gamepad-getvrdisplays-attribute-1">displayId</a>;
 };
 </pre>
-   <h4 class="heading settled" data-level="2.16.1" id="gamepad-attributes"><span class="secno">2.16.1. </span><span class="content">Attributes</span><a class="self-link" href="#gamepad-attributes"></a></h4>
+   <h4 class="heading settled" data-level="2.15.1" id="gamepad-attributes"><span class="secno">2.15.1. </span><span class="content">Attributes</span><a class="self-link" href="#gamepad-attributes"></a></h4>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="Gamepad" data-dfn-type="attribute" data-export="" id="gamepad-getvrdisplays-attribute">displayId</dfn> Return the <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-displayid" id="ref-for-dom-vrdisplay-displayid-1">displayId</a></code> for the associated <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-58">VRDisplay</a></code>.</p>
    <h2 class="heading settled" data-level="3" id="security"><span class="secno">3. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
    <p>While not directly affecting the API interface and Web IDL, WebVR implementations should maintains the user’s expectations of privacy, security, and comfort on the Web by adhering to the following guidelines:</p>
@@ -2212,7 +2207,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
     displayId
     <ul>
      <li><a href="#dom-vrdisplay-displayid">attribute for VRDisplay</a><span>, in §2.1</span>
-     <li><a href="#gamepad-getvrdisplays-attribute">attribute for Gamepad</a><span>, in §2.16.1</span>
+     <li><a href="#gamepad-getvrdisplays-attribute">attribute for Gamepad</a><span>, in §2.15.1</span>
     </ul>
    <li><a href="#dom-vrdisplay-displayname">displayName</a><span>, in §2.1</span>
    <li><a href="#dom-vrfieldofview-downdegrees">downDegrees</a><span>, in §2.5</span>
@@ -2305,7 +2300,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
    <li><a href="#dom-vrdisplayevent-vrdisplayevent">VRDisplayEvent(eventInitDict)</a><span>, in §2.12</span>
    <li><a href="#dictdef-vrdisplayeventinit">VRDisplayEventInit</a><span>, in §2.12</span>
    <li><a href="#enumdef-vrdisplayeventreason">VRDisplayEventReason</a><span>, in §2.11</span>
-   <li><a href="#dom-document-vrenabled">vrEnabled</a><span>, in §2.15</span>
+   <li><a href="#navigator-vrenabled-attribute">vrEnabled</a><span>, in §2.10.1</span>
    <li><a href="#enumdef-vreye">VREye</a><span>, in §2.4</span>
    <li><a href="#vreyeparameters">VREyeParameters</a><span>, in §2.8</span>
    <li><a href="#vrfieldofview">VRFieldOfView</a><span>, in §2.5</span>
@@ -2548,6 +2543,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/webappapis.html#navigator">Navigator</a> {
   <span class="kt">Promise</span>&lt;<span class="kt">sequence</span>&lt;<a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a>>> <a class="nv idl-code" data-link-type="method" href="#navigator-getvrdisplays-attribute">getVRDisplays</a>();
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">FrozenArray</span>&lt;<a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a>> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="FrozenArray<VRDisplay>" href="#navigator-activevrdisplays-attribute">activeVRDisplays</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#navigator-vrenabled-attribute">vrEnabled</a>;
 };
 
 <span class="kt">enum</span> <a class="nv" href="#enumdef-vrdisplayeventreason">VRDisplayEventReason</a> {
@@ -2579,10 +2575,6 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
   <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv" data-type="boolean" href="#dom-htmliframeelement-allowvr">allowvr</a>;
 };
 
-<span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/dom.html#document">Document</a> {
-  <span class="kt">attribute</span> <span class="kt">boolean</span> <a class="nv" data-type="boolean" href="#dom-document-vrenabled">vrEnabled</a>;
-};
-
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#gamepad-getvrdisplays-attribute">displayId</a>;
 };
@@ -2606,14 +2598,14 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
     <li><a href="#ref-for-vrdisplay-47">2.12. VRDisplayEvent</a> <a href="#ref-for-vrdisplay-48">(2)</a>
     <li><a href="#ref-for-vrdisplay-49">2.12.1. Attributes</a>
     <li><a href="#ref-for-vrdisplay-50">2.13. Window Interface extension</a> <a href="#ref-for-vrdisplay-51">(2)</a> <a href="#ref-for-vrdisplay-52">(3)</a> <a href="#ref-for-vrdisplay-53">(4)</a> <a href="#ref-for-vrdisplay-54">(5)</a> <a href="#ref-for-vrdisplay-55">(6)</a> <a href="#ref-for-vrdisplay-56">(7)</a> <a href="#ref-for-vrdisplay-57">(8)</a>
-    <li><a href="#ref-for-vrdisplay-58">2.16.1. Attributes</a>
+    <li><a href="#ref-for-vrdisplay-58">2.15.1. Attributes</a>
     <li><a href="#ref-for-vrdisplay-59">3. Security Considerations</a> <a href="#ref-for-vrdisplay-60">(2)</a> <a href="#ref-for-vrdisplay-61">(3)</a> <a href="#ref-for-vrdisplay-62">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-displayid">
    <b><a href="#dom-vrdisplay-displayid">#dom-vrdisplay-displayid</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplay-displayid-1">2.16.1. Attributes</a>
+    <li><a href="#ref-for-dom-vrdisplay-displayid-1">2.15.1. Attributes</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-isconnected">
@@ -2975,6 +2967,13 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
     <li><a href="#ref-for-navigator-activevrdisplays-attribute-2">2.10.1. Attributes</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="navigator-vrenabled-attribute">
+   <b><a href="#navigator-vrenabled-attribute">#navigator-vrenabled-attribute</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-navigator-vrenabled-attribute-1">2.10. Navigator Interface extension</a>
+    <li><a href="#ref-for-navigator-vrenabled-attribute-2">2.10.1. Attributes</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="enumdef-vrdisplayeventreason">
    <b><a href="#enumdef-vrdisplayeventreason">#enumdef-vrdisplayeventreason</a></b><b>Referenced in:</b>
    <ul>
@@ -3028,21 +3027,14 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
   <aside class="dfn-panel" data-for="dom-htmliframeelement-allowvr">
    <b><a href="#dom-htmliframeelement-allowvr">#dom-htmliframeelement-allowvr</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-htmliframeelement-allowvr-1">2.10.1. Attributes</a>
-    <li><a href="#ref-for-dom-htmliframeelement-allowvr-2">2.14. allowvr iframe attribute</a>
-    <li><a href="#ref-for-dom-htmliframeelement-allowvr-3">2.15. vrEnabled Document attribute</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-document-vrenabled">
-   <b><a href="#dom-document-vrenabled">#dom-document-vrenabled</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-document-vrenabled-1">2.15. vrEnabled Document attribute</a>
+    <li><a href="#ref-for-dom-htmliframeelement-allowvr-1">2.10.1. Attributes</a> <a href="#ref-for-dom-htmliframeelement-allowvr-2">(2)</a>
+    <li><a href="#ref-for-dom-htmliframeelement-allowvr-3">2.14. allowvr iframe attribute</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="gamepad-getvrdisplays-attribute">
    <b><a href="#gamepad-getvrdisplays-attribute">#gamepad-getvrdisplays-attribute</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-gamepad-getvrdisplays-attribute-1">2.16. Gamepad Interface extension</a>
+    <li><a href="#ref-for-gamepad-getvrdisplays-attribute-1">2.15. Gamepad Interface extension</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
