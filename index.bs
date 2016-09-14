@@ -652,6 +652,8 @@ partial interface Window {
   attribute EventHandler onvrdisplaydisconnect;
   attribute EventHandler onvrdisplayactivate;
   attribute EventHandler onvrdisplaydeactivate;
+  attribute EventHandler onvrdisplayblur;
+  attribute EventHandler onvrdisplayfocus;
   attribute EventHandler onvrdisplaypresentchange;
 };
 </pre>
@@ -669,6 +671,12 @@ A user agent MAY dispatch this event type to indicate that something has occured
 
 <dfn event for="Window" id="window-vrdisplaydeactivate-event">onvrdisplaydeactivate</dfn>
 A user agent MAY dispatch this event type to indicate that something has occured which suggests the {{VRDisplay}} should exit presentation. For example, if the {{VRDisplay}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so with the reason "unmounted".
+
+<dfn event for="Window" id="window-onvrdisplayblur-event">onvrdisplayblur</dfn>
+A user agent MAY dispatch this event type to indicate that presentation to the display by the page is paused by the user agent, OS, or VR hardware. While a {{VRDisplay}} is blurred it does not lose it's presenting status ({{isPresenting}} continues to report true) but {{getFrameData}} returns false without updating the provided {{VRFrameData}} and {{getPose}} returns null. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: A user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions.
+
+<dfn event for="Window" id="window-onvrdisplayblur-event">onvrdisplayfocus</dfn>
+A user agent MAY dispatch this event type to indicate that presentation to the display by the page has resumed after being blurred.
 
 <dfn event for="Window" id="window-vrdisplaypresentchange-event">onvrdisplaypresentchange</dfn>
 A user agent MUST dispatch this event type to indicate that a {{VRDisplay}} has begun or ended VR presentation. This event should not fire on subsequent calls to {{requestPresent()}} after the {{VRDisplay}} has already begun VR presentation.
@@ -707,7 +715,6 @@ partial interface Gamepad {
 
 <dfn attribute for="Gamepad" id="gamepad-getvrdisplays-attribute">displayId</dfn>
 Return the {{VRDisplay/displayId}} for the associated {{VRDisplay}}.
-
 
 # Security Considerations # {#security}
 
