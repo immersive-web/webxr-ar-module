@@ -1421,7 +1421,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebVR</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-09-14">14 September 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2016-09-20">20 September 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2020,12 +2020,12 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
 };
 </pre>
    <h4 class="heading settled" data-level="2.15.1" id="gamepad-attributes"><span class="secno">2.15.1. </span><span class="content">Attributes</span><a class="self-link" href="#gamepad-attributes"></a></h4>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Gamepad" data-dfn-type="attribute" data-export="" id="gamepad-getvrdisplays-attribute">displayId</dfn> Return the <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-displayid" id="ref-for-dom-vrdisplay-displayid-1">displayId</a></code> for the associated <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-59">VRDisplay</a></code>.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="Gamepad" data-dfn-type="attribute" data-export="" id="gamepad-getvrdisplays-attribute">displayId</dfn> Return the <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-displayid" id="ref-for-dom-vrdisplay-displayid-1">displayId</a></code> of the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-59">VRDisplay</a></code> this <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a></code> is associated with. A <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a></code> is considered to be associated with a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-60">VRDisplay</a></code> if it reports a pose that is in the same space as the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-61">VRDisplay</a></code> pose. If the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a></code> is not associated with a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-62">VRDisplay</a></code> should return 0.</p>
    <h2 class="heading settled" data-level="3" id="security"><span class="secno">3. </span><span class="content">Security Considerations</span><a class="self-link" href="#security"></a></h2>
    <p>While not directly affecting the API interface and Web IDL, WebVR implementations should maintains the user’s expectations of privacy, security, and comfort on the Web by adhering to the following guidelines:</p>
    <ul>
     <li data-md="">
-     <p>Trusted UI must be drawn by an independent rendering context who’s state is isolated from that of the WebGL contexts provided as a <code class="idl"><a data-link-type="idl" href="#dictdef-vrlayer" id="ref-for-dictdef-vrlayer-10">VRLayer</a></code> source to a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-60">VRDisplay</a></code>.</p>
+     <p>Trusted UI must be drawn by an independent rendering context who’s state is isolated from that of the WebGL contexts provided as a <code class="idl"><a data-link-type="idl" href="#dictdef-vrlayer" id="ref-for-dictdef-vrlayer-10">VRLayer</a></code> source to a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-63">VRDisplay</a></code>.</p>
     <li data-md="">
      <p>A "VR Compositor" runs asynchronously from content, responsible for compositing the trusted and untrusted content. If content is not performant or does not submit frames, or terminates unexpectedly the browser should be able to continue presenting a responsive front-end.</p>
     <li data-md="">
@@ -2033,13 +2033,13 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
     <li data-md="">
      <p>When navigating between pages in VR the browser should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.</p>
     <li data-md="">
-     <p>The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-61">VRDisplay</a></code> pose and other VR inputs are only updated for the focused page.</p>
+     <p>The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-64">VRDisplay</a></code> pose and other VR inputs are only updated for the focused page.</p>
     <li data-md="">
      <p>The Gamepad API will be updated such that the gamepad inputs are only updated for the focused page.</p>
     <li data-md="">
-     <p>Non-focused tabs are allowed to enumerate <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a></code>s and <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-62">VRDisplay</a></code>s but will see last received state or default values.</p>
+     <p>Non-focused tabs are allowed to enumerate <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/gamepad/#gamepad">Gamepad</a></code>s and <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-65">VRDisplay</a></code>s but will see last received state or default values.</p>
     <li data-md="">
-     <p>To prevent CORS-related vulnerabilities, each page will see a new instance of objects returned by the WebVR API, such as <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-63">VRDisplay</a></code>. Attributes such as the <code class="idl"><a data-link-type="idl" href="#dictdef-vrlayer" id="ref-for-dictdef-vrlayer-11">VRLayer</a></code>.<code class="idl"><a data-link-type="idl" href="#dom-vrlayer-source" id="ref-for-dom-vrlayer-source-5">source</a></code> set by one page must not be able to be read by another.</p>
+     <p>To prevent CORS-related vulnerabilities, each page will see a new instance of objects returned by the WebVR API, such as <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-66">VRDisplay</a></code>. Attributes such as the <code class="idl"><a data-link-type="idl" href="#dictdef-vrlayer" id="ref-for-dictdef-vrlayer-11">VRLayer</a></code>.<code class="idl"><a data-link-type="idl" href="#dom-vrlayer-source" id="ref-for-dom-vrlayer-source-5">source</a></code> set by one page must not be able to be read by another.</p>
    </ul>
    <h2 class="heading settled" data-level="4" id="ack"><span class="secno">4. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
   </main>
@@ -2362,7 +2362,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-webidl-1">[WebIDL-1]
-   <dd>Cameron McCormack; Boris Zbarsky. <a href="https://heycam.github.io/webidl/">WebIDL Level 1</a>. 8 March 2016. CR. URL: <a href="https://heycam.github.io/webidl/">https://heycam.github.io/webidl/</a>
+   <dd>Cameron McCormack; Boris Zbarsky. <a href="https://heycam.github.io/webidl/">WebIDL Level 1</a>. 15 September 2016. PR. URL: <a href="https://heycam.github.io/webidl/">https://heycam.github.io/webidl/</a>
    <dt id="biblio-whatwg-dom">[WHATWG-DOM]
    <dd>Anne van Kesteren. <a href="https://dom.spec.whatwg.org/">DOM Standard</a>. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
   </dl>
@@ -2616,8 +2616,8 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
     <li><a href="#ref-for-vrdisplay-47">2.12. VRDisplayEvent</a> <a href="#ref-for-vrdisplay-48">(2)</a>
     <li><a href="#ref-for-vrdisplay-49">2.12.1. Attributes</a>
     <li><a href="#ref-for-vrdisplay-50">2.13. Window Interface extension</a> <a href="#ref-for-vrdisplay-51">(2)</a> <a href="#ref-for-vrdisplay-52">(3)</a> <a href="#ref-for-vrdisplay-53">(4)</a> <a href="#ref-for-vrdisplay-54">(5)</a> <a href="#ref-for-vrdisplay-55">(6)</a> <a href="#ref-for-vrdisplay-56">(7)</a> <a href="#ref-for-vrdisplay-57">(8)</a> <a href="#ref-for-vrdisplay-58">(9)</a>
-    <li><a href="#ref-for-vrdisplay-59">2.15.1. Attributes</a>
-    <li><a href="#ref-for-vrdisplay-60">3. Security Considerations</a> <a href="#ref-for-vrdisplay-61">(2)</a> <a href="#ref-for-vrdisplay-62">(3)</a> <a href="#ref-for-vrdisplay-63">(4)</a>
+    <li><a href="#ref-for-vrdisplay-59">2.15.1. Attributes</a> <a href="#ref-for-vrdisplay-60">(2)</a> <a href="#ref-for-vrdisplay-61">(3)</a> <a href="#ref-for-vrdisplay-62">(4)</a>
+    <li><a href="#ref-for-vrdisplay-63">3. Security Considerations</a> <a href="#ref-for-vrdisplay-64">(2)</a> <a href="#ref-for-vrdisplay-65">(3)</a> <a href="#ref-for-vrdisplay-66">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-displayid">

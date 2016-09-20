@@ -714,7 +714,7 @@ partial interface Gamepad {
 ### Attributes ### {#gamepad-attributes}
 
 <dfn attribute for="Gamepad" id="gamepad-getvrdisplays-attribute">displayId</dfn>
-Return the {{VRDisplay/displayId}} for the associated {{VRDisplay}}.
+Return the {{VRDisplay/displayId}} of the {{VRDisplay}} this {{Gamepad}} is associated with. A {{Gamepad}} is considered to be associated with a {{VRDisplay}} if it reports a pose that is in the same space as the {{VRDisplay}} pose. If the {{Gamepad}} is not associated with a {{VRDisplay}} should return 0.
 
 # Security Considerations # {#security}
 
