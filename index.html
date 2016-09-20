@@ -1604,7 +1604,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
    * The VRPose will contain the position, orientation, velocity,
    * and acceleration of each of these properties.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#NewObject">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose" id="ref-for-vrpose-1">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose" id="ref-for-dom-vrdisplay-getpose-1">getPose</a>();
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#NewObject">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose" id="ref-for-vrpose-1">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose" id="ref-for-dom-vrdisplay-getpose-1">getPose</a>();
 
   /**
    * Reset the pose for this display, treating its current position and
@@ -1764,9 +1764,8 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
 };
 </pre>
    <h3 class="heading settled" data-level="2.5" id="interface-interface-vrfieldofview"><span class="secno">2.5. </span><span class="content">VRFieldOfView</span><a class="self-link" href="#interface-interface-vrfieldofview"></a></h3>
-   <p>The <code class="idl"><a data-link-type="idl" href="#vrfieldofview" id="ref-for-vrfieldofview-1">VRFieldOfView</a></code> interface represents a field of view, as given by 4 degrees describing the view from a center point.</p>
-<pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>]
-<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrfieldofview">VRFieldOfView</dfn> {
+   <p><i>(Deprecated)</i> The <code class="idl"><a data-link-type="idl" href="#vrfieldofview" id="ref-for-vrfieldofview-1">VRFieldOfView</a></code> interface represents a field of view, as given by 4 degrees describing the view from a center point.</p>
+<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrfieldofview">VRFieldOfView</dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">double</span> <dfn class="nv idl-code" data-dfn-for="VRFieldOfView" data-dfn-type="attribute" data-export="" data-readonly="" data-type="double" id="dom-vrfieldofview-updegrees">upDegrees<a class="self-link" href="#dom-vrfieldofview-updegrees"></a></dfn>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">double</span> <dfn class="nv idl-code" data-dfn-for="VRFieldOfView" data-dfn-type="attribute" data-export="" data-readonly="" data-type="double" id="dom-vrfieldofview-rightdegrees">rightDegrees<a class="self-link" href="#dom-vrfieldofview-rightdegrees"></a></dfn>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">double</span> <dfn class="nv idl-code" data-dfn-for="VRFieldOfView" data-dfn-type="attribute" data-export="" data-readonly="" data-type="double" id="dom-vrfieldofview-downdegrees">downDegrees<a class="self-link" href="#dom-vrfieldofview-downdegrees"></a></dfn>;
@@ -1897,7 +1896,7 @@ starts at 0 the first time <code class="idl"><a data-link-type="idl" href="#dom-
 <pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vreyeparameters">VREyeParameters</dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset" id="ref-for-dom-vreyeparameters-offset-1">offset</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview" id="ref-for-vrfieldofview-2">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview" id="ref-for-dom-vreyeparameters-fieldofview-1">fieldOfView</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview" id="ref-for-vrfieldofview-2">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview" id="ref-for-dom-vreyeparameters-fieldofview-1">fieldOfView</a>;
 
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth" id="ref-for-dom-vreyeparameters-renderwidth-1">renderWidth</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight" id="ref-for-dom-vreyeparameters-renderheight-1">renderHeight</a>;
@@ -2417,7 +2416,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
    * The VRPose will contain the position, orientation, velocity,
    * and acceleration of each of these properties.
    */
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#NewObject">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose">getPose</a>();
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#NewObject">NewObject</a>] <a class="n" data-link-type="idl-name" href="#vrpose">VRPose</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrdisplay-getpose">getPose</a>();
 
   /**
    * Reset the pose for this display, treating its current position and
@@ -2509,7 +2508,6 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
   <a class="s" href="#dom-vreye-right">"right"</a>
 };
 
-[<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>]
 <span class="kt">interface</span> <a class="nv" href="#vrfieldofview">VRFieldOfView</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">double</span> <a class="nv" data-readonly="" data-type="double" href="#dom-vrfieldofview-updegrees">upDegrees</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">double</span> <a class="nv" data-readonly="" data-type="double" href="#dom-vrfieldofview-rightdegrees">rightDegrees</a>;
@@ -2543,7 +2541,7 @@ navigator<span class="p">.</span>getVRDisplays<span class="p">(</span><span clas
 <span class="kt">interface</span> <a class="nv" href="#vreyeparameters">VREyeParameters</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">Float32Array</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vreyeparameters-offset">offset</a>;
 
-  [<a class="nv idl-code" data-link-type="extended-attribute">Deprecated</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview">fieldOfView</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrfieldofview">VRFieldOfView</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRFieldOfView" href="#dom-vreyeparameters-fieldofview">fieldOfView</a>;
 
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderwidth">renderWidth</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">unsigned</span> <span class="kt">long</span> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vreyeparameters-renderheight">renderHeight</a>;

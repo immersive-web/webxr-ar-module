@@ -100,7 +100,7 @@ interface VRDisplay : EventTarget {
    * The VRPose will contain the position, orientation, velocity,
    * and acceleration of each of these properties.
    */
-  [Deprecated, NewObject] VRPose getPose();
+  [NewObject] VRPose getPose();
 
   /**
    * Reset the pose for this display, treating its current position and
@@ -327,10 +327,9 @@ enum VREye {
 
 ## VRFieldOfView ## {#interface-interface-vrfieldofview}
 
-The {{VRFieldOfView}} interface represents a field of view, as given by 4 degrees describing the view from a center point.
+<i>(Deprecated)</i> The {{VRFieldOfView}} interface represents a field of view, as given by 4 degrees describing the view from a center point.
 
 <pre class="idl">
-[Deprecated]
 interface VRFieldOfView {
   readonly attribute double upDegrees;
   readonly attribute double rightDegrees;
@@ -502,7 +501,7 @@ The {{VREyeParameters}} interface represents all the information required to cor
 interface VREyeParameters {
   readonly attribute Float32Array offset;
 
-  [Deprecated, SameObject] readonly attribute VRFieldOfView fieldOfView;
+  [SameObject] readonly attribute VRFieldOfView fieldOfView;
 
   readonly attribute unsigned long renderWidth;
   readonly attribute unsigned long renderHeight;
