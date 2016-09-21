@@ -717,7 +717,7 @@ Return the {{VRDisplay/displayId}} of the {{VRDisplay}} this {{Gamepad}} is asso
 
 # Security Considerations # {#security}
 
-While not directly affecting the API interface and Web IDL, WebVR implementations should maintains the user's expectations of privacy, security, and comfort on the Web by adhering to the following guidelines:
+While not directly affecting the API interface and Web IDL, WebVR implementations should maintain the user's expectations of privacy, security, and comfort on the Web by adhering to the following guidelines:
 
 * Trusted UI must be drawn by an independent rendering context who's state is isolated from that of the WebGL contexts provided as a {{VRLayer}} source to a {{VRDisplay}}.
 * A "VR Compositor" runs asynchronously from content, responsible for compositing the trusted and untrusted content. If content is not performant or does not submit frames, or terminates unexpectedly the browser should be able to continue presenting a responsive front-end.
