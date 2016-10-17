@@ -1,3 +1,5 @@
 *~
-
 .DS_Store
+deploy_key
+node_modules
+npm-debug*.log*
