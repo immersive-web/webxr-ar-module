@@ -626,7 +626,7 @@ The {{VRDisplay}} has detected that the user has taken it off.
 ## VRDisplayEvent ## {#interface-vrdisplayevent}
 
 <pre class="idl">
-[Constructor(VRDisplayEventInit eventInitDict)]
+[Constructor(DOMString type, VRDisplayEventInit eventInitDict)]
 interface VRDisplayEvent : Event {
   readonly attribute VRDisplay display;
   readonly attribute VRDisplayEventReason? reason;
