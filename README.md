@@ -24,7 +24,7 @@ This is the repository for the [WebVR Community Group](https://www.w3.org/commun
 * [W3C Community Group: `webvr`](http://www.w3.org/community/webvr/)
   * [`public-webvr` mailing list](http://lists.w3.org/Archives/Public/public-webvr/)
 * [GitHub issues list: `webvr`](https://github.com/w3c/webvr/issues)
-* [WebVR Slack chat](https://slacknow.herokuapp.com/webvr/)
+* [WebVR Slack chat](https://webvr-slack.herokuapp.com/)
 
 
 ## Maintainers
