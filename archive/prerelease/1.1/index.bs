@@ -151,7 +151,7 @@ interface VRDisplay : EventTarget {
    * If the number of values in the leftBounds/rightBounds arrays is not 0 or 4 for any of the passed layers the promise is rejected
    * If the source of any of the layers is not present (null), the promise is rejected.
    */
-  Promise&lt;void&gt; requestPresent(sequence&lt;VRLayerInit&gt; layers);
+  Promise&lt;void&gt; requestPresent(sequence&lt;VRLayer&gt; layers);
 
   /**
    * Stops presenting to the VRDisplay.
@@ -205,7 +205,7 @@ Functionally equivalent to <a href="https://www.w3.org/TR/html51/webappapis.html
 Passing the value returned by {{requestAnimationFrame()}} to will unregister the callback.
 
 <dfn method for="VRDisplay">requestPresent()</dfn>
-Begins presenting the contents of the specified {{VRLayer}}s, described by {{VRLayerInit}} dictionaries, on the {{VRDisplay}} and fulfills the returned promise when presentation has begun. If {{canPresent}} is false the promise MUST be rejected. If the array contains more than {{maxLayers}} elements the promise MUST be rejected. If {{requestPresent()}} is called outside of a user gesture the promise MUST be rejected. The user agent MAY reject the promise for any other reason. If the {{VRDisplay}} is already presenting when {{requestPresent()}} is called the {{VRDisplay}} SHOULD update the {{VRLayer}} list being presented. If a call to {{requestPresent()}} is rejected while the {{VRDisplay}} is already presenting the {{VRDisplay}} MUST end presentation.
+Begins presenting the contents of the specified {{VRLayer}} array on the {{VRDisplay}} and fulfills the returned promise when presentation has begun. If {{canPresent}} is false the promise MUST be rejected. If the {{VRLayer}} array contains more than {{maxLayers}} elements the promise MUST be rejected. If {{requestPresent()}} is called outside of a user gesture the promise MUST be rejected. The user agent MAY reject the promise for any other reason. If the {{VRDisplay}} is already presenting when {{requestPresent()}} is called the {{VRDisplay}} SHOULD update the {{VRLayer}} list being presented. If a call to {{requestPresent()}} is rejected while the {{VRDisplay}} is already presenting the {{VRDisplay}} MUST end presentation.
 
 <dfn method for="VRDisplay">exitPresent()</dfn>
 Ends presentation to the {{VRDisplay}} and fulfills the returned promise when fully exited. If the {{VRDisplay}} is not presenting the promise MUST be rejected.
@@ -265,15 +265,7 @@ The {{VRLayer}} interface is provided to a {{VRDisplay}} and presented in the HM
 typedef (HTMLCanvasElement or
          OffscreenCanvas) VRSource;
 
-[Constructor(optional VRLayerInit layer)]
-interface VRLayer {
-  readonly attribute VRSource? source;
-
-  readonly attribute sequence&lt;float&gt; leftBounds;
-  readonly attribute sequence&lt;float&gt; rightBounds;
-};
-
-dictionary VRLayerInit {
+dictionary VRLayer {
   VRSource? source = null;
 
   sequence&lt;float&gt; leftBounds = [ ];
@@ -283,14 +275,14 @@ dictionary VRLayerInit {
 
 ### Attributes ### {#vrlayer-attributes}
 
-<dfn attribute for="VRLayer">source</dfn>
-The {{VRLayer/source}} attribute defines the canvas whose contents will be presented by the {{VRDisplay}} when {{VRDisplay}}.{{submitFrame()}} is called. Upon being passed into {{requestPresent()}} the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
+<dfn dict-member for="VRLayer">source</dfn>
+The {{source}} attribute defines the canvas whose contents will be presented by the {{VRDisplay}} when {{VRDisplay}}.{{submitFrame()}} is called.
 
-<dfn attribute for="VRLayer">leftBounds</dfn>
-The {{VRLayer/leftBounds}} attribute contains four values defining the texture bounds within the {{VRLayer/source}} canvas to present to the eye in UV space: <code>[0]</code> left offset of the bounds (0.0 - 1.0); <code>[1]</code> top offset of the bounds (0.0 - 1.0); <code>[2]</code> width of the bounds (0.0 - 1.0); <code>[3]</code> height of the bounds (0.0 - 1.0). The {{VRLayer/leftBounds}} MUST default to <code>[0.0, 0.0, 0.5, 1.0]</code>.
+<dfn dict-member for="VRLayer">leftBounds</dfn>
+The {{leftBounds}} attribute contains four values defining the texture bounds within the {{source}} canvas to present to the eye in UV space: <code>[0]</code> left offset of the bounds (0.0 - 1.0); <code>[1]</code> top offset of the bounds (0.0 - 1.0); <code>[2]</code> width of the bounds (0.0 - 1.0); <code>[3]</code> height of the bounds (0.0 - 1.0). The {{leftBounds}} MUST default to <code>[0.0, 0.0, 0.5, 1.0]</code>.
 
-<dfn attribute for="VRLayer">rightBounds</dfn>
-The {{VRLayer/rightBounds}} attribute contains four values defining the texture bounds rectangle within the {{VRLayer/source}} canvas to present to the eye in UV space: <code>[0]</code> left offset of the bounds (0.0 - 1.0); <code>[1]</code> top offset of the bounds (0.0 - 1.0); <code>[2]</code> width of the bounds (0.0 - 1.0); <code>[3]</code> height of the bounds (0.0 - 1.0). The {{VRLayer/rightBounds}} MUST default to <code>[0.5, 0.0, 0.5, 1.0]</code>.
+<dfn dict-member for="VRLayer">rightBounds</dfn>
+The {{rightBounds}} attribute contains four values defining the texture bounds rectangle within the {{source}} canvas to present to the eye in UV space: <code>[0]</code> left offset of the bounds (0.0 - 1.0); <code>[1]</code> top offset of the bounds (0.0 - 1.0); <code>[2]</code> width of the bounds (0.0 - 1.0); <code>[3]</code> height of the bounds (0.0 - 1.0). The {{rightBounds}} MUST default to <code>[0.5, 0.0, 0.5, 1.0]</code>.
 
 
 ## VRDisplayCapabilities ## {#interface-vrdisplaycapabilities}
@@ -741,6 +733,6 @@ While not directly affecting the API interface and Web IDL, WebVR implementation
 * The {{VRDisplay}} pose and other VR inputs are only updated for the focused page.
 * The Gamepad API will be updated such that the gamepad inputs are only updated for the focused page.
 * Non-focused tabs are allowed to enumerate {{Gamepad}}s and {{VRDisplay}}s but will see last received state or default values.
-* To prevent CORS-related vulnerabilities, each page will see a new instance of objects returned by the WebVR API, such as {{VRDisplay}}. Attributes such as the {{VRLayer}}.{{VRLayer/source}} set by one page must not be able to be read by another.
+* To prevent CORS-related vulnerabilities, each page will see a new instance of objects returned by the WebVR API, such as {{VRDisplay}}. Attributes such as the {{VRLayer}}.{{source}} set by one page must not be able to be read by another.
 
 # Acknowledgements # {#ack}
