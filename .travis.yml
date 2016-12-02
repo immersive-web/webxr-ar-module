@@ -5,6 +5,9 @@ env:
   - COMMIT_AUTHOR_NAME="Travis CI"
   - COMMIT_AUTHOR_EMAIL="travis-ci@w3.org"
   - SPECS="index"
-  - secure: hGyA1/D+nb6K3UDDyS5/vzybCoHwYEE5b80nU97mxq8h5Bk2JoSTUoIKDd8FQPRCbclsISd76Q643a8lVE07mCIu0WtJGLQ3nHVMKQ4PBakvAYoCIJOb6yzBDwiwvgSZM11GM2YbFb5jJHYz14Q3RLszEFYEzO7lJQ+mXuPFI9nQYf+437jJmLEpd/w4UukwM7hwjuFG/XDl6628dYZ3fO/hpqn6ssLf1rroop8mKO4TM4JXPMgdLIaAz6jCc/u7GUiaoXRjdMhcijBRBWl9gx1uH6uMzLKCVMqz5ZIKGsL8DiyD0cI9fs06jaeg1n0rkkJuJNTbSi4IW3mhAZEzRtGxSBU8wk6dLLp0CB/LNowg2lZorbimPPREOf8wlyVzLgtAjBGFNpAli2wQx+YBOjs+t1mW0MrIuluf0C/lpHkzQvehd0MB1QSHdKAa0ipuU8RO/eoKBXJJQ2hxnPTyPpWMJ8bjS4MDOSunQAL29/VoR+HTri0y/4Xy5w5/KtKsar5OASjBPBu3FyVEn7RdeSPx4Bh2tJIc8P18XOADHzbheg8Ve8Y3uOJwRGW5RDo8PrV1N0Ri+oUgpLZXvy0hAoEgR4cKQQ6w1SmXreOZL9YlPSVv2ivLVHfsqIA9mdZMgyLP/VvGi4wucNx5tC93V/mTeUpTf2v8h1JXcDQYtJ8=
 after_success:
-  - git commit -a -m "Committed by Travis-CI build number: $TRAVIS_JOB_ID"
+- git commit -a -m "Committed by Travis-CI build number: $TRAVIS_JOB_ID"
+- git push origin master
+before_install:
+- openssl aes-256-cbc -K $encrypted_ad8d97fae5ea_key -iv $encrypted_ad8d97fae5ea_iv
+  -in deploy_key.enc -out deploy_key -d
