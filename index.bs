@@ -338,7 +338,7 @@ enum VREye {
 };
 </pre>
 
-## VRFieldOfView ## {#interface-interface-vrfieldofview}
+## VRFieldOfView ## {#interface-vrfieldofview}
 
 <i>(Deprecated)</i> The {{VRFieldOfView}} interface represents a field of view, as given by 4 degrees describing the view from a center point.
 
