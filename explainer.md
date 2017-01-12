@@ -22,8 +22,10 @@ Enable Virtual Reality applications on the web by allowing pages to do the follo
 * Take full advantage of Augmented Reality devices.
 * Build “[The Metaverse](https://en.wikipedia.org/wiki/Metaverse).”
 
+Also, while input is an important part of the full VR experience it's a large enough topic that it should be handled separately, and thus will not be covered in-depth by this document.
+
 ## Use cases
-Given the marketing of early VR hardware to gamers, it’s natural to expect that this API will primarily be used for development of games. While that’s certainly something we expect to see given the history of the WebGL API, which is tightly related, we’ll probably see far more “long tail”-style content than large-scale games. Broadly, VR content on the web will likely cover areas that do not cleanly fit into the app-store models being used as the primary distribution methods by all the major VR hardware providers, or where the content itself is not permitted by the store guidelines.
+Given the marketing of early VR hardware to gamers, one may naturally assume that this API will primarily be used for development of games. While that’s certainly something we expect to see given the history of the WebGL API, which is tightly related, we’ll probably see far more “long tail”-style content than large-scale games. Broadly, VR content on the web will likely cover areas that do not cleanly fit into the app-store models being used as the primary distribution methods by all the major VR hardware providers, or where the content itself is not permitted by the store guidelines. Some high level examples are:
 
 ### Video
 360° and 3D video are areas of immense interest (for example, see [ABC’s 360° video coverage of the upcoming US election](http://abcnews.go.com/US/fullpage/abc-news-vr-virtual-reality-news-stories-33768357)), and the web has proven massively effective at distributing video in the past. A VR-enabled video player would, upon detecting the presence of VR hardware, show a “View in VR” button, similar to the “Fullscreen” buttons present in today’s video players. When the user clicks that button, a video would render in the headset and respond to natural head movement. Traditional 2D video could also be presented in the headset as though the user is sitting in front of a theater-sized screen, providing a more immersive experience.
@@ -36,138 +38,319 @@ Home shopping applications (e.g., [Matterport](https://matterport.com/try/)) ser
 ### Artistic experiences
 VR provides an interesting canvas for artists looking to explore the possibilities of a new medium. Shorter, abstract, and highly experimental experiences are often poor fits for an app-store model, where the perceived overhead of downloading and installing a native executable may be disproportionate to the content delivered. The web’s transient nature makes these types of applications more appealing, since they provide a frictionless way of viewing the experience. Artists can also more easily attract people to the content and target the widest range of devices and platforms with a single code base.
 
-## Basic API usage
+## Lifetime of a VR web app
 
-### Device detection
-The first thing that any VR-enabled page will want to do is enumerate the available VR hardware and determine which one to interact with.
+The basic steps any WebVR application will go through are:
+
+ 1. Request a list of the available VR displays.
+ 2. Checks to see if the desired display supports the presentation modes the application needs.
+ 3. If so, application advertise VR functionality to the user.
+ 4. User performs an action that indicates they want to enter VR mode.
+ 5. Request a VR session to present VR content with.
+ 6. Begin a render loop that produces graphical frames to be displayed on the VR display.
+ 7. Continue producing frames until the user indicates that they wish to exit VR mode.
+ 8. End the VR session.
+
+### Display enumeration
+The first thing that any VR-enabled page will want to do is enumerate the available VR hardware and, if present, advertise VR functionality to the user.
+
+[`navigator.vr.getDisplays`](https://w3c.github.io/webvr/#navigator-getvrdisplays-attribute) returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to a list of available displays. Each [`VRDisplay`](https://w3c.github.io/webvr/#interface-vrdisplay) represents a physical unit of VR hardware that can present imagery to the user somehow. On desktops this will usually be a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness (e.g., Google Cardboard or Samsung Gear VR). It may also represent devices without stereo presentation capabilities but more advanced tracking, such as Tango devices.
 
 ```js
-var vrDisplay = null;
-navigator.getVRDisplays().then(function (displays) {
-  // Use the first display in the array if one is available. If multiple
-  // displays are present, you may want to present the user with a way of
-  // choosing which display to use.
+let vrDisplay = null;
+
+navigator.vr.getDisplays().then(displays => {
   if (displays.length > 0) {
+    // Use the first display in the array if one is available. If multiple
+    // displays are present, you may want to provide the user a way of choosing
+    // which display to use.
     vrDisplay = displays[0];
-    // If the user has VR hardware, using `vrDisplay`, advertise your
-    // page's VR features (i.e., render your VR scene).
-    showVRFeatures();
+    OnVRAvailable();
   } else {
     // Could not find any VR hardware connected.
   }
+}, err => {
+  // An error occurred querying VR hardware. May be the result of blocked
+  // permissions by a parent frame.
 });
 ```
+### Detecting and advertising VR mode
 
-[`navigator.getVRDisplays`](https://w3c.github.io/webvr/#navigator-getvrdisplays-attribute) returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that, when resolved, provides a list of available displays. Each [`VRDisplay`](https://w3c.github.io/webvr/#interface-vrdisplay) represents a single piece of physical VR hardware. On desktops this will usually be a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness (e.g., Google Cardboard or Samsung Gear VR).
+If a VRDisplay is available and has the appropriate capabilities the page will usually want to add some UI to trigger activation of "VR Presentation Mode", where the page can begin sending imagery to the display. Testing to see if the display supports the capabilities the page needs is done via the `supportsSession` call, which takes a dictionary of the desired functionality and returns whether or not the display can create a session supporting them. Querying for support this way is necessary because it allows the application to detect what VR features are available without actually engaging the sensors or beginning presentation, which can incur significant power or performance overhead on some systems and may have side effects such as launching a VR status tray or storefront.
 
-### Device capabilities
-VR headsets can differ significantly in their tracking and display capabilities. For instance, VR hardware tracks the hardware’s orientation and/or position of the hardware in space. A headset that tracks only orientation is referred to as having 3-Degrees-of-Freedom (3DoF) tracking. A headseat that tracks orientation and position is referred to as having 6-Degrees-of-Freedom (6DoF) tracking.
-
-To determine the headset’s capabilities and the page’s behavior accordingly, developers can inspect the [`capabilities` attribute](https://w3c.github.io/webvr/#interface-vrdisplaycapabilities) of the [`VRDisplay` instance](https://w3c.github.io/webvr/#interface-vrdisplay).
+In this case, we only ask if the ability to `present` (That is, to display stereo imagery on the headset) is supported. Note that present: true is actually the dictionary default, and so does not need to be specified here. It’s made explicit in this example for clarity.
 
 ```js
-if (vrDisplay.capabilities.hasPosition) {
-  // This headset can track its position.
-}
-if (vrDisplay.capabilities.hasOrientation) {
-  // This headset can track its orientation, which should almost
-  // always be the case.
-}
-if (vrDisplay.capabilities.hasExternalDisplay) {
-  // The headset is a separate display from the main monitor, which
-  // means you should consider mirroring the content shown on the headset.
-  // This is usually `true` on PCs and `false` on mobile devices.
-}
-if (vrDisplay.capabilities.canPresent) {
-  // If this is `false`, then the headset can’t actually present content to
-  // the user in stereo. Although you may want to take the tracking
-  // into account, you shouldn’t advertise “VR mode” to users.
-  // Google Project Tango devices are good examples of a headset that would
-  // expose 6DoF tracking but without presentation capabilities. Instead,
-  // they can be used as a “magic window” into a virtual space.
-}
-```
-
-### Headset input
-WebVR provides tracking information via the [`getPose` method](https://w3c.github.io/webvr/#dom-vrdisplay-getpose) method of the [`VRDisplay` instance](https://w3c.github.io/webvr/#interface-vrdisplay), which developers can use to poll the display for new position, orientation, velocity, and acceleration data on each frame. The ideal pattern is to query this information within a [`VRDisplay#requestAnimationFrame`](https://w3c.github.io/webvr/#dom-vrdisplay-requestanimationframe) callback loop, which runs at the refresh rate of the headset (which is frequently higher than that of an average monitor). The [pose](https://w3c.github.io/webvr/#vrpose) can then be used to update either the viewpoint of a scene or the position and orientation of an object within that scene.
-
-```js
-function onAnimationFrame (time) {
-  // When presenting content to the headset, we want to update at its
-  // refresh rate if it differs from the refresh rate of the main
-  // display. Calling `VRDisplay#requestAnimationFrame` ensures we render
-  // at the right speed for VR.
-  vrDisplay.requestAnimationFrame(onAnimationFrame);
-
-  // Orientation is reported as a quaternion.
-  camera.orientation = pose.orientation;
-
-  // Need to account for the fact that not all headsets report position.
-  if (pose.position) {
-  	camera.position = pose.position;
-  } else {
-    camera.position = [0, 0, 0];
+async function OnVRAvailable() {
+  // Most (but not all) VRDisplays are capable of presenting stereo imagery to
+  // the user. If the display has that capability the page will want to add an
+  // "Enter VR" button (similar to "Enter Fullscreen") that triggers the page
+  // to begin showing imagery on the headset.
+  let presentSupported = await vrDisplay.supportsSession({ present: true });
+  if (presentSupported) {
+    var enterVrBtn = document.createElement("button");
+    enterVrBtn.innerHTML = "Enter VR";
+    enterVrBtn.addEventListener("click", BeginVRSession());
+    document.body.appendChild(enterVrBtn);
   }
-
-  drawScene(camera);
 }
 ```
 
-### Rendering
-Currently the only supported rendering method is [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API), though that’s likely to change in future versions of the WebVR API. In order to render a WebGL scene that will feel correct when viewed through a headset, values from the [`VREyeParameters`](https://w3c.github.io/webvr/#interface-vreyeparameters) interface that describe the field of view, resolution, and [interpupillary distance](https://en.wikipedia.org/wiki/Interpupillary_distance) (IPD) are used to set up WebGL’s view and projection matrices.
+### Beginning a VR session
+
+Clicking that button will attempt to initiate a [`VRSession`](https://w3c.github.io/webvr/#interface-vrsession), which manages input and output for the display. When creating a session with `VRDisplay.requestSession` the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` returned true for a given dictionary then calling `requestingSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture or another page currently having an active session for the same display.)
+
+The content to present to the display is defined by a `VRLayer`. In the initial version of the spec only one layer type, `VRCanvasLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layer, at which point this would act like the `firstChild` attribute of a DOM element.)
 
 ```js
-function drawSceneForEye (eyeName, camera) {
-  // `eyeName` is a string equal to `left` or `right`.
-  var eye = vrDisplay.getEyeParameters(eyeName);
+// Initially only canvases with WebGL contexts will be supported.
+let glCanvas = document.createElement("canvas");
+let gl = glCanvas.getContext("webgl");
 
-  // Adjust the camera to render correctly for this eye.
-  camera.setFieldOfView(eye.fieldOfView);
-  camera.position.translate(eye.offset);
+let vrSession = null;
 
-  // Render scene’s 3D content here using the camera.
-  // …
-}
-```
+function BeginVRSession() {
+  // VRDisplay.requestSession must be called within a user gesture event
+  // like click or touch when using { present: true }.
+  vrDisplay.requestSession({ present: true }).then(session => {
+    // Store the session for use later.
+    vrSession = session;
 
-### Output
-VR hardware frequently needs to make use of specialized display paths to counteract distortion introduced by the lenses, compensate for latency, etc. As a result, VR content can’t simply be drawn to the screen like a normal web app would; instead, VR content must be explicitly submitted to the `VRDisplay` instance. In order to do that, the page must first request permission to begin presenting to the `VRDisplay` using [`VRDisplay#requestPresent`](https://w3c.github.io/webvr/#dom-vrdisplay-requestpresent), which takes in the WebGL canvas whose contents will be shown on the headset and returns a Promise that will resolve or reject if the page can begin presenting or not, respectively.
+    // In order to ensure the canvas renders at an appropriate size for the
+    // display the preferred canvas size should be queried from the session.
+    let sourceProperties = vrSession.getSourceProperties();
+    glCanvas.width = sourceProperties.width;
+    glCanvas.height = sourceProperties.height;
 
-```js
-function enterVRMode () {
-  vrDisplay.requestPresent([{source: glCanvas}]).then(function () {
-    // Presentation began successfully, so kick off the animation loop.
-    vrDisplay.requestAnimationFrame(onAnimationFrame);
-  }, function (err) {
-    // Unable to begin presentation for some reason.
-    console.error('Could not present VR', err);
+    // The depth range of the scene should be set so that the projection
+    // matrices returned by the session are correct.
+    vrSession.depthNear = 0.1;
+    vrSession.depthFar = 100.0;
+
+    // The content that will be shown on the display when presenting is
+    // defined by the current layer.
+    vrSession.baseLayer = new VRCanvasLayer(glCanvas);
+
+    OnDrawFrame();
+  }, err => {
+    // May fail for a variety of reasons, including another page already
+    // presenting to the display.
   });
 }
 ```
 
-The page is responsible for rendering a stereo view by drawing out the content for each eye to one half of the canvas. Then, once the rendering has completed, the page must notify the headset that it’s done by calling the [`VRDisplay#submitFrame`](https://w3c.github.io/webvr/#dom-vrdisplay-submitframe) method.
+The page may also want to create a session that doesn't present to the display for tracking purposes. Since the `VRSession` is also what provides access to the display's position and orientation data requesting a non-presenting session enables what's referred to as "Magic Window" use cases, where the scene is rendered on the page normally but is responsive to display movement. This is especially useful for mobile devices, where moving the device can be used to look around a scene. Devices with Tango tracking capabilities may also expose 6DoF tracking this way, even when the device itself is not capable of stereo presentation.
 
 ```js
-function drawScene (camera) {
-  // Draw the left eye.
-  gl.viewport(0, 0, glCanvas.width * 0.5, glCanvas.height);
-  drawSceneForEye("left", camera);
+function TryBeginMagicWindow() {
+  // When calling VRDisplay.requestSession with { present: false } no user
+  // gesture is needed. Support for this mode will vary, so your app should not
+  // depend on it being available.
+  vrDisplay.requestSession({ present: false }).then(session => {
+    // Store the session for use later.
+    vrSession = session;
 
-  // Draw the right eye.
-  gl.viewport(glCanvas.width * 0.5, 0, glCanvas.width * 0.5, glCanvas.height);
-  drawSceneForEye("right", camera);
+    // In non-presenting mode layers aren't used and the canvas should be sized
+    // according to the page's needs instead of querying the size from
+    // getSourceProperties.
 
-  // Notify the headset that the new frame is ready.
-  vrDisplay.submitFrame();
+    OnDrawFrame();
+  }, err => {
+    // Magic window isn't available. Probably just want to render the scene
+    // normally without any tracking at this point.
+    window.requestAnimationFrame(OnDrawFrame);
+  });
 }
 ```
 
-To stop presenting to the `VRDisplay`, the page must call the [`VRDisplay#exitPresent`](https://w3c.github.io/webvr/#dom-vrdisplay-exitpresent) method.
+It’s worth noting that requesting a new type of session will end any previously active ones.
+
+### Main render loop
+
+WebVR provides tracking information via the [`VRSession.getFrameData`](https://w3c.github.io/webvr/#dom-vrsession-getframedata) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRFrameData`](https://w3c.github.io/webvr/#interface-vrframedata) can be used to render the appropriate viewpoint of the scene for both eyes. Once rendering is complete [`VRSession.commit`](https://w3c.github.io/webvr/#dom-vrsession-commit) is called to signal to the `VRDisplay` that the newly rendered scene should be presented to the user. `VRSession.commit` also returns a Promise, which resolves when the `VRDisplay` is ready to accept another frame, taking into account the displays refresh rate.
+
+```js
+// The Frame of Reference indicates what the matrices and coordinates the
+// VRDisplay returns are relative to. A VRFrameOfReference created with default
+// settings reports values relative to the location where the display first
+// began tracking.
+let frameOfRef = vrSession.getFrameOfReference();
+
+function OnDrawFrame() {
+  // Do we have an active session?
+  if (vrSession) {
+    let pose = vrSession.getFrameData(frameOfRef);
+
+    // Is it a presenting session? If so draw the scene in stereo
+    if (vrSession.createParameters.present) {
+      // Draw the left eye's view of the scene to the left half of the canvas.
+      gl.viewport(0, 0, glCanvas.width * 0.5, glCanvas.height);
+      drawScene(pose.leftProjectionMatrix, pose.leftViewMatrix);
+
+      // Draw the right eye's view of the scene to the right half of the canvas.
+      gl.viewport(glCanvas.width * 0.5, 0, glCanvas.width * 0.5, glCanvas.height);
+      drawScene(pose.rightProjectionMatrix, pose.rightViewMatrix);
+    } else {
+      // If not a presenting session, draw a tracked mono view of the scene.
+      gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+      drawScene(defaultProjectionMatrix, pose.poseModelMatrix.inverse());
+    }
+
+    // VRSession.commit() indicates that rendering has completed and the current
+    // canvas contents should be shown on the headest. This should ideally be
+    // called immediately after the app is finished submitting draw commands to
+    // reduce latency. The promise it returns resolves when the frame has been
+    // submitted and the next frame is ready to be drawn, which allows it to
+    // function as a requestAnimationFrame analog that runs at the framerate of
+    // the VRDisplay instead of the main monitor.
+    vrSession.commit().then(OnDrawFrame);
+  } else {
+    // No session available, so render a default mono view.
+    gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+    drawScene(defaultProjectionMatrix, defaultViewMatrix);
+
+    window.requestAnimationFrame(OnDrawFrame);
+  }
+}
+```
+
+### Ending the VR session
+
+To stop presenting to the `VRDisplay`, the page calls [`VRSession.endSession`](https://w3c.github.io/webvr/#dom-vrsession-endsession). Once the session has ended any canvas used as a layer source should be resized to fit the page again.
+
+```js
+function EndVRSession() {
+  // Do we have an active session?
+  if (vrDisplay.activeSession) {
+    // End VR mode now.
+    vrDisplay.activeSession.endSession().then(OnSessionEnded);
+  }
+}
+
+// Restore the page to normal after VR presentation is finished.
+function OnSessionEnded() {
+  // Restore the canvas to it's original resolution.
+  glCanvas.width = defaultCanvasWidth;
+  glCanvas.height = defaultCanvasHeight;
+
+  // Ending the session will reject any outstanding commit promises, so if you
+  // want the animation loop to continue running you'll need to manually queue
+  // up the next frame.
+  window.requestAnimationFrame(OnDrawFrame);
+}
+```
+
+In addition to the application ending the session manually, the UA may force the session to end at any time for a variety of reasons. Well behaved applications should monitor the `sessionchange` event on the `VRDisplay` to detect when that happens.
+
+```js
+vrDisplay.addEventListener('sessionchange', vrEvent => {
+  // Check to see if the vrDisplay no longer has an active session.
+  if (!vrDisplay.activeSession) {
+    OnSessionEnded();
+  }
+});
+
+```
+
+## Additional scenarios
+
+A few potential application uses are described here to demonstrate more specialized API uses.
+
+### 360 Photo or Video viewer
+
+A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any translation component in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by providing an option to `VRSession.getFrameOfReference`.
+
+```js
+let frameOfRef = vrSession.getFrameOfReference({position: false});
+
+// Use frameOfRef as detailed above.
+```
+
+### Room-scale application
+
+Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR applications can take advantage of that space by creating a `VRFrameOfReference` with the `floorRelative` option set to true. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `getFrameOfReference` will return null in that case.
+
+```js
+// Try to get a frame of reference where the floor is at Y = 0
+let frameOfRef = vrSession.getFrameOfReference({ floorRelative: true });
+
+// Check to ensure the desired VRFrameOfReference is supported.
+if (!frameOfRef) {
+  // In this case the application will want to estimate the position of the
+  // floor, perhaps by asking the user's height, and translate the reported
+  // values upward by that distance so that the floor appears in approximately
+  // the correct position.
+  frameOfRef = vrSession.getFrameOfReference();
+}
+
+// Use frameOfRef as detailed above, but render the floor of the virtual space at Y = 0;
+```
+
+### High quality rendering
+
+In general `vrSession.getSourceProperties()` will report a resolution that is deemed by the UA to be a good balance between performance and quality. This may mean that it reports a resolution lower than necessary to get a 1:1 pixel ratio at the center of the users vision post-distortion, especially on mobile devices. For the majority of applications that's probably the right call, but some applications will want to ensure their output is as high quality as possible for the device. These will usually be simpler scenes with detailed textures, like a photo viewer or text-heavy experiences. To accomplish this the application can explicitly request a 1:1 pixel ratio from `getSourceProperties`
+
+```js
+vrDisplay.requestSession({ present: true }).then(session => {
+  // Request dimensions needed for 1:1 output pixel ratio. 0.5 would request a
+  // half resolution buffer, values greater than 1.0 request a resolution that
+  // will be super-sampled. Passing 0.0 or leaving to optional scale factor off
+  // lets the UA decide what scale factor to use.
+  let sourceProperties = session.getSourceProperties(1.0);
+
+  glCanvas.width = sourceProperties.width;
+  glCanvas.height = sourceProperties.height;
+
+  // Start render loop
+});
+```
+
+### Presenting automatically when the user interacts with the headset
+
+Many VR devices have some way of detecting when the user has put the headset on or is otherwise trying to use the hardware. For example: an Oculus Rift or Vive have proximity sensors that indicate when the headset is being worn. And a Daydream device uses NFC tags to inform the phone when it's been placed in a headset. In both of these cases the user is showing a clear intent to begin using VR. A well behaved WebVR application should ideally begin presenting automatically in these scenarios. The `activate` event fired from the `VRDisplay` can be used to accomplish that.
+
+```js
+vrDisplay.addEventListener('activate', vrEvent => {
+  // The activate event acts as a user gesture, so a presenting session can be
+  // requested in the even handler.
+  vrDisplay.requestSession().then(session => {
+    // Setup for VR presentation and start render loop.
+  });
+});
+```
+
+Similarly, the `deactivate` event can be used to detect when the user removes the headset, at which point the application may want to end the session.
+
+```js
+vrDisplay.addEventListener('deactivate', vrEvent => {
+  if (vrDisplay.activeSession) {
+    vrDisplay.activeSession.endSession().then(OnSessionEnded);
+  }
+});
+```
+
+### Responding to a suspended session
+
+The UA may temporarily suspend a session if allowing the page to continue reading the headset position represents a security risk (like when the user is entering a password or URL with a virtual keyboard, in which case the head motion may infer the user's input), or if other content is obscuring the page's output. While suspended the page may either resolve commits at a slower rate or not at all, and poses queried from the headset may be less accurate. The UA is expected to present a tracked environment to the user when the page is being throttled to prevent user discomfort.
+
+In general the page should continue producing frames like normal whenever `commit()` resolves. The UA may use these frames as part of it's tracked environment, though they may be partially occluded, blurred, or otherwise manipulated. Still, some applications may wish to respond to this suspension by halting game logic, purposefully obscuring content, or pausing media. To do so, the application should listen for the `blur` and `focus` events from the `VRSession`. For example, a 360 media player would do this to pause the video/audio whenever the UA has obscured it.
+
+```js
+vrSession.addEventListener('blur', vrEvent => {
+  PauseMedia();
+  // Allow the render loop to keep running, but just keep rendering the last frame.
+  // Render loop may not run at full framerate.
+});
+
+vrSession.addEventListener('focus', vrEvent => {
+  ResumeMedia();
+});
+```
 
 ### More sample code
 This overview attempts to touch on all the important parts of using WebVR but, for the sake of clarity, avoids discussing advanced uses. For developers who want to dig a bit deeper, there are several working samples of the API in action at https://webvr.info/samples/. These samples each outline a specific part of the API with plenty of code comments to help guide developers through what everything is doing.
 
-## I don’t understand why this is a new API. Why can’t we use…
+## Appendix A: I don’t understand why this is a new API. Why can’t we use…
 
 ### `DeviceOrientation` Events
 The data provided by a `VRPose` instance is similar to the data provided by `DeviceOrientationEvent`, with some key differences:
@@ -190,7 +373,147 @@ Some people have suggested that we try to expose VR headset data through the [Ga
 * VR device capabilities can differ significantly, and the Gamepad API currently doesn’t provide a way to communicate a device’s features and its optical properties.
 * Gamepad features such as buttons have no clear meaning when describing a VR headset and its periphery.
 
-There is a related effort to expose 3DoF and 6DoF VR controllers through the Gamepad API by adding a `pose` attribute and some other related properties. Although these additions would make the API more accommodating for headsets, we feel that it’s best for developers to have a separation of concerns such that devices exposed by the Gamepad API can be reasonably assumed to be gamepad-like and devices exposed by the WebVR API can be reasonably assumed to be headset-like.
+There is a related effort to expose motion-sensing controllers through the Gamepad API by adding a `pose` attribute and some other related properties. Although these additions would make the API more accommodating for headsets, we feel that it’s best for developers to have a separation of concerns such that devices exposed by the Gamepad API can be reasonably assumed to be gamepad-like and devices exposed by the WebVR API can be reasonably assumed to be headset-like.
 
 ### These alternatives don’t account for display
 It’s important to realize that all of the alternative solutions offer no method of displaying imagery on the headset itself, with the exception of Cardboard-like devices where you can simply render a fullscreen split view. Even so, that doesn’t take into account how to communicate the projection or distortion necessary for an accurate image. Without a reliable display method the ability to query inputs from a headset becomes far less valuable.
+
+## Appendix B: Proposed IDL
+
+```webidl
+//
+// Navigator
+//
+
+partial interface Navigator {
+  readonly attribute VR vr;
+};
+
+interface VR : EventTarget {
+  attribute EventHandler ondisplayconnect;
+  attribute EventHandler ondisplaydisconnect;
+  attribute EventHandler onnavigate;
+
+  Promise<sequence<VRDisplay>> getDisplays();
+};
+
+//
+// Display
+//
+
+interface VRDisplay : EventTarget {
+  readonly attribute DOMString displayName;
+  readonly attribute boolean isExternal;
+
+  attribute VRSession? activeSession;
+
+  attribute EventHandler onsessionchange;
+  attribute EventHandler onactivate;
+  attribute EventHandler ondeactivate;
+
+  Promise<boolean> supportsSession(VRSessionCreateParametersInit parameters);
+  Promise<VRSession> requestSession(VRSessionCreateParametersInit parameters);
+};
+
+//
+// Session
+//
+
+dictionary VRSessionCreateParametersInit {
+  boolean present = true;
+};
+
+interface VRSessionCreateParameters {
+  readonly boolean present;
+};
+
+interface VRSourceProperties {
+  readonly attribute float scale;
+  readonly attribute unsigned long width;
+  readonly attribute unsigned long height;
+};
+
+interface VRSession : EventTarget {
+  readonly attribute VRSessionCreateParameters createParameters;
+
+  attribute double depthNear;
+  attribute double depthFar;
+
+  attribute VRLayer baseLayer;
+
+  attribute EventHandler onblur;
+  attribute EventHandler onfocus;
+  attribute EventHandler onresetpose;
+
+  VRSourceProperties getSourceProperties(optional float scale);
+
+  VRFrameOfReference? getFrameOfReference(VRFrameOfReferenceInit options);
+  VRFrameData? getFrameData(VRFrameOfReference frameOfReference);
+
+  Promise<DOMHighResTimeStamp> commit();
+  Promise<void> endSession();
+};
+
+//
+// Pose
+//
+
+interface VRFrameData {
+  readonly attribute Float32Array leftProjectionMatrix;
+  readonly attribute Float32Array leftViewMatrix;
+
+  readonly attribute Float32Array rightProjectionMatrix;
+  readonly attribute Float32Array rightViewMatrix;
+
+  readonly attribute Float32Array poseModelMatrix;
+};
+
+//
+// Layers
+//
+
+interface VRLayer {};
+
+typedef (HTMLCanvasElement or
+         OffscreenCanvas) VRCanvasSource;
+
+[Constructor(optional VRCanvasSource source)]
+interface VRCanvasLayer : VRLayer {
+  attribute VRCanvasSource source;
+
+  void setLeftBounds(float left, float bottom, float right, float top);
+  sequence<float> getLeftBounds();
+
+  void setRightBounds(float left, float bottom, float right, float top);
+  sequence<float> getRightBounds();
+};
+
+//
+// Frame of Reference
+//
+
+dictionary VRFrameOfReferenceInit {
+  attribute boolean position = true;
+  attribute boolean floorRelative = false;
+};
+
+interface VRFrameOfReference {
+  readonly attribute boolean position;
+  readonly attribute boolean floorRelative;
+};
+
+//
+// VREvent
+//
+
+[Constructor(DOMString type, VREventInit eventInitDict)]
+interface VREvent : Event {
+  readonly attribute VRDisplay display;
+  readonly attribute VRSession? session;
+};
+
+dictionary VREventInit : EventInit {
+  required VRDisplay display;
+  VRSession? session;
+};
+```
