@@ -614,7 +614,7 @@ The {{VRDisplay}} has detected that the user has put it on.
 The page has been navigated to from a context that allows this page to begin presenting immediately, such as from another site that was already in VR presentation mode.
 
 <dfn enum-value for="VRDisplayEventReason">requested</dfn>
-The user agent MAY request start VR presentation mode. This allows user agents to include a consistent UI to enter VR across diferent sites.
+The user agent MAY request start VR presentation mode. This allows user agents to include a consistent UI to enter VR across different sites.
 
 <dfn enum-value for="VRDisplayEventReason">unmounted</dfn>
 The {{VRDisplay}} has detected that the user has taken it off.
