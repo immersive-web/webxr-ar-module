@@ -1553,6 +1553,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    </ol>
   </nav>
   <main>
+   <p><b style="color: red; font-size: 1.3em">DO NOT IMPLEMENT</b></p>
+   <p><b>The version of the WebVR API represented in this document is incomplete and changing rapidly. Do not attempt to implement it at this time.</b></p>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
    <p>Hardware that enables Virtual Reality applications requires high-precision, low-latency interfaces to deliver an acceptable experience.
 Other interfaces, such as device orientation events, can be repurposed to surface VR input but doing so dilutes the interface’s original
@@ -2019,7 +2021,7 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
    <h4 class="heading settled" data-level="2.12.1" id="vrdisplayeventreason-codes"><span class="secno">2.12.1. </span><span class="content">Reasons</span><a class="self-link" href="#vrdisplayeventreason-codes"></a></h4>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-mounted">mounted</dfn> The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-54">VRDisplay</a></code> has detected that the user has put it on.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-navigation">navigation</dfn> The page has been navigated to from a context that allows this page to begin presenting immediately, such as from another site that was already in VR presentation mode.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-requested">requested</dfn> The user agent MAY request start VR presentation mode. This allows user agents to include a consistent UI to enter VR across diferent sites.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-requested">requested</dfn> The user agent MAY request start VR presentation mode. This allows user agents to include a consistent UI to enter VR across different sites.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-unmounted">unmounted</dfn> The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-55">VRDisplay</a></code> has detected that the user has taken it off.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-blur">blur</dfn> The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-56">VRDisplay</a></code> has lost focus.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEventReason" data-dfn-type="enum-value" data-export="" id="dom-vrdisplayeventreason-focus">focus</dfn> The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-57">VRDisplay</a></code> has regained focus.</p>
