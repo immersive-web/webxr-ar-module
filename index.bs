@@ -767,5 +767,3 @@ While not directly affecting the API interface and Web IDL, WebVR implementation
 * The Gamepad API will be updated such that the gamepad inputs are only updated for the focused page.
 * Non-focused tabs are allowed to enumerate {{Gamepad}}s and {{VRDisplay}}s but will see last received state or default values.
 * To prevent CORS-related vulnerabilities, each page will see a new instance of objects returned by the WebVR API, such as {{VRDisplay}}. Attributes such as the {{VRLayer/source}} set by one page must not be able to be read by another.
-
-# Acknowledgements # {#ack}
