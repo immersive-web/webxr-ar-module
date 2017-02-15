@@ -28,7 +28,7 @@ Also, while input is an important part of the full VR experience it's a large en
 Given the marketing of early VR hardware to gamers, one may naturally assume that this API will primarily be used for development of games. While that’s certainly something we expect to see given the history of the WebGL API, which is tightly related, we’ll probably see far more “long tail”-style content than large-scale games. Broadly, VR content on the web will likely cover areas that do not cleanly fit into the app-store models being used as the primary distribution methods by all the major VR hardware providers, or where the content itself is not permitted by the store guidelines. Some high level examples are:
 
 ### Video
-360° and 3D video are areas of immense interest (for example, see [ABC’s 360° video coverage of the upcoming US election](http://abcnews.go.com/US/fullpage/abc-news-vr-virtual-reality-news-stories-33768357)), and the web has proven massively effective at distributing video in the past. A VR-enabled video player would, upon detecting the presence of VR hardware, show a “View in VR” button, similar to the “Fullscreen” buttons present in today’s video players. When the user clicks that button, a video would render in the headset and respond to natural head movement. Traditional 2D video could also be presented in the headset as though the user is sitting in front of a theater-sized screen, providing a more immersive experience.
+360° and 3D video are areas of immense interest (for example, see [ABC’s 360° video coverage](http://abcnews.go.com/US/fullpage/abc-news-vr-virtual-reality-news-stories-33768357)), and the web has proven massively effective at distributing video in the past. A VR-enabled video player would, upon detecting the presence of VR hardware, show a “View in VR” button, similar to the “Fullscreen” buttons present in today’s video players. When the user clicks that button, a video would render in the headset and respond to natural head movement. Traditional 2D video could also be presented in the headset as though the user is sitting in front of a theater-sized screen, providing a more immersive experience.
 
 ### Object/data visualization
 Sites can provide easy 3D visualizations through WebVR, often as a progressive improvement to their more traditional rendering. Viewing 3D models (e.g., [SketchFab](https://sketchfab.com/)), architectural previsualizations, medical imaging, mapping, and [basic data visualization](http://graphics.wsj.com/3d-nasdaq/) can all be more impactful, easier to understand, and convey an accurate sense of scale in VR. For those use cases, few users would justify installing a native app, especially when web content is simply a link or a click away.
@@ -98,7 +98,7 @@ async function OnVRAvailable() {
 
 ### Beginning a VR session
 
-Clicking that button will attempt to initiate a [`VRSession`](https://w3c.github.io/webvr/#interface-vrsession), which manages input and output for the display. When creating a session with `VRDisplay.requestSession` the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` returned true for a given dictionary then calling `requestingSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture or another page currently having an active session for the same display.)
+Clicking that button will attempt to initiate a [`VRSession`](https://w3c.github.io/webvr/#interface-vrsession), which manages input and output for the display. When creating a session with `VRDisplay.requestSession` the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` returned true for a given dictionary then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture or another page currently having an active session for the same display.)
 
 The content to present to the display is defined by a `VRLayer`. In the initial version of the spec only one layer type, `VRCanvasLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layer, at which point this would act like the `firstChild` attribute of a DOM element.)
 
@@ -167,19 +167,18 @@ It’s worth noting that requesting a new type of session will end any previousl
 
 ### Main render loop
 
-WebVR provides tracking information via the [`VRSession.getFrameData`](https://w3c.github.io/webvr/#dom-vrsession-getframedata) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRFrameData`](https://w3c.github.io/webvr/#interface-vrframedata) can be used to render the appropriate viewpoint of the scene for both eyes. Once rendering is complete [`VRSession.commit`](https://w3c.github.io/webvr/#dom-vrsession-commit) is called to signal to the `VRDisplay` that the newly rendered scene should be presented to the user. `VRSession.commit` also returns a Promise, which resolves when the `VRDisplay` is ready to accept another frame, taking into account the displays refresh rate.
+WebVR provides tracking information via the [`VRSession.getDisplayPose`](https://w3c.github.io/webvr/#dom-vrsession-getdisplaypose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDisplayPose`](https://w3c.github.io/webvr/#interface-vrdisplaypose) can be used to render the appropriate viewpoint of the scene for both eyes. Once rendering is complete [`VRSession.commit`](https://w3c.github.io/webvr/#dom-vrsession-commit) is called to signal to the `VRDisplay` that the newly rendered scene should be presented to the user. `VRSession.commit` also returns a Promise, which resolves when the `VRDisplay` is ready to accept another frame, taking into account the displays refresh rate.
 
 ```js
 // The Frame of Reference indicates what the matrices and coordinates the
-// VRDisplay returns are relative to. A VRFrameOfReference created with default
-// settings reports values relative to the location where the display first
-// began tracking.
-let frameOfRef = vrSession.getFrameOfReference();
+// VRDisplay returns are relative to. An "EyeLevel" VRFrameOfReference reports
+// values relative to the location where the display first began tracking.
+let frameOfRef = await vrSession.createFrameOfReference("EyeLevel");
 
 function OnDrawFrame() {
   // Do we have an active session?
   if (vrSession) {
-    let pose = vrSession.getFrameData(frameOfRef);
+    let pose = vrSession.getDisplayPose(frameOfRef);
 
     // Is it a presenting session? If so draw the scene in stereo
     if (vrSession.createParameters.present) {
@@ -258,30 +257,31 @@ A few potential application uses are described here to demonstrate more speciali
 
 ### 360 Photo or Video viewer
 
-A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any translation component in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by providing an option to `VRSession.getFrameOfReference`.
+A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any translation component in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "HeadModel" `VRFrameOfReference`.
 
 ```js
-let frameOfRef = vrSession.getFrameOfReference({position: false});
+let frameOfRef = await vrSession.createFrameOfReference("HeadModel");
 
 // Use frameOfRef as detailed above.
 ```
 
 ### Room-scale application
 
-Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR applications can take advantage of that space by creating a `VRFrameOfReference` with the `floorRelative` option set to true. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `getFrameOfReference` will return null in that case.
+Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR applications can take advantage of that space by creating a "FloorLevel" `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
 
 ```js
 // Try to get a frame of reference where the floor is at Y = 0
-let frameOfRef = vrSession.getFrameOfReference({ floorRelative: true });
+vrSession.createFrameOfReference("FloorLevel").then(frame => {
+  frameOfRef = frame;
+}).catch(err => {
+  // "FloorLevel" VRFrameOfReference is not supported.
 
-// Check to ensure the desired VRFrameOfReference is supported.
-if (!frameOfRef) {
   // In this case the application will want to estimate the position of the
   // floor, perhaps by asking the user's height, and translate the reported
   // values upward by that distance so that the floor appears in approximately
   // the correct position.
-  frameOfRef = vrSession.getFrameOfReference();
-}
+  frameOfRef = await vrSession.createFrameOfReference("EyeLevel");
+});
 
 // Use frameOfRef as detailed above, but render the floor of the virtual space at Y = 0;
 ```
@@ -447,8 +447,9 @@ interface VRSession : EventTarget {
 
   VRSourceProperties getSourceProperties(optional float scale);
 
-  VRFrameOfReference? getFrameOfReference(VRFrameOfReferenceInit options);
-  VRFrameData? getFrameData(VRFrameOfReference frameOfReference);
+  Promise<VRFrameOfReference> createFrameOfReference(VRFrameOfReferenceType type);
+  VRDisplayPose? getDisplayPose(VRCoordinateSystem coordinateSystem);
+  Promise<VRPlayAreaBounds> getPlayAreaBounds(VRCoordinateSystem coordinateSystem);
 
   Promise<DOMHighResTimeStamp> commit();
   Promise<void> endSession();
@@ -458,7 +459,7 @@ interface VRSession : EventTarget {
 // Pose
 //
 
-interface VRFrameData {
+interface VRDisplayPose {
   readonly attribute Float32Array leftProjectionMatrix;
   readonly attribute Float32Array leftViewMatrix;
 
@@ -482,24 +483,38 @@ interface VRCanvasLayer : VRLayer {
   attribute VRCanvasSource source;
 
   void setLeftBounds(float left, float bottom, float right, float top);
-  sequence<float> getLeftBounds();
+  FrozenArray<float> getLeftBounds();
 
   void setRightBounds(float left, float bottom, float right, float top);
-  sequence<float> getRightBounds();
+  FrozenArray<float> getRightBounds();
 };
 
 //
-// Frame of Reference
+// Coordinate Systems
 //
 
-dictionary VRFrameOfReferenceInit {
-  attribute boolean position = true;
-  attribute boolean floorRelative = false;
+interface VRCoordinateSystem {
+  Float32Array? getTransformTo(VRCoordinateSystem other);
 };
 
-interface VRFrameOfReference {
-  readonly attribute boolean position;
-  readonly attribute boolean floorRelative;
+enum VRFrameOfReferenceType {
+  "EyeLevel",
+  "FloorLevel",
+};
+
+interface VRFrameOfReference : VRCoordinateSystem {
+  readonly attribute VRFrameOfReferenceType type;
+};
+
+//
+// Play Area Bounds
+//
+
+interface VRPlayAreaBounds {
+  readonly attribute float minX;
+  readonly attribute float maxX;
+  readonly attribute float minZ;
+  readonly attribute float maxZ;
 };
 
 //
