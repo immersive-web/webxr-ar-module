@@ -100,7 +100,7 @@ async function OnVRAvailable() {
 
 Clicking that button will attempt to initiate a [`VRSession`](https://w3c.github.io/webvr/#interface-vrsession), which manages input and output for the display. When creating a session with `VRDisplay.requestSession` the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` returned true for a given dictionary then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture or another page currently having an active session for the same display.)
 
-The content to present to the display is defined by a `VRLayer`. In the initial version of the spec only one layer type, `VRCanvasLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layer, at which point this would act like the `firstChild` attribute of a DOM element.)
+The content to present to the display is defined by a [`VRLayer`](https://w3c.github.io/webvr/#interface-vrlayer). In the initial version of the spec only one layer type, `VRCanvasLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layer, at which point this would act like the `firstChild` attribute of a DOM element.)
 
 ```js
 // Initially only canvases with WebGL contexts will be supported.
@@ -129,7 +129,7 @@ function BeginVRSession() {
 
     // The content that will be shown on the display when presenting is
     // defined by the current layer.
-    vrSession.baseLayer = new VRCanvasLayer(glCanvas);
+    vrSession.baseLayer = new VRCanvasLayer(vrSession, glCanvas);
 
     OnDrawFrame();
   }, err => {
@@ -167,7 +167,11 @@ It’s worth noting that requesting a new type of session will end any previousl
 
 ### Main render loop
 
-WebVR provides tracking information via the [`VRSession.getDisplayPose`](https://w3c.github.io/webvr/#dom-vrsession-getdisplaypose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDisplayPose`](https://w3c.github.io/webvr/#interface-vrdisplaypose) can be used to render the appropriate viewpoint of the scene for both eyes. Once rendering is complete [`VRSession.commit`](https://w3c.github.io/webvr/#dom-vrsession-commit) is called to signal to the `VRDisplay` that the newly rendered scene should be presented to the user. `VRSession.commit` also returns a Promise, which resolves when the `VRDisplay` is ready to accept another frame, taking into account the displays refresh rate.
+WebVR provides tracking information via the [`VRSession.getDisplayPose`](https://w3c.github.io/webvr/#dom-vrsession-getdisplaypose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDisplayPose`](https://w3c.github.io/webvr/#interface-vrdisplaypose) can be used to render the appropriate viewpoint of the scene for both eyes.
+
+The UA maintains a VR compositor behind the scenes that is always active during a presenting session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR display at as close to the display's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`. If `commit()` is called on a canvas layer multiple times in the course of a single frame the previously committed contents are discarded and only the most recent results will be displayed.
+
+`VRCanvasLayer.commit` returns a Promise, which resolves when the VR compositor is ready draw a new frame. This enables it to act as an analog for requestAnimationFrame which runs at the display's refresh rate.
 
 ```js
 // The Frame of Reference indicates what the matrices and coordinates the
@@ -195,14 +199,14 @@ function OnDrawFrame() {
       drawScene(defaultProjectionMatrix, pose.poseModelMatrix.inverse());
     }
 
-    // VRSession.commit() indicates that rendering has completed and the current
-    // canvas contents should be shown on the headest. This should ideally be
-    // called immediately after the app is finished submitting draw commands to
-    // reduce latency. The promise it returns resolves when the frame has been
-    // submitted and the next frame is ready to be drawn, which allows it to
-    // function as a requestAnimationFrame analog that runs at the framerate of
-    // the VRDisplay instead of the main monitor.
-    vrSession.commit().then(OnDrawFrame);
+    // VRCanvasLayer.commit() indicates that rendering has completed and the
+    // current canvas contents should be shown on the headest. This should
+    // ideally be called immediately after the app is finished submitting draw
+    // commands to reduce latency. The promise it returns resolves when the
+    // frame has been submitted and the next frame is ready to be drawn, which
+    // allows it to function as a requestAnimationFrame analog that runs at the
+    // framerate of the VRDisplay instead of the main monitor.
+    vrSession.baseLayer.commit().then(OnDrawFrame);
   } else {
     // No session available, so render a default mono view.
     gl.viewport(0, 0, glCanvas.width, glCanvas.height);
@@ -302,6 +306,7 @@ vrDisplay.requestSession({ present: true }).then(session => {
   glCanvas.height = sourceProperties.height;
 
   // Start render loop
+  OnDrawFrame();
 });
 ```
 
@@ -346,9 +351,6 @@ vrSession.addEventListener('focus', vrEvent => {
   ResumeMedia();
 });
 ```
-
-### More sample code
-This overview attempts to touch on all the important parts of using WebVR but, for the sake of clarity, avoids discussing advanced uses. For developers who want to dig a bit deeper, there are several working samples of the API in action at https://webvr.info/samples/. These samples each outline a specific part of the API with plenty of code comments to help guide developers through what everything is doing.
 
 ## Appendix A: I don’t understand why this is a new API. Why can’t we use…
 
@@ -451,7 +453,6 @@ interface VRSession : EventTarget {
   VRDisplayPose? getDisplayPose(VRCoordinateSystem coordinateSystem);
   Promise<VRPlayAreaBounds> getPlayAreaBounds(VRCoordinateSystem coordinateSystem);
 
-  Promise<DOMHighResTimeStamp> commit();
   Promise<void> endSession();
 };
 
@@ -478,7 +479,7 @@ interface VRLayer {};
 typedef (HTMLCanvasElement or
          OffscreenCanvas) VRCanvasSource;
 
-[Constructor(optional VRCanvasSource source)]
+[Constructor(VRSession session, optional VRCanvasSource source)]
 interface VRCanvasLayer : VRLayer {
   attribute VRCanvasSource source;
 
@@ -487,6 +488,8 @@ interface VRCanvasLayer : VRLayer {
 
   void setRightBounds(float left, float bottom, float right, float top);
   FrozenArray<float> getRightBounds();
+
+  Promise<DOMHighResTimeStamp> commit();
 };
 
 //
@@ -498,6 +501,7 @@ interface VRCoordinateSystem {
 };
 
 enum VRFrameOfReferenceType {
+  "HeadModel",
   "EyeLevel",
   "FloorLevel",
 };
