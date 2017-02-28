@@ -255,11 +255,11 @@ vrDisplay.addEventListener('sessionchange', vrEvent => {
 
 ```
 
-## Additional scenarios
+## Advanced functionality.
 
-A few potential application uses are described here to demonstrate more specialized API uses.
+Beyond the core APIs described above, the WebVR API also exposes several options for taking greater advantage of the VR hardware's capabilities.
 
-### 360 Photo or Video viewer
+### Orientation-only tracking
 
 A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any translation component in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "HeadModel" `VRFrameOfReference`.
 
@@ -269,7 +269,7 @@ let frameOfRef = await vrSession.createFrameOfReference("HeadModel");
 // Use frameOfRef as detailed above.
 ```
 
-### Room-scale application
+### Room-scale tracking
 
 Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR applications can take advantage of that space by creating a "FloorLevel" `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
 
@@ -316,7 +316,7 @@ Many VR devices have some way of detecting when the user has put the headset on 
 
 ```js
 vrDisplay.addEventListener('activate', vrEvent => {
-  // The activate event acts as a user gesture, so a presenting session can be
+  // The activate event acts as a user gesture, so exclusive access can be
   // requested in the even handler.
   vrDisplay.requestSession().then(session => {
     // Setup for VR presentation and start render loop.
@@ -349,6 +349,24 @@ vrSession.addEventListener('blur', vrEvent => {
 
 vrSession.addEventListener('focus', vrEvent => {
   ResumeMedia();
+});
+```
+
+### Page navigation
+
+WebVR applications can, like any web page, link to other pages. In the context of a VR scene this is handled by setting `window.location` to the desired URL when the user performs some action. If the page being linked to is not VR-capable the user will either have to remove the VR display to view it (which th UA should explicitly instruct them to do) or the page could be shown as a 2D page in a VR browser.
+
+If the page being navigated to is VR capable, however, it's frequently desriable to allow the user to immediately begin using a VR session for that page as well, so that the user feels as though they are navigating through a single continous VR experience. To achive this the page can handle the `navigate` event, fired on the `navigator.vr` object. This event provides the `VRDisplay` that the previous page was presenting to and a `VRSession` that's compatible with the one the previous page was using.
+
+To indicate to indicate that you wish to continue presenting VR content on this page the handler must call `event.preventDefault()`.
+
+```js
+navigator.vr.addEventListener('navigate', vrEvent => {
+  vrEvent.preventDefault();
+  vrDisplay = vrEvent.display;
+  vrSession = vrEvent.session;
+  // Ensure content is loaded and begin drawing.
+  OnDrawFrame();
 });
 ```
 
