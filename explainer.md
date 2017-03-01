@@ -78,15 +78,16 @@ navigator.vr.getDisplays().then(displays => {
 
 If a VRDisplay is available and has the appropriate capabilities the page will usually want to add some UI to trigger activation of "VR Presentation Mode", where the page can begin sending imagery to the display. Testing to see if the display supports the capabilities the page needs is done via the `supportsSession` call, which takes a dictionary of the desired functionality and returns whether or not the display can create a session supporting them. Querying for support this way is necessary because it allows the application to detect what VR features are available without actually engaging the sensors or beginning presentation, which can incur significant power or performance overhead on some systems and may have side effects such as launching a VR status tray or storefront.
 
-In this case, we only ask if the ability to `present` (That is, to display stereo imagery on the headset) is supported. Note that present: true is actually the dictionary default, and so does not need to be specified here. It’s made explicit in this example for clarity.
+In this case, we only ask if the ability to `present` (That is, to display stereo imagery on the headset) is supported. Note that exclusive: true is actually the dictionary default, and so does not need to be specified here. It’s made explicit in this example for clarity.
 
 ```js
 async function OnVRAvailable() {
-  // Most (but not all) VRDisplays are capable of presenting stereo imagery to
-  // the user. If the display has that capability the page will want to add an
-  // "Enter VR" button (similar to "Enter Fullscreen") that triggers the page
-  // to begin showing imagery on the headset.
-  let presentSupported = await vrDisplay.supportsSession({ present: true });
+  // Most (but not all) VRDisplays are capable of providing exclusive access,
+  // which is required to present stereo imagery to the user.
+  // If the display has that capability the page will want to add an "Enter VR"
+  // button (similar to "Enter Fullscreen") that triggers the page to begin
+  // showing imagery on the headset.
+  let presentSupported = await vrDisplay.supportsSession({ exclusive: true });
   if (presentSupported) {
     var enterVrBtn = document.createElement("button");
     enterVrBtn.innerHTML = "Enter VR";
@@ -111,8 +112,8 @@ let vrSession = null;
 
 function BeginVRSession() {
   // VRDisplay.requestSession must be called within a user gesture event
-  // like click or touch when using { present: true }.
-  vrDisplay.requestSession({ present: true }).then(session => {
+  // like click or touch when using { exclusive: true }.
+  vrDisplay.requestSession({ exclusive: true }).then(session => {
     // Store the session for use later.
     vrSession = session;
 
@@ -127,30 +128,30 @@ function BeginVRSession() {
     vrSession.depthNear = 0.1;
     vrSession.depthFar = 100.0;
 
-    // The content that will be shown on the display when presenting is
+    // The content that will be shown on the display is
     // defined by the current layer.
     vrSession.baseLayer = new VRCanvasLayer(vrSession, glCanvas);
 
     OnDrawFrame();
   }, err => {
     // May fail for a variety of reasons, including another page already
-    // presenting to the display.
+    // has exclusive access to the display.
   });
 }
 ```
 
-The page may also want to create a session that doesn't present to the display for tracking purposes. Since the `VRSession` is also what provides access to the display's position and orientation data requesting a non-presenting session enables what's referred to as "Magic Window" use cases, where the scene is rendered on the page normally but is responsive to display movement. This is especially useful for mobile devices, where moving the device can be used to look around a scene. Devices with Tango tracking capabilities may also expose 6DoF tracking this way, even when the device itself is not capable of stereo presentation.
+The page may also want to create a session that doesn't need exclusive access to the display for tracking purposes. Since the `VRSession` is also what provides access to the display's position and orientation data requesting a non-exclusive session enables what's referred to as "Magic Window" use cases, where the scene is rendered on the page normally but is responsive to display movement. This is especially useful for mobile devices, where moving the device can be used to look around a scene. Devices with Tango tracking capabilities may also expose 6DoF tracking this way, even when the device itself is not capable of stereo presentation.
 
 ```js
 function TryBeginMagicWindow() {
-  // When calling VRDisplay.requestSession with { present: false } no user
+  // When calling VRDisplay.requestSession with { exclusive: false } no user
   // gesture is needed. Support for this mode will vary, so your app should not
   // depend on it being available.
-  vrDisplay.requestSession({ present: false }).then(session => {
+  vrDisplay.requestSession({ exclusive: false }).then(session => {
     // Store the session for use later.
     vrSession = session;
 
-    // In non-presenting mode layers aren't used and the canvas should be sized
+    // In non-exclusive mode layers aren't used and the canvas should be sized
     // according to the page's needs instead of querying the size from
     // getSourceProperties.
 
@@ -169,7 +170,7 @@ It’s worth noting that requesting a new type of session will end any previousl
 
 WebVR provides tracking information via the [`VRSession.getDisplayPose`](https://w3c.github.io/webvr/#dom-vrsession-getdisplaypose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDisplayPose`](https://w3c.github.io/webvr/#interface-vrdisplaypose) can be used to render the appropriate viewpoint of the scene for both eyes.
 
-The UA maintains a VR compositor behind the scenes that is always active during a presenting session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR display at as close to the display's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`. If `commit()` is called on a canvas layer multiple times in the course of a single frame the previously committed contents are discarded and only the most recent results will be displayed.
+The UA maintains a VR compositor behind the scenes that is always active during an exclusive session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR display at as close to the display's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`. If `commit()` is called on a canvas layer multiple times in the course of a single frame the previously committed contents are discarded and only the most recent results will be displayed.
 
 `VRCanvasLayer.commit` returns a Promise, which resolves when the VR compositor is ready draw a new frame. This enables it to act as an analog for requestAnimationFrame which runs at the display's refresh rate.
 
@@ -184,8 +185,8 @@ function OnDrawFrame() {
   if (vrSession) {
     let pose = vrSession.getDisplayPose(frameOfRef);
 
-    // Is it a presenting session? If so draw the scene in stereo
-    if (vrSession.createParameters.present) {
+    // Is it an exclusive session? If so draw the scene in stereo
+    if (vrSession.createParameters.exclusive) {
       // Draw the left eye's view of the scene to the left half of the canvas.
       gl.viewport(0, 0, glCanvas.width * 0.5, glCanvas.height);
       drawScene(pose.leftProjectionMatrix, pose.leftViewMatrix);
@@ -194,7 +195,7 @@ function OnDrawFrame() {
       gl.viewport(glCanvas.width * 0.5, 0, glCanvas.width * 0.5, glCanvas.height);
       drawScene(pose.rightProjectionMatrix, pose.rightViewMatrix);
     } else {
-      // If not a presenting session, draw a tracked mono view of the scene.
+      // If not an exclusive session, draw a tracked mono view of the scene.
       gl.viewport(0, 0, glCanvas.width, glCanvas.height);
       drawScene(defaultProjectionMatrix, pose.poseModelMatrix.inverse());
     }
@@ -271,14 +272,14 @@ let frameOfRef = await vrSession.createFrameOfReference("HeadModel");
 
 ### Room-scale tracking
 
-Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR applications can take advantage of that space by creating a "FloorLevel" `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
+Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR refers to this type of bounded, floor relative play space as a "Stage". Applications can take advantage of that space by creating a Stage `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
 
 ```js
 // Try to get a frame of reference where the floor is at Y = 0
-vrSession.createFrameOfReference("FloorLevel").then(frame => {
+vrSession.createFrameOfReference("Stage").then(frame => {
   frameOfRef = frame;
 }).catch(err => {
-  // "FloorLevel" VRFrameOfReference is not supported.
+  // "Stage" VRFrameOfReference is not supported.
 
   // In this case the application will want to estimate the position of the
   // floor, perhaps by asking the user's height, and translate the reported
@@ -295,7 +296,7 @@ vrSession.createFrameOfReference("FloorLevel").then(frame => {
 In general `vrSession.getSourceProperties()` will report a resolution that is deemed by the UA to be a good balance between performance and quality. This may mean that it reports a resolution lower than necessary to get a 1:1 pixel ratio at the center of the users vision post-distortion, especially on mobile devices. For the majority of applications that's probably the right call, but some applications will want to ensure their output is as high quality as possible for the device. These will usually be simpler scenes with detailed textures, like a photo viewer or text-heavy experiences. To accomplish this the application can explicitly request a 1:1 pixel ratio from `getSourceProperties`
 
 ```js
-vrDisplay.requestSession({ present: true }).then(session => {
+vrDisplay.requestSession({ exclusive: true }).then(session => {
   // Request dimensions needed for 1:1 output pixel ratio. 0.5 would request a
   // half resolution buffer, values greater than 1.0 request a resolution that
   // will be super-sampled. Passing 0.0 or leaving to optional scale factor off
@@ -440,11 +441,11 @@ interface VRDisplay : EventTarget {
 //
 
 dictionary VRSessionCreateParametersInit {
-  boolean present = true;
+  boolean exclusive = true;
 };
 
 interface VRSessionCreateParameters {
-  readonly boolean present;
+  readonly boolean exclusive;
 };
 
 interface VRSourceProperties {
@@ -469,7 +470,6 @@ interface VRSession : EventTarget {
 
   Promise<VRFrameOfReference> createFrameOfReference(VRFrameOfReferenceType type);
   VRDisplayPose? getDisplayPose(VRCoordinateSystem coordinateSystem);
-  Promise<VRPlayAreaBounds> getPlayAreaBounds(VRCoordinateSystem coordinateSystem);
 
   Promise<void> endSession();
 };
@@ -521,18 +521,14 @@ interface VRCoordinateSystem {
 enum VRFrameOfReferenceType {
   "HeadModel",
   "EyeLevel",
-  "FloorLevel",
+  "Stage",
 };
 
 interface VRFrameOfReference : VRCoordinateSystem {
-  readonly attribute VRFrameOfReferenceType type;
+  readonly attribute VRStageBounds? bounds;
 };
 
-//
-// Play Area Bounds
-//
-
-interface VRPlayAreaBounds {
+interface VRStageBounds {
   readonly attribute float minX;
   readonly attribute float maxX;
   readonly attribute float minZ;
