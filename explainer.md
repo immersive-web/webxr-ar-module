@@ -247,7 +247,7 @@ function OnSessionEnded() {
 In addition to the application ending the session manually, the UA may force the session to end at any time for a variety of reasons. Well behaved applications should monitor the `sessionchange` event on the `VRDisplay` to detect when that happens.
 
 ```js
-vrDisplay.addEventListener('sessionchange', vrEvent => {
+vrDisplay.addEventListener('sessionchange', vrDisplayEvent => {
   // Check to see if the vrDisplay no longer has an active session.
   if (!vrDisplay.activeSession) {
     OnSessionEnded();
@@ -316,7 +316,7 @@ vrDisplay.requestSession().then(session => {
 Many VR devices have some way of detecting when the user has put the headset on or is otherwise trying to use the hardware. For example: an Oculus Rift or Vive have proximity sensors that indicate when the headset is being worn. And a Daydream device uses NFC tags to inform the phone when it's been placed in a headset. In both of these cases the user is showing a clear intent to begin using VR. A well behaved WebVR application should ideally begin presenting automatically in these scenarios. The `activate` event fired from the `VRDisplay` can be used to accomplish that.
 
 ```js
-vrDisplay.addEventListener('activate', vrEvent => {
+vrDisplay.addEventListener('activate', vrDisplayEvent => {
   // The activate event acts as a user gesture, so exclusive access can be
   // requested in the even handler.
   vrDisplay.requestSession().then(session => {
@@ -328,7 +328,7 @@ vrDisplay.addEventListener('activate', vrEvent => {
 Similarly, the `deactivate` event can be used to detect when the user removes the headset, at which point the application may want to end the session.
 
 ```js
-vrDisplay.addEventListener('deactivate', vrEvent => {
+vrDisplay.addEventListener('deactivate', vrDisplayEvent => {
   if (vrDisplay.activeSession) {
     vrDisplay.activeSession.endSession().then(OnSessionEnded);
   }
@@ -342,13 +342,13 @@ The UA may temporarily suspend a session if allowing the page to continue readin
 In general the page should continue producing frames like normal whenever `commit()` resolves. The UA may use these frames as part of it's tracked environment, though they may be partially occluded, blurred, or otherwise manipulated. Still, some applications may wish to respond to this suspension by halting game logic, purposefully obscuring content, or pausing media. To do so, the application should listen for the `blur` and `focus` events from the `VRSession`. For example, a 360 media player would do this to pause the video/audio whenever the UA has obscured it.
 
 ```js
-vrSession.addEventListener('blur', vrEvent => {
+vrSession.addEventListener('blur', vrSessionEvent => {
   PauseMedia();
   // Allow the render loop to keep running, but just keep rendering the last frame.
   // Render loop may not run at full framerate.
 });
 
-vrSession.addEventListener('focus', vrEvent => {
+vrSession.addEventListener('focus', vrSessionEvent => {
   ResumeMedia();
 });
 ```
@@ -362,10 +362,11 @@ If the page being navigated to is VR capable, however, it's frequently desriable
 To indicate to indicate that you wish to continue presenting VR content on this page the handler must call `event.preventDefault()`.
 
 ```js
-navigator.vr.addEventListener('navigate', vrEvent => {
-  vrEvent.preventDefault();
-  vrDisplay = vrEvent.display;
-  vrSession = vrEvent.session;
+navigator.vr.addEventListener('navigate', vrSessionEvent => {
+  vrSessionEvent.preventDefault();
+  vrSession = vrSessionEvent.session;
+  vrDisplay = vrSession.display;
+
   // Ensure content is loaded and begin drawing.
   OnDrawFrame();
 });
@@ -455,6 +456,7 @@ interface VRSourceProperties {
 };
 
 interface VRSession : EventTarget {
+  readonly attribute VRDisplay display;
   readonly attribute VRSessionCreateParameters createParameters;
 
   attribute double depthNear;
@@ -536,17 +538,24 @@ interface VRStageBounds {
 };
 
 //
-// VREvent
+// Events
 //
 
-[Constructor(DOMString type, VREventInit eventInitDict)]
-interface VREvent : Event {
+[Constructor(DOMString type, VRDisplayEventInit eventInitDict)]
+interface VRDisplayEvent : Event {
   readonly attribute VRDisplay display;
-  readonly attribute VRSession? session;
 };
 
-dictionary VREventInit : EventInit {
+dictionary VRDisplayEventInit : EventInit {
   required VRDisplay display;
-  VRSession? session;
+};
+
+[Constructor(DOMString type, VRSessionEventInit eventInitDict)]
+interface VRSessionEvent : Event {
+  readonly attribute VRSession session;
+};
+
+dictionary VRSessionEventInit : EventInit {
+  required VRSession session;
 };
 ```
