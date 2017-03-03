@@ -101,7 +101,7 @@ async function OnVRAvailable() {
 
 Clicking that button will attempt to initiate a [`VRSession`](https://w3c.github.io/webvr/#interface-vrsession), which manages input and output for the display. When creating a session with `VRDisplay.requestSession` the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` returned true for a given dictionary then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture or another page currently having an active session for the same display.)
 
-The content to present to the display is defined by a [`VRLayer`](https://w3c.github.io/webvr/#interface-vrlayer). In the initial version of the spec only one layer type, `VRCanvasLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layer, at which point this would act like the `firstChild` attribute of a DOM element.)
+The content to present to the display is defined by a [`VRLayer`](https://w3c.github.io/webvr/#interface-vrlayer). In the initial version of the spec only one layer type, `VRCanvasLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layers, at which point this would act like the `firstChild` attribute of a DOM element.)
 
 ```js
 // Initially only canvases with WebGL contexts will be supported.
@@ -170,9 +170,11 @@ It’s worth noting that requesting a new type of session will end any previousl
 
 WebVR provides tracking information via the [`VRSession.getDisplayPose`](https://w3c.github.io/webvr/#dom-vrsession-getdisplaypose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDisplayPose`](https://w3c.github.io/webvr/#interface-vrdisplaypose) can be used to render the appropriate viewpoint of the scene for both eyes.
 
-The UA maintains a VR compositor behind the scenes that is always active during an exclusive session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR display at as close to the display's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`. If `commit()` is called on a canvas layer multiple times in the course of a single frame the previously committed contents are discarded and only the most recent results will be displayed.
+Unless the "HeadModel" Frame of Reference is being used, the session is not guaranteed to return a pose. (It may have lost tracking, for instance.) In that case the app will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a HeadModel Frame of Reference, or simply not update.
 
-`VRCanvasLayer.commit` returns a Promise, which resolves when the VR compositor is ready draw a new frame. This enables it to act as an analog for requestAnimationFrame which runs at the display's refresh rate.
+The UA maintains a VR compositor behind the scenes that is always active during an exclusive session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR display at as close to the display's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`.
+
+`VRCanvasLayer.commit` returns a Promise, which resolves when the VR compositor is ready draw a new frame. This enables it to act as an analog for requestAnimationFrame which runs at the display's refresh rate. If the layer's source is not dirty when `commit()` is called no new imagery is sent to the compositor but a valid promise is still returned. If `commit()` is called on a canvas layer multiple times in the course of a single frame only the image from the first commit is used, and the subsequent ones are discarded but a valid promise is still returned.
 
 ```js
 // The Frame of Reference indicates what the matrices and coordinates the
@@ -184,6 +186,12 @@ function OnDrawFrame() {
   // Do we have an active session?
   if (vrSession) {
     let pose = vrSession.getDisplayPose(frameOfRef);
+
+    // If no pose is provided, exit early without drawing new content.
+    if (!pose) {
+      vrSession.baseLayer.commit().then(OnDrawFrame);
+      return;
+    }
 
     // Do we have exclusive access to the display? If so draw the in stereo.
     if (vrSession.createParameters.exclusive) {
