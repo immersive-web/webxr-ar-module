@@ -270,9 +270,9 @@ let frameOfRef = await vrSession.createFrameOfReference("HeadModel");
 // Use frameOfRef as detailed above.
 ```
 
-### Room-scale tracking
+### Room-scale tracking and boundaries
 
-Some VR displays have knowledge about the room they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR refers to this type of bounded, floor relative play space as a "Stage". Applications can take advantage of that space by creating a Stage `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
+Some VR displays have been configured with details about the area they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR refers to this type of bounded, floor relative play space as a "Stage". Applications can take advantage of that space by creating a Stage `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDisplays` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
 
 ```js
 // Try to get a frame of reference where the floor is at Y = 0
@@ -289,6 +289,27 @@ vrSession.createFrameOfReference("Stage").then(frame => {
 });
 
 // Use frameOfRef as detailed above, but render the floor of the virtual space at Y = 0;
+```
+
+When using a Stage `VRFrameOfReference` the display will frequently have a configured "safe area" that the user can move around in without fear of bumping into real world objects. WebVR can communicate the rough boundaries of this space via the `VRFrameOfReference.bounds` attribute. It describes an axis-aligned bounding rectangle which represents the known safe space with the `minX`, `maxX`, `minZ`, and `maxZ` values. The values reported are relative to the Stage origin, but do not necessarily contain it. (Future iterations of the API may include more detailed polygonal bounds as well.) The `bounds` attribute is null if the bounds are unavailable for the current frame of reference.
+
+If the `bounds` are available the application should try to ensure that all content the user needs to interact with can be reached while staying inside the described bounds.
+
+```js
+if(frameOfRef.bounds) {
+  // Reposition the scene to match the reported bounds. Assumes a scene with a
+  // floor who's left back corner is at (0, 0, 0) and is 1 meter square.
+  scene.translateX(frameOfRef.bounds.minX);
+  scene.translateZ(frameOfRef.bounds.minZ);
+  scene.scaleX(frameOfRef.bounds.maxX - frameOfRef.bounds.minX);
+  scene.scaleZ(frameOfRef.bounds.maxZ - frameOfRef.bounds.minZ);
+} else {
+  // Use default bounds. (2 meters square, centered at the origin)
+  scene.translateX(-1.0);
+  scene.translateZ(-1.0);
+  scene.scaleX(2.0);
+  scene.scaleZ(2.0);
+}
 ```
 
 ### High quality rendering
