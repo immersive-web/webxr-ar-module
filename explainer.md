@@ -78,17 +78,17 @@ navigator.vr.getDisplays().then(displays => {
 
 If a VRDisplay is available and has the appropriate capabilities the page will usually want to add some UI to trigger activation of "VR Presentation Mode", where the page can begin sending imagery to the display. Testing to see if the display supports the capabilities the page needs is done via the `supportsSession` call, which takes a dictionary of the desired functionality and returns whether or not the display can create a session supporting them. Querying for support this way is necessary because it allows the application to detect what VR features are available without actually engaging the sensors or beginning presentation, which can incur significant power or performance overhead on some systems and may have side effects such as launching a VR status tray or storefront.
 
-In this case, we only ask if the ability to `present` (That is, to display stereo imagery on the headset) is supported. Note that exclusive: true is actually the dictionary default, and so does not need to be specified here. It’s made explicit in this example for clarity.
+In this case, we only ask if the ability to have `exclusive` access (Which includes the ability to display imagery on the headset). Note that `exclusive: true` is actually the dictionary default, and so does not need to be specified here. It’s made explicit in this example for clarity.
 
 ```js
 async function OnVRAvailable() {
-  // Most (but not all) VRDisplays are capable of providing exclusive access,
-  // which is required to present stereo imagery to the user.
-  // If the display has that capability the page will want to add an "Enter VR"
-  // button (similar to "Enter Fullscreen") that triggers the page to begin
-  // showing imagery on the headset.
-  let presentSupported = await vrDisplay.supportsSession({ exclusive: true });
-  if (presentSupported) {
+  // Most (but not all) VRDisplays are capable of granting exclusive access to
+  // the device, which is necessary to show imagery in a headset. If the display
+  // has that capability the page will want to add an "Enter VR" button (similar
+  // to "Enter Fullscreen") that triggers the page to begin showing imagery on
+  // the headset.
+  let exclusiveMode = await vrDisplay.supportsSession({ exclusive: true });
+  if (exclusiveMode) {
     var enterVrBtn = document.createElement("button");
     enterVrBtn.innerHTML = "Enter VR";
     enterVrBtn.addEventListener("click", BeginVRSession());
@@ -112,8 +112,8 @@ let vrSession = null;
 
 function BeginVRSession() {
   // VRDisplay.requestSession must be called within a user gesture event
-  // like click or touch when using { exclusive: true }.
-  vrDisplay.requestSession({ exclusive: true }).then(session => {
+  // like click or touch when requesting exclusive access.
+  vrDisplay.requestSession().then(session => {
     // Store the session for use later.
     vrSession = session;
 
@@ -135,7 +135,7 @@ function BeginVRSession() {
     OnDrawFrame();
   }, err => {
     // May fail for a variety of reasons, including another page already
-    // has exclusive access to the display.
+    // having exclusive access to the display.
   });
 }
 ```
@@ -185,7 +185,7 @@ function OnDrawFrame() {
   if (vrSession) {
     let pose = vrSession.getDisplayPose(frameOfRef);
 
-    // Is it an exclusive session? If so draw the scene in stereo
+    // Do we have exclusive access to the display? If so draw the in stereo.
     if (vrSession.createParameters.exclusive) {
       // Draw the left eye's view of the scene to the left half of the canvas.
       gl.viewport(0, 0, glCanvas.width * 0.5, glCanvas.height);
@@ -231,7 +231,7 @@ function EndVRSession() {
   }
 }
 
-// Restore the page to normal after VR presentation is finished.
+// Restore the page to normal after exclusive access has been released.
 function OnSessionEnded() {
   // Restore the canvas to it's original resolution.
   glCanvas.width = defaultCanvasWidth;
@@ -296,7 +296,7 @@ vrSession.createFrameOfReference("Stage").then(frame => {
 In general `vrSession.getSourceProperties()` will report a resolution that is deemed by the UA to be a good balance between performance and quality. This may mean that it reports a resolution lower than necessary to get a 1:1 pixel ratio at the center of the users vision post-distortion, especially on mobile devices. For the majority of applications that's probably the right call, but some applications will want to ensure their output is as high quality as possible for the device. These will usually be simpler scenes with detailed textures, like a photo viewer or text-heavy experiences. To accomplish this the application can explicitly request a 1:1 pixel ratio from `getSourceProperties`
 
 ```js
-vrDisplay.requestSession({ exclusive: true }).then(session => {
+vrDisplay.requestSession().then(session => {
   // Request dimensions needed for 1:1 output pixel ratio. 0.5 would request a
   // half resolution buffer, values greater than 1.0 request a resolution that
   // will be super-sampled. Passing 0.0 or leaving to optional scale factor off
