@@ -382,6 +382,20 @@ vrSession.addEventListener('focus', vrSessionEvent => {
 });
 ```
 
+### Responding to a reset pose
+
+Most VR systems have a mechanism for allowing the user to reset which direction is "forward." For security and comfort reasons the WebVR API has no mechanism to trigger a pose reset programatically, but it can still be useful to know when it happens. Pages may want to take advantage of the visual discontinuity to reposition the user or other elements in the scene into a more natural position for the new orientation. Pages may also want to use the opportunity to clear or reset any additional transforms that have been applied if no longer needed.
+
+A page can be notified when a pose reset happens by listening for the 'resetpose' event from the 'VRSession'.
+
+```js
+vrSession.addEventListener('resetpose', vrSessionEvent => {
+  // For an app that allows artificial Yaw rotation, this would be a perfect
+  // time to reset that.
+  ResetYawTransform();
+});
+```
+
 ### Page navigation
 
 WebVR applications can, like any web page, link to other pages. In the context of a VR scene this is handled by setting `window.location` to the desired URL when the user performs some action. If the page being linked to is not VR-capable the user will either have to remove the VR display to view it (which th UA should explicitly instruct them to do) or the page could be shown as a 2D page in a VR browser.
