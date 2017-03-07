@@ -493,7 +493,7 @@ interface VRSessionCreateParameters {
 };
 
 interface VRSourceProperties {
-  readonly attribute float scale;
+  readonly attribute double scale;
   readonly attribute unsigned long width;
   readonly attribute unsigned long height;
 };
@@ -511,7 +511,7 @@ interface VRSession : EventTarget {
   attribute EventHandler onfocus;
   attribute EventHandler onresetpose;
 
-  VRSourceProperties getSourceProperties(optional float scale);
+  VRSourceProperties getSourceProperties(optional double scale);
 
   Promise<VRFrameOfReference> createFrameOfReference(VRFrameOfReferenceType type);
   VRDisplayPose? getDisplayPose(VRCoordinateSystem coordinateSystem);
@@ -546,11 +546,11 @@ typedef (HTMLCanvasElement or
 interface VRCanvasLayer : VRLayer {
   attribute VRCanvasSource source;
 
-  void setLeftBounds(float left, float bottom, float right, float top);
-  FrozenArray<float> getLeftBounds();
+  void setLeftBounds(double left, double bottom, double right, double top);
+  FrozenArray<double> getLeftBounds();
 
-  void setRightBounds(float left, float bottom, float right, float top);
-  FrozenArray<float> getRightBounds();
+  void setRightBounds(double left, double bottom, double right, double top);
+  FrozenArray<double> getRightBounds();
 
   Promise<DOMHighResTimeStamp> commit();
 };
@@ -574,10 +574,10 @@ interface VRFrameOfReference : VRCoordinateSystem {
 };
 
 interface VRStageBounds {
-  readonly attribute float minX;
-  readonly attribute float maxX;
-  readonly attribute float minZ;
-  readonly attribute float maxZ;
+  readonly attribute double minX;
+  readonly attribute double maxX;
+  readonly attribute double minZ;
+  readonly attribute double maxZ;
 };
 
 //
