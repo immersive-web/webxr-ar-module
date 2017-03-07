@@ -34,6 +34,10 @@ urlPrefix: https://www.w3.org/TR/html51/webappapis.html
     type: dfn; text: window.requestAnimationFrame
 urlPrefix: https://www.w3.org/TR/html5/
     type: interface; text: Document
+urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
+    type: typedef; text: uniformMatrix4fv
+urlPrefix: https://drafts.fxtf.org/geometry/
+    type: interface; text: DOMMatrix
 
 spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
     type: interface
@@ -140,17 +144,17 @@ A {{VRDisplay}} represents a physical unit of VR hardware that can present image
 
 <dfn attribute for="VRDisplay">isExternal</dfn> returns true if the {{VRDisplay}} hardware is a separate physical display from the system's main display.
 
-A {{VRDisplay}} has an <dfn for="VRDisplay">active session</dfn>, initially <code>null</code>, which is the {{VRSession}} that is currently accessing and/or presenting to the display. Only one session can be active for a given display at a time.
+A {{VRDisplay}} has an <dfn for="VRDisplay">active session</dfn>, initially <code>null</code>, which is the {{VRSession}} that is currently accessing and/or presenting to the display. Only one session per page can be active for a given display at a time.
 
 In order to set or retrieve the [=active session=] a page must <dfn>request a session</dfn> from the display using the <dfn method for="VRDisplay">requestSession()</dfn> method. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
  1. If the requested [=session description=] is not supported by the display, <a>reject</a> |promise| and abort these steps.
  1. If the display's [=active session=] matches the requested [=session description=], <a>resolve</a> |promise| with the [=active session=] and abort these steps.
  1. If the requested [=session description=] requires a user gesture and the algorithm is not <a>triggered by user activation</a> <a>reject</a> |promise| and abort these steps.
- 1. If another page has an [=presenting=] [=active session=] for the display, <a>reject</a> |promise| and abort these steps.
+ 1. If another page has an [=exclusive session=] for the display, <a>reject</a> |promise| and abort these steps.
  1. Let |nextSession| be a new {{VRSession}} which matches the [=session description=].
  1. Let |prevSession| be the current [=active session=].
- 1. <a>Fire an event</a> named {{sessionchange}} on the display with it's {{VREvent/session}} attribute initialized to |nextSession|.
+ 1. <a>Fire an event</a> named {{sessionchange}} on the display with it's {{VRSessionEvent/session}} attribute initialized to |nextSession|.
  1. Set the [=active session=] to |nextSession|.
  1. If |prevSession| is not null, [=end the session=].
  1. <a>Resolve</a> |promise| with the [=active session=].
@@ -197,6 +201,7 @@ VRSession {#vrsession-interface}
 <pre class="idl">
 interface VRSession : EventTarget {
   // Attributes
+  readonly attribute VRDisplay display;
   readonly attribute VRSessionCreateParameters createParameters;
 
   attribute double depthNear;
@@ -204,10 +209,9 @@ interface VRSession : EventTarget {
   attribute VRLayer baseLayer;
 
   // Methods
-  VRSourceProperties getSourceProperties(optional float scale);
+  VRSourceProperties getSourceProperties(optional double scale);
   Promise&lt;VRFrameOfReference&gt; createFrameOfReference(VRFrameOfReferenceType type);
   VRDisplayPose? getDisplayPose(VRCoordinateSystem coordinateSystem);
-  Promise&lt;VRPlayAreaBounds&gt; getPlayAreaBounds(VRCoordinateSystem coordinateSystem);
   Promise&lt;void&gt; endSession();
 
   // Events
@@ -217,9 +221,11 @@ interface VRSession : EventTarget {
 };
 </pre>
 
-A {{VRSession}} is the interface through with most interaction with a {{VRDisplay}} happens. A page must [=request a session=] from the {{VRDisplay}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the display pose=], query information about the user's environment and, if it's a [=presenting session=], define imagery to show on the {{VRDisplay}}.
+A {{VRSession}} is the interface through with most interaction with a {{VRDisplay}} happens. A page must [=request a session=] from the {{VRDisplay}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the display pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{VRDisplay}}.
 
 The UA, when possible, SHOULD NOT initialize display tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the VR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of VR hardware in order to advertise VR features. Not all VR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
+
+<dfn attribute for="VRSession">display</dfn>
 
 <dfn attribute for="VRSession">createParameters</dfn>
 
@@ -236,8 +242,6 @@ The UA, when possible, SHOULD NOT initialize display tracking or rendering capab
 <dfn method for="VRSession">getDisplayPose()</dfn>
 
 Issue: Document how to <dfn>poll the display pose</dfn>
-
-<dfn method for="VRSession">getPlayAreaBounds()</dfn>
 
 <dfn method for="VRSession">endSession()</dfn>
 
@@ -260,19 +264,19 @@ The {{VRSessionCreateParameters}} interface
 
 <pre class="idl">
 dictionary VRSessionCreateParametersInit {
-  required boolean present = true;
+  required boolean exclusive = true;
 };
 
 interface VRSessionCreateParameters {
-  readonly attribute boolean present;
+  readonly attribute boolean exclusive;
 };
 </pre>
 
-<dfn attribute for="VRSessionCreateParameters">present</dfn>
-
 The {{VRSessionCreateParametersInit}} dictionary provides a <dfn>session description</dfn>, indicating the desired capabilities of a session to be returned from {{requestSession()}}.
 
-Issue: Document restrictions and capabilities of a <dfn>presenting session</dfn>
+<dfn attribute for="VRSessionCreateParameters">exclusive</dfn>
+
+Issue: Document restrictions and capabilities of an <dfn>exclusive session</dfn>
 
 The VR Compositor {#compositor}
 -----------------
@@ -311,6 +315,40 @@ Then, the frame loop performs the following steps while the session is active:
  1. Once the promise has been resolved, return to step 1.
 
 
+Pose {#pose}
+====
+
+Matrices {#matrices}
+--------
+
+WebVR provides various transforms in the form of <dfn lt="matrix|matrices">matrices</dfn>. WebVR matrices are always 4x4 and given as 16 element {{Float32Array}}s in column major order. They may be passed directly to WebGL's {{uniformMatrix4fv}} function, used to create an equivalent {{DOMMatrix}}, or used with a variety of third party math libraries.
+
+
+VRDisplayPose {#vrdisplaypose-interface}
+-------------
+
+<pre class="idl">
+interface VRDisplayPose {
+  readonly attribute Float32Array leftProjectionMatrix;
+  readonly attribute Float32Array leftViewMatrix;
+
+  readonly attribute Float32Array rightProjectionMatrix;
+  readonly attribute Float32Array rightViewMatrix;
+
+  readonly attribute Float32Array poseModelMatrix;
+};
+</pre>
+
+A {{VRDisplayPose}} describes the position and orientation of a {{VRDisplay}} relative to the {{VRCoordinateSystem}} it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of a VR scene.
+
+The <dfn attribute for="VRDisplayPose">leftProjectionMatrix</dfn> and <dfn attribute for="VRDisplayPose">rightProjectionMatrix</dfn>  are [=matrices=] describing the projection to be used for the left and right eye's rendering, respectively. It is highly recommended that applications use this matrix without modification. Failure to use these projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
+
+The <dfn attribute for="VRDisplayPose">leftViewMatrix</dfn> and
+<dfn attribute for="VRDisplayPose">rightViewMatrix</dfn> are [=matrices=] describing the view transform to be used for the left and right eye's rendering, respectively. The matrices represent the inverse of the model matrix of the associated eye. This value may be passed
+
+<dfn attribute for="VRDisplayPose">poseModelMatrix</dfn>
+
+
 Layers {#layers}
 ======
 
@@ -336,11 +374,11 @@ interface VRCanvasLayer : VRLayer {
   attribute VRCanvasSource source;
 
   // Methods
-  void setLeftBounds(float left, float bottom, float right, float top);
-  FrozenArray&lt;float&gt; getLeftBounds();
+  void setLeftBounds(double left, double bottom, double right, double top);
+  FrozenArray&lt;double&gt; getLeftBounds();
 
-  void setRightBounds(float left, float bottom, float right, float top);
-  FrozenArray&lt;float&gt; getRightBounds();
+  void setRightBounds(double left, double bottom, double right, double top);
+  FrozenArray&lt;double&gt; getRightBounds();
 
   Promise&lt;DOMHighResTimeStamp&gt; commit();
 };
@@ -360,9 +398,9 @@ Invoking the <dfn method for="VRCanvasLayer">setLeftBounds()</dfn> method with a
 
 Invoking the <dfn method for="VRCanvasLayer">setRightBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=right bounds=] |left|, |bottom|, |right|, and |top| respectively.
 
-Invoking the <dfn method for="VRCanvasLayer">getLeftBounds()</dfn> method returns a {{FrozenArray}} of floats containing the [=left bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
+Invoking the <dfn method for="VRCanvasLayer">getLeftBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=left bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
 
-Invoking the <dfn method for="VRCanvasLayer">getRightBounds()</dfn> method returns a {{FrozenArray}} of floats containing the [=right bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
+Invoking the <dfn method for="VRCanvasLayer">getRightBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=right bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
 
 <dfn method for="VRCanvasLayer">commit()</dfn> captures the {{VRCanvasLayer/source}} canvas's bitmap and submits it to the [=VR compositor=]. Calling {{commit()}} has the same effect on the source canvas as any other operation that uses it's bitmap, and canvases created without <code>preserveDrawingBuffer</code> set to <code>true</code> will be cleared.
 
@@ -373,7 +411,7 @@ VRSourceProperties {#vrsourceproperties-interface}
 
 <pre class="idl">
 interface VRSourceProperties {
-  readonly attribute float scale;
+  readonly attribute double scale;
   readonly attribute unsigned long width;
   readonly attribute unsigned long height;
 };
@@ -396,6 +434,7 @@ canvasLayer.source.height = sourceProperties.height;
 </pre>
 </div>
 
+
 Coordinate Systems {#coordinatesystems}
 ==================
 
@@ -410,6 +449,7 @@ interface VRCoordinateSystem {
 };
 </pre>
 
+
 VRFrameOfReference {#vrframeofreference-interface}
 ------------------
 
@@ -417,105 +457,96 @@ VRFrameOfReference {#vrframeofreference-interface}
 enum VRFrameOfReferenceType {
   "HeadModel",
   "EyeLevel",
-  "FloorLevel",
+  "Stage",
 };
 
 interface VRFrameOfReference : VRCoordinateSystem {
-  readonly attribute VRFrameOfReferenceType type;
+  readonly attribute VRStageBounds? bounds;
 };
 </pre>
 
 
-VRDisplayPose {#vrdisplaypose-interface}
--------------
-
-<pre class="idl">
-interface VRDisplayPose {
-  readonly attribute Float32Array leftProjectionMatrix;
-  readonly attribute Float32Array leftViewMatrix;
-
-  readonly attribute Float32Array rightProjectionMatrix;
-  readonly attribute Float32Array rightViewMatrix;
-
-  readonly attribute Float32Array poseModelMatrix;
-};
-</pre>
-
-<dfn attribute for="VRDisplayPose">leftProjectionMatrix</dfn>
-<dfn attribute for="VRDisplayPose">rightProjectionMatrix</dfn>
-
-<dfn attribute for="VRDisplayPose">leftViewMatrix</dfn>
-<dfn attribute for="VRDisplayPose">rightViewMatrix</dfn>
-
-<dfn attribute for="VRDisplayPose">poseModelMatrix</dfn>
-
-
-VRPlayAreaBounds {#vrplayareabounds-interface}
+VRStageBounds {#vrstagebounds-interface}
 ----------------
 
 <pre class="idl">
-interface VRPlayAreaBounds {
-  readonly attribute float minX;
-  readonly attribute float maxX;
-  readonly attribute float minZ;
-  readonly attribute float maxZ;
+interface VRStageBounds {
+  readonly attribute double minX;
+  readonly attribute double maxX;
+  readonly attribute double minZ;
+  readonly attribute double maxZ;
 };
 </pre>
 
-The {{VRPlayAreaBounds}} interface describes the size and shape of the user's play area for devices that support room-scale experiences. This is the area that the user can be expected to safely be able to move within.
+The {{VRStageBounds}} interface describes a space known as a "<dfn for="VRStageBounds">Stage</dfn>". The [=stage=] is a bounded, floor relative play space that the user can be expected to safely be able to move within. Other VR platforms sometimes refer to this concept as "room scale" or "standing VR".
 
-<dfn attribute for="VRPlayAreaBounds">minX</dfn>, <dfn attribute for="VRPlayAreaBounds">maxX</dfn>, <dfn attribute for="VRPlayAreaBounds">minZ</dfn>, and <dfn attribute for="VRPlayAreaBounds">maxZ</dfn> define an axis-aligned rectangle on the floor relative to the origin of the {{VRCoordinateSystem}} the bounds were queried with. The origin MAY be outside the bounds rectangle. {{minX}} MUST be less than {{maxX}} and {{minZ}} MUST be less than {{maxZ}}.
+<dfn attribute for="VRStageBounds">minX</dfn>, <dfn attribute for="VRStageBounds">maxX</dfn>, <dfn attribute for="VRStageBounds">minZ</dfn>, and <dfn attribute for="VRStageBounds">maxZ</dfn> define an axis-aligned rectangle on the floor relative to the origin of the {{VRCoordinateSystem}} the bounds were queried with. The origin MAY be outside the bounds rectangle. {{minX}} MUST be less than {{maxX}} and {{minZ}} MUST be less than {{maxZ}}.
 
-Note: Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe.
+Note: Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe if their physical surroundings allow for it.
 
 
 Events {#events}
 ========
 
-VREvent {#vrevent-interface}
+VRDisplayEvent {#vrdisplayevent-interface}
 -------
 
 <pre class="idl">
-[Constructor(DOMString type, VREventInit eventInitDict)]
-interface VREvent : Event {
+[Constructor(DOMString type, VRDisplayEventInit eventInitDict)]
+interface VRDisplayEvent : Event {
   readonly attribute VRDisplay display;
-  readonly attribute VRSession? session;
 };
 
-dictionary VREventInit : EventInit {
+dictionary VRDisplayEventInit : EventInit {
   required VRDisplay display;
-  VRSession? session;
 };
 </pre>
 
-<dfn attribute for="VREvent">display</dfn>
+<dfn attribute for="VRDisplayEvent">display</dfn>
 The {{VRDisplay}} associated with this event.
 
-<dfn attribute for="VREvent">session</dfn>
+<dfn attribute for="VRDisplayEvent">session</dfn>
 The {{VRSession}} associated with this event, if any.
+
+VRSessionEvent {#vrsessionevent-interface}
+-------
+
+<pre class="idl">
+[Constructor(DOMString type, VRSessionEventInit eventInitDict)]
+interface VRSessionEvent : Event {
+  readonly attribute VRSession session;
+};
+
+dictionary VRSessionEventInit : EventInit {
+  required VRSession session;
+};
+</pre>
+
+<dfn attribute for="VRSessionEvent">session</dfn>
+The {{VRSession}} associated with this event.
 
 Event Types {#event-types}
 -----------
 
-The UA MUST provide the following new events. The corresponding events must be of type {{VREvent}}. Registration for and firing of the events must follow the usual behavior of DOM4 Events.
+The UA MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.
 
-The UA MAY fire a <dfn event for="VR">displayconnect</dfn> event on the {{VR}} object to indicate that a {{VRDisplay}} has been connected.
+The UA MAY fire a <dfn event for="VR">displayconnect</dfn> event on the {{VR}} object to indicate that a {{VRDisplay}} has been connected. The event MUST be of type {{VRDisplayEvent}}.
 
-The UA MAY dispatch a <dfn event for="VR">displaydisconnect</dfn> event on the {{VR}} object to indicate that a {{VRDisplay}} has been disconnected.
+The UA MAY dispatch a <dfn event for="VR">displaydisconnect</dfn> event on the {{VR}} object to indicate that a {{VRDisplay}} has been disconnected. The event MUST be of type {{VRDisplayEvent}}.
 
-The UA MAY dispatch a <dfn event for="VR">navigate</dfn> event on the {{VR}} object to indicate that the current page has been navigated to from a browsing context that was actively presenting VR content. The event's {{VREvent/session}} MUST be an instance of a {{VRSession}} with identical capabilities to the active session from the previous page, such that presenting to the session will feel like a seamless transition to the user.
+The UA MAY dispatch a <dfn event for="VR">navigate</dfn> event on the {{VR}} object to indicate that the current page has been navigated to from a browsing context that was actively presenting VR content. The event's {{VRSessionEvent/session}} MUST be an instance of a {{VRSession}} with identical capabilities to the [=active session=] from the previous page, such that presenting to the session will feel like a seamless transition to the user. The event MUST be of type {{VRSessionEvent}}.
 
-The UA MUST dispatch a <dfn event for="VRDisplay">sessionchange</dfn> event on a {{VRDisplay}} to indicate that the {{VRDisplay}} has begun or ended a new {{VRSession}}. This event should not fire on subsequent calls to {{requestSession()}} if the returned session is the same as the current {{activeSession}}.
+The UA MUST dispatch a <dfn event for="VRDisplay">sessionchange</dfn> event on a {{VRDisplay}} to indicate that the {{VRDisplay}} has begun or ended a new {{VRSession}}. This event should not fire on subsequent calls to {{requestSession()}} if the returned session is the same as the current {{activeSession}}. The event MUST be of type {{VRSessionEvent}}.
 
-The UA MAY dispatch a <dfn event for="VRDisplay">activate</dfn> event on a {{VRDisplay}} to indicate that something has occurred which suggests the {{VRDisplay}} should be begin a presenting session. For example, if the {{VRDisplay}} is capable of detecting when the user has put it on, this event SHOULD fire when they do so.
+The UA MAY dispatch a <dfn event for="VRDisplay">activate</dfn> event on a {{VRDisplay}} to indicate that something has occurred which suggests the {{VRDisplay}} should be begin an [=exclusive session=]. For example, if the {{VRDisplay}} is capable of detecting when the user has put it on, this event SHOULD fire when they do so. The event MUST be of type {{VRDisplayEvent}}.
 
-The UA MAY dispatch a <dfn event for="VRDisplay">deactivate</dfn> event on a {{VRDisplay}} to indicate that something has occurred which suggests the {{VRDisplay}} should end the active session. For example, if the {{VRDisplay}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so.
+The UA MAY dispatch a <dfn event for="VRDisplay">deactivate</dfn> event on a {{VRDisplay}} to indicate that something has occurred which suggests the {{VRDisplay}} should end the active session. For example, if the {{VRDisplay}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{VRDisplayEvent}}.
 
-A UA MAY dispatch a <dfn event for="VRSession">blur</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has been suspended by the UA, OS, or VR hardware. While a {{VRSession}} is blurred it remains active but it may have it's frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions.
+A UA MAY dispatch a <dfn event for="VRSession">blur</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has been suspended by the UA, OS, or VR hardware. While a {{VRSession}} is blurred it remains active but it may have it's frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type {{VRSessionEvent}}.
 
-A UA MAY dispatch a <dfn event for="VRSession">focus</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has resumed after being suspended.
+A UA MAY dispatch a <dfn event for="VRSession">focus</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has resumed after being suspended. The event MUST be of type {{VRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="VRSession">resetpose</dfn> event on a {{VRSession}} when the system resets the {{VRDisplay}}'s position or orientation.
+A UA MUST dispatch a <dfn event for="VRSession">resetpose</dfn> event on a {{VRSession}} when the system resets the {{VRDisplay}}'s position or orientation. The event MUST be of type {{VRSessionEvent}}.
 
 Navigator interface extension {#navigator-interface}
 =============================

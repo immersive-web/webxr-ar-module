@@ -22,7 +22,7 @@ Enable Virtual Reality applications on the web by allowing pages to do the follo
 * Take full advantage of Augmented Reality devices.
 * Build “[The Metaverse](https://en.wikipedia.org/wiki/Metaverse).”
 
-Also, while input is an important part of the full VR experience it's a large enough topic that it should be handled separately, and thus will not be covered in-depth by this document.
+Also, while input is an important part of the full VR experience it's a large enough topic that it should be handled separately, and thus will not be covered in-depth by this document. It's worth noting, however, that it may be necessary to have a basic understanding of how VR input will be handled in order for the WebVR spec to be complete.
 
 ## Use cases
 Given the marketing of early VR hardware to gamers, one may naturally assume that this API will primarily be used for development of games. While that’s certainly something we expect to see given the history of the WebGL API, which is tightly related, we’ll probably see far more “long tail”-style content than large-scale games. Broadly, VR content on the web will likely cover areas that do not cleanly fit into the app-store models being used as the primary distribution methods by all the major VR hardware providers, or where the content itself is not permitted by the store guidelines. Some high level examples are:

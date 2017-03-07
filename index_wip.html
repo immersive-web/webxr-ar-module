@@ -1176,7 +1176,7 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version be6f14c185c768fa6a5effdfb3aff9ec2fa0b134" name="generator">
+  <meta content="Bikeshed version 7e43b56c4e1ede2eed18417e4d8def49e6eb4bd8" name="generator">
 <style>/* style-md-lists */
 
             /* This is a weird hack for me not yet following the commonmark spec
@@ -1423,7 +1423,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebVR</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-03-02">2 March 2017</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-03-07">7 March 2017</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1494,27 +1494,33 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       <li><a href="#compositor"><span class="secno">4.3</span> <span class="content">The VR Compositor</span></a>
      </ol>
     <li>
-     <a href="#layers"><span class="secno">5</span> <span class="content">Layers</span></a>
+     <a href="#pose"><span class="secno">5</span> <span class="content">Pose</span></a>
      <ol class="toc">
-      <li><a href="#vrlayer-interface"><span class="secno">5.1</span> <span class="content">VRLayer</span></a>
-      <li><a href="#vrcanvaslayer-interface"><span class="secno">5.2</span> <span class="content">VRCanvasLayer</span></a>
-      <li><a href="#vrsourceproperties-interface"><span class="secno">5.3</span> <span class="content">VRSourceProperties</span></a>
+      <li><a href="#matrices"><span class="secno">5.1</span> <span class="content">Matrices</span></a>
+      <li><a href="#vrdisplaypose-interface"><span class="secno">5.2</span> <span class="content">VRDisplayPose</span></a>
      </ol>
     <li>
-     <a href="#coordinatesystems"><span class="secno">6</span> <span class="content">Coordinate Systems</span></a>
+     <a href="#layers"><span class="secno">6</span> <span class="content">Layers</span></a>
      <ol class="toc">
-      <li><a href="#vrcoordinatesystem-interface"><span class="secno">6.1</span> <span class="content">VRCoordinateSystem</span></a>
-      <li><a href="#vrframeofreference-interface"><span class="secno">6.2</span> <span class="content">VRFrameOfReference</span></a>
-      <li><a href="#vrdisplaypose-interface"><span class="secno">6.3</span> <span class="content">VRDisplayPose</span></a>
-      <li><a href="#vrplayareabounds-interface"><span class="secno">6.4</span> <span class="content">VRPlayAreaBounds</span></a>
+      <li><a href="#vrlayer-interface"><span class="secno">6.1</span> <span class="content">VRLayer</span></a>
+      <li><a href="#vrcanvaslayer-interface"><span class="secno">6.2</span> <span class="content">VRCanvasLayer</span></a>
+      <li><a href="#vrsourceproperties-interface"><span class="secno">6.3</span> <span class="content">VRSourceProperties</span></a>
      </ol>
     <li>
-     <a href="#events"><span class="secno">7</span> <span class="content">Events</span></a>
+     <a href="#coordinatesystems"><span class="secno">7</span> <span class="content">Coordinate Systems</span></a>
      <ol class="toc">
-      <li><a href="#vrevent-interface"><span class="secno">7.1</span> <span class="content">VREvent</span></a>
-      <li><a href="#event-types"><span class="secno">7.2</span> <span class="content">Event Types</span></a>
+      <li><a href="#vrcoordinatesystem-interface"><span class="secno">7.1</span> <span class="content">VRCoordinateSystem</span></a>
+      <li><a href="#vrframeofreference-interface"><span class="secno">7.2</span> <span class="content">VRFrameOfReference</span></a>
+      <li><a href="#vrstagebounds-interface"><span class="secno">7.3</span> <span class="content">VRStageBounds</span></a>
      </ol>
-    <li><a href="#navigator-interface"><span class="secno">8</span> <span class="content">Navigator interface extension</span></a>
+    <li>
+     <a href="#events"><span class="secno">8</span> <span class="content">Events</span></a>
+     <ol class="toc">
+      <li><a href="#vrdisplayevent-interface"><span class="secno">8.1</span> <span class="content">VRDisplayEvent</span></a>
+      <li><a href="#vrsessionevent-interface"><span class="secno">8.2</span> <span class="content">VRSessionEvent</span></a>
+      <li><a href="#event-types"><span class="secno">8.3</span> <span class="content">Event Types</span></a>
+     </ol>
+    <li><a href="#navigator-interface"><span class="secno">9</span> <span class="content">Navigator interface extension</span></a>
     <li><a href="#conformance"><span class="secno"></span> <span class="content"> Conformance</span></a>
     <li>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
@@ -1588,7 +1594,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
    <p>A <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-4">VRDisplay</a></code> represents a physical unit of VR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" id="dom-vrdisplay-displayname">displayName</dfn> returns a human readable string describing the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-5">VRDisplay</a></code>.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" id="dom-vrdisplay-isexternal">isExternal</dfn> returns true if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-6">VRDisplay</a></code> hardware is a separate physical display from the system’s main display.</p>
-   <p>A <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-7">VRDisplay</a></code> has an <dfn class="dfn-paneled" data-dfn-for="VRDisplay" data-dfn-type="dfn" data-noexport="" id="vrdisplay-active-session">active session</dfn>, initially <code>null</code>, which is the <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-4">VRSession</a></code> that is currently accessing and/or presenting to the display. Only one session can be active for a given display at a time.</p>
+   <p>A <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-7">VRDisplay</a></code> has an <dfn class="dfn-paneled" data-dfn-for="VRDisplay" data-dfn-type="dfn" data-noexport="" id="vrdisplay-active-session">active session</dfn>, initially <code>null</code>, which is the <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-4">VRSession</a></code> that is currently accessing and/or presenting to the display. Only one session per page can be active for a given display at a time.</p>
    <p>In order to set or retrieve the <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-1">active session</a> a page must <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="request-a-session">request a session</dfn> from the display using the <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="method" data-export="" id="dom-vrdisplay-requestsession">requestSession()</dfn> method. When invoked it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a>:</p>
    <ol>
     <li data-md="">
@@ -1598,19 +1604,19 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
     <li data-md="">
      <p>If the requested <a data-link-type="dfn" href="#session-description" id="ref-for-session-description-3">session description</a> requires a user gesture and the algorithm is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/interaction.html#triggered-by-user-activation">triggered by user activation</a> <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise">reject</a> <var>promise</var> and abort these steps.</p>
     <li data-md="">
-     <p>If another page has an <a data-link-type="dfn" href="https://heycam.github.io/webidl/#dfn-present">presenting</a> <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-4">active session</a> for the display, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise">reject</a> <var>promise</var> and abort these steps.</p>
+     <p>If another page has an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session-1">exclusive session</a> for the display, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise">reject</a> <var>promise</var> and abort these steps.</p>
     <li data-md="">
      <p>Let <var>nextSession</var> be a new <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-5">VRSession</a></code> which matches the <a data-link-type="dfn" href="#session-description" id="ref-for-session-description-4">session description</a>.</p>
     <li data-md="">
-     <p>Let <var>prevSession</var> be the current <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-5">active session</a>.</p>
+     <p>Let <var>prevSession</var> be the current <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-4">active session</a>.</p>
     <li data-md="">
-     <p><a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-event-fire">Fire an event</a> named <code class="idl"><a data-link-type="idl" href="#eventdef-vrdisplay-sessionchange" id="ref-for-eventdef-vrdisplay-sessionchange-1">sessionchange</a></code> on the display with it’s <code class="idl"><a data-link-type="idl" href="#dom-vrevent-session" id="ref-for-dom-vrevent-session-1">session</a></code> attribute initialized to <var>nextSession</var>.</p>
+     <p><a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-event-fire">Fire an event</a> named <code class="idl"><a data-link-type="idl" href="#eventdef-vrdisplay-sessionchange" id="ref-for-eventdef-vrdisplay-sessionchange-1">sessionchange</a></code> on the display with it’s <code class="idl"><a data-link-type="idl" href="#dom-vrsessionevent-session" id="ref-for-dom-vrsessionevent-session-1">session</a></code> attribute initialized to <var>nextSession</var>.</p>
     <li data-md="">
-     <p>Set the <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-6">active session</a> to <var>nextSession</var>.</p>
+     <p>Set the <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-5">active session</a> to <var>nextSession</var>.</p>
     <li data-md="">
      <p>If <var>prevSession</var> is not null, <a data-link-type="dfn" href="#end-the-session" id="ref-for-end-the-session-1">end the session</a>.</p>
     <li data-md="">
-     <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise">Resolve</a> <var>promise</var> with the <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-7">active session</a>.</p>
+     <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise">Resolve</a> <var>promise</var> with the <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-6">active session</a>.</p>
    </ol>
    <p>When the <dfn class="idl-code" data-dfn-for="VRDisplay" data-dfn-type="method" data-export="" id="dom-vrdisplay-supportssession">supportsSession()<a class="self-link" href="#dom-vrdisplay-supportssession"></a></dfn> method is invoked it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel">in parallel</a>:</p>
    <ol>
@@ -1620,7 +1626,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
      <p>Else <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise">resolve</a> <var>promise</var> with false.</p>
    </ol>
    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" id="dom-vrdisplay-activesession">activeSession</dfn> IDL attribute’s getter
-MUST return the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-8">VRDisplay</a></code>'s <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-8">active session</a>.</p>
+MUST return the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-8">VRDisplay</a></code>'s <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-7">active session</a>.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" id="dom-vrdisplay-onsessionchange">onsessionchange</dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-vrdisplay-sessionchange" id="ref-for-eventdef-vrdisplay-sessionchange-2">sessionchange</a></code> event type.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" id="dom-vrdisplay-onactivate">onactivate</dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-vrdisplay-activate" id="ref-for-eventdef-vrdisplay-activate-1">activate</a></code> event type.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="attribute" data-export="" id="dom-vrdisplay-ondeactivate">ondeactivate</dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-vrdisplay-deactivate" id="ref-for-eventdef-vrdisplay-deactivate-1">deactivate</a></code> event type.</p>
@@ -1642,6 +1648,7 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
    <h3 class="heading settled" data-level="4.1" id="vrsession-interface"><span class="secno">4.1. </span><span class="content">VRSession</span><a class="self-link" href="#vrsession-interface"></a></h3>
 <pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrsession">VRSession</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget">EventTarget</a> {
   // Attributes
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-10">VRDisplay</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplay" href="#dom-vrsession-display" id="ref-for-dom-vrsession-display-1">display</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrsessioncreateparameters" id="ref-for-vrsessioncreateparameters-1">VRSessionCreateParameters</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRSessionCreateParameters" href="#dom-vrsession-createparameters" id="ref-for-dom-vrsession-createparameters-1">createParameters</a>;
 
   <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-type="double" href="#dom-vrsession-depthnear" id="ref-for-dom-vrsession-depthnear-1">depthNear</a>;
@@ -1649,10 +1656,9 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrlayer" id="ref-for-vrlayer-1">VRLayer</a> <a class="nv idl-code" data-link-type="attribute" data-type="VRLayer" href="#dom-vrsession-baselayer" id="ref-for-dom-vrsession-baselayer-1">baseLayer</a>;
 
   // Methods
-  <a class="n" data-link-type="idl-name" href="#vrsourceproperties" id="ref-for-vrsourceproperties-1">VRSourceProperties</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrsession-getsourceproperties" id="ref-for-dom-vrsession-getsourceproperties-1">getSourceProperties</a>(<span class="kt">optional</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRSession/getSourceProperties(scale), VRSession/getSourceProperties()" data-dfn-type="argument" data-export="" id="dom-vrsession-getsourceproperties-scale-scale">scale<a class="self-link" href="#dom-vrsession-getsourceproperties-scale-scale"></a></dfn>);
+  <a class="n" data-link-type="idl-name" href="#vrsourceproperties" id="ref-for-vrsourceproperties-1">VRSourceProperties</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrsession-getsourceproperties" id="ref-for-dom-vrsession-getsourceproperties-1">getSourceProperties</a>(<span class="kt">optional</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRSession/getSourceProperties(scale), VRSession/getSourceProperties()" data-dfn-type="argument" data-export="" id="dom-vrsession-getsourceproperties-scale-scale">scale<a class="self-link" href="#dom-vrsession-getsourceproperties-scale-scale"></a></dfn>);
   <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#vrframeofreference" id="ref-for-vrframeofreference-1">VRFrameOfReference</a>> <dfn class="nv idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" data-lt="createFrameOfReference(type)" id="dom-vrsession-createframeofreference">createFrameOfReference<a class="self-link" href="#dom-vrsession-createframeofreference"></a></dfn>(<a class="n" data-link-type="idl-name" href="#enumdef-vrframeofreferencetype" id="ref-for-enumdef-vrframeofreferencetype-1">VRFrameOfReferenceType</a> <dfn class="nv idl-code" data-dfn-for="VRSession/createFrameOfReference(type)" data-dfn-type="argument" data-export="" id="dom-vrsession-createframeofreference-type-type">type<a class="self-link" href="#dom-vrsession-createframeofreference-type-type"></a></dfn>);
   <a class="n" data-link-type="idl-name" href="#vrdisplaypose" id="ref-for-vrdisplaypose-1">VRDisplayPose</a>? <dfn class="nv idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" data-lt="getDisplayPose(coordinateSystem)" id="dom-vrsession-getdisplaypose">getDisplayPose<a class="self-link" href="#dom-vrsession-getdisplaypose"></a></dfn>(<a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-1">VRCoordinateSystem</a> <dfn class="nv idl-code" data-dfn-for="VRSession/getDisplayPose(coordinateSystem)" data-dfn-type="argument" data-export="" id="dom-vrsession-getdisplaypose-coordinatesystem-coordinatesystem">coordinateSystem<a class="self-link" href="#dom-vrsession-getdisplaypose-coordinatesystem-coordinatesystem"></a></dfn>);
-  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#vrplayareabounds" id="ref-for-vrplayareabounds-1">VRPlayAreaBounds</a>> <dfn class="nv idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" data-lt="getPlayAreaBounds(coordinateSystem)" id="dom-vrsession-getplayareabounds">getPlayAreaBounds<a class="self-link" href="#dom-vrsession-getplayareabounds"></a></dfn>(<a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-2">VRCoordinateSystem</a> <dfn class="nv idl-code" data-dfn-for="VRSession/getPlayAreaBounds(coordinateSystem)" data-dfn-type="argument" data-export="" id="dom-vrsession-getplayareabounds-coordinatesystem-coordinatesystem">coordinateSystem<a class="self-link" href="#dom-vrsession-getplayareabounds-coordinatesystem-coordinatesystem"></a></dfn>);
   <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-vrsession-endsession" id="ref-for-dom-vrsession-endsession-1">endSession</a>();
 
   // Events
@@ -1661,8 +1667,9 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-vrsession-onresetpose" id="ref-for-dom-vrsession-onresetpose-1">onresetpose</a>;
 };
 </pre>
-   <p>A <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-6">VRSession</a></code> is the interface through with most interaction with a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-10">VRDisplay</a></code> happens. A page must <a data-link-type="dfn" href="#request-a-session" id="ref-for-request-a-session-1">request a session</a> from the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-11">VRDisplay</a></code>, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to <a data-link-type="dfn" href="#poll-the-display-pose" id="ref-for-poll-the-display-pose-1">poll the display pose</a>, query information about the user’s environment and, if it’s a <a data-link-type="dfn" href="#presenting-session" id="ref-for-presenting-session-1">presenting session</a>, define imagery to show on the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-12">VRDisplay</a></code>.</p>
+   <p>A <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-6">VRSession</a></code> is the interface through with most interaction with a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-11">VRDisplay</a></code> happens. A page must <a data-link-type="dfn" href="#request-a-session" id="ref-for-request-a-session-1">request a session</a> from the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-12">VRDisplay</a></code>, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to <a data-link-type="dfn" href="#poll-the-display-pose" id="ref-for-poll-the-display-pose-1">poll the display pose</a>, query information about the user’s environment and, if it’s an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session-2">exclusive session</a>, define imagery to show on the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-13">VRDisplay</a></code>.</p>
    <p>The UA, when possible, SHOULD NOT initialize display tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the VR systems when they’re not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of VR hardware in order to advertise VR features. Not all VR platforms offer ways to detect the hardware’s presence without initializing tracking, however, so this is only a strong recommendation.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="attribute" data-export="" id="dom-vrsession-display">display</dfn></p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="attribute" data-export="" id="dom-vrsession-createparameters">createParameters</dfn></p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="attribute" data-export="" id="dom-vrsession-depthnear">depthNear</dfn></p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="attribute" data-export="" id="dom-vrsession-depthfar">depthFar</dfn></p>
@@ -1671,7 +1678,6 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
    <p><dfn class="idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" id="dom-vrsession-createframeofreference">createFrameOfReference()<a class="self-link" href="#dom-vrsession-createframeofreference"></a></dfn></p>
    <p><dfn class="idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" id="dom-vrsession-getdisplaypose">getDisplayPose()<a class="self-link" href="#dom-vrsession-getdisplaypose"></a></dfn></p>
    <p class="issue" id="issue-5f76c7b9"><a class="self-link" href="#issue-5f76c7b9"></a> Document how to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="poll-the-display-pose">poll the display pose</dfn></p>
-   <p><dfn class="idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" id="dom-vrsession-getplayareabounds">getPlayAreaBounds()<a class="self-link" href="#dom-vrsession-getplayareabounds"></a></dfn></p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="method" data-export="" id="dom-vrsession-endsession">endSession()</dfn></p>
    <p class="issue" id="issue-398b8983"><a class="self-link" href="#issue-398b8983"></a> Document what happens when we <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="end-the-session">end the session</dfn></p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="attribute" data-export="" id="dom-vrsession-onblur">onblur</dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-vrsession-blur" id="ref-for-eventdef-vrsession-blur-1">blur</a></code> event type.</p>
@@ -1682,16 +1688,16 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
    <h3 class="heading settled" data-level="4.2" id="vrsessioncreateparameters-interface"><span class="secno">4.2. </span><span class="content">VRSessionCreateParameters</span><a class="self-link" href="#vrsessioncreateparameters-interface"></a></h3>
    <p>The <code class="idl"><a data-link-type="idl" href="#vrsessioncreateparameters" id="ref-for-vrsessioncreateparameters-2">VRSessionCreateParameters</a></code> interface</p>
 <pre class="idl highlight def"><span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-vrsessioncreateparametersinit">VRSessionCreateParametersInit</dfn> {
-  <span class="kt">required</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <dfn class="nv idl-code" data-default="true" data-dfn-for="VRSessionCreateParametersInit" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-vrsessioncreateparametersinit-present">present<a class="self-link" href="#dom-vrsessioncreateparametersinit-present"></a></dfn> = <span class="kt">true</span>;
+  <span class="kt">required</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <dfn class="nv idl-code" data-default="true" data-dfn-for="VRSessionCreateParametersInit" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-vrsessioncreateparametersinit-exclusive">exclusive<a class="self-link" href="#dom-vrsessioncreateparametersinit-exclusive"></a></dfn> = <span class="kt">true</span>;
 };
 
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrsessioncreateparameters">VRSessionCreateParameters</dfn> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-vrsessioncreateparameters-present" id="ref-for-dom-vrsessioncreateparameters-present-1">present</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-vrsessioncreateparameters-exclusive" id="ref-for-dom-vrsessioncreateparameters-exclusive-1">exclusive</a>;
 };
 </pre>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSessionCreateParameters" data-dfn-type="attribute" data-export="" id="dom-vrsessioncreateparameters-present">present</dfn></p>
    <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-vrsessioncreateparametersinit" id="ref-for-dictdef-vrsessioncreateparametersinit-3">VRSessionCreateParametersInit</a></code> dictionary provides a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="session-description">session description</dfn>, indicating the desired capabilities of a session to be returned from <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-requestsession" id="ref-for-dom-vrdisplay-requestsession-1">requestSession()</a></code>.</p>
-   <p class="issue" id="issue-ff3443b2"><a class="self-link" href="#issue-ff3443b2"></a> Document restrictions and capabilities of a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="presenting-session">presenting session</dfn></p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSessionCreateParameters" data-dfn-type="attribute" data-export="" id="dom-vrsessioncreateparameters-exclusive">exclusive</dfn></p>
+   <p class="issue" id="issue-8db9fdff"><a class="self-link" href="#issue-8db9fdff"></a> Document restrictions and capabilities of an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="exclusive-session">exclusive session</dfn></p>
    <h3 class="heading settled" data-level="4.3" id="compositor"><span class="secno">4.3. </span><span class="content">The VR Compositor</span><a class="self-link" href="#compositor"></a></h3>
    <p class="issue" id="issue-88218c4e"><a class="self-link" href="#issue-88218c4e"></a> This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.</p>
    <p>The UA MUST maintain a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="vr-compositor">VR Compositor</dfn> which handles layer composition and frame timing. The compositor MUST use an independent rendering context who’s state is isolated from that of the WebGL contexts provided as <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-1">VRCanvasLayer</a></code> sources to prevent the page from corruption the compositor state or reading back content from other pages.</p>
@@ -1738,78 +1744,10 @@ navigator<span class="p">.</span>vr<span class="p">.</span>getDisplays<span clas
     <li data-md="">
      <p>Once the promise has been resolved, return to step 1.</p>
    </ol>
-   <h2 class="heading settled" data-level="5" id="layers"><span class="secno">5. </span><span class="content">Layers</span><a class="self-link" href="#layers"></a></h2>
-   <h3 class="heading settled" data-level="5.1" id="vrlayer-interface"><span class="secno">5.1. </span><span class="content">VRLayer</span><a class="self-link" href="#vrlayer-interface"></a></h3>
-<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrlayer">VRLayer</dfn> {};
-</pre>
-   <p>A <code class="idl"><a data-link-type="idl" href="#vrlayer" id="ref-for-vrlayer-2">VRLayer</a></code> defines a source of bitmap images and a description of how the image is to be rendered in the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-13">VRDisplay</a></code>. Initially only one type of layer, the <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-2">VRCanvasLayer</a></code>, is defined but future revisions of the spec may extend the available layer types.</p>
-   <h3 class="heading settled" data-level="5.2" id="vrcanvaslayer-interface"><span class="secno">5.2. </span><span class="content">VRCanvasLayer</span><a class="self-link" href="#vrcanvaslayer-interface"></a></h3>
-<pre class="idl highlight def"><span class="kt">typedef</span> (<a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/scripting.html#htmlcanvaselement">HTMLCanvasElement</a> <span class="kt">or</span>
-         <a class="n" data-link-type="idl-name" href="https://wiki.whatwg.org/wiki/OffscreenCanvas#offscreencanvas">OffscreenCanvas</a>) <dfn class="nv dfn-paneled idl-code" data-dfn-type="typedef" data-export="" id="typedefdef-vrcanvassource">VRCanvasSource</dfn>;
-
-[<dfn class="nv idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="constructor" data-export="" data-lt="VRCanvasLayer(session, source)|VRCanvasLayer(session)" id="dom-vrcanvaslayer-vrcanvaslayer">Constructor<a class="self-link" href="#dom-vrcanvaslayer-vrcanvaslayer"></a></dfn>(<a class="n" data-link-type="idl-name" href="#vrsession" id="ref-for-vrsession-7">VRSession</a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/VRCanvasLayer(session, source)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-vrcanvaslayer-session-source-session">session<a class="self-link" href="#dom-vrcanvaslayer-vrcanvaslayer-session-source-session"></a></dfn>, <span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#typedefdef-vrcanvassource" id="ref-for-typedefdef-vrcanvassource-1">VRCanvasSource</a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/VRCanvasLayer(session, source)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-vrcanvaslayer-session-source-source">source<a class="self-link" href="#dom-vrcanvaslayer-vrcanvaslayer-session-source-source"></a></dfn>)]
-<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrcanvaslayer">VRCanvasLayer</dfn> : <a class="n" data-link-type="idl-name" href="#vrlayer" id="ref-for-vrlayer-3">VRLayer</a> {
-  // Attributes
-  <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#typedefdef-vrcanvassource" id="ref-for-typedefdef-vrcanvassource-2">VRCanvasSource</a> <a class="nv idl-code" data-link-type="attribute" data-type="VRCanvasSource" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-2">source</a>;
-
-  // Methods
-  <span class="kt">void</span> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" data-lt="setLeftBounds(left, bottom, right, top)" id="dom-vrcanvaslayer-setleftbounds">setLeftBounds<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-left">left<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-left"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-bottom">bottom<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-bottom"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-right">right<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-right"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-top">top<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-top"></a></dfn>);
-  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getleftbounds" id="ref-for-dom-vrcanvaslayer-getleftbounds-1">getLeftBounds</a>();
-
-  <span class="kt">void</span> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" data-lt="setRightBounds(left, bottom, right, top)" id="dom-vrcanvaslayer-setrightbounds">setRightBounds<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-left">left<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-left"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-bottom">bottom<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-bottom"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-right">right<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-right"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-top">top<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-top"></a></dfn>);
-  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getrightbounds" id="ref-for-dom-vrcanvaslayer-getrightbounds-1">getRightBounds</a>();
-
-  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="http://www.w3.org/TR/hr-time/#domhighrestimestamp">DOMHighResTimeStamp</a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-commit" id="ref-for-dom-vrcanvaslayer-commit-3">commit</a>();
-};
-</pre>
-   <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="attribute" data-export="" id="dom-vrcanvaslayer-source">source</dfn> defines a canvas whose contents will be presented by the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-14">VRDisplay</a></code> when <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-commit" id="ref-for-dom-vrcanvaslayer-commit-4">commit()</a></code> is called.</p>
-   <p>Upon being set as the source of a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-3">VRCanvasLayer</a></code> the source’s context MAY be lost. Additionally the current backbuffer of the source’s context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.</p>
-   <p class="note" role="note"><span>Note:</span> In order to make use of a canvas in the event of context loss, the application should handle the <code>webglcontextlost</code> event on the source canvas and prevent the event’s default behavior. The application should then listen for a <code>webglcontextrestored</code> event to be fired and reload any necessary graphical resources in response.</p>
-   <p>The layer describes two viewports: the <dfn class="dfn-paneled" data-dfn-for="VRCanvasLayer" data-dfn-type="dfn" data-noexport="" id="vrcanvaslayer-left-bounds">Left Bounds</dfn> and <dfn class="dfn-paneled" data-dfn-for="VRCanvasLayer" data-dfn-type="dfn" data-noexport="" id="vrcanvaslayer-right-bounds">Right Bounds</dfn>. Each bounds contians four values (<var>left</var>, <var>bottom</var>, <var>right</var>, <var>top</var>) defining the texture bounds within the source canvas to present to the related eye in UV space (0.0 - 1.0) with the bottom left corner of the canvas at (0, 0) and the top right corner of the canvas at (1, 1). If the left bound is greater or equal to the right bound or the bottom bound is greater than or equal to the top bound the viewport is considered to be empty and no content from this layer will be shown on the related eye of the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-15">VRDisplay</a></code>.</p>
-   <p>The <a data-link-type="dfn" href="#vrcanvaslayer-left-bounds" id="ref-for-vrcanvaslayer-left-bounds-1">left bounds</a> MUST default to <code>[0.0, 0.0, 0.5, 1.0]</code> and the <a data-link-type="dfn" href="#vrcanvaslayer-right-bounds" id="ref-for-vrcanvaslayer-right-bounds-1">right bounds</a> MUST default to <code>[0.5, 0.0, 1.0, 1.0]</code>.</p>
-   <p>Invoking the <dfn class="idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-setleftbounds">setLeftBounds()<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds"></a></dfn> method with a given <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> value sets the values of the <a data-link-type="dfn" href="#vrcanvaslayer-left-bounds" id="ref-for-vrcanvaslayer-left-bounds-2">left bounds</a> <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> respectively.</p>
-   <p>Invoking the <dfn class="idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-setrightbounds">setRightBounds()<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds"></a></dfn> method with a given <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> value sets the values of the <a data-link-type="dfn" href="#vrcanvaslayer-right-bounds" id="ref-for-vrcanvaslayer-right-bounds-2">right bounds</a> <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> respectively.</p>
-   <p>Invoking the <dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-getleftbounds">getLeftBounds()</dfn> method returns a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-frozen-array">FrozenArray</a></code> of floats containing the <a data-link-type="dfn" href="#vrcanvaslayer-left-bounds" id="ref-for-vrcanvaslayer-left-bounds-3">left bounds</a> to <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> values in that order.</p>
-   <p>Invoking the <dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-getrightbounds">getRightBounds()</dfn> method returns a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-frozen-array">FrozenArray</a></code> of floats containing the <a data-link-type="dfn" href="#vrcanvaslayer-right-bounds" id="ref-for-vrcanvaslayer-right-bounds-3">right bounds</a> to <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> values in that order.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-commit">commit()</dfn> captures the <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-3">source</a></code> canvas’s bitmap and submits it to the <a data-link-type="dfn" href="#vr-compositor" id="ref-for-vr-compositor-2">VR compositor</a>. Calling <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-commit" id="ref-for-dom-vrcanvaslayer-commit-5">commit()</a></code> has the same effect on the source canvas as any other operation that uses it’s bitmap, and canvases created without <code>preserveDrawingBuffer</code> set to <code>true</code> will be cleared.</p>
-   <p class="issue" id="issue-78a990eb"><a class="self-link" href="#issue-78a990eb"></a> Need an example snippet of a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-4">VRCanvasLayer</a></code> render loop</p>
-   <h3 class="heading settled" data-level="5.3" id="vrsourceproperties-interface"><span class="secno">5.3. </span><span class="content">VRSourceProperties</span><a class="self-link" href="#vrsourceproperties-interface"></a></h3>
-<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrsourceproperties">VRSourceProperties</dfn> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrsourceproperties-scale" id="ref-for-dom-vrsourceproperties-scale-1">scale</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><span class="kt">unsigned</span> <span class="kt">long</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vrsourceproperties-width" id="ref-for-dom-vrsourceproperties-width-1">width</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><span class="kt">unsigned</span> <span class="kt">long</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vrsourceproperties-height" id="ref-for-dom-vrsourceproperties-height-1">height</a>;
-};
-</pre>
-   <p>The <code class="idl"><a data-link-type="idl" href="#vrsourceproperties" id="ref-for-vrsourceproperties-2">VRSourceProperties</a></code> interface describes the ideal dimensions of a layer image for a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-16">VRDisplay</a></code>, taking into account the native resolution of the display and the distortion required to counteract an distortion introduced by the display’s optics.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSourceProperties" data-dfn-type="attribute" data-export="" id="dom-vrsourceproperties-scale">scale</dfn> returns the scale provided to <code class="idl"><a data-link-type="idl" href="#dom-vrsession-getsourceproperties" id="ref-for-dom-vrsession-getsourceproperties-2">getSourceProperties()</a></code> if one was given. If not, it returns the scale recommended by the system.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSourceProperties" data-dfn-type="attribute" data-export="" id="dom-vrsourceproperties-width">width</dfn> and <dfn class="dfn-paneled idl-code" data-dfn-for="VRSourceProperties" data-dfn-type="attribute" data-export="" id="dom-vrsourceproperties-height">height</dfn> describe the dimensions a layer image should ideally be in order to appear on the display at a <code class="idl"><a data-link-type="idl" href="#dom-vrsourceproperties-scale" id="ref-for-dom-vrsourceproperties-scale-2">scale</a></code>:1 pixel ratio. The given dimenions MUST only account for a single eye.</p>
-   <div class="example" id="example-f92b9692">
-    <a class="self-link" href="#example-f92b9692"></a> Because a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-5">VRCanvasLayer</a></code> contains content for both eyes, the <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-4">source</a></code> canvas should be twice the size perscribed by the <code class="idl"><a data-link-type="idl" href="#vrsourceproperties" id="ref-for-vrsourceproperties-3">VRSourceProperties</a></code> in order to get the desired output. 
-<pre class="lang-js highlight"><span class="kd">var</span> sourceProperties <span class="o">=</span> vrSession<span class="p">.</span>getSourceProperties<span class="p">(</span><span class="p">)</span><span class="p">;</span>
-
-canvasLayer<span class="p">.</span>source<span class="p">.</span>width <span class="o">=</span> sourceProperties<span class="p">.</span>width <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
-canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span class="o">=</span> sourceProperties<span class="p">.</span>height<span class="p">;</span>
-</pre>
-   </div>
-   <h2 class="heading settled" data-level="6" id="coordinatesystems"><span class="secno">6. </span><span class="content">Coordinate Systems</span><a class="self-link" href="#coordinatesystems"></a></h2>
-   <p class="issue" id="issue-908c5434"><a class="self-link" href="#issue-908c5434"></a> Pretty much nothing in this section is documented</p>
-   <h3 class="heading settled" data-level="6.1" id="vrcoordinatesystem-interface"><span class="secno">6.1. </span><span class="content">VRCoordinateSystem</span><a class="self-link" href="#vrcoordinatesystem-interface"></a></h3>
-<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrcoordinatesystem">VRCoordinateSystem</dfn> {
-  <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a>? <dfn class="nv idl-code" data-dfn-for="VRCoordinateSystem" data-dfn-type="method" data-export="" data-lt="getTransformTo(other)" id="dom-vrcoordinatesystem-gettransformto">getTransformTo<a class="self-link" href="#dom-vrcoordinatesystem-gettransformto"></a></dfn>(<a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-3">VRCoordinateSystem</a> <dfn class="nv idl-code" data-dfn-for="VRCoordinateSystem/getTransformTo(other)" data-dfn-type="argument" data-export="" id="dom-vrcoordinatesystem-gettransformto-other-other">other<a class="self-link" href="#dom-vrcoordinatesystem-gettransformto-other-other"></a></dfn>);
-};
-</pre>
-   <h3 class="heading settled" data-level="6.2" id="vrframeofreference-interface"><span class="secno">6.2. </span><span class="content">VRFrameOfReference</span><a class="self-link" href="#vrframeofreference-interface"></a></h3>
-<pre class="idl highlight def"><span class="kt">enum</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="enum" data-export="" id="enumdef-vrframeofreferencetype">VRFrameOfReferenceType</dfn> {
-  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;HeadModel&quot;|HeadModel" id="dom-vrframeofreferencetype-headmodel">"HeadModel"<a class="self-link" href="#dom-vrframeofreferencetype-headmodel"></a></dfn>,
-  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;EyeLevel&quot;|EyeLevel" id="dom-vrframeofreferencetype-eyelevel">"EyeLevel"<a class="self-link" href="#dom-vrframeofreferencetype-eyelevel"></a></dfn>,
-  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;FloorLevel&quot;|FloorLevel" id="dom-vrframeofreferencetype-floorlevel">"FloorLevel"<a class="self-link" href="#dom-vrframeofreferencetype-floorlevel"></a></dfn>,
-};
-
-<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrframeofreference">VRFrameOfReference</dfn> : <a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-4">VRCoordinateSystem</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#enumdef-vrframeofreferencetype" id="ref-for-enumdef-vrframeofreferencetype-2">VRFrameOfReferenceType</a> <dfn class="nv idl-code" data-dfn-for="VRFrameOfReference" data-dfn-type="attribute" data-export="" data-readonly="" data-type="VRFrameOfReferenceType" id="dom-vrframeofreference-type">type<a class="self-link" href="#dom-vrframeofreference-type"></a></dfn>;
-};
-</pre>
-   <h3 class="heading settled" data-level="6.3" id="vrdisplaypose-interface"><span class="secno">6.3. </span><span class="content">VRDisplayPose</span><a class="self-link" href="#vrdisplaypose-interface"></a></h3>
+   <h2 class="heading settled" data-level="5" id="pose"><span class="secno">5. </span><span class="content">Pose</span><a class="self-link" href="#pose"></a></h2>
+   <h3 class="heading settled" data-level="5.1" id="matrices"><span class="secno">5.1. </span><span class="content">Matrices</span><a class="self-link" href="#matrices"></a></h3>
+   <p>WebVR provides various transforms in the form of <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="matrix|matrices" data-noexport="" id="matrix">matrices</dfn>. WebVR matrices are always 4x4 and given as 16 element <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-Float32Array">Float32Array</a></code>s in column major order. They may be passed directly to WebGL’s <code class="idl"><a data-link-type="idl" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#uniformmatrix4fv">uniformMatrix4fv</a></code> function, used to create an equivalent <code class="idl"><a data-link-type="idl" href="https://drafts.fxtf.org/geometry/#dommatrix">DOMMatrix</a></code>, or used with a variety of third party math libraries.</p>
+   <h3 class="heading settled" data-level="5.2" id="vrdisplaypose-interface"><span class="secno">5.2. </span><span class="content">VRDisplayPose</span><a class="self-link" href="#vrdisplaypose-interface"></a></h3>
 <pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrdisplaypose">VRDisplayPose</dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-leftprojectionmatrix" id="ref-for-dom-vrdisplaypose-leftprojectionmatrix-1">leftProjectionMatrix</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-leftviewmatrix" id="ref-for-dom-vrdisplaypose-leftviewmatrix-1">leftViewMatrix</a>;
@@ -1820,47 +1758,128 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-posemodelmatrix" id="ref-for-dom-vrdisplaypose-posemodelmatrix-1">poseModelMatrix</a>;
 };
 </pre>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-leftprojectionmatrix">leftProjectionMatrix</dfn> <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-rightprojectionmatrix">rightProjectionMatrix</dfn></p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-leftviewmatrix">leftViewMatrix</dfn> <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-rightviewmatrix">rightViewMatrix</dfn></p>
+   <p>A <code class="idl"><a data-link-type="idl" href="#vrdisplaypose" id="ref-for-vrdisplaypose-2">VRDisplayPose</a></code> describes the position and orientation of a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-14">VRDisplay</a></code> relative to the <code class="idl"><a data-link-type="idl" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-2">VRCoordinateSystem</a></code> it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of a VR scene.</p>
+   <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-leftprojectionmatrix">leftProjectionMatrix</dfn> and <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-rightprojectionmatrix">rightProjectionMatrix</dfn> are <a data-link-type="dfn" href="#matrix" id="ref-for-matrix-1">matrices</a> describing the projection to be used for the left and right eye’s rendering, respectively. It is highly recommended that applications use this matrix without modification. Failure to use these projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.</p>
+   <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-leftviewmatrix">leftViewMatrix</dfn> and <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-rightviewmatrix">rightViewMatrix</dfn> are <a data-link-type="dfn" href="#matrix" id="ref-for-matrix-2">matrices</a> describing the view transform to be used for the left and right eye’s rendering, respectively. The matrices represent the inverse of the model matrix of the associated eye. This value may be passed</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayPose" data-dfn-type="attribute" data-export="" id="dom-vrdisplaypose-posemodelmatrix">poseModelMatrix</dfn></p>
-   <h3 class="heading settled" data-level="6.4" id="vrplayareabounds-interface"><span class="secno">6.4. </span><span class="content">VRPlayAreaBounds</span><a class="self-link" href="#vrplayareabounds-interface"></a></h3>
-<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrplayareabounds">VRPlayAreaBounds</dfn> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-minx" id="ref-for-dom-vrplayareabounds-minx-1">minX</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-maxx" id="ref-for-dom-vrplayareabounds-maxx-1">maxX</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-minz" id="ref-for-dom-vrplayareabounds-minz-1">minZ</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-maxz" id="ref-for-dom-vrplayareabounds-maxz-1">maxZ</a>;
+   <h2 class="heading settled" data-level="6" id="layers"><span class="secno">6. </span><span class="content">Layers</span><a class="self-link" href="#layers"></a></h2>
+   <h3 class="heading settled" data-level="6.1" id="vrlayer-interface"><span class="secno">6.1. </span><span class="content">VRLayer</span><a class="self-link" href="#vrlayer-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrlayer">VRLayer</dfn> {};
+</pre>
+   <p>A <code class="idl"><a data-link-type="idl" href="#vrlayer" id="ref-for-vrlayer-2">VRLayer</a></code> defines a source of bitmap images and a description of how the image is to be rendered in the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-15">VRDisplay</a></code>. Initially only one type of layer, the <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-2">VRCanvasLayer</a></code>, is defined but future revisions of the spec may extend the available layer types.</p>
+   <h3 class="heading settled" data-level="6.2" id="vrcanvaslayer-interface"><span class="secno">6.2. </span><span class="content">VRCanvasLayer</span><a class="self-link" href="#vrcanvaslayer-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">typedef</span> (<a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/scripting.html#htmlcanvaselement">HTMLCanvasElement</a> <span class="kt">or</span>
+         <a class="n" data-link-type="idl-name" href="https://wiki.whatwg.org/wiki/OffscreenCanvas#offscreencanvas">OffscreenCanvas</a>) <dfn class="nv dfn-paneled idl-code" data-dfn-type="typedef" data-export="" id="typedefdef-vrcanvassource">VRCanvasSource</dfn>;
+
+[<dfn class="nv idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="constructor" data-export="" data-lt="VRCanvasLayer(session, source)|VRCanvasLayer(session)" id="dom-vrcanvaslayer-vrcanvaslayer">Constructor<a class="self-link" href="#dom-vrcanvaslayer-vrcanvaslayer"></a></dfn>(<a class="n" data-link-type="idl-name" href="#vrsession" id="ref-for-vrsession-7">VRSession</a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/VRCanvasLayer(session, source)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-vrcanvaslayer-session-source-session">session<a class="self-link" href="#dom-vrcanvaslayer-vrcanvaslayer-session-source-session"></a></dfn>, <span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#typedefdef-vrcanvassource" id="ref-for-typedefdef-vrcanvassource-1">VRCanvasSource</a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/VRCanvasLayer(session, source)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-vrcanvaslayer-session-source-source">source<a class="self-link" href="#dom-vrcanvaslayer-vrcanvaslayer-session-source-source"></a></dfn>)]
+<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrcanvaslayer">VRCanvasLayer</dfn> : <a class="n" data-link-type="idl-name" href="#vrlayer" id="ref-for-vrlayer-3">VRLayer</a> {
+  // Attributes
+  <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#typedefdef-vrcanvassource" id="ref-for-typedefdef-vrcanvassource-2">VRCanvasSource</a> <a class="nv idl-code" data-link-type="attribute" data-type="VRCanvasSource" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-2">source</a>;
+
+  // Methods
+  <span class="kt">void</span> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" data-lt="setLeftBounds(left, bottom, right, top)" id="dom-vrcanvaslayer-setleftbounds">setLeftBounds<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-left">left<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-left"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-bottom">bottom<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-bottom"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-right">right<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-right"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setLeftBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-top">top<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-top"></a></dfn>);
+  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getleftbounds" id="ref-for-dom-vrcanvaslayer-getleftbounds-1">getLeftBounds</a>();
+
+  <span class="kt">void</span> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" data-lt="setRightBounds(left, bottom, right, top)" id="dom-vrcanvaslayer-setrightbounds">setRightBounds<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-left">left<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-left"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-bottom">bottom<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-bottom"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-right">right<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-right"></a></dfn>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <dfn class="nv idl-code" data-dfn-for="VRCanvasLayer/setRightBounds(left, bottom, right, top)" data-dfn-type="argument" data-export="" id="dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-top">top<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-top"></a></dfn>);
+  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getrightbounds" id="ref-for-dom-vrcanvaslayer-getrightbounds-1">getRightBounds</a>();
+
+  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="http://www.w3.org/TR/hr-time/#domhighrestimestamp">DOMHighResTimeStamp</a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-commit" id="ref-for-dom-vrcanvaslayer-commit-3">commit</a>();
 };
 </pre>
-   <p>The <code class="idl"><a data-link-type="idl" href="#vrplayareabounds" id="ref-for-vrplayareabounds-2">VRPlayAreaBounds</a></code> interface describes the size and shape of the user’s play area for devices that support room-scale experiences. This is the area that the user can be expected to safely be able to move within.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPlayAreaBounds" data-dfn-type="attribute" data-export="" id="dom-vrplayareabounds-minx">minX</dfn>, <dfn class="dfn-paneled idl-code" data-dfn-for="VRPlayAreaBounds" data-dfn-type="attribute" data-export="" id="dom-vrplayareabounds-maxx">maxX</dfn>, <dfn class="dfn-paneled idl-code" data-dfn-for="VRPlayAreaBounds" data-dfn-type="attribute" data-export="" id="dom-vrplayareabounds-minz">minZ</dfn>, and <dfn class="dfn-paneled idl-code" data-dfn-for="VRPlayAreaBounds" data-dfn-type="attribute" data-export="" id="dom-vrplayareabounds-maxz">maxZ</dfn> define an axis-aligned rectangle on the floor relative to the origin of the <code class="idl"><a data-link-type="idl" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-5">VRCoordinateSystem</a></code> the bounds were queried with. The origin MAY be outside the bounds rectangle. <code class="idl"><a data-link-type="idl" href="#dom-vrplayareabounds-minx" id="ref-for-dom-vrplayareabounds-minx-2">minX</a></code> MUST be less than <code class="idl"><a data-link-type="idl" href="#dom-vrplayareabounds-maxx" id="ref-for-dom-vrplayareabounds-maxx-2">maxX</a></code> and <code class="idl"><a data-link-type="idl" href="#dom-vrplayareabounds-minz" id="ref-for-dom-vrplayareabounds-minz-2">minZ</a></code> MUST be less than <code class="idl"><a data-link-type="idl" href="#dom-vrplayareabounds-maxz" id="ref-for-dom-vrplayareabounds-maxz-2">maxZ</a></code>.</p>
-   <p class="note" role="note"><span>Note:</span> Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe.</p>
-   <h2 class="heading settled" data-level="7" id="events"><span class="secno">7. </span><span class="content">Events</span><a class="self-link" href="#events"></a></h2>
-   <h3 class="heading settled" data-level="7.1" id="vrevent-interface"><span class="secno">7.1. </span><span class="content">VREvent</span><a class="self-link" href="#vrevent-interface"></a></h3>
-<pre class="idl highlight def">[<dfn class="nv idl-code" data-dfn-for="VREvent" data-dfn-type="constructor" data-export="" data-lt="VREvent(type, eventInitDict)" id="dom-vrevent-vrevent">Constructor<a class="self-link" href="#dom-vrevent-vrevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="VREvent/VREvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-vrevent-vrevent-type-eventinitdict-type">type<a class="self-link" href="#dom-vrevent-vrevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-vreventinit" id="ref-for-dictdef-vreventinit-1">VREventInit</a> <dfn class="nv idl-code" data-dfn-for="VREvent/VREvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-vrevent-vrevent-type-eventinitdict-eventinitdict">eventInitDict<a class="self-link" href="#dom-vrevent-vrevent-type-eventinitdict-eventinitdict"></a></dfn>)]
-<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrevent">VREvent</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event">Event</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-17">VRDisplay</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplay" href="#dom-vrevent-display" id="ref-for-dom-vrevent-display-1">display</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrsession" id="ref-for-vrsession-8">VRSession</a>? <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRSession?" href="#dom-vrevent-session" id="ref-for-dom-vrevent-session-2">session</a>;
+   <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="attribute" data-export="" id="dom-vrcanvaslayer-source">source</dfn> defines a canvas whose contents will be presented by the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-16">VRDisplay</a></code> when <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-commit" id="ref-for-dom-vrcanvaslayer-commit-4">commit()</a></code> is called.</p>
+   <p>Upon being set as the source of a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-3">VRCanvasLayer</a></code> the source’s context MAY be lost. Additionally the current backbuffer of the source’s context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.</p>
+   <p class="note" role="note"><span>Note:</span> In order to make use of a canvas in the event of context loss, the application should handle the <code>webglcontextlost</code> event on the source canvas and prevent the event’s default behavior. The application should then listen for a <code>webglcontextrestored</code> event to be fired and reload any necessary graphical resources in response.</p>
+   <p>The layer describes two viewports: the <dfn class="dfn-paneled" data-dfn-for="VRCanvasLayer" data-dfn-type="dfn" data-noexport="" id="vrcanvaslayer-left-bounds">Left Bounds</dfn> and <dfn class="dfn-paneled" data-dfn-for="VRCanvasLayer" data-dfn-type="dfn" data-noexport="" id="vrcanvaslayer-right-bounds">Right Bounds</dfn>. Each bounds contians four values (<var>left</var>, <var>bottom</var>, <var>right</var>, <var>top</var>) defining the texture bounds within the source canvas to present to the related eye in UV space (0.0 - 1.0) with the bottom left corner of the canvas at (0, 0) and the top right corner of the canvas at (1, 1). If the left bound is greater or equal to the right bound or the bottom bound is greater than or equal to the top bound the viewport is considered to be empty and no content from this layer will be shown on the related eye of the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-17">VRDisplay</a></code>.</p>
+   <p>The <a data-link-type="dfn" href="#vrcanvaslayer-left-bounds" id="ref-for-vrcanvaslayer-left-bounds-1">left bounds</a> MUST default to <code>[0.0, 0.0, 0.5, 1.0]</code> and the <a data-link-type="dfn" href="#vrcanvaslayer-right-bounds" id="ref-for-vrcanvaslayer-right-bounds-1">right bounds</a> MUST default to <code>[0.5, 0.0, 1.0, 1.0]</code>.</p>
+   <p>Invoking the <dfn class="idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-setleftbounds">setLeftBounds()<a class="self-link" href="#dom-vrcanvaslayer-setleftbounds"></a></dfn> method with a given <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> value sets the values of the <a data-link-type="dfn" href="#vrcanvaslayer-left-bounds" id="ref-for-vrcanvaslayer-left-bounds-2">left bounds</a> <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> respectively.</p>
+   <p>Invoking the <dfn class="idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-setrightbounds">setRightBounds()<a class="self-link" href="#dom-vrcanvaslayer-setrightbounds"></a></dfn> method with a given <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> value sets the values of the <a data-link-type="dfn" href="#vrcanvaslayer-right-bounds" id="ref-for-vrcanvaslayer-right-bounds-2">right bounds</a> <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> respectively.</p>
+   <p>Invoking the <dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-getleftbounds">getLeftBounds()</dfn> method returns a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-frozen-array">FrozenArray</a></code> of doubles containing the <a data-link-type="dfn" href="#vrcanvaslayer-left-bounds" id="ref-for-vrcanvaslayer-left-bounds-3">left bounds</a> to <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> values in that order.</p>
+   <p>Invoking the <dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-getrightbounds">getRightBounds()</dfn> method returns a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#idl-frozen-array">FrozenArray</a></code> of doubles containing the <a data-link-type="dfn" href="#vrcanvaslayer-right-bounds" id="ref-for-vrcanvaslayer-right-bounds-3">right bounds</a> to <var>left</var>, <var>bottom</var>, <var>right</var>, and <var>top</var> values in that order.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRCanvasLayer" data-dfn-type="method" data-export="" id="dom-vrcanvaslayer-commit">commit()</dfn> captures the <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-3">source</a></code> canvas’s bitmap and submits it to the <a data-link-type="dfn" href="#vr-compositor" id="ref-for-vr-compositor-2">VR compositor</a>. Calling <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-commit" id="ref-for-dom-vrcanvaslayer-commit-5">commit()</a></code> has the same effect on the source canvas as any other operation that uses it’s bitmap, and canvases created without <code>preserveDrawingBuffer</code> set to <code>true</code> will be cleared.</p>
+   <p class="issue" id="issue-78a990eb"><a class="self-link" href="#issue-78a990eb"></a> Need an example snippet of a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-4">VRCanvasLayer</a></code> render loop</p>
+   <h3 class="heading settled" data-level="6.3" id="vrsourceproperties-interface"><span class="secno">6.3. </span><span class="content">VRSourceProperties</span><a class="self-link" href="#vrsourceproperties-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrsourceproperties">VRSourceProperties</dfn> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrsourceproperties-scale" id="ref-for-dom-vrsourceproperties-scale-1">scale</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><span class="kt">unsigned</span> <span class="kt">long</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vrsourceproperties-width" id="ref-for-dom-vrsourceproperties-width-1">width</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><span class="kt">unsigned</span> <span class="kt">long</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vrsourceproperties-height" id="ref-for-dom-vrsourceproperties-height-1">height</a>;
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#vrsourceproperties" id="ref-for-vrsourceproperties-2">VRSourceProperties</a></code> interface describes the ideal dimensions of a layer image for a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-18">VRDisplay</a></code>, taking into account the native resolution of the display and the distortion required to counteract an distortion introduced by the display’s optics.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSourceProperties" data-dfn-type="attribute" data-export="" id="dom-vrsourceproperties-scale">scale</dfn> returns the scale provided to <code class="idl"><a data-link-type="idl" href="#dom-vrsession-getsourceproperties" id="ref-for-dom-vrsession-getsourceproperties-2">getSourceProperties()</a></code> if one was given. If not, it returns the scale recommended by the system.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSourceProperties" data-dfn-type="attribute" data-export="" id="dom-vrsourceproperties-width">width</dfn> and <dfn class="dfn-paneled idl-code" data-dfn-for="VRSourceProperties" data-dfn-type="attribute" data-export="" id="dom-vrsourceproperties-height">height</dfn> describe the dimensions a layer image should ideally be in order to appear on the display at a <code class="idl"><a data-link-type="idl" href="#dom-vrsourceproperties-scale" id="ref-for-dom-vrsourceproperties-scale-2">scale</a></code>:1 pixel ratio. The given dimenions MUST only account for a single eye.</p>
+   <div class="example" id="example-f92b9692">
+    <a class="self-link" href="#example-f92b9692"></a> Because a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer" id="ref-for-vrcanvaslayer-5">VRCanvasLayer</a></code> contains content for both eyes, the <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-4">source</a></code> canvas should be twice the size perscribed by the <code class="idl"><a data-link-type="idl" href="#vrsourceproperties" id="ref-for-vrsourceproperties-3">VRSourceProperties</a></code> in order to get the desired output. 
+<pre class="lang-js highlight"><span class="kd">var</span> sourceProperties <span class="o">=</span> vrSession<span class="p">.</span>getSourceProperties<span class="p">(</span><span class="p">)</span><span class="p">;</span>
+
+canvasLayer<span class="p">.</span>source<span class="p">.</span>width <span class="o">=</span> sourceProperties<span class="p">.</span>width <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span class="o">=</span> sourceProperties<span class="p">.</span>height<span class="p">;</span>
+</pre>
+   </div>
+   <h2 class="heading settled" data-level="7" id="coordinatesystems"><span class="secno">7. </span><span class="content">Coordinate Systems</span><a class="self-link" href="#coordinatesystems"></a></h2>
+   <p class="issue" id="issue-908c5434"><a class="self-link" href="#issue-908c5434"></a> Pretty much nothing in this section is documented</p>
+   <h3 class="heading settled" data-level="7.1" id="vrcoordinatesystem-interface"><span class="secno">7.1. </span><span class="content">VRCoordinateSystem</span><a class="self-link" href="#vrcoordinatesystem-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrcoordinatesystem">VRCoordinateSystem</dfn> {
+  <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a>? <dfn class="nv idl-code" data-dfn-for="VRCoordinateSystem" data-dfn-type="method" data-export="" data-lt="getTransformTo(other)" id="dom-vrcoordinatesystem-gettransformto">getTransformTo<a class="self-link" href="#dom-vrcoordinatesystem-gettransformto"></a></dfn>(<a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-3">VRCoordinateSystem</a> <dfn class="nv idl-code" data-dfn-for="VRCoordinateSystem/getTransformTo(other)" data-dfn-type="argument" data-export="" id="dom-vrcoordinatesystem-gettransformto-other-other">other<a class="self-link" href="#dom-vrcoordinatesystem-gettransformto-other-other"></a></dfn>);
+};
+</pre>
+   <h3 class="heading settled" data-level="7.2" id="vrframeofreference-interface"><span class="secno">7.2. </span><span class="content">VRFrameOfReference</span><a class="self-link" href="#vrframeofreference-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">enum</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="enum" data-export="" id="enumdef-vrframeofreferencetype">VRFrameOfReferenceType</dfn> {
+  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;HeadModel&quot;|HeadModel" id="dom-vrframeofreferencetype-headmodel">"HeadModel"<a class="self-link" href="#dom-vrframeofreferencetype-headmodel"></a></dfn>,
+  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;EyeLevel&quot;|EyeLevel" id="dom-vrframeofreferencetype-eyelevel">"EyeLevel"<a class="self-link" href="#dom-vrframeofreferencetype-eyelevel"></a></dfn>,
+  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;Stage&quot;|Stage" id="dom-vrframeofreferencetype-stage">"Stage"<a class="self-link" href="#dom-vrframeofreferencetype-stage"></a></dfn>,
 };
 
-<span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-vreventinit">VREventInit</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a> {
-  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-18">VRDisplay</a> <dfn class="nv idl-code" data-dfn-for="VREventInit" data-dfn-type="dict-member" data-export="" data-type="VRDisplay " id="dom-vreventinit-display">display<a class="self-link" href="#dom-vreventinit-display"></a></dfn>;
-  <a class="n" data-link-type="idl-name" href="#vrsession" id="ref-for-vrsession-9">VRSession</a>? <dfn class="nv idl-code" data-dfn-for="VREventInit" data-dfn-type="dict-member" data-export="" data-type="VRSession? " id="dom-vreventinit-session">session<a class="self-link" href="#dom-vreventinit-session"></a></dfn>;
+<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrframeofreference">VRFrameOfReference</dfn> : <a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-4">VRCoordinateSystem</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrstagebounds" id="ref-for-vrstagebounds-1">VRStageBounds</a>? <dfn class="nv idl-code" data-dfn-for="VRFrameOfReference" data-dfn-type="attribute" data-export="" data-readonly="" data-type="VRStageBounds?" id="dom-vrframeofreference-bounds">bounds<a class="self-link" href="#dom-vrframeofreference-bounds"></a></dfn>;
 };
 </pre>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VREvent" data-dfn-type="attribute" data-export="" id="dom-vrevent-display">display</dfn> The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-19">VRDisplay</a></code> associated with this event.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VREvent" data-dfn-type="attribute" data-export="" id="dom-vrevent-session">session</dfn> The <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-10">VRSession</a></code> associated with this event, if any.</p>
-   <h3 class="heading settled" data-level="7.2" id="event-types"><span class="secno">7.2. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
-   <p>The UA MUST provide the following new events. The corresponding events must be of type <code class="idl"><a data-link-type="idl" href="#vrevent" id="ref-for-vrevent-1">VREvent</a></code>. Registration for and firing of the events must follow the usual behavior of DOM4 Events.</p>
-   <p>The UA MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="VR" data-dfn-type="event" data-export="" id="eventdef-vr-displayconnect">displayconnect</dfn> event on the <code class="idl"><a data-link-type="idl" href="#vr" id="ref-for-vr-1">VR</a></code> object to indicate that a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-20">VRDisplay</a></code> has been connected.</p>
-   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VR" data-dfn-type="event" data-export="" id="eventdef-vr-displaydisconnect">displaydisconnect</dfn> event on the <code class="idl"><a data-link-type="idl" href="#vr" id="ref-for-vr-2">VR</a></code> object to indicate that a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-21">VRDisplay</a></code> has been disconnected.</p>
-   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VR" data-dfn-type="event" data-export="" id="eventdef-vr-navigate">navigate</dfn> event on the <code class="idl"><a data-link-type="idl" href="#vr" id="ref-for-vr-3">VR</a></code> object to indicate that the current page has been navigated to from a browsing context that was actively presenting VR content. The event’s <code class="idl"><a data-link-type="idl" href="#dom-vrevent-session" id="ref-for-dom-vrevent-session-3">session</a></code> MUST be an instance of a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-11">VRSession</a></code> with identical capabilities to the active session from the previous page, such that presenting to the session will feel like a seamless transition to the user.</p>
-   <p>The UA MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="event" data-export="" id="eventdef-vrdisplay-sessionchange">sessionchange</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-22">VRDisplay</a></code> to indicate that the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-23">VRDisplay</a></code> has begun or ended a new <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-12">VRSession</a></code>. This event should not fire on subsequent calls to <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-requestsession" id="ref-for-dom-vrdisplay-requestsession-3">requestSession()</a></code> if the returned session is the same as the current <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-activesession" id="ref-for-dom-vrdisplay-activesession-2">activeSession</a></code>.</p>
-   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="event" data-export="" id="eventdef-vrdisplay-activate">activate</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-24">VRDisplay</a></code> to indicate that something has occurred which suggests the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-25">VRDisplay</a></code> should be begin a presenting session. For example, if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-26">VRDisplay</a></code> is capable of detecting when the user has put it on, this event SHOULD fire when they do so.</p>
-   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="event" data-export="" id="eventdef-vrdisplay-deactivate">deactivate</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-27">VRDisplay</a></code> to indicate that something has occurred which suggests the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-28">VRDisplay</a></code> should end the active session. For example, if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-29">VRDisplay</a></code> is capable of detecting when the user has taken it off, this event SHOULD fire when they do so.</p>
-   <p>A UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="event" data-export="" id="eventdef-vrsession-blur">blur</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-13">VRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-14">VRSession</a></code> by the page has been suspended by the UA, OS, or VR hardware. While a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-15">VRSession</a></code> is blurred it remains active but it may have it’s frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions.</p>
-   <p>A UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="event" data-export="" id="eventdef-vrsession-focus">focus</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-16">VRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-17">VRSession</a></code> by the page has resumed after being suspended.</p>
-   <p>A UA MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="event" data-export="" id="eventdef-vrsession-resetpose">resetpose</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-18">VRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-30">VRDisplay</a></code>'s position or orientation.</p>
-   <h2 class="heading settled" data-level="8" id="navigator-interface"><span class="secno">8. </span><span class="content">Navigator interface extension</span><a class="self-link" href="#navigator-interface"></a></h2>
+   <h3 class="heading settled" data-level="7.3" id="vrstagebounds-interface"><span class="secno">7.3. </span><span class="content">VRStageBounds</span><a class="self-link" href="#vrstagebounds-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrstagebounds">VRStageBounds</dfn> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-minx" id="ref-for-dom-vrstagebounds-minx-1">minX</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-maxx" id="ref-for-dom-vrstagebounds-maxx-1">maxX</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-minz" id="ref-for-dom-vrstagebounds-minz-1">minZ</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-maxz" id="ref-for-dom-vrstagebounds-maxz-1">maxZ</a>;
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#vrstagebounds" id="ref-for-vrstagebounds-2">VRStageBounds</a></code> interface describes a space known as a "<dfn class="dfn-paneled" data-dfn-for="VRStageBounds" data-dfn-type="dfn" data-noexport="" id="vrstagebounds-stage">Stage</dfn>". The <a data-link-type="dfn" href="#vrstagebounds-stage" id="ref-for-vrstagebounds-stage-1">stage</a> is a bounded, floor relative play space that the user can be expected to safely be able to move within. Other VR platforms sometimes refer to this concept as "room scale" or "standing VR".</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRStageBounds" data-dfn-type="attribute" data-export="" id="dom-vrstagebounds-minx">minX</dfn>, <dfn class="dfn-paneled idl-code" data-dfn-for="VRStageBounds" data-dfn-type="attribute" data-export="" id="dom-vrstagebounds-maxx">maxX</dfn>, <dfn class="dfn-paneled idl-code" data-dfn-for="VRStageBounds" data-dfn-type="attribute" data-export="" id="dom-vrstagebounds-minz">minZ</dfn>, and <dfn class="dfn-paneled idl-code" data-dfn-for="VRStageBounds" data-dfn-type="attribute" data-export="" id="dom-vrstagebounds-maxz">maxZ</dfn> define an axis-aligned rectangle on the floor relative to the origin of the <code class="idl"><a data-link-type="idl" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-5">VRCoordinateSystem</a></code> the bounds were queried with. The origin MAY be outside the bounds rectangle. <code class="idl"><a data-link-type="idl" href="#dom-vrstagebounds-minx" id="ref-for-dom-vrstagebounds-minx-2">minX</a></code> MUST be less than <code class="idl"><a data-link-type="idl" href="#dom-vrstagebounds-maxx" id="ref-for-dom-vrstagebounds-maxx-2">maxX</a></code> and <code class="idl"><a data-link-type="idl" href="#dom-vrstagebounds-minz" id="ref-for-dom-vrstagebounds-minz-2">minZ</a></code> MUST be less than <code class="idl"><a data-link-type="idl" href="#dom-vrstagebounds-maxz" id="ref-for-dom-vrstagebounds-maxz-2">maxZ</a></code>.</p>
+   <p class="note" role="note"><span>Note:</span> Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe if their physical surroundings allow for it.</p>
+   <h2 class="heading settled" data-level="8" id="events"><span class="secno">8. </span><span class="content">Events</span><a class="self-link" href="#events"></a></h2>
+   <h3 class="heading settled" data-level="8.1" id="vrdisplayevent-interface"><span class="secno">8.1. </span><span class="content">VRDisplayEvent</span><a class="self-link" href="#vrdisplayevent-interface"></a></h3>
+<pre class="idl highlight def">[<dfn class="nv idl-code" data-dfn-for="VRDisplayEvent" data-dfn-type="constructor" data-export="" data-lt="VRDisplayEvent(type, eventInitDict)" id="dom-vrdisplayevent-vrdisplayevent">Constructor<a class="self-link" href="#dom-vrdisplayevent-vrdisplayevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="VRDisplayEvent/VRDisplayEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-vrdisplayevent-vrdisplayevent-type-eventinitdict-type">type<a class="self-link" href="#dom-vrdisplayevent-vrdisplayevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-vrdisplayeventinit" id="ref-for-dictdef-vrdisplayeventinit-1">VRDisplayEventInit</a> <dfn class="nv idl-code" data-dfn-for="VRDisplayEvent/VRDisplayEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-vrdisplayevent-vrdisplayevent-type-eventinitdict-eventinitdict">eventInitDict<a class="self-link" href="#dom-vrdisplayevent-vrdisplayevent-type-eventinitdict-eventinitdict"></a></dfn>)]
+<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrdisplayevent">VRDisplayEvent</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event">Event</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-19">VRDisplay</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplay" href="#dom-vrdisplayevent-display" id="ref-for-dom-vrdisplayevent-display-1">display</a>;
+};
+
+<span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-vrdisplayeventinit">VRDisplayEventInit</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a> {
+  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#vrdisplay" id="ref-for-vrdisplay-20">VRDisplay</a> <dfn class="nv idl-code" data-dfn-for="VRDisplayEventInit" data-dfn-type="dict-member" data-export="" data-type="VRDisplay " id="dom-vrdisplayeventinit-display">display<a class="self-link" href="#dom-vrdisplayeventinit-display"></a></dfn>;
+};
+</pre>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplayEvent" data-dfn-type="attribute" data-export="" id="dom-vrdisplayevent-display">display</dfn> The <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-21">VRDisplay</a></code> associated with this event.</p>
+   <p><dfn class="idl-code" data-dfn-for="VRDisplayEvent" data-dfn-type="attribute" data-export="" id="dom-vrdisplayevent-session">session<a class="self-link" href="#dom-vrdisplayevent-session"></a></dfn> The <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-8">VRSession</a></code> associated with this event, if any.</p>
+   <h3 class="heading settled" data-level="8.2" id="vrsessionevent-interface"><span class="secno">8.2. </span><span class="content">VRSessionEvent</span><a class="self-link" href="#vrsessionevent-interface"></a></h3>
+<pre class="idl highlight def">[<dfn class="nv idl-code" data-dfn-for="VRSessionEvent" data-dfn-type="constructor" data-export="" data-lt="VRSessionEvent(type, eventInitDict)" id="dom-vrsessionevent-vrsessionevent">Constructor<a class="self-link" href="#dom-vrsessionevent-vrsessionevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="VRSessionEvent/VRSessionEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-vrsessionevent-vrsessionevent-type-eventinitdict-type">type<a class="self-link" href="#dom-vrsessionevent-vrsessionevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-vrsessioneventinit" id="ref-for-dictdef-vrsessioneventinit-1">VRSessionEventInit</a> <dfn class="nv idl-code" data-dfn-for="VRSessionEvent/VRSessionEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-vrsessionevent-vrsessionevent-type-eventinitdict-eventinitdict">eventInitDict<a class="self-link" href="#dom-vrsessionevent-vrsessionevent-type-eventinitdict-eventinitdict"></a></dfn>)]
+<span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrsessionevent">VRSessionEvent</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event">Event</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrsession" id="ref-for-vrsession-9">VRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRSession" href="#dom-vrsessionevent-session" id="ref-for-dom-vrsessionevent-session-2">session</a>;
+};
+
+<span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-vrsessioneventinit">VRSessionEventInit</dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a> {
+  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#vrsession" id="ref-for-vrsession-10">VRSession</a> <dfn class="nv idl-code" data-dfn-for="VRSessionEventInit" data-dfn-type="dict-member" data-export="" data-type="VRSession " id="dom-vrsessioneventinit-session">session<a class="self-link" href="#dom-vrsessioneventinit-session"></a></dfn>;
+};
+</pre>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRSessionEvent" data-dfn-type="attribute" data-export="" id="dom-vrsessionevent-session">session</dfn> The <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-11">VRSession</a></code> associated with this event.</p>
+   <h3 class="heading settled" data-level="8.3" id="event-types"><span class="secno">8.3. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
+   <p>The UA MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.</p>
+   <p>The UA MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="VR" data-dfn-type="event" data-export="" id="eventdef-vr-displayconnect">displayconnect</dfn> event on the <code class="idl"><a data-link-type="idl" href="#vr" id="ref-for-vr-1">VR</a></code> object to indicate that a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-22">VRDisplay</a></code> has been connected. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-1">VRDisplayEvent</a></code>.</p>
+   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VR" data-dfn-type="event" data-export="" id="eventdef-vr-displaydisconnect">displaydisconnect</dfn> event on the <code class="idl"><a data-link-type="idl" href="#vr" id="ref-for-vr-2">VR</a></code> object to indicate that a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-23">VRDisplay</a></code> has been disconnected. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-2">VRDisplayEvent</a></code>.</p>
+   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VR" data-dfn-type="event" data-export="" id="eventdef-vr-navigate">navigate</dfn> event on the <code class="idl"><a data-link-type="idl" href="#vr" id="ref-for-vr-3">VR</a></code> object to indicate that the current page has been navigated to from a browsing context that was actively presenting VR content. The event’s <code class="idl"><a data-link-type="idl" href="#dom-vrsessionevent-session" id="ref-for-dom-vrsessionevent-session-3">session</a></code> MUST be an instance of a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-12">VRSession</a></code> with identical capabilities to the <a data-link-type="dfn" href="#vrdisplay-active-session" id="ref-for-vrdisplay-active-session-8">active session</a> from the previous page, such that presenting to the session will feel like a seamless transition to the user. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrsessionevent" id="ref-for-vrsessionevent-1">VRSessionEvent</a></code>.</p>
+   <p>The UA MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="event" data-export="" id="eventdef-vrdisplay-sessionchange">sessionchange</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-24">VRDisplay</a></code> to indicate that the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-25">VRDisplay</a></code> has begun or ended a new <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-13">VRSession</a></code>. This event should not fire on subsequent calls to <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-requestsession" id="ref-for-dom-vrdisplay-requestsession-3">requestSession()</a></code> if the returned session is the same as the current <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-activesession" id="ref-for-dom-vrdisplay-activesession-2">activeSession</a></code>. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrsessionevent" id="ref-for-vrsessionevent-2">VRSessionEvent</a></code>.</p>
+   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="event" data-export="" id="eventdef-vrdisplay-activate">activate</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-26">VRDisplay</a></code> to indicate that something has occurred which suggests the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-27">VRDisplay</a></code> should be begin an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session-3">exclusive session</a>. For example, if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-28">VRDisplay</a></code> is capable of detecting when the user has put it on, this event SHOULD fire when they do so. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-3">VRDisplayEvent</a></code>.</p>
+   <p>The UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRDisplay" data-dfn-type="event" data-export="" id="eventdef-vrdisplay-deactivate">deactivate</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-29">VRDisplay</a></code> to indicate that something has occurred which suggests the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-30">VRDisplay</a></code> should end the active session. For example, if the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-31">VRDisplay</a></code> is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrdisplayevent" id="ref-for-vrdisplayevent-4">VRDisplayEvent</a></code>.</p>
+   <p>A UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="event" data-export="" id="eventdef-vrsession-blur">blur</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-14">VRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-15">VRSession</a></code> by the page has been suspended by the UA, OS, or VR hardware. While a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-16">VRSession</a></code> is blurred it remains active but it may have it’s frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrsessionevent" id="ref-for-vrsessionevent-3">VRSessionEvent</a></code>.</p>
+   <p>A UA MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="event" data-export="" id="eventdef-vrsession-focus">focus</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-17">VRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-18">VRSession</a></code> by the page has resumed after being suspended. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrsessionevent" id="ref-for-vrsessionevent-4">VRSessionEvent</a></code>.</p>
+   <p>A UA MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="VRSession" data-dfn-type="event" data-export="" id="eventdef-vrsession-resetpose">resetpose</dfn> event on a <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-19">VRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#vrdisplay" id="ref-for-vrdisplay-32">VRDisplay</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#vrsessionevent" id="ref-for-vrsessionevent-5">VRSessionEvent</a></code>.</p>
+   <h2 class="heading settled" data-level="9" id="navigator-interface"><span class="secno">9. </span><span class="content">Navigator interface extension</span><a class="self-link" href="#navigator-interface"></a></h2>
    <p class="issue" id="issue-b29e4629"><a class="self-link" href="#issue-b29e4629"></a> Navigator interface is all alone. :( Does this belong somewhere else, or is this reasonable? This is about how WebUSB and WebBluetooth handle it.</p>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/webappapis.html#navigator">Navigator</a> {
   [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vr" id="ref-for-vr-4">VR</a> <dfn class="nv idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" data-readonly="" data-type="VR" id="dom-navigator-vr">vr<a class="self-link" href="#dom-navigator-vr"></a></dfn>;
@@ -2016,58 +2035,65 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#eventdef-vrdisplay-activate">activate</a><span>, in §7.2</span>
+   <li><a href="#eventdef-vrdisplay-activate">activate</a><span>, in §8.3</span>
    <li><a href="#dom-vrdisplay-activesession">activeSession</a><span>, in §3.2</span>
    <li><a href="#vrdisplay-active-session">active session</a><span>, in §3.2</span>
    <li><a href="#dom-vrsession-baselayer">baseLayer</a><span>, in §4.1</span>
-   <li><a href="#eventdef-vrsession-blur">blur</a><span>, in §7.2</span>
+   <li><a href="#eventdef-vrsession-blur">blur</a><span>, in §8.3</span>
    <li><a href="#blur-the-active-session">blur the active session</a><span>, in §4.1</span>
-   <li><a href="#dom-vrcanvaslayer-commit">commit()</a><span>, in §5.2</span>
+   <li><a href="#dom-vrframeofreference-bounds">bounds</a><span>, in §7.2</span>
+   <li><a href="#dom-vrcanvaslayer-commit">commit()</a><span>, in §6.2</span>
    <li><a href="#dom-vrsession-createframeofreference">createFrameOfReference()</a><span>, in §4.1</span>
    <li><a href="#dom-vrsession-createframeofreference">createFrameOfReference(type)</a><span>, in §4.1</span>
    <li><a href="#dom-vrsession-createparameters">createParameters</a><span>, in §4.1</span>
-   <li><a href="#eventdef-vrdisplay-deactivate">deactivate</a><span>, in §7.2</span>
+   <li><a href="#eventdef-vrdisplay-deactivate">deactivate</a><span>, in §8.3</span>
    <li><a href="#dom-vrsession-depthfar">depthFar</a><span>, in §4.1</span>
    <li><a href="#dom-vrsession-depthnear">depthNear</a><span>, in §4.1</span>
    <li>
     display
     <ul>
-     <li><a href="#dom-vreventinit-display">dict-member for VREventInit</a><span>, in §7.1</span>
-     <li><a href="#dom-vrevent-display">attribute for VREvent</a><span>, in §7.1</span>
+     <li><a href="#dom-vrsession-display">attribute for VRSession</a><span>, in §4.1</span>
+     <li><a href="#dom-vrdisplayeventinit-display">dict-member for VRDisplayEventInit</a><span>, in §8.1</span>
+     <li><a href="#dom-vrdisplayevent-display">attribute for VRDisplayEvent</a><span>, in §8.1</span>
     </ul>
-   <li><a href="#eventdef-vr-displayconnect">displayconnect</a><span>, in §7.2</span>
-   <li><a href="#eventdef-vr-displaydisconnect">displaydisconnect</a><span>, in §7.2</span>
+   <li><a href="#eventdef-vr-displayconnect">displayconnect</a><span>, in §8.3</span>
+   <li><a href="#eventdef-vr-displaydisconnect">displaydisconnect</a><span>, in §8.3</span>
    <li><a href="#dom-vrdisplay-displayname">displayName</a><span>, in §3.2</span>
    <li><a href="#dom-vrsession-endsession">endSession()</a><span>, in §4.1</span>
    <li><a href="#end-the-session">end the session</a><span>, in §4.1</span>
-   <li><a href="#dom-vrframeofreferencetype-eyelevel">EyeLevel</a><span>, in §6.2</span>
-   <li><a href="#dom-vrframeofreferencetype-eyelevel">"EyeLevel"</a><span>, in §6.2</span>
-   <li><a href="#dom-vrframeofreferencetype-floorlevel">FloorLevel</a><span>, in §6.2</span>
-   <li><a href="#dom-vrframeofreferencetype-floorlevel">"FloorLevel"</a><span>, in §6.2</span>
-   <li><a href="#eventdef-vrsession-focus">focus</a><span>, in §7.2</span>
+   <li>
+    exclusive
+    <ul>
+     <li><a href="#dom-vrsessioncreateparametersinit-exclusive">dict-member for VRSessionCreateParametersInit</a><span>, in §4.2</span>
+     <li><a href="#dom-vrsessioncreateparameters-exclusive">attribute for VRSessionCreateParameters</a><span>, in §4.2</span>
+    </ul>
+   <li><a href="#exclusive-session">exclusive session</a><span>, in §4.2</span>
+   <li><a href="#dom-vrframeofreferencetype-eyelevel">EyeLevel</a><span>, in §7.2</span>
+   <li><a href="#dom-vrframeofreferencetype-eyelevel">"EyeLevel"</a><span>, in §7.2</span>
+   <li><a href="#eventdef-vrsession-focus">focus</a><span>, in §8.3</span>
    <li><a href="#frame-loop">Frame Loop</a><span>, in §4.3</span>
    <li><a href="#dom-vrsession-getdisplaypose">getDisplayPose()</a><span>, in §4.1</span>
    <li><a href="#dom-vrsession-getdisplaypose">getDisplayPose(coordinateSystem)</a><span>, in §4.1</span>
    <li><a href="#dom-vr-getdisplays">getDisplays()</a><span>, in §3.1</span>
-   <li><a href="#dom-vrcanvaslayer-getleftbounds">getLeftBounds()</a><span>, in §5.2</span>
-   <li><a href="#dom-vrsession-getplayareabounds">getPlayAreaBounds()</a><span>, in §4.1</span>
-   <li><a href="#dom-vrsession-getplayareabounds">getPlayAreaBounds(coordinateSystem)</a><span>, in §4.1</span>
-   <li><a href="#dom-vrcanvaslayer-getrightbounds">getRightBounds()</a><span>, in §5.2</span>
+   <li><a href="#dom-vrcanvaslayer-getleftbounds">getLeftBounds()</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-getrightbounds">getRightBounds()</a><span>, in §6.2</span>
    <li><a href="#dom-vrsession-getsourceproperties">getSourceProperties()</a><span>, in §4.1</span>
    <li><a href="#dom-vrsession-getsourceproperties">getSourceProperties(scale)</a><span>, in §4.1</span>
-   <li><a href="#dom-vrcoordinatesystem-gettransformto">getTransformTo(other)</a><span>, in §6.1</span>
-   <li><a href="#dom-vrframeofreferencetype-headmodel">HeadModel</a><span>, in §6.2</span>
-   <li><a href="#dom-vrframeofreferencetype-headmodel">"HeadModel"</a><span>, in §6.2</span>
-   <li><a href="#dom-vrsourceproperties-height">height</a><span>, in §5.3</span>
+   <li><a href="#dom-vrcoordinatesystem-gettransformto">getTransformTo(other)</a><span>, in §7.1</span>
+   <li><a href="#dom-vrframeofreferencetype-headmodel">HeadModel</a><span>, in §7.2</span>
+   <li><a href="#dom-vrframeofreferencetype-headmodel">"HeadModel"</a><span>, in §7.2</span>
+   <li><a href="#dom-vrsourceproperties-height">height</a><span>, in §6.3</span>
    <li><a href="#dom-vrdisplay-isexternal">isExternal</a><span>, in §3.2</span>
-   <li><a href="#vrcanvaslayer-left-bounds">Left Bounds</a><span>, in §5.2</span>
-   <li><a href="#dom-vrdisplaypose-leftprojectionmatrix">leftProjectionMatrix</a><span>, in §6.3</span>
-   <li><a href="#dom-vrdisplaypose-leftviewmatrix">leftViewMatrix</a><span>, in §6.3</span>
-   <li><a href="#dom-vrplayareabounds-maxx">maxX</a><span>, in §6.4</span>
-   <li><a href="#dom-vrplayareabounds-maxz">maxZ</a><span>, in §6.4</span>
-   <li><a href="#dom-vrplayareabounds-minx">minX</a><span>, in §6.4</span>
-   <li><a href="#dom-vrplayareabounds-minz">minZ</a><span>, in §6.4</span>
-   <li><a href="#eventdef-vr-navigate">navigate</a><span>, in §7.2</span>
+   <li><a href="#vrcanvaslayer-left-bounds">Left Bounds</a><span>, in §6.2</span>
+   <li><a href="#dom-vrdisplaypose-leftprojectionmatrix">leftProjectionMatrix</a><span>, in §5.2</span>
+   <li><a href="#dom-vrdisplaypose-leftviewmatrix">leftViewMatrix</a><span>, in §5.2</span>
+   <li><a href="#matrix">matrices</a><span>, in §5.1</span>
+   <li><a href="#matrix">matrix</a><span>, in §5.1</span>
+   <li><a href="#dom-vrstagebounds-maxx">maxX</a><span>, in §7.3</span>
+   <li><a href="#dom-vrstagebounds-maxz">maxZ</a><span>, in §7.3</span>
+   <li><a href="#dom-vrstagebounds-minx">minX</a><span>, in §7.3</span>
+   <li><a href="#dom-vrstagebounds-minz">minZ</a><span>, in §7.3</span>
+   <li><a href="#eventdef-vr-navigate">navigate</a><span>, in §8.3</span>
    <li><a href="#dom-vrdisplay-onactivate">onactivate</a><span>, in §3.2</span>
    <li><a href="#dom-vrsession-onblur">onblur</a><span>, in §4.1</span>
    <li><a href="#dom-vrdisplay-ondeactivate">ondeactivate</a><span>, in §3.2</span>
@@ -2078,61 +2104,64 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <li><a href="#dom-vrsession-onresetpose">onresetpose</a><span>, in §4.1</span>
    <li><a href="#dom-vrdisplay-onsessionchange">onsessionchange</a><span>, in §3.2</span>
    <li><a href="#poll-the-display-pose">poll the display pose</a><span>, in §4.1</span>
-   <li><a href="#dom-vrdisplaypose-posemodelmatrix">poseModelMatrix</a><span>, in §6.3</span>
-   <li>
-    present
-    <ul>
-     <li><a href="#dom-vrsessioncreateparametersinit-present">dict-member for VRSessionCreateParametersInit</a><span>, in §4.2</span>
-     <li><a href="#dom-vrsessioncreateparameters-present">attribute for VRSessionCreateParameters</a><span>, in §4.2</span>
-    </ul>
-   <li><a href="#presenting-session">presenting session</a><span>, in §4.2</span>
+   <li><a href="#dom-vrdisplaypose-posemodelmatrix">poseModelMatrix</a><span>, in §5.2</span>
    <li><a href="#render-loop">Render Loop</a><span>, in §4.3</span>
    <li><a href="#request-a-session">request a session</a><span>, in §3.2</span>
    <li><a href="#dom-vrdisplay-requestsession">requestSession()</a><span>, in §3.2</span>
    <li><a href="#dom-vrdisplay-requestsession">requestSession(parameters)</a><span>, in §3.2</span>
-   <li><a href="#eventdef-vrsession-resetpose">resetpose</a><span>, in §7.2</span>
-   <li><a href="#vrcanvaslayer-right-bounds">Right Bounds</a><span>, in §5.2</span>
-   <li><a href="#dom-vrdisplaypose-rightprojectionmatrix">rightProjectionMatrix</a><span>, in §6.3</span>
-   <li><a href="#dom-vrdisplaypose-rightviewmatrix">rightViewMatrix</a><span>, in §6.3</span>
-   <li><a href="#dom-vrsourceproperties-scale">scale</a><span>, in §5.3</span>
+   <li><a href="#eventdef-vrsession-resetpose">resetpose</a><span>, in §8.3</span>
+   <li><a href="#vrcanvaslayer-right-bounds">Right Bounds</a><span>, in §6.2</span>
+   <li><a href="#dom-vrdisplaypose-rightprojectionmatrix">rightProjectionMatrix</a><span>, in §5.2</span>
+   <li><a href="#dom-vrdisplaypose-rightviewmatrix">rightViewMatrix</a><span>, in §5.2</span>
+   <li><a href="#dom-vrsourceproperties-scale">scale</a><span>, in §6.3</span>
    <li>
     session
     <ul>
-     <li><a href="#dom-vreventinit-session">dict-member for VREventInit</a><span>, in §7.1</span>
-     <li><a href="#dom-vrevent-session">attribute for VREvent</a><span>, in §7.1</span>
+     <li><a href="#dom-vrdisplayevent-session">attribute for VRDisplayEvent</a><span>, in §8.1</span>
+     <li><a href="#dom-vrsessioneventinit-session">dict-member for VRSessionEventInit</a><span>, in §8.2</span>
+     <li><a href="#dom-vrsessionevent-session">attribute for VRSessionEvent</a><span>, in §8.2</span>
     </ul>
-   <li><a href="#eventdef-vrdisplay-sessionchange">sessionchange</a><span>, in §7.2</span>
+   <li><a href="#eventdef-vrdisplay-sessionchange">sessionchange</a><span>, in §8.3</span>
    <li><a href="#session-description">session description</a><span>, in §4.2</span>
-   <li><a href="#dom-vrcanvaslayer-setleftbounds">setLeftBounds()</a><span>, in §5.2</span>
-   <li><a href="#dom-vrcanvaslayer-setleftbounds">setLeftBounds(left, bottom, right, top)</a><span>, in §5.2</span>
-   <li><a href="#dom-vrcanvaslayer-setrightbounds">setRightBounds()</a><span>, in §5.2</span>
-   <li><a href="#dom-vrcanvaslayer-setrightbounds">setRightBounds(left, bottom, right, top)</a><span>, in §5.2</span>
-   <li><a href="#dom-vrcanvaslayer-source">source</a><span>, in §5.2</span>
+   <li><a href="#dom-vrcanvaslayer-setleftbounds">setLeftBounds()</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-setleftbounds">setLeftBounds(left, bottom, right, top)</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-setrightbounds">setRightBounds()</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-setrightbounds">setRightBounds(left, bottom, right, top)</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-source">source</a><span>, in §6.2</span>
+   <li><a href="#dom-vrframeofreferencetype-stage">"Stage"</a><span>, in §7.2</span>
+   <li>
+    Stage
+    <ul>
+     <li><a href="#dom-vrframeofreferencetype-stage">enum-value for VRFrameOfReferenceType</a><span>, in §7.2</span>
+     <li><a href="#vrstagebounds-stage">dfn for VRStageBounds</a><span>, in §7.3</span>
+    </ul>
    <li><a href="#dom-vrdisplay-supportssession">supportsSession()</a><span>, in §3.2</span>
    <li><a href="#dom-vrdisplay-supportssession">supportsSession(parameters)</a><span>, in §3.2</span>
-   <li><a href="#dom-vrframeofreference-type">type</a><span>, in §6.2</span>
-   <li><a href="#dom-navigator-vr">vr</a><span>, in §8</span>
+   <li><a href="#dom-navigator-vr">vr</a><span>, in §9</span>
    <li><a href="#vr">VR</a><span>, in §3.1</span>
-   <li><a href="#vrcanvaslayer">VRCanvasLayer</a><span>, in §5.2</span>
-   <li><a href="#dom-vrcanvaslayer-vrcanvaslayer">VRCanvasLayer(session)</a><span>, in §5.2</span>
-   <li><a href="#dom-vrcanvaslayer-vrcanvaslayer">VRCanvasLayer(session, source)</a><span>, in §5.2</span>
-   <li><a href="#typedefdef-vrcanvassource">VRCanvasSource</a><span>, in §5.2</span>
+   <li><a href="#vrcanvaslayer">VRCanvasLayer</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-vrcanvaslayer">VRCanvasLayer(session)</a><span>, in §6.2</span>
+   <li><a href="#dom-vrcanvaslayer-vrcanvaslayer">VRCanvasLayer(session, source)</a><span>, in §6.2</span>
+   <li><a href="#typedefdef-vrcanvassource">VRCanvasSource</a><span>, in §6.2</span>
    <li><a href="#vr-compositor">VR Compositor</a><span>, in §4.3</span>
-   <li><a href="#vrcoordinatesystem">VRCoordinateSystem</a><span>, in §6.1</span>
+   <li><a href="#vrcoordinatesystem">VRCoordinateSystem</a><span>, in §7.1</span>
    <li><a href="#vrdisplay">VRDisplay</a><span>, in §3.2</span>
-   <li><a href="#vrdisplaypose">VRDisplayPose</a><span>, in §6.3</span>
-   <li><a href="#vrevent">VREvent</a><span>, in §7.1</span>
-   <li><a href="#dictdef-vreventinit">VREventInit</a><span>, in §7.1</span>
-   <li><a href="#dom-vrevent-vrevent">VREvent(type, eventInitDict)</a><span>, in §7.1</span>
-   <li><a href="#vrframeofreference">VRFrameOfReference</a><span>, in §6.2</span>
-   <li><a href="#enumdef-vrframeofreferencetype">VRFrameOfReferenceType</a><span>, in §6.2</span>
-   <li><a href="#vrlayer">VRLayer</a><span>, in §5.1</span>
-   <li><a href="#vrplayareabounds">VRPlayAreaBounds</a><span>, in §6.4</span>
+   <li><a href="#vrdisplayevent">VRDisplayEvent</a><span>, in §8.1</span>
+   <li><a href="#dictdef-vrdisplayeventinit">VRDisplayEventInit</a><span>, in §8.1</span>
+   <li><a href="#dom-vrdisplayevent-vrdisplayevent">VRDisplayEvent(type, eventInitDict)</a><span>, in §8.1</span>
+   <li><a href="#vrdisplaypose">VRDisplayPose</a><span>, in §5.2</span>
+   <li><a href="#vrframeofreference">VRFrameOfReference</a><span>, in §7.2</span>
+   <li><a href="#enumdef-vrframeofreferencetype">VRFrameOfReferenceType</a><span>, in §7.2</span>
+   <li><a href="#vrlayer">VRLayer</a><span>, in §6.1</span>
    <li><a href="#vrsession">VRSession</a><span>, in §4.1</span>
    <li><a href="#vrsessioncreateparameters">VRSessionCreateParameters</a><span>, in §4.2</span>
    <li><a href="#dictdef-vrsessioncreateparametersinit">VRSessionCreateParametersInit</a><span>, in §4.2</span>
-   <li><a href="#vrsourceproperties">VRSourceProperties</a><span>, in §5.3</span>
-   <li><a href="#dom-vrsourceproperties-width">width</a><span>, in §5.3</span>
+   <li><a href="#vrsessionevent">VRSessionEvent</a><span>, in §8.2</span>
+   <li><a href="#dictdef-vrsessioneventinit">VRSessionEventInit</a><span>, in §8.2</span>
+   <li><a href="#dom-vrsessionevent-vrsessionevent">VRSessionEvent(type, eventInitDict)</a><span>, in §8.2</span>
+   <li><a href="#vrsourceproperties">VRSourceProperties</a><span>, in §6.3</span>
+   <li><a href="#vrstagebounds">VRStageBounds</a><span>, in §7.3</span>
+   <li><a href="#dom-vrsourceproperties-width">width</a><span>, in §6.3</span>
   </ul>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
@@ -2170,8 +2199,6 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
      <li><a href="https://heycam.github.io/webidl/#SameObject">SameObject</a>
      <li><a href="https://heycam.github.io/webidl/#idl-boolean">boolean</a>
      <li><a href="https://heycam.github.io/webidl/#idl-double">double</a>
-     <li><a href="https://heycam.github.io/webidl/#idl-float">float</a>
-     <li><a href="https://heycam.github.io/webidl/#dfn-present">present</a>
      <li><a href="https://heycam.github.io/webidl/#idl-unsigned-long">unsigned long</a>
     </ul>
   </ul>
@@ -2219,6 +2246,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
 
 <span class="kt">interface</span> <a class="nv" href="#vrsession">VRSession</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget">EventTarget</a> {
   // Attributes
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplay" href="#dom-vrsession-display">display</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrsessioncreateparameters">VRSessionCreateParameters</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRSessionCreateParameters" href="#dom-vrsession-createparameters">createParameters</a>;
 
   <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-type="double" href="#dom-vrsession-depthnear">depthNear</a>;
@@ -2226,10 +2254,9 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrlayer">VRLayer</a> <a class="nv idl-code" data-link-type="attribute" data-type="VRLayer" href="#dom-vrsession-baselayer">baseLayer</a>;
 
   // Methods
-  <a class="n" data-link-type="idl-name" href="#vrsourceproperties">VRSourceProperties</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrsession-getsourceproperties">getSourceProperties</a>(<span class="kt">optional</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrsession-getsourceproperties-scale-scale">scale</a>);
+  <a class="n" data-link-type="idl-name" href="#vrsourceproperties">VRSourceProperties</a> <a class="nv idl-code" data-link-type="method" href="#dom-vrsession-getsourceproperties">getSourceProperties</a>(<span class="kt">optional</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrsession-getsourceproperties-scale-scale">scale</a>);
   <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#vrframeofreference">VRFrameOfReference</a>> <a class="nv" href="#dom-vrsession-createframeofreference">createFrameOfReference</a>(<a class="n" data-link-type="idl-name" href="#enumdef-vrframeofreferencetype">VRFrameOfReferenceType</a> <a class="nv" href="#dom-vrsession-createframeofreference-type-type">type</a>);
   <a class="n" data-link-type="idl-name" href="#vrdisplaypose">VRDisplayPose</a>? <a class="nv" href="#dom-vrsession-getdisplaypose">getDisplayPose</a>(<a class="n" data-link-type="idl-name" href="#vrcoordinatesystem">VRCoordinateSystem</a> <a class="nv" href="#dom-vrsession-getdisplaypose-coordinatesystem-coordinatesystem">coordinateSystem</a>);
-  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#vrplayareabounds">VRPlayAreaBounds</a>> <a class="nv" href="#dom-vrsession-getplayareabounds">getPlayAreaBounds</a>(<a class="n" data-link-type="idl-name" href="#vrcoordinatesystem">VRCoordinateSystem</a> <a class="nv" href="#dom-vrsession-getplayareabounds-coordinatesystem-coordinatesystem">coordinateSystem</a>);
   <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-vrsession-endsession">endSession</a>();
 
   // Events
@@ -2239,11 +2266,21 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
 };
 
 <span class="kt">dictionary</span> <a class="nv" href="#dictdef-vrsessioncreateparametersinit">VRSessionCreateParametersInit</a> {
-  <span class="kt">required</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <a class="nv" data-default="true" data-type="boolean " href="#dom-vrsessioncreateparametersinit-present">present</a> = <span class="kt">true</span>;
+  <span class="kt">required</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <a class="nv" data-default="true" data-type="boolean " href="#dom-vrsessioncreateparametersinit-exclusive">exclusive</a> = <span class="kt">true</span>;
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vrsessioncreateparameters">VRSessionCreateParameters</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-vrsessioncreateparameters-present">present</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-vrsessioncreateparameters-exclusive">exclusive</a>;
+};
+
+<span class="kt">interface</span> <a class="nv" href="#vrdisplaypose">VRDisplayPose</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-leftprojectionmatrix">leftProjectionMatrix</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-leftviewmatrix">leftViewMatrix</a>;
+
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-rightprojectionmatrix">rightProjectionMatrix</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-rightviewmatrix">rightViewMatrix</a>;
+
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-posemodelmatrix">poseModelMatrix</a>;
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vrlayer">VRLayer</a> {};
@@ -2257,17 +2294,17 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#typedefdef-vrcanvassource">VRCanvasSource</a> <a class="nv idl-code" data-link-type="attribute" data-type="VRCanvasSource" href="#dom-vrcanvaslayer-source">source</a>;
 
   // Methods
-  <span class="kt">void</span> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds">setLeftBounds</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-left">left</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-bottom">bottom</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-right">right</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-top">top</a>);
-  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getleftbounds">getLeftBounds</a>();
+  <span class="kt">void</span> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds">setLeftBounds</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-left">left</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-bottom">bottom</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-right">right</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setleftbounds-left-bottom-right-top-top">top</a>);
+  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getleftbounds">getLeftBounds</a>();
 
-  <span class="kt">void</span> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds">setRightBounds</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-left">left</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-bottom">bottom</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-right">right</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-top">top</a>);
-  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getrightbounds">getRightBounds</a>();
+  <span class="kt">void</span> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds">setRightBounds</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-left">left</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-bottom">bottom</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-right">right</a>, <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv" href="#dom-vrcanvaslayer-setrightbounds-left-bottom-right-top-top">top</a>);
+  <span class="kt">FrozenArray</span>&lt;<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-getrightbounds">getRightBounds</a>();
 
   <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="http://www.w3.org/TR/hr-time/#domhighrestimestamp">DOMHighResTimeStamp</a>> <a class="nv idl-code" data-link-type="method" href="#dom-vrcanvaslayer-commit">commit</a>();
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vrsourceproperties">VRSourceProperties</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrsourceproperties-scale">scale</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrsourceproperties-scale">scale</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><span class="kt">unsigned</span> <span class="kt">long</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vrsourceproperties-width">width</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><span class="kt">unsigned</span> <span class="kt">long</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long" href="#dom-vrsourceproperties-height">height</a>;
 };
@@ -2279,39 +2316,36 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
 <span class="kt">enum</span> <a class="nv" href="#enumdef-vrframeofreferencetype">VRFrameOfReferenceType</a> {
   <a class="s" href="#dom-vrframeofreferencetype-headmodel">"HeadModel"</a>,
   <a class="s" href="#dom-vrframeofreferencetype-eyelevel">"EyeLevel"</a>,
-  <a class="s" href="#dom-vrframeofreferencetype-floorlevel">"FloorLevel"</a>,
+  <a class="s" href="#dom-vrframeofreferencetype-stage">"Stage"</a>,
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vrframeofreference">VRFrameOfReference</a> : <a class="n" data-link-type="idl-name" href="#vrcoordinatesystem">VRCoordinateSystem</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#enumdef-vrframeofreferencetype">VRFrameOfReferenceType</a> <a class="nv" data-readonly="" data-type="VRFrameOfReferenceType" href="#dom-vrframeofreference-type">type</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrstagebounds">VRStageBounds</a>? <a class="nv" data-readonly="" data-type="VRStageBounds?" href="#dom-vrframeofreference-bounds">bounds</a>;
 };
 
-<span class="kt">interface</span> <a class="nv" href="#vrdisplaypose">VRDisplayPose</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-leftprojectionmatrix">leftProjectionMatrix</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-leftviewmatrix">leftViewMatrix</a>;
-
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-rightprojectionmatrix">rightProjectionMatrix</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-rightviewmatrix">rightViewMatrix</a>;
-
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="Float32Array" href="#dom-vrdisplaypose-posemodelmatrix">poseModelMatrix</a>;
+<span class="kt">interface</span> <a class="nv" href="#vrstagebounds">VRStageBounds</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-minx">minX</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-maxx">maxX</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-minz">minZ</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="double" href="#dom-vrstagebounds-maxz">maxZ</a>;
 };
 
-<span class="kt">interface</span> <a class="nv" href="#vrplayareabounds">VRPlayAreaBounds</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-minx">minX</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-maxx">maxX</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-minz">minZ</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-float"><span class="kt">float</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="float" href="#dom-vrplayareabounds-maxz">maxZ</a>;
+[<a class="nv" href="#dom-vrdisplayevent-vrdisplayevent">Constructor</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><span class="kt">DOMString</span></a> <a class="nv" href="#dom-vrdisplayevent-vrdisplayevent-type-eventinitdict-type">type</a>, <a class="n" data-link-type="idl-name" href="#dictdef-vrdisplayeventinit">VRDisplayEventInit</a> <a class="nv" href="#dom-vrdisplayevent-vrdisplayevent-type-eventinitdict-eventinitdict">eventInitDict</a>)]
+<span class="kt">interface</span> <a class="nv" href="#vrdisplayevent">VRDisplayEvent</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event">Event</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplay" href="#dom-vrdisplayevent-display">display</a>;
 };
 
-[<a class="nv" href="#dom-vrevent-vrevent">Constructor</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><span class="kt">DOMString</span></a> <a class="nv" href="#dom-vrevent-vrevent-type-eventinitdict-type">type</a>, <a class="n" data-link-type="idl-name" href="#dictdef-vreventinit">VREventInit</a> <a class="nv" href="#dom-vrevent-vrevent-type-eventinitdict-eventinitdict">eventInitDict</a>)]
-<span class="kt">interface</span> <a class="nv" href="#vrevent">VREvent</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event">Event</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRDisplay" href="#dom-vrevent-display">display</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrsession">VRSession</a>? <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRSession?" href="#dom-vrevent-session">session</a>;
+<span class="kt">dictionary</span> <a class="nv" href="#dictdef-vrdisplayeventinit">VRDisplayEventInit</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a> {
+  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a> <a class="nv" data-type="VRDisplay " href="#dom-vrdisplayeventinit-display">display</a>;
 };
 
-<span class="kt">dictionary</span> <a class="nv" href="#dictdef-vreventinit">VREventInit</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a> {
-  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#vrdisplay">VRDisplay</a> <a class="nv" data-type="VRDisplay " href="#dom-vreventinit-display">display</a>;
-  <a class="n" data-link-type="idl-name" href="#vrsession">VRSession</a>? <a class="nv" data-type="VRSession? " href="#dom-vreventinit-session">session</a>;
+[<a class="nv" href="#dom-vrsessionevent-vrsessionevent">Constructor</a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><span class="kt">DOMString</span></a> <a class="nv" href="#dom-vrsessionevent-vrsessionevent-type-eventinitdict-type">type</a>, <a class="n" data-link-type="idl-name" href="#dictdef-vrsessioneventinit">VRSessionEventInit</a> <a class="nv" href="#dom-vrsessionevent-vrsessionevent-type-eventinitdict-eventinitdict">eventInitDict</a>)]
+<span class="kt">interface</span> <a class="nv" href="#vrsessionevent">VRSessionEvent</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event">Event</a> {
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#vrsession">VRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="VRSession" href="#dom-vrsessionevent-session">session</a>;
+};
+
+<span class="kt">dictionary</span> <a class="nv" href="#dictdef-vrsessioneventinit">VRSessionEventInit</a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a> {
+  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#vrsession">VRSession</a> <a class="nv" data-type="VRSession " href="#dom-vrsessioneventinit-session">session</a>;
 };
 
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/webappapis.html#navigator">Navigator</a> {
@@ -2325,7 +2359,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <div class="issue"> Document what happens when we <span>end the session</span><a href="#issue-398b8983"> ↵ </a></div>
    <div class="issue"> Document effects when we <span>blur the active session</span><a href="#issue-0e9adca4"> ↵ </a></div>
    <div class="issue"> Example of acquiring a session here.<a href="#issue-2db59f6a"> ↵ </a></div>
-   <div class="issue"> Document restrictions and capabilities of a <span>presenting session</span><a href="#issue-ff3443b2"> ↵ </a></div>
+   <div class="issue"> Document restrictions and capabilities of an <span>exclusive session</span><a href="#issue-8db9fdff"> ↵ </a></div>
    <div class="issue"> This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.<a href="#issue-88218c4e"> ↵ </a></div>
    <div class="issue"> Need an example snippet of a <code class="idl"><a data-link-type="idl" href="#vrcanvaslayer">VRCanvasLayer</a></code> render loop<a href="#issue-78a990eb"> ↵ </a></div>
    <div class="issue"> Pretty much nothing in this section is documented<a href="#issue-908c5434"> ↵ </a></div>
@@ -2334,8 +2368,8 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <aside class="dfn-panel" data-for="vr">
    <b><a href="#vr">#vr</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vr-1">7.2. Event Types</a> <a href="#ref-for-vr-2">(2)</a> <a href="#ref-for-vr-3">(3)</a>
-    <li><a href="#ref-for-vr-4">8. Navigator interface extension</a>
+    <li><a href="#ref-for-vr-1">8.3. Event Types</a> <a href="#ref-for-vr-2">(2)</a> <a href="#ref-for-vr-3">(3)</a>
+    <li><a href="#ref-for-vr-4">9. Navigator interface extension</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vr-getdisplays">
@@ -2368,12 +2402,13 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
     <li><a href="#ref-for-vrdisplay-1">2.3. Content Isolation</a>
     <li><a href="#ref-for-vrdisplay-2">3.1. VR</a> <a href="#ref-for-vrdisplay-3">(2)</a>
     <li><a href="#ref-for-vrdisplay-4">3.2. VRDisplay</a> <a href="#ref-for-vrdisplay-5">(2)</a> <a href="#ref-for-vrdisplay-6">(3)</a> <a href="#ref-for-vrdisplay-7">(4)</a> <a href="#ref-for-vrdisplay-8">(5)</a> <a href="#ref-for-vrdisplay-9">(6)</a>
-    <li><a href="#ref-for-vrdisplay-10">4.1. VRSession</a> <a href="#ref-for-vrdisplay-11">(2)</a> <a href="#ref-for-vrdisplay-12">(3)</a>
-    <li><a href="#ref-for-vrdisplay-13">5.1. VRLayer</a>
-    <li><a href="#ref-for-vrdisplay-14">5.2. VRCanvasLayer</a> <a href="#ref-for-vrdisplay-15">(2)</a>
-    <li><a href="#ref-for-vrdisplay-16">5.3. VRSourceProperties</a>
-    <li><a href="#ref-for-vrdisplay-17">7.1. VREvent</a> <a href="#ref-for-vrdisplay-18">(2)</a> <a href="#ref-for-vrdisplay-19">(3)</a>
-    <li><a href="#ref-for-vrdisplay-20">7.2. Event Types</a> <a href="#ref-for-vrdisplay-21">(2)</a> <a href="#ref-for-vrdisplay-22">(3)</a> <a href="#ref-for-vrdisplay-23">(4)</a> <a href="#ref-for-vrdisplay-24">(5)</a> <a href="#ref-for-vrdisplay-25">(6)</a> <a href="#ref-for-vrdisplay-26">(7)</a> <a href="#ref-for-vrdisplay-27">(8)</a> <a href="#ref-for-vrdisplay-28">(9)</a> <a href="#ref-for-vrdisplay-29">(10)</a> <a href="#ref-for-vrdisplay-30">(11)</a>
+    <li><a href="#ref-for-vrdisplay-10">4.1. VRSession</a> <a href="#ref-for-vrdisplay-11">(2)</a> <a href="#ref-for-vrdisplay-12">(3)</a> <a href="#ref-for-vrdisplay-13">(4)</a>
+    <li><a href="#ref-for-vrdisplay-14">5.2. VRDisplayPose</a>
+    <li><a href="#ref-for-vrdisplay-15">6.1. VRLayer</a>
+    <li><a href="#ref-for-vrdisplay-16">6.2. VRCanvasLayer</a> <a href="#ref-for-vrdisplay-17">(2)</a>
+    <li><a href="#ref-for-vrdisplay-18">6.3. VRSourceProperties</a>
+    <li><a href="#ref-for-vrdisplay-19">8.1. VRDisplayEvent</a> <a href="#ref-for-vrdisplay-20">(2)</a> <a href="#ref-for-vrdisplay-21">(3)</a>
+    <li><a href="#ref-for-vrdisplay-22">8.3. Event Types</a> <a href="#ref-for-vrdisplay-23">(2)</a> <a href="#ref-for-vrdisplay-24">(3)</a> <a href="#ref-for-vrdisplay-25">(4)</a> <a href="#ref-for-vrdisplay-26">(5)</a> <a href="#ref-for-vrdisplay-27">(6)</a> <a href="#ref-for-vrdisplay-28">(7)</a> <a href="#ref-for-vrdisplay-29">(8)</a> <a href="#ref-for-vrdisplay-30">(9)</a> <a href="#ref-for-vrdisplay-31">(10)</a> <a href="#ref-for-vrdisplay-32">(11)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-requestsession">
@@ -2381,7 +2416,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <ul>
     <li><a href="#ref-for-dom-vrdisplay-requestsession-1">4.2. VRSessionCreateParameters</a>
     <li><a href="#ref-for-dom-vrdisplay-requestsession-2">4.3. The VR Compositor</a>
-    <li><a href="#ref-for-dom-vrdisplay-requestsession-3">7.2. Event Types</a>
+    <li><a href="#ref-for-dom-vrdisplay-requestsession-3">8.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-displayname">
@@ -2399,7 +2434,8 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <aside class="dfn-panel" data-for="vrdisplay-active-session">
    <b><a href="#vrdisplay-active-session">#vrdisplay-active-session</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrdisplay-active-session-1">3.2. VRDisplay</a> <a href="#ref-for-vrdisplay-active-session-2">(2)</a> <a href="#ref-for-vrdisplay-active-session-3">(3)</a> <a href="#ref-for-vrdisplay-active-session-4">(4)</a> <a href="#ref-for-vrdisplay-active-session-5">(5)</a> <a href="#ref-for-vrdisplay-active-session-6">(6)</a> <a href="#ref-for-vrdisplay-active-session-7">(7)</a> <a href="#ref-for-vrdisplay-active-session-8">(8)</a>
+    <li><a href="#ref-for-vrdisplay-active-session-1">3.2. VRDisplay</a> <a href="#ref-for-vrdisplay-active-session-2">(2)</a> <a href="#ref-for-vrdisplay-active-session-3">(3)</a> <a href="#ref-for-vrdisplay-active-session-4">(4)</a> <a href="#ref-for-vrdisplay-active-session-5">(5)</a> <a href="#ref-for-vrdisplay-active-session-6">(6)</a> <a href="#ref-for-vrdisplay-active-session-7">(7)</a>
+    <li><a href="#ref-for-vrdisplay-active-session-8">8.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="request-a-session">
@@ -2413,14 +2449,14 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <ul>
     <li><a href="#ref-for-dom-vrdisplay-requestsession-1">4.2. VRSessionCreateParameters</a>
     <li><a href="#ref-for-dom-vrdisplay-requestsession-2">4.3. The VR Compositor</a>
-    <li><a href="#ref-for-dom-vrdisplay-requestsession-3">7.2. Event Types</a>
+    <li><a href="#ref-for-dom-vrdisplay-requestsession-3">8.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-activesession">
    <b><a href="#dom-vrdisplay-activesession">#dom-vrdisplay-activesession</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-vrdisplay-activesession-1">3.2. VRDisplay</a>
-    <li><a href="#ref-for-dom-vrdisplay-activesession-2">7.2. Event Types</a>
+    <li><a href="#ref-for-dom-vrdisplay-activesession-2">8.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrdisplay-onsessionchange">
@@ -2447,9 +2483,16 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
     <li><a href="#ref-for-vrsession-1">2.3. Content Isolation</a>
     <li><a href="#ref-for-vrsession-2">3.2. VRDisplay</a> <a href="#ref-for-vrsession-3">(2)</a> <a href="#ref-for-vrsession-4">(3)</a> <a href="#ref-for-vrsession-5">(4)</a>
     <li><a href="#ref-for-vrsession-6">4.1. VRSession</a>
-    <li><a href="#ref-for-vrsession-7">5.2. VRCanvasLayer</a>
-    <li><a href="#ref-for-vrsession-8">7.1. VREvent</a> <a href="#ref-for-vrsession-9">(2)</a> <a href="#ref-for-vrsession-10">(3)</a>
-    <li><a href="#ref-for-vrsession-11">7.2. Event Types</a> <a href="#ref-for-vrsession-12">(2)</a> <a href="#ref-for-vrsession-13">(3)</a> <a href="#ref-for-vrsession-14">(4)</a> <a href="#ref-for-vrsession-15">(5)</a> <a href="#ref-for-vrsession-16">(6)</a> <a href="#ref-for-vrsession-17">(7)</a> <a href="#ref-for-vrsession-18">(8)</a>
+    <li><a href="#ref-for-vrsession-7">6.2. VRCanvasLayer</a>
+    <li><a href="#ref-for-vrsession-8">8.1. VRDisplayEvent</a>
+    <li><a href="#ref-for-vrsession-9">8.2. VRSessionEvent</a> <a href="#ref-for-vrsession-10">(2)</a> <a href="#ref-for-vrsession-11">(3)</a>
+    <li><a href="#ref-for-vrsession-12">8.3. Event Types</a> <a href="#ref-for-vrsession-13">(2)</a> <a href="#ref-for-vrsession-14">(3)</a> <a href="#ref-for-vrsession-15">(4)</a> <a href="#ref-for-vrsession-16">(5)</a> <a href="#ref-for-vrsession-17">(6)</a> <a href="#ref-for-vrsession-18">(7)</a> <a href="#ref-for-vrsession-19">(8)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-vrsession-display">
+   <b><a href="#dom-vrsession-display">#dom-vrsession-display</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-vrsession-display-1">4.1. VRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrsession-createparameters">
@@ -2480,7 +2523,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <b><a href="#dom-vrsession-getsourceproperties">#dom-vrsession-getsourceproperties</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-vrsession-getsourceproperties-1">4.1. VRSession</a>
-    <li><a href="#ref-for-dom-vrsession-getsourceproperties-2">5.3. VRSourceProperties</a>
+    <li><a href="#ref-for-dom-vrsession-getsourceproperties-2">6.3. VRSourceProperties</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="poll-the-display-pose">
@@ -2539,132 +2582,177 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
     <li><a href="#ref-for-vrsessioncreateparameters-2">4.2. VRSessionCreateParameters</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrsessioncreateparameters-present">
-   <b><a href="#dom-vrsessioncreateparameters-present">#dom-vrsessioncreateparameters-present</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-vrsessioncreateparameters-present-1">4.2. VRSessionCreateParameters</a>
-   </ul>
-  </aside>
   <aside class="dfn-panel" data-for="session-description">
    <b><a href="#session-description">#session-description</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-session-description-1">3.2. VRDisplay</a> <a href="#ref-for-session-description-2">(2)</a> <a href="#ref-for-session-description-3">(3)</a> <a href="#ref-for-session-description-4">(4)</a> <a href="#ref-for-session-description-5">(5)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="presenting-session">
-   <b><a href="#presenting-session">#presenting-session</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrsessioncreateparameters-exclusive">
+   <b><a href="#dom-vrsessioncreateparameters-exclusive">#dom-vrsessioncreateparameters-exclusive</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-presenting-session-1">4.1. VRSession</a>
+    <li><a href="#ref-for-dom-vrsessioncreateparameters-exclusive-1">4.2. VRSessionCreateParameters</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="exclusive-session">
+   <b><a href="#exclusive-session">#exclusive-session</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-exclusive-session-1">3.2. VRDisplay</a>
+    <li><a href="#ref-for-exclusive-session-2">4.1. VRSession</a>
+    <li><a href="#ref-for-exclusive-session-3">8.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vr-compositor">
    <b><a href="#vr-compositor">#vr-compositor</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-vr-compositor-1">2.2. Trusted Environment</a>
-    <li><a href="#ref-for-vr-compositor-2">5.2. VRCanvasLayer</a>
+    <li><a href="#ref-for-vr-compositor-2">6.2. VRCanvasLayer</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="matrix">
+   <b><a href="#matrix">#matrix</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-matrix-1">5.2. VRDisplayPose</a> <a href="#ref-for-matrix-2">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="vrdisplaypose">
+   <b><a href="#vrdisplaypose">#vrdisplaypose</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-vrdisplaypose-1">4.1. VRSession</a>
+    <li><a href="#ref-for-vrdisplaypose-2">5.2. VRDisplayPose</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-vrdisplaypose-leftprojectionmatrix">
+   <b><a href="#dom-vrdisplaypose-leftprojectionmatrix">#dom-vrdisplaypose-leftprojectionmatrix</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-vrdisplaypose-leftprojectionmatrix-1">5.2. VRDisplayPose</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-vrdisplaypose-rightprojectionmatrix">
+   <b><a href="#dom-vrdisplaypose-rightprojectionmatrix">#dom-vrdisplaypose-rightprojectionmatrix</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-vrdisplaypose-rightprojectionmatrix-1">5.2. VRDisplayPose</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-vrdisplaypose-leftviewmatrix">
+   <b><a href="#dom-vrdisplaypose-leftviewmatrix">#dom-vrdisplaypose-leftviewmatrix</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-vrdisplaypose-leftviewmatrix-1">5.2. VRDisplayPose</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-vrdisplaypose-rightviewmatrix">
+   <b><a href="#dom-vrdisplaypose-rightviewmatrix">#dom-vrdisplaypose-rightviewmatrix</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-vrdisplaypose-rightviewmatrix-1">5.2. VRDisplayPose</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-vrdisplaypose-posemodelmatrix">
+   <b><a href="#dom-vrdisplaypose-posemodelmatrix">#dom-vrdisplaypose-posemodelmatrix</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-vrdisplaypose-posemodelmatrix-1">5.2. VRDisplayPose</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrlayer">
    <b><a href="#vrlayer">#vrlayer</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-vrlayer-1">4.1. VRSession</a>
-    <li><a href="#ref-for-vrlayer-2">5.1. VRLayer</a>
-    <li><a href="#ref-for-vrlayer-3">5.2. VRCanvasLayer</a>
+    <li><a href="#ref-for-vrlayer-2">6.1. VRLayer</a>
+    <li><a href="#ref-for-vrlayer-3">6.2. VRCanvasLayer</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="typedefdef-vrcanvassource">
    <b><a href="#typedefdef-vrcanvassource">#typedefdef-vrcanvassource</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-typedefdef-vrcanvassource-1">5.2. VRCanvasLayer</a> <a href="#ref-for-typedefdef-vrcanvassource-2">(2)</a>
+    <li><a href="#ref-for-typedefdef-vrcanvassource-1">6.2. VRCanvasLayer</a> <a href="#ref-for-typedefdef-vrcanvassource-2">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrcanvaslayer">
    <b><a href="#vrcanvaslayer">#vrcanvaslayer</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-vrcanvaslayer-1">4.3. The VR Compositor</a>
-    <li><a href="#ref-for-vrcanvaslayer-2">5.1. VRLayer</a>
-    <li><a href="#ref-for-vrcanvaslayer-3">5.2. VRCanvasLayer</a> <a href="#ref-for-vrcanvaslayer-4">(2)</a>
-    <li><a href="#ref-for-vrcanvaslayer-5">5.3. VRSourceProperties</a>
+    <li><a href="#ref-for-vrcanvaslayer-2">6.1. VRLayer</a>
+    <li><a href="#ref-for-vrcanvaslayer-3">6.2. VRCanvasLayer</a> <a href="#ref-for-vrcanvaslayer-4">(2)</a>
+    <li><a href="#ref-for-vrcanvaslayer-5">6.3. VRSourceProperties</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrcanvaslayer-source">
    <b><a href="#dom-vrcanvaslayer-source">#dom-vrcanvaslayer-source</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-vrcanvaslayer-source-1">2.3. Content Isolation</a>
-    <li><a href="#ref-for-dom-vrcanvaslayer-source-2">5.2. VRCanvasLayer</a> <a href="#ref-for-dom-vrcanvaslayer-source-3">(2)</a>
-    <li><a href="#ref-for-dom-vrcanvaslayer-source-4">5.3. VRSourceProperties</a>
+    <li><a href="#ref-for-dom-vrcanvaslayer-source-2">6.2. VRCanvasLayer</a> <a href="#ref-for-dom-vrcanvaslayer-source-3">(2)</a>
+    <li><a href="#ref-for-dom-vrcanvaslayer-source-4">6.3. VRSourceProperties</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrcanvaslayer-left-bounds">
    <b><a href="#vrcanvaslayer-left-bounds">#vrcanvaslayer-left-bounds</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrcanvaslayer-left-bounds-1">5.2. VRCanvasLayer</a> <a href="#ref-for-vrcanvaslayer-left-bounds-2">(2)</a> <a href="#ref-for-vrcanvaslayer-left-bounds-3">(3)</a>
+    <li><a href="#ref-for-vrcanvaslayer-left-bounds-1">6.2. VRCanvasLayer</a> <a href="#ref-for-vrcanvaslayer-left-bounds-2">(2)</a> <a href="#ref-for-vrcanvaslayer-left-bounds-3">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrcanvaslayer-right-bounds">
    <b><a href="#vrcanvaslayer-right-bounds">#vrcanvaslayer-right-bounds</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrcanvaslayer-right-bounds-1">5.2. VRCanvasLayer</a> <a href="#ref-for-vrcanvaslayer-right-bounds-2">(2)</a> <a href="#ref-for-vrcanvaslayer-right-bounds-3">(3)</a>
+    <li><a href="#ref-for-vrcanvaslayer-right-bounds-1">6.2. VRCanvasLayer</a> <a href="#ref-for-vrcanvaslayer-right-bounds-2">(2)</a> <a href="#ref-for-vrcanvaslayer-right-bounds-3">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrcanvaslayer-getleftbounds">
    <b><a href="#dom-vrcanvaslayer-getleftbounds">#dom-vrcanvaslayer-getleftbounds</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrcanvaslayer-getleftbounds-1">5.2. VRCanvasLayer</a>
+    <li><a href="#ref-for-dom-vrcanvaslayer-getleftbounds-1">6.2. VRCanvasLayer</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrcanvaslayer-getrightbounds">
    <b><a href="#dom-vrcanvaslayer-getrightbounds">#dom-vrcanvaslayer-getrightbounds</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrcanvaslayer-getrightbounds-1">5.2. VRCanvasLayer</a>
+    <li><a href="#ref-for-dom-vrcanvaslayer-getrightbounds-1">6.2. VRCanvasLayer</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrcanvaslayer-commit">
    <b><a href="#dom-vrcanvaslayer-commit">#dom-vrcanvaslayer-commit</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-vrcanvaslayer-commit-1">4.3. The VR Compositor</a> <a href="#ref-for-dom-vrcanvaslayer-commit-2">(2)</a>
-    <li><a href="#ref-for-dom-vrcanvaslayer-commit-3">5.2. VRCanvasLayer</a> <a href="#ref-for-dom-vrcanvaslayer-commit-4">(2)</a> <a href="#ref-for-dom-vrcanvaslayer-commit-5">(3)</a>
+    <li><a href="#ref-for-dom-vrcanvaslayer-commit-3">6.2. VRCanvasLayer</a> <a href="#ref-for-dom-vrcanvaslayer-commit-4">(2)</a> <a href="#ref-for-dom-vrcanvaslayer-commit-5">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrsourceproperties">
    <b><a href="#vrsourceproperties">#vrsourceproperties</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-vrsourceproperties-1">4.1. VRSession</a>
-    <li><a href="#ref-for-vrsourceproperties-2">5.3. VRSourceProperties</a> <a href="#ref-for-vrsourceproperties-3">(2)</a>
+    <li><a href="#ref-for-vrsourceproperties-2">6.3. VRSourceProperties</a> <a href="#ref-for-vrsourceproperties-3">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrsourceproperties-scale">
    <b><a href="#dom-vrsourceproperties-scale">#dom-vrsourceproperties-scale</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrsourceproperties-scale-1">5.3. VRSourceProperties</a> <a href="#ref-for-dom-vrsourceproperties-scale-2">(2)</a>
+    <li><a href="#ref-for-dom-vrsourceproperties-scale-1">6.3. VRSourceProperties</a> <a href="#ref-for-dom-vrsourceproperties-scale-2">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrsourceproperties-width">
    <b><a href="#dom-vrsourceproperties-width">#dom-vrsourceproperties-width</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrsourceproperties-width-1">5.3. VRSourceProperties</a>
+    <li><a href="#ref-for-dom-vrsourceproperties-width-1">6.3. VRSourceProperties</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-vrsourceproperties-height">
    <b><a href="#dom-vrsourceproperties-height">#dom-vrsourceproperties-height</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrsourceproperties-height-1">5.3. VRSourceProperties</a>
+    <li><a href="#ref-for-dom-vrsourceproperties-height-1">6.3. VRSourceProperties</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrcoordinatesystem">
    <b><a href="#vrcoordinatesystem">#vrcoordinatesystem</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrcoordinatesystem-1">4.1. VRSession</a> <a href="#ref-for-vrcoordinatesystem-2">(2)</a>
-    <li><a href="#ref-for-vrcoordinatesystem-3">6.1. VRCoordinateSystem</a>
-    <li><a href="#ref-for-vrcoordinatesystem-4">6.2. VRFrameOfReference</a>
-    <li><a href="#ref-for-vrcoordinatesystem-5">6.4. VRPlayAreaBounds</a>
+    <li><a href="#ref-for-vrcoordinatesystem-1">4.1. VRSession</a>
+    <li><a href="#ref-for-vrcoordinatesystem-2">5.2. VRDisplayPose</a>
+    <li><a href="#ref-for-vrcoordinatesystem-3">7.1. VRCoordinateSystem</a>
+    <li><a href="#ref-for-vrcoordinatesystem-4">7.2. VRFrameOfReference</a>
+    <li><a href="#ref-for-vrcoordinatesystem-5">7.3. VRStageBounds</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="enumdef-vrframeofreferencetype">
    <b><a href="#enumdef-vrframeofreferencetype">#enumdef-vrframeofreferencetype</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-enumdef-vrframeofreferencetype-1">4.1. VRSession</a>
-    <li><a href="#ref-for-enumdef-vrframeofreferencetype-2">6.2. VRFrameOfReference</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="vrframeofreference">
@@ -2673,97 +2761,79 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
     <li><a href="#ref-for-vrframeofreference-1">4.1. VRSession</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="vrdisplaypose">
-   <b><a href="#vrdisplaypose">#vrdisplaypose</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="vrstagebounds">
+   <b><a href="#vrstagebounds">#vrstagebounds</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrdisplaypose-1">4.1. VRSession</a>
+    <li><a href="#ref-for-vrstagebounds-1">7.2. VRFrameOfReference</a>
+    <li><a href="#ref-for-vrstagebounds-2">7.3. VRStageBounds</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrdisplaypose-leftprojectionmatrix">
-   <b><a href="#dom-vrdisplaypose-leftprojectionmatrix">#dom-vrdisplaypose-leftprojectionmatrix</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="vrstagebounds-stage">
+   <b><a href="#vrstagebounds-stage">#vrstagebounds-stage</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplaypose-leftprojectionmatrix-1">6.3. VRDisplayPose</a>
+    <li><a href="#ref-for-vrstagebounds-stage-1">7.3. VRStageBounds</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrdisplaypose-rightprojectionmatrix">
-   <b><a href="#dom-vrdisplaypose-rightprojectionmatrix">#dom-vrdisplaypose-rightprojectionmatrix</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrstagebounds-minx">
+   <b><a href="#dom-vrstagebounds-minx">#dom-vrstagebounds-minx</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplaypose-rightprojectionmatrix-1">6.3. VRDisplayPose</a>
+    <li><a href="#ref-for-dom-vrstagebounds-minx-1">7.3. VRStageBounds</a> <a href="#ref-for-dom-vrstagebounds-minx-2">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrdisplaypose-leftviewmatrix">
-   <b><a href="#dom-vrdisplaypose-leftviewmatrix">#dom-vrdisplaypose-leftviewmatrix</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrstagebounds-maxx">
+   <b><a href="#dom-vrstagebounds-maxx">#dom-vrstagebounds-maxx</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplaypose-leftviewmatrix-1">6.3. VRDisplayPose</a>
+    <li><a href="#ref-for-dom-vrstagebounds-maxx-1">7.3. VRStageBounds</a> <a href="#ref-for-dom-vrstagebounds-maxx-2">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrdisplaypose-rightviewmatrix">
-   <b><a href="#dom-vrdisplaypose-rightviewmatrix">#dom-vrdisplaypose-rightviewmatrix</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrstagebounds-minz">
+   <b><a href="#dom-vrstagebounds-minz">#dom-vrstagebounds-minz</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplaypose-rightviewmatrix-1">6.3. VRDisplayPose</a>
+    <li><a href="#ref-for-dom-vrstagebounds-minz-1">7.3. VRStageBounds</a> <a href="#ref-for-dom-vrstagebounds-minz-2">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrdisplaypose-posemodelmatrix">
-   <b><a href="#dom-vrdisplaypose-posemodelmatrix">#dom-vrdisplaypose-posemodelmatrix</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrstagebounds-maxz">
+   <b><a href="#dom-vrstagebounds-maxz">#dom-vrstagebounds-maxz</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrdisplaypose-posemodelmatrix-1">6.3. VRDisplayPose</a>
+    <li><a href="#ref-for-dom-vrstagebounds-maxz-1">7.3. VRStageBounds</a> <a href="#ref-for-dom-vrstagebounds-maxz-2">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="vrplayareabounds">
-   <b><a href="#vrplayareabounds">#vrplayareabounds</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="vrdisplayevent">
+   <b><a href="#vrdisplayevent">#vrdisplayevent</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrplayareabounds-1">4.1. VRSession</a>
-    <li><a href="#ref-for-vrplayareabounds-2">6.4. VRPlayAreaBounds</a>
+    <li><a href="#ref-for-vrdisplayevent-1">8.3. Event Types</a> <a href="#ref-for-vrdisplayevent-2">(2)</a> <a href="#ref-for-vrdisplayevent-3">(3)</a> <a href="#ref-for-vrdisplayevent-4">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrplayareabounds-minx">
-   <b><a href="#dom-vrplayareabounds-minx">#dom-vrplayareabounds-minx</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dictdef-vrdisplayeventinit">
+   <b><a href="#dictdef-vrdisplayeventinit">#dictdef-vrdisplayeventinit</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrplayareabounds-minx-1">6.4. VRPlayAreaBounds</a> <a href="#ref-for-dom-vrplayareabounds-minx-2">(2)</a>
+    <li><a href="#ref-for-dictdef-vrdisplayeventinit-1">8.1. VRDisplayEvent</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrplayareabounds-maxx">
-   <b><a href="#dom-vrplayareabounds-maxx">#dom-vrplayareabounds-maxx</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrdisplayevent-display">
+   <b><a href="#dom-vrdisplayevent-display">#dom-vrdisplayevent-display</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrplayareabounds-maxx-1">6.4. VRPlayAreaBounds</a> <a href="#ref-for-dom-vrplayareabounds-maxx-2">(2)</a>
+    <li><a href="#ref-for-dom-vrdisplayevent-display-1">8.1. VRDisplayEvent</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrplayareabounds-minz">
-   <b><a href="#dom-vrplayareabounds-minz">#dom-vrplayareabounds-minz</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="vrsessionevent">
+   <b><a href="#vrsessionevent">#vrsessionevent</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrplayareabounds-minz-1">6.4. VRPlayAreaBounds</a> <a href="#ref-for-dom-vrplayareabounds-minz-2">(2)</a>
+    <li><a href="#ref-for-vrsessionevent-1">8.3. Event Types</a> <a href="#ref-for-vrsessionevent-2">(2)</a> <a href="#ref-for-vrsessionevent-3">(3)</a> <a href="#ref-for-vrsessionevent-4">(4)</a> <a href="#ref-for-vrsessionevent-5">(5)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-vrplayareabounds-maxz">
-   <b><a href="#dom-vrplayareabounds-maxz">#dom-vrplayareabounds-maxz</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dictdef-vrsessioneventinit">
+   <b><a href="#dictdef-vrsessioneventinit">#dictdef-vrsessioneventinit</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrplayareabounds-maxz-1">6.4. VRPlayAreaBounds</a> <a href="#ref-for-dom-vrplayareabounds-maxz-2">(2)</a>
+    <li><a href="#ref-for-dictdef-vrsessioneventinit-1">8.2. VRSessionEvent</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="vrevent">
-   <b><a href="#vrevent">#vrevent</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="dom-vrsessionevent-session">
+   <b><a href="#dom-vrsessionevent-session">#dom-vrsessionevent-session</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrevent-1">7.2. Event Types</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dictdef-vreventinit">
-   <b><a href="#dictdef-vreventinit">#dictdef-vreventinit</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dictdef-vreventinit-1">7.1. VREvent</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-vrevent-display">
-   <b><a href="#dom-vrevent-display">#dom-vrevent-display</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-vrevent-display-1">7.1. VREvent</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-vrevent-session">
-   <b><a href="#dom-vrevent-session">#dom-vrevent-session</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-vrevent-session-1">3.2. VRDisplay</a>
-    <li><a href="#ref-for-dom-vrevent-session-2">7.1. VREvent</a>
-    <li><a href="#ref-for-dom-vrevent-session-3">7.2. Event Types</a>
+    <li><a href="#ref-for-dom-vrsessionevent-session-1">3.2. VRDisplay</a>
+    <li><a href="#ref-for-dom-vrsessionevent-session-2">8.2. VRSessionEvent</a>
+    <li><a href="#ref-for-dom-vrsessionevent-session-3">8.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eventdef-vr-displayconnect">
