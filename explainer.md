@@ -109,6 +109,7 @@ let glCanvas = document.createElement("canvas");
 let gl = glCanvas.getContext("webgl");
 
 let vrSession = null;
+let vrCanvasLayer = null;
 
 function BeginVRSession() {
   // VRDevice.requestSession must be called within a user gesture event
@@ -130,7 +131,8 @@ function BeginVRSession() {
 
     // The content that will be shown on the device is
     // defined by the current layer.
-    vrSession.baseLayer = new VRCanvasLayer(vrSession, glCanvas);
+    vrCanvasLayer = new VRCanvasLayer(vrSession, glCanvas);
+    vrSession.baseLayer = vrCanvasLayer;
 
     OnDrawFrame();
   }, err => {
@@ -151,9 +153,12 @@ function TryBeginMagicWindow() {
     // Store the session for use later.
     vrSession = session;
 
-    // In non-exclusive mode layers aren't used and the canvas should be sized
-    // according to the page's needs instead of querying the size from
-    // getSourceProperties.
+    // In non-exclusive mode the canvas should be sized according to the page's
+    // needs instead of querying the size from getSourceProperties.
+
+    // Also, in non-exclusive mode layers aren't needed, but it's convenient to
+    // create one anyway to observe the VR frame loop with.
+    vrCanvasLayer = new VRCanvasLayer(vrSession, glCanvas);
 
     OnDrawFrame();
   }, err => {
@@ -187,25 +192,22 @@ function OnDrawFrame() {
   if (vrSession) {
     let pose = vrSession.getDevicePose(frameOfRef);
 
-    // If no pose is provided, exit early without drawing new content.
-    if (!pose) {
-      vrSession.baseLayer.commit().then(OnDrawFrame);
-      return;
-    }
+    // Only render if a new pose is available
+    if (pose) {
+      // Do we have exclusive access to the device? If so draw the in stereo.
+      if (vrSession.createParameters.exclusive) {
+        // Draw the left eye's view to the left half of the canvas.
+        gl.viewport(0, 0, glCanvas.width*0.5, glCanvas.height);
+        drawScene(pose.leftProjectionMatrix, pose.leftViewMatrix);
 
-    // Do we have exclusive access to the device? If so draw the in stereo.
-    if (vrSession.createParameters.exclusive) {
-      // Draw the left eye's view of the scene to the left half of the canvas.
-      gl.viewport(0, 0, glCanvas.width * 0.5, glCanvas.height);
-      drawScene(pose.leftProjectionMatrix, pose.leftViewMatrix);
-
-      // Draw the right eye's view of the scene to the right half of the canvas.
-      gl.viewport(glCanvas.width * 0.5, 0, glCanvas.width * 0.5, glCanvas.height);
-      drawScene(pose.rightProjectionMatrix, pose.rightViewMatrix);
-    } else {
-      // If not an exclusive session, draw a tracked mono view of the scene.
-      gl.viewport(0, 0, glCanvas.width, glCanvas.height);
-      drawScene(defaultProjectionMatrix, pose.poseModelMatrix.inverse());
+        // Draw the right eye's view to the right half of the canvas.
+        gl.viewport(glCanvas.width*0.5, 0, glCanvas.width*0.5, glCanvas.height);
+        drawScene(pose.rightProjectionMatrix, pose.rightViewMatrix);
+      } else {
+        // If not an exclusive session, draw a tracked mono view of the scene.
+        gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+        drawScene(defaultProjectionMatrix, pose.poseModelMatrix.inverse());
+      }
     }
 
     // VRCanvasLayer.commit() indicates that rendering has completed and the
@@ -215,7 +217,7 @@ function OnDrawFrame() {
     // frame has been submitted and the next frame is ready to be drawn, which
     // allows it to function as a requestAnimationFrame analog that runs at the
     // framerate of the VRDevice instead of the main monitor.
-    vrSession.baseLayer.commit().then(OnDrawFrame);
+    vrCanvasLayer.commit().then(OnDrawFrame);
   } else {
     // No session available, so render a default mono view.
     gl.viewport(0, 0, glCanvas.width, glCanvas.height);
