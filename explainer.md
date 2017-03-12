@@ -400,7 +400,9 @@ vrSession.addEventListener('resetpose', vrSessionEvent => {
 
 WebVR applications can, like any web page, link to other pages. In the context of a VR scene this is handled by setting `window.location` to the desired URL when the user performs some action. If the page being linked to is not VR-capable the user will either have to remove the VR display to view it (which the UA should explicitly instruct them to do) or the page could be shown as a 2D page in a VR browser.
 
-If the page being navigated to is VR capable, however, it's frequently desirable to allow the user to immediately begin using a VR session for that page as well, so that the user feels as though they are navigating through a single continuous VR experience. To achieve this the page can handle the `navigate` event, fired on the `navigator.vr` object. This event provides the `VRDisplay` that the previous page was presenting to and a `VRSession` that's compatible with the one the previous page was using.
+If the page being navigated to is VR capable, however, it's frequently desirable to allow the user to immediately begin using a VR session for that page as well, so that the user feels as though they are navigating through a single continuous VR experience. To achieve this the page can handle the `navigate` event, fired on the `navigator.vr` object. This event provides a `VRSession` for the `VRDevice` that the previous page was presenting to.
+
+The `VRDevice` and `VRSession` must not retain any state set by the previous page, and need not make any guarantees about consistency of pose data between pages. They should maintain the same general implementation between pages for basic usage consistency. For example: The user agent should not switch users from the Oculus SDK to OpenVR between pages, or from Daydream to Cardboard, even though in both cases the users device could technically be used with either.
 
 To indicate to indicate that you wish to continue presenting VR content on this page the handler must call `event.preventDefault()`.
 
