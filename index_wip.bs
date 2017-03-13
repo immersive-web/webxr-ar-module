@@ -323,6 +323,8 @@ Matrices {#matrices}
 
 WebVR provides various transforms in the form of <dfn lt="matrix|matrices">matrices</dfn>. WebVR matrices are always 4x4 and given as 16 element {{Float32Array}}s in column major order. They may be passed directly to WebGL's {{uniformMatrix4fv}} function, used to create an equivalent {{DOMMatrix}}, or used with a variety of third party math libraries.
 
+Translations specified by WebVR matrices are always given in meters.
+
 
 VRDevicePose {#vrdevicepose-interface}
 -------------
@@ -480,7 +482,7 @@ interface VRStageBounds {
 
 The {{VRStageBounds}} interface describes a space known as a "<dfn for="VRStageBounds">Stage</dfn>". The [=stage=] is a bounded, floor relative play space that the user can be expected to safely be able to move within. Other VR platforms sometimes refer to this concept as "room scale" or "standing VR".
 
-<dfn attribute for="VRStageBounds">minX</dfn>, <dfn attribute for="VRStageBounds">maxX</dfn>, <dfn attribute for="VRStageBounds">minZ</dfn>, and <dfn attribute for="VRStageBounds">maxZ</dfn> define an axis-aligned rectangle on the floor relative to the origin of the {{VRCoordinateSystem}} the bounds were queried with. The origin MAY be outside the bounds rectangle. {{minX}} MUST be less than {{maxX}} and {{minZ}} MUST be less than {{maxZ}}.
+<dfn attribute for="VRStageBounds">minX</dfn>, <dfn attribute for="VRStageBounds">maxX</dfn>, <dfn attribute for="VRStageBounds">minZ</dfn>, and <dfn attribute for="VRStageBounds">maxZ</dfn> define an axis-aligned rectangle on the floor relative to the origin of the {{VRCoordinateSystem}} the bounds were queried with. Bounds are specified in meters. The origin MAY be outside the bounds rectangle. {{minX}} MUST be less than {{maxX}} and {{minZ}} MUST be less than {{maxZ}}.
 
 Note: Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe if their physical surroundings allow for it.
 
