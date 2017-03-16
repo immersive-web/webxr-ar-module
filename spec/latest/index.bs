@@ -33,11 +33,28 @@ urlPrefix: https://www.w3.org/TR/html5/
     type: interface; text: Document
 </pre>
 
+<style>
+  .unstable::before {
+    content: "This section is not stable.";
+    float: right;
+    color: red;
+  }
+  .unstable {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290'><text transform='rotate(-45)' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='70' y='210' opacity='.1'>Unstable</text></svg>");
+    background-repeat: repeat
+  }
+
+ .unstable.example:not(.no-marker)::before {
+     content: "Example " counter(example) " (Unstable)";
+     float: none;
+ }
+</style>
 
 <b style="color: red; font-size: 1.3em">DO NOT IMPLEMENT</b>
 
 <b>The version of the WebVR API represented in this document is incomplete and changing rapidly. Do not attempt to implement it at this time.</b>
 
+<section class="unstable">
 
 # Introduction # {#intro}
 
@@ -766,3 +783,5 @@ While not directly affecting the API interface and Web IDL, WebVR implementation
 * The Gamepad API will be updated such that the gamepad inputs are only updated for the focused page.
 * Non-focused tabs are allowed to enumerate {{Gamepad}}s and {{VRDisplay}}s but will see last received state or default values.
 * To prevent CORS-related vulnerabilities, each page will see a new instance of objects returned by the WebVR API, such as {{VRDisplay}}. Attributes such as the {{VRLayer/source}} set by one page must not be able to be read by another.
+
+</section>

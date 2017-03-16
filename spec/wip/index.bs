@@ -42,11 +42,29 @@ spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
         text: Promise; url:sec-promise-objects
 </pre>
 
+<style>
+  .unstable::before {
+    content: "This section is not stable.";
+    float: right;
+    color: red;
+  }
+  .unstable {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290'><text transform='rotate(-45)' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='70' y='210' opacity='.1'>Unstable</text></svg>");
+    background-repeat: repeat
+  }
+
+ .unstable.example:not(.no-marker)::before {
+     content: "Example " counter(example) " (Unstable)";
+     float: none;
+ }
+</style>
+
 
 <b style="color: red; font-size: 1.3em">DO NOT IMPLEMENT</b>
 
 <b>The version of the WebVR API represented in this document is incomplete and changing rapidly. Do not attempt to implement it at this time.</b>
 
+<section class="unstable">
 
 Introduction {#intro}
 =============
@@ -559,3 +577,4 @@ partial interface Navigator {
 };
 </pre>
 
+</section>
