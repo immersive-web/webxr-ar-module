@@ -13,9 +13,3 @@ spec/latest/index.html: spec/latest/index.bs
 spec/1.1/index.html: spec/1.1/index.bs
 	curl https://api.csswg.org/bikeshed/ -F file=@spec/1.1/index.bs -F output=err
 	curl https://api.csswg.org/bikeshed/ -F file=@spec/1.1/index.bs -F force=1 > spec/1.1/index.html | tee
-
-wip: spec/wip/index.html
-
-spec/wip/index.html: spec/wip/index.bs
-	curl https://api.csswg.org/bikeshed/ -F file=@spec/wip/index.bs -F output=err
-	curl https://api.csswg.org/bikeshed/ -F file=@spec/wip/index.bs -F force=1 > spec/wip/index.html | tee
