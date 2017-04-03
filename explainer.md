@@ -134,7 +134,8 @@ function BeginVRSession() {
     vrCanvasLayer = new VRCanvasLayer(vrSession, glCanvas);
     vrSession.baseLayer = vrCanvasLayer;
 
-    OnDrawFrame();
+    // Start the render loop
+    vrCanvasLayer.commit().then(OnDrawFrame);
   }, err => {
     // May fail for a variety of reasons, including another page already
     // having exclusive access to the device.
@@ -150,17 +151,27 @@ function TryBeginMagicWindow() {
   // gesture is needed. Support for this mode will vary, so your app should not
   // depend on it being available.
   vrDevice.requestSession({ exclusive: false }).then(session => {
+    // In non-exclusive mode the canvas should be sized according to the page's
+    // needs instead of querying the size from getSourceProperties.
+    // Otherwise this is identical to the exclusive session setup.
+
     // Store the session for use later.
     vrSession = session;
 
-    // In non-exclusive mode the canvas should be sized according to the page's
-    // needs instead of querying the size from getSourceProperties.
+    // The depth range of the scene should be set so that the projection
+    // matrices returned by the session are correct.
+    vrSession.depthNear = 0.1;
+    vrSession.depthFar = 100.0;
 
-    // Also, in non-exclusive mode layers aren't needed, but it's convenient to
-    // create one anyway to observe the VR frame loop with.
+    // The baseLayer is no longer used for presentation in non-exclusive mode,
+    // but the canvas dimensions are used to construct the projection matrices.
+    // If no baseLayer is provide or it does not contain a canvas source the
+    // window dimensions are used instead.
     vrCanvasLayer = new VRCanvasLayer(vrSession, glCanvas);
+    vrSession.baseLayer = vrCanvasLayer;
 
-    OnDrawFrame();
+    // Start the render loop
+    vrCanvasLayer.commit().then(OnDrawFrame);
   }, err => {
     // Magic window isn't available. Probably just want to render the scene
     // normally without any tracking at this point.
@@ -179,7 +190,9 @@ Unless the "HeadModel" Frame of Reference is being used, the session is not guar
 
 The UA maintains a VR compositor behind the scenes that is always active during an exclusive session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR device at as close to the device's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`.
 
-`VRCanvasLayer.commit` returns a Promise, which resolves when the VR compositor is ready draw a new frame. This enables it to act as an analog for requestAnimationFrame which runs at the device's refresh rate. If the layer's source is not dirty when `commit()` is called no new imagery is sent to the compositor but a valid promise is still returned. If `commit()` is called on a canvas layer multiple times in the course of a single frame only the image from the first commit is used, and the subsequent ones are discarded but a valid promise is still returned.
+`VRCanvasLayer.commit` returns a promise, which resolves when the VR compositor is ready draw a new frame. This enables it to act as an analog for requestAnimationFrame which runs at the device's refresh rate. If the layer's source is not dirty when `commit()` is called no new imagery is sent to the compositor but a valid promise is still returned. If `commit()` is called on a canvas layer multiple times in the course of a single frame only the image from the first commit is used, and the subsequent ones are discarded but a valid promise is still returned.
+
+Calling `commit()` on a layer attached to an exclusive session has the same effect on the canvas as normal composition within the page. If the WebGL context was created with `preserveDrawingBuffer: false` the canvas contents will be discarded. When used with a non-exclusive session `commit()` doesn't alter the source canvas contents, but the promise for the next frame is still returned. Frame promises returned by a non-exclusive session resolve at the same rate as `window.requestAnimationFrame` callbacks.
 
 ```js
 // The Frame of Reference indicates what the matrices and coordinates the
@@ -205,8 +218,9 @@ function OnDrawFrame() {
         drawScene(pose.rightProjectionMatrix, pose.rightViewMatrix);
       } else {
         // If not an exclusive session, draw a tracked mono view of the scene.
+        // Use only either the left or right matrices.
         gl.viewport(0, 0, glCanvas.width, glCanvas.height);
-        drawScene(defaultProjectionMatrix, pose.poseModelMatrix.inverse());
+        drawScene(pose.leftProjectionMatrix, pose.leftViewMatrix);
       }
     }
 
@@ -216,7 +230,8 @@ function OnDrawFrame() {
     // commands to reduce latency. The promise it returns resolves when the
     // frame has been submitted and the next frame is ready to be drawn, which
     // allows it to function as a requestAnimationFrame analog that runs at the
-    // framerate of the VRDevice instead of the main monitor.
+    // appropriate framerate for the output device (whether that's a VRDisplay
+    // or the main monitor).
     vrCanvasLayer.commit().then(OnDrawFrame);
   } else {
     // No session available, so render a default mono view.
