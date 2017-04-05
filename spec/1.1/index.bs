@@ -381,14 +381,14 @@ but when doing so SHOULD report {{VRDisplayCapabilities}}.{{hasPosition}} as
 false. When not null MUST be a three-element array.
 
 <dfn attribute for="VRPose">linearVelocity</dfn>
-Linear velocity of the sensor given in meters per second. MAY be null if the
-sensor is incapable of providing linear velocity. When not null MUST be a
-three-element array.
+Linear velocity of the sensor given in meters per second in sitting space. MAY
+be null if the sensor is incapable of providing linear velocity. When not null
+MUST be a three-element array.
 
 <dfn attribute for="VRPose">linearAcceleration</dfn>
-Linear acceleration of the sensor given in meters per second squared. MAY be
-null if the sensor is incapable of providing linear acceleration. When not null
-MUST be a three-element array.
+Linear acceleration of the sensor given in meters per second squared in sitting
+space. MAY be null if the sensor is incapable of providing linear acceleration.
+When not null MUST be a three-element array.
 
 <dfn attribute for="VRPose">orientation</dfn>
 Orientation of the sensor as a quaternion. The orientation yaw (rotation around
@@ -399,14 +399,14 @@ sensor is incapable of providing orientation data. When not null MUST be a
 four-element array.
 
 <dfn attribute for="VRPose">angularVelocity</dfn>
-Angular velocity of the sensor given in radians per second. MAY be null if the
-sensor is incapable of providing angular velocity. When not null MUST be a
-three-element array.
+Angular velocity of the sensor given in radians per second in sitting space. MAY
+be null if the sensor is incapable of providing angular velocity. When not null
+MUST be a three-element array.
 
 <dfn attribute for="VRPose">angularAcceleration</dfn>
-Angular acceleration of the sensor given in radians per second squared. MAY be
-null if the sensor is incapable of providing angular acceleration. When not null
-MUST be a three-element array.
+Angular acceleration of the sensor given in radians per second squared in
+sitting space. MAY be null if the sensor is incapable of providing angular
+acceleration. When not null MUST be a three-element array.
 
 <div class="example">
 The following code snippet creates a WebGL-compatible matrix from a

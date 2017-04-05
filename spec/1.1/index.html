@@ -1176,7 +1176,8 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version 9260eac3642631ba07cbb9e9b2936efe928153e3" name="generator">
+  <meta content="Bikeshed version 81c00a31d8c468599cf8337dd150a8be9a2b4e5d" name="generator">
+  <link href="https://w3c.github.io/webvr/" rel="canonical">
 <style>/* style-md-lists */
 
             /* This is a weird hack for me not yet following the commonmark spec
@@ -1423,7 +1424,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebVR</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-03-13">13 March 2017</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-04-05">5 April 2017</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1807,24 +1808,24 @@ MAY be null if the sensor is incapable of providing positional data. User agents
 MAY provide emulated position values through techniques such as neck modeling,
 but when doing so SHOULD report <code class="idl"><a data-link-type="idl" href="#vrdisplaycapabilities" id="ref-for-vrdisplaycapabilities-4">VRDisplayCapabilities</a></code>.<code class="idl"><a data-link-type="idl" href="#dom-vrdisplaycapabilities-hasposition" id="ref-for-dom-vrdisplaycapabilities-hasposition-3">hasPosition</a></code> as
 false. When not null MUST be a three-element array.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-linearvelocity">linearVelocity</dfn> Linear velocity of the sensor given in meters per second. MAY be null if the
-sensor is incapable of providing linear velocity. When not null MUST be a
-three-element array.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-linearacceleration">linearAcceleration</dfn> Linear acceleration of the sensor given in meters per second squared. MAY be
-null if the sensor is incapable of providing linear acceleration. When not null
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-linearvelocity">linearVelocity</dfn> Linear velocity of the sensor given in meters per second in sitting space. MAY
+be null if the sensor is incapable of providing linear velocity. When not null
 MUST be a three-element array.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-linearacceleration">linearAcceleration</dfn> Linear acceleration of the sensor given in meters per second squared in sitting
+space. MAY be null if the sensor is incapable of providing linear acceleration.
+When not null MUST be a three-element array.</p>
    <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-orientation">orientation</dfn> Orientation of the sensor as a quaternion. The orientation yaw (rotation around
 the Y axis) is relative to the initial yaw of the sensor when it was first read
 or the yaw of the sensor at the point that <code class="idl"><a data-link-type="idl" href="#dom-vrdisplay-resetpose" id="ref-for-dom-vrdisplay-resetpose-7">resetPose()</a></code> was last called. An
 orientation of [0, 0, 0, 1] is considered to be "forward". MAY be null if the
 sensor is incapable of providing orientation data. When not null MUST be a
 four-element array.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-angularvelocity">angularVelocity</dfn> Angular velocity of the sensor given in radians per second. MAY be null if the
-sensor is incapable of providing angular velocity. When not null MUST be a
-three-element array.</p>
-   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-angularacceleration">angularAcceleration</dfn> Angular acceleration of the sensor given in radians per second squared. MAY be
-null if the sensor is incapable of providing angular acceleration. When not null
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-angularvelocity">angularVelocity</dfn> Angular velocity of the sensor given in radians per second in sitting space. MAY
+be null if the sensor is incapable of providing angular velocity. When not null
 MUST be a three-element array.</p>
+   <p><dfn class="dfn-paneled idl-code" data-dfn-for="VRPose" data-dfn-type="attribute" data-export="" id="dom-vrpose-angularacceleration">angularAcceleration</dfn> Angular acceleration of the sensor given in radians per second squared in
+sitting space. MAY be null if the sensor is incapable of providing angular
+acceleration. When not null MUST be a three-element array.</p>
    <div class="example" id="example-a13bd44b">
     <a class="self-link" href="#example-a13bd44b"></a> The following code snippet creates a WebGL-compatible matrix from a <code class="idl"><a data-link-type="idl" href="#vrpose" id="ref-for-vrpose-7">VRPose</a></code>: 
 <pre class="lang-js highlight"><span class="kd">function</span> poseToMatrix <span class="p">(</span>pose<span class="p">)</span> <span class="p">{</span>
