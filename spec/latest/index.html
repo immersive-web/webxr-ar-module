@@ -1176,7 +1176,7 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version 31cb2a09cfa9e1757739fb1eb0bb2da567f58c60" name="generator">
+  <meta content="Bikeshed version ebf2734db77b4aff3d5749f39c4209550544a23e" name="generator">
   <link href="https://w3c.github.io/webvr/" rel="canonical">
 <style>
   .unstable::before {
@@ -1440,7 +1440,7 @@ pre.idl.highlight { color: #708090; }
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebVR</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-03-28">28 March 2017</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-04-11">11 April 2017</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1493,7 +1493,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <ol class="toc">
       <li><a href="#gazetracking-security"><span class="secno">2.1</span> <span class="content">Gaze Tracking</span></a>
       <li><a href="#trustedenvironment-security"><span class="secno">2.2</span> <span class="content">Trusted Environment</span></a>
-      <li><a href="#contextisolation-security"><span class="secno">2.3</span> <span class="content">Content Isolation</span></a>
+      <li><a href="#contextisolation-security"><span class="secno">2.3</span> <span class="content">Context Isolation</span></a>
      </ol>
     <li>
      <a href="#deviceenumeration"><span class="secno">3</span> <span class="content">Device Enumeration</span></a>
@@ -1571,7 +1571,7 @@ to VR hardware to allow developers to build compelling, comfortable VR experienc
     <p>If the virtual environment does not consistently track the user’s head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the UA MUST provide a tracked, trusted environment and a <a data-link-type="dfn" href="#vr-compositor" id="ref-for-vr-compositor-1">VR Compositor</a> which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the UA should be able to continue presenting a responsive, trusted UI.</p>
     <p>Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the VR experience. Removing the VR device in these cases may not always be a fast or practical option. To accomodate this the UA SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebVR content and displays the UA’s trusted UI.</p>
     <p>When navigating between pages in VR the UA should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.</p>
-    <h3 class="heading settled" data-level="2.3" id="contextisolation-security"><span class="secno">2.3. </span><span class="content">Content Isolation</span><a class="self-link" href="#contextisolation-security"></a></h3>
+    <h3 class="heading settled" data-level="2.3" id="contextisolation-security"><span class="secno">2.3. </span><span class="content">Context Isolation</span><a class="self-link" href="#contextisolation-security"></a></h3>
     <p>The trusted UI must be drawing by an independent rendering context who’s state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI’s context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.</p>
     <p>Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as <code class="idl"><a data-link-type="idl" href="#vrdevice" id="ref-for-vrdevice-1">VRDevice</a></code> and <code class="idl"><a data-link-type="idl" href="#vrsession" id="ref-for-vrsession-1">VRSession</a></code>. Attributes such as the <code class="idl"><a data-link-type="idl" href="#dom-vrcanvaslayer-source" id="ref-for-dom-vrcanvaslayer-source-1">source</a></code> set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The UA MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.</p>
     <h2 class="heading settled" data-level="3" id="deviceenumeration"><span class="secno">3. </span><span class="content">Device Enumeration</span><a class="self-link" href="#deviceenumeration"></a></h2>
@@ -1842,9 +1842,9 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
 </pre>
     <h3 class="heading settled" data-level="7.2" id="vrframeofreference-interface"><span class="secno">7.2. </span><span class="content">VRFrameOfReference</span><a class="self-link" href="#vrframeofreference-interface"></a></h3>
 <pre class="idl highlight def"><span class="kt">enum</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="enum" data-export="" id="enumdef-vrframeofreferencetype">VRFrameOfReferenceType</dfn> {
-  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;HeadModel&quot;|HeadModel" id="dom-vrframeofreferencetype-headmodel">"HeadModel"<a class="self-link" href="#dom-vrframeofreferencetype-headmodel"></a></dfn>,
-  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;EyeLevel&quot;|EyeLevel" id="dom-vrframeofreferencetype-eyelevel">"EyeLevel"<a class="self-link" href="#dom-vrframeofreferencetype-eyelevel"></a></dfn>,
-  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;Stage&quot;|Stage" id="dom-vrframeofreferencetype-stage">"Stage"<a class="self-link" href="#dom-vrframeofreferencetype-stage"></a></dfn>,
+  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;headModel&quot;|headModel" id="dom-vrframeofreferencetype-headmodel">"headModel"<a class="self-link" href="#dom-vrframeofreferencetype-headmodel"></a></dfn>,
+  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;eyeLevel&quot;|eyeLevel" id="dom-vrframeofreferencetype-eyelevel">"eyeLevel"<a class="self-link" href="#dom-vrframeofreferencetype-eyelevel"></a></dfn>,
+  <dfn class="s idl-code" data-dfn-for="VRFrameOfReferenceType" data-dfn-type="enum-value" data-export="" data-lt="&quot;stage&quot;|stage" id="dom-vrframeofreferencetype-stage">"stage"<a class="self-link" href="#dom-vrframeofreferencetype-stage"></a></dfn>,
 };
 
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="vrframeofreference">VRFrameOfReference</dfn> : <a class="n" data-link-type="idl-name" href="#vrcoordinatesystem" id="ref-for-vrcoordinatesystem-4">VRCoordinateSystem</a> {
@@ -2093,8 +2093,8 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
      <li><a href="#dom-vrsessioncreateparameters-exclusive">attribute for VRSessionCreateParameters</a><span>, in §4.2</span>
     </ul>
    <li><a href="#exclusive-session">exclusive session</a><span>, in §4.2</span>
-   <li><a href="#dom-vrframeofreferencetype-eyelevel">EyeLevel</a><span>, in §7.2</span>
-   <li><a href="#dom-vrframeofreferencetype-eyelevel">"EyeLevel"</a><span>, in §7.2</span>
+   <li><a href="#dom-vrframeofreferencetype-eyelevel">"eyeLevel"</a><span>, in §7.2</span>
+   <li><a href="#dom-vrframeofreferencetype-eyelevel">eyeLevel</a><span>, in §7.2</span>
    <li><a href="#eventdef-vrsession-focus">focus</a><span>, in §8.3</span>
    <li><a href="#frame-loop">Frame Loop</a><span>, in §4.3</span>
    <li><a href="#dom-vrsession-getdevicepose">getDevicePose()</a><span>, in §4.1</span>
@@ -2105,8 +2105,8 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <li><a href="#dom-vrsession-getsourceproperties">getSourceProperties()</a><span>, in §4.1</span>
    <li><a href="#dom-vrsession-getsourceproperties">getSourceProperties(scale)</a><span>, in §4.1</span>
    <li><a href="#dom-vrcoordinatesystem-gettransformto">getTransformTo(other)</a><span>, in §7.1</span>
-   <li><a href="#dom-vrframeofreferencetype-headmodel">HeadModel</a><span>, in §7.2</span>
-   <li><a href="#dom-vrframeofreferencetype-headmodel">"HeadModel"</a><span>, in §7.2</span>
+   <li><a href="#dom-vrframeofreferencetype-headmodel">"headModel"</a><span>, in §7.2</span>
+   <li><a href="#dom-vrframeofreferencetype-headmodel">headModel</a><span>, in §7.2</span>
    <li><a href="#dom-vrsourceproperties-height">height</a><span>, in §6.3</span>
    <li><a href="#dom-vrdevice-isexternal">isExternal</a><span>, in §3.2</span>
    <li><a href="#vrcanvaslayer-left-bounds">Left Bounds</a><span>, in §6.2</span>
@@ -2153,13 +2153,9 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
    <li><a href="#dom-vrcanvaslayer-setrightbounds">setRightBounds()</a><span>, in §6.2</span>
    <li><a href="#dom-vrcanvaslayer-setrightbounds">setRightBounds(left, bottom, right, top)</a><span>, in §6.2</span>
    <li><a href="#dom-vrcanvaslayer-source">source</a><span>, in §6.2</span>
-   <li><a href="#dom-vrframeofreferencetype-stage">"Stage"</a><span>, in §7.2</span>
-   <li>
-    Stage
-    <ul>
-     <li><a href="#dom-vrframeofreferencetype-stage">enum-value for VRFrameOfReferenceType</a><span>, in §7.2</span>
-     <li><a href="#vrstagebounds-stage">dfn for VRStageBounds</a><span>, in §7.3</span>
-    </ul>
+   <li><a href="#dom-vrframeofreferencetype-stage">"stage"</a><span>, in §7.2</span>
+   <li><a href="#vrstagebounds-stage">Stage</a><span>, in §7.3</span>
+   <li><a href="#dom-vrframeofreferencetype-stage">stage</a><span>, in §7.2</span>
    <li><a href="#dom-vrdevice-supportssession">supportsSession()</a><span>, in §3.2</span>
    <li><a href="#dom-vrdevice-supportssession">supportsSession(parameters)</a><span>, in §3.2</span>
    <li><a href="#dom-navigator-vr">vr</a><span>, in §9</span>
@@ -2339,9 +2335,9 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
 };
 
 <span class="kt">enum</span> <a class="nv" href="#enumdef-vrframeofreferencetype">VRFrameOfReferenceType</a> {
-  <a class="s" href="#dom-vrframeofreferencetype-headmodel">"HeadModel"</a>,
-  <a class="s" href="#dom-vrframeofreferencetype-eyelevel">"EyeLevel"</a>,
-  <a class="s" href="#dom-vrframeofreferencetype-stage">"Stage"</a>,
+  <a class="s" href="#dom-vrframeofreferencetype-headmodel">"headModel"</a>,
+  <a class="s" href="#dom-vrframeofreferencetype-eyelevel">"eyeLevel"</a>,
+  <a class="s" href="#dom-vrframeofreferencetype-stage">"stage"</a>,
 };
 
 <span class="kt">interface</span> <a class="nv" href="#vrframeofreference">VRFrameOfReference</a> : <a class="n" data-link-type="idl-name" href="#vrcoordinatesystem">VRCoordinateSystem</a> {
@@ -2424,7 +2420,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <aside class="dfn-panel" data-for="vrdevice">
    <b><a href="#vrdevice">#vrdevice</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrdevice-1">2.3. Content Isolation</a>
+    <li><a href="#ref-for-vrdevice-1">2.3. Context Isolation</a>
     <li><a href="#ref-for-vrdevice-2">3.1. VR</a> <a href="#ref-for-vrdevice-3">(2)</a>
     <li><a href="#ref-for-vrdevice-4">3.2. VRDevice</a> <a href="#ref-for-vrdevice-5">(2)</a> <a href="#ref-for-vrdevice-6">(3)</a> <a href="#ref-for-vrdevice-7">(4)</a> <a href="#ref-for-vrdevice-8">(5)</a> <a href="#ref-for-vrdevice-9">(6)</a>
     <li><a href="#ref-for-vrdevice-10">4.1. VRSession</a> <a href="#ref-for-vrdevice-11">(2)</a> <a href="#ref-for-vrdevice-12">(3)</a> <a href="#ref-for-vrdevice-13">(4)</a>
@@ -2505,7 +2501,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <aside class="dfn-panel" data-for="vrsession">
    <b><a href="#vrsession">#vrsession</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-vrsession-1">2.3. Content Isolation</a>
+    <li><a href="#ref-for-vrsession-1">2.3. Context Isolation</a>
     <li><a href="#ref-for-vrsession-2">3.2. VRDevice</a> <a href="#ref-for-vrsession-3">(2)</a> <a href="#ref-for-vrsession-4">(3)</a> <a href="#ref-for-vrsession-5">(4)</a>
     <li><a href="#ref-for-vrsession-6">4.1. VRSession</a>
     <li><a href="#ref-for-vrsession-7">6.2. VRCanvasLayer</a>
@@ -2703,7 +2699,7 @@ canvasLayer<span class="p">.</span>source<span class="p">.</span>height <span cl
   <aside class="dfn-panel" data-for="dom-vrcanvaslayer-source">
    <b><a href="#dom-vrcanvaslayer-source">#dom-vrcanvaslayer-source</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-vrcanvaslayer-source-1">2.3. Content Isolation</a>
+    <li><a href="#ref-for-dom-vrcanvaslayer-source-1">2.3. Context Isolation</a>
     <li><a href="#ref-for-dom-vrcanvaslayer-source-2">6.2. VRCanvasLayer</a> <a href="#ref-for-dom-vrcanvaslayer-source-3">(2)</a>
     <li><a href="#ref-for-dom-vrcanvaslayer-source-4">6.3. VRSourceProperties</a>
    </ul>

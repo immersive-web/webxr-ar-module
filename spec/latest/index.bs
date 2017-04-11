@@ -474,9 +474,9 @@ VRFrameOfReference {#vrframeofreference-interface}
 
 <pre class="idl">
 enum VRFrameOfReferenceType {
-  "HeadModel",
-  "EyeLevel",
-  "Stage",
+  "headModel",
+  "eyeLevel",
+  "stage",
 };
 
 interface VRFrameOfReference : VRCoordinateSystem {

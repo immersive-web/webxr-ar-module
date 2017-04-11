@@ -186,23 +186,23 @@ It’s worth noting that requesting a new type of session will end any previousl
 
 WebVR provides tracking information via the [`VRSession.getDevicePose`](https://w3c.github.io/webvr/#dom-vrsession-getdevicepose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDevicePose`](https://w3c.github.io/webvr/#interface-vrdevicepose) can be used to render the appropriate viewpoint of the scene for both eyes.
 
-In order to poll the pose, developers must indicate what frame of reference should be used, which determines what the returned pose is relative to. This is supplied as a `VRFrameOfReference` object, which can be created once a `VRSession` has been acquired. The most common type is an "EyeLevel" frame of referencem which indicates that the headsets orientation and position are reported relative to the first sensor readings received from the device (or the last time the user manually reset the orientation.)
+In order to poll the pose, developers must indicate what frame of reference should be used, which determines what the returned pose is relative to. This is supplied as a `VRFrameOfReference` object, which can be created once a `VRSession` has been acquired. The most common type is an "eyeLevel" frame of referencem which indicates that the headsets orientation and position are reported relative to the first sensor readings received from the device (or the last time the user manually reset the orientation.)
 
 ```js
 let vrFrameOfRef = null;
 
 function OnFirstVRFrame() {
   // The Frame of Reference indicates what the matrices and coordinates the
-  // VRDevice returns are relative to. An "EyeLevel" VRFrameOfReference reports
+  // VRDevice returns are relative to. An "eyeLevel" VRFrameOfReference reports
   // values relative to the orientation and position where the device first
   // began tracking.
-  vrFrameOfRef = await vrSession.createFrameOfReference("EyeLevel");
+  vrFrameOfRef = await vrSession.createFrameOfReference("eyeLevel");
 
   OnDrawFrame();
 }
 ```
 
-Unless a ["HeadModel"](#orientation-only-tracking) Frame of Reference is being used, the session is not guaranteed to return a pose. (It may have lost tracking, for instance.) In that case the app will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a HeadModel Frame of Reference, or simply not update.
+Unless a ["headModel"](#orientation-only-tracking) Frame of Reference is being used, the session is not guaranteed to return a pose. (It may have lost tracking, for instance.) In that case the app will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a headModel Frame of Reference, or simply not update.
 
 The UA maintains a VR compositor behind the scenes that is always active during an exclusive session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR device at as close to the device's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`.
 
@@ -313,36 +313,36 @@ Beyond the core APIs described above, the WebVR API also exposes several options
 
 ### Orientation-only tracking
 
-A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any positional tracking in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "HeadModel" `VRFrameOfReference`.
+A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any positional tracking in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "headModel" `VRFrameOfReference`.
 
 ```js
-let frameOfRef = await vrSession.createFrameOfReference("HeadModel");
+let frameOfRef = await vrSession.createFrameOfReference("headModel");
 
 // Use frameOfRef as detailed above.
 ```
 
 ### Room-scale tracking and boundaries
 
-Some VR devices have been configured with details about the area they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR refers to this type of bounded, floor relative play space as a "Stage". Applications can take advantage of that space by creating a Stage `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDevices` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
+Some VR devices have been configured with details about the area they are being used in, including things like where the floor is and what boundaries of the safe space is so that it can be communicated to the user in VR. It can be beneficial to render the virtual scene so that it lines up with the users physical space for added immersion, especially ensuring that the virtual floor and the physical floor align. This is frequently called "room scale" or "standing" VR. It helps the user feel grounded in the virtual space. WebVR refers to this type of bounded, floor relative play space as a "stage". Applications can take advantage of that space by creating a stage `VRFrameOfReference`. This will report values relative to the floor, ideally at the center of the room. (In other words the users physical floor is at Y = 0.) Not all `VRDevices` will support this mode, however. `createFrameOfReference` will reject the promise in that case.
 
 ```js
 // Try to get a frame of reference where the floor is at Y = 0
-vrSession.createFrameOfReference("Stage").then(frame => {
+vrSession.createFrameOfReference("stage").then(frame => {
   frameOfRef = frame;
 }).catch(err => {
-  // "Stage" VRFrameOfReference is not supported.
+  // "stage" VRFrameOfReference is not supported.
 
   // In this case the application will want to estimate the position of the
   // floor, perhaps by asking the user's height, and translate the reported
   // values upward by that distance so that the floor appears in approximately
   // the correct position.
-  frameOfRef = await vrSession.createFrameOfReference("EyeLevel");
+  frameOfRef = await vrSession.createFrameOfReference("eyeLevel");
 });
 
 // Use frameOfRef as detailed above, but render the floor of the virtual space at Y = 0;
 ```
 
-When using a Stage `VRFrameOfReference` the device will frequently have a configured "safe area" that the user can move around in without fear of bumping into real world objects. WebVR can communicate the rough boundaries of this space via the `VRFrameOfReference.bounds` attribute. It describes an axis-aligned bounding rectangle which represents the known safe space with the `minX`, `maxX`, `minZ`, and `maxZ` values. The values reported are relative to the Stage origin, but do not necessarily contain it. (Future iterations of the API may include more detailed polygonal bounds as well.) The `bounds` attribute is null if the bounds are unavailable for the current frame of reference.
+When using a stage `VRFrameOfReference` the device will frequently have a configured "safe area" that the user can move around in without fear of bumping into real world objects. WebVR can communicate the rough boundaries of this space via the `VRFrameOfReference.bounds` attribute. It describes an axis-aligned bounding rectangle which represents the known safe space with the `minX`, `maxX`, `minZ`, and `maxZ` values. The values reported are relative to the stage origin, but do not necessarily contain it. (Future iterations of the API may include more detailed polygonal bounds as well.) The `bounds` attribute is null if the bounds are unavailable for the current frame of reference.
 
 If the `bounds` are available the application should try to ensure that all content the user needs to interact with can be reached while staying inside the described bounds.
 
@@ -609,9 +609,9 @@ interface VRCoordinateSystem {
 };
 
 enum VRFrameOfReferenceType {
-  "HeadModel",
-  "EyeLevel",
-  "Stage",
+  "headModel",
+  "eyeLevel",
+  "stage",
 };
 
 interface VRFrameOfReference : VRCoordinateSystem {
