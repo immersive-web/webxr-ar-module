@@ -135,7 +135,7 @@ function BeginVRSession() {
     vrSession.baseLayer = vrCanvasLayer;
 
     // Start the render loop
-    vrCanvasLayer.commit().then(OnDrawFrame);
+    vrCanvasLayer.commit().then(OnFirstVRFrame);
   }, err => {
     // May fail for a variety of reasons, including another page already
     // having exclusive access to the device.
@@ -171,7 +171,7 @@ function TryBeginMagicWindow() {
     vrSession.baseLayer = vrCanvasLayer;
 
     // Start the render loop
-    vrCanvasLayer.commit().then(OnDrawFrame);
+    vrCanvasLayer.commit().then(OnFirstVRFrame);
   }, err => {
     // Magic window isn't available. Probably just want to render the scene
     // normally without any tracking at this point.
@@ -186,7 +186,23 @@ It’s worth noting that requesting a new type of session will end any previousl
 
 WebVR provides tracking information via the [`VRSession.getDevicePose`](https://w3c.github.io/webvr/#dom-vrsession-getdevicepose) method, which developers can poll each frame to get the view and projection matrices for each eye. The matrices provided by the [`VRDevicePose`](https://w3c.github.io/webvr/#interface-vrdevicepose) can be used to render the appropriate viewpoint of the scene for both eyes.
 
-Unless the "HeadModel" Frame of Reference is being used, the session is not guaranteed to return a pose. (It may have lost tracking, for instance.) In that case the app will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a HeadModel Frame of Reference, or simply not update.
+In order to poll the pose, developers must indicate what frame of reference should be used, which determines what the returned pose is relative to. This is supplied as a `VRFrameOfReference` object, which can be created once a `VRSession` has been acquired. The most common type is an "EyeLevel" frame of referencem which indicates that the headsets orientation and position are reported relative to the first sensor readings received from the device (or the last time the user manually reset the orientation.)
+
+```js
+let vrFrameOfRef = null;
+
+function OnFirstVRFrame() {
+  // The Frame of Reference indicates what the matrices and coordinates the
+  // VRDevice returns are relative to. An "EyeLevel" VRFrameOfReference reports
+  // values relative to the orientation and position where the device first
+  // began tracking.
+  vrFrameOfRef = await vrSession.createFrameOfReference("EyeLevel");
+
+  OnDrawFrame();
+}
+```
+
+Unless a ["HeadModel"](#orientation-only-tracking) Frame of Reference is being used, the session is not guaranteed to return a pose. (It may have lost tracking, for instance.) In that case the app will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a HeadModel Frame of Reference, or simply not update.
 
 The UA maintains a VR compositor behind the scenes that is always active during an exclusive session. It runs a tight rendering loop, presenting the imagery defined by the session's layers to the VR device at as close to the device's native framerate as possible. Potentially future spec iterations could enable video layers that would automatically be synchronized to the compositor, but images from a canvas layer are not updated automatically. Once rendering is complete [`VRCanvasLayer.commit`](https://w3c.github.io/webvr/#dom-vrcanvaslayer-commit) must be called to send the current contents of the canvas backbuffer to the VR compositor. The compositor will continue presenting that content to the user, reprojected, each frame until a new one is provided via `commit`.
 
@@ -195,15 +211,10 @@ The UA maintains a VR compositor behind the scenes that is always active during 
 Calling `commit()` on a layer attached to an exclusive session has the same effect on the canvas as normal composition within the page. If the WebGL context was created with `preserveDrawingBuffer: false` the canvas contents will be discarded. When used with a non-exclusive session `commit()` doesn't alter the source canvas contents, but the promise for the next frame is still returned. Frame promises returned by a non-exclusive session resolve at the same rate as `window.requestAnimationFrame` callbacks.
 
 ```js
-// The Frame of Reference indicates what the matrices and coordinates the
-// VRDevice returns are relative to. An "EyeLevel" VRFrameOfReference reports
-// values relative to the location where the device first began tracking.
-let frameOfRef = await vrSession.createFrameOfReference("EyeLevel");
-
 function OnDrawFrame() {
   // Do we have an active session?
   if (vrSession) {
-    let pose = vrSession.getDevicePose(frameOfRef);
+    let pose = vrSession.getDevicePose(vrFrameOfRef);
 
     // Only render if a new pose is available
     if (pose) {
@@ -242,6 +253,21 @@ function OnDrawFrame() {
   }
 }
 ```
+
+> **Note: Why have `VRCanvasLayer.commit()` instead of using `CanvasRenderingContext.commit()`?**
+>
+> While it's not included in the initial version of the feature we do intend to support multiple layers in a future iteration of WebVR. In that scenario it would be useful to have the same canvas bound to two different layers, since it would allow the same GL resources (meshes, textures, shaders) to be used when rendering both. The rendering pattern would then be:
+>
+> ```js
+> let canvasLayerA = new VRCanvasLayer(session, canvas);
+> let canvasLayerB = new VRCanvasLayer(session, canvas);
+>
+> // In the render loop
+> drawLayerA(gl);
+> canvasLayerA.commit();
+> drawLayerB(gl);
+> canvasLayerB.commit().then(OnDrawFrame);
+> ```
 
 ### Ending the VR session
 
@@ -287,7 +313,7 @@ Beyond the core APIs described above, the WebVR API also exposes several options
 
 ### Orientation-only tracking
 
-A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any translation component in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "HeadModel" `VRFrameOfReference`.
+A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any positional tracking in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "HeadModel" `VRFrameOfReference`.
 
 ```js
 let frameOfRef = await vrSession.createFrameOfReference("HeadModel");

@@ -97,7 +97,7 @@ Additionally, page content has the ability to make users uncomfortable in ways n
 
 When navigating between pages in VR the UA should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
 
-Content Isolation {#contextisolation-security}
+Context Isolation {#contextisolation-security}
 -----------------
 
 The trusted UI must be drawing by an independent rendering context who's state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
