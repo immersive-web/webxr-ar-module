@@ -1,7 +1,7 @@
-# WebVR Explained
+﻿# WebVR Explained
 
 ## What is WebVR?
-[WebVR](https://w3c.github.io/webvr/) is an API that provides access to input and output capabilities commonly associated with Virtual Reality hardware like [Google’s Daydream](https://vr.google.com/daydream/), the [Oculus Rift](https://www3.oculus.com/rift/), the [Samsung Gear VR](http://www.samsung.com/global/galaxy/gear-vr/), and the [HTC Vive](https://www.htcvive.com/). More simply put, it lets you create Virtual Reality web sites that you can view in a VR headset.
+[WebVR](https://w3c.github.io/webvr/) is an API that provides access to input and output capabilities commonly associated with Virtual Reality hardware like [Google’s Daydream](https://vr.google.com/daydream/), the [Oculus Rift](https://www3.oculus.com/rift/), the [Samsung Gear VR](http://www.samsung.com/global/galaxy/gear-vr/), the [HTC Vive](https://www.htcvive.com/), and [Windows Mixed Reality headsets](https://developer.microsoft.com/en-us/windows/mixed-reality). More simply put, it lets you create Virtual Reality web sites that you can view in a VR headset.
 
 ### Ooh, so like _Johnny Mnemonic_ where the Internet is all ’90s CGI?
 Nope, not even slightly. And why do you even want that? That’s a terrible UX.
