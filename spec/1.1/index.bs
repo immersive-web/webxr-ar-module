@@ -181,7 +181,7 @@ interface VRDisplay : EventTarget {
 ### Attributes ### {#vrdisplay-attributes}
 
 <dfn attribute for="VRDisplay">isConnected</dfn>
-The {{isConnected}} attribute MUST return the {{VRDisplay}}'s connected state.
+<i>(Deprecated)</i> The {{isConnected}} attribute MUST return the {{VRDisplay}}'s connected state.
 
 <dfn attribute for="VRDisplay">isPresenting</dfn>
 The {{isPresenting}} attribute MUST return the {{VRDisplay}}'s presentation state.
@@ -201,7 +201,7 @@ Populates the provided {{VRFrameData}} object with the {{VRPose}} and view and p
 This function is deprecated but is preserved for backwards compatibility. Using it MAY incur warnings from the User Agent. Prefer using {{getFrameData()}}, which also provides a {{VRPose}}, instead.
 
 <dfn method for="VRDisplay">resetPose()</dfn>
-Reset the pose for the {{VRDisplay}}, treating its current position and orientation as the "origin/zero" values. Future values returned from {{getFrameData()}} or {{getPose()}} will describe positions relative to the {{VRDisplay}}'s position when {{resetPose()}} was last called and will treat the display's yaw when {{resetPose()}} was last called as the forward orientation. The {{VRDisplay}}'s reported roll and pitch do not change when {{resetPose()}} is called as they are relative to gravity. Calling {{resetPose()}} may change the {{sittingToStandingTransform}} matrix of the {{VRStageParameters}}.
+<i>(Deprecated)</i> Reset the pose for the {{VRDisplay}}, treating its current position and orientation as the "origin/zero" values. Future values returned from {{getFrameData()}} or {{getPose()}} will describe positions relative to the {{VRDisplay}}'s position when {{resetPose()}} was last called and will treat the display's yaw when {{resetPose()}} was last called as the forward orientation. The {{VRDisplay}}'s reported roll and pitch do not change when {{resetPose()}} is called as they are relative to gravity. Calling {{resetPose()}} may change the {{sittingToStandingTransform}} matrix of the {{VRStageParameters}}.
 
 <dfn method for="VRDisplay">requestAnimationFrame()</dfn>
 Functionally equivalent to <a href="https://www.w3.org/TR/html51/webappapis.html#animation-frames">window.requestAnimationFrame</a> when the {{VRDisplay}} is not presenting. When the {{VRDisplay}} is presenting the callback is called at the native refresh rate of the {{VRDisplay}}.
@@ -310,7 +310,7 @@ interface VRDisplayCapabilities {
 The {{hasPosition}} attribute MUST return whether the {{VRDisplay}} is capable of tracking its position.
 
 <dfn attribute for="VRDisplayCapabilities">hasOrientation</dfn>
-The {{hasOrientation}} attribute MUST return whether the {{VRDisplay}} is capable of tracking its orientation.
+<i>(Deprecated)</i> The {{hasOrientation}} attribute MUST return whether the {{VRDisplay}} is capable of tracking its orientation.
 
 <dfn attribute for="VRDisplayCapabilities">hasExternalDisplay</dfn>
 The {{hasExternalDisplay}} attribute MUST return whether the {{VRDisplay}} is separate from the device's primary display. If presenting VR content will obscure other content on the device, this should be false. When false, the application should not attempt to mirror VR content or update non-VR UI because that content will not be visible.
