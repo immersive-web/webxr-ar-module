@@ -104,6 +104,12 @@ The trusted UI must be drawing by an independent rendering context whose state i
 
 Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{VRDevice}} and {{VRSession}}. Attributes such as the {{VRCanvasLayer/source}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The UA MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
 
+Fingerprinting {#fingerprinting-security}
+--------------
+
+Given that the API describes hardware available to the user and it's capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue such as ensuring that device names are reasonably generic and don't contain unique IDs. (For example: "Daydream View" instead of "Daydream View, Pixel XL (Black) - Serial: 1234-56-7890")
+
+Issue: Discuss use of sensor activity as a possible fingerprinting vector.
 
 Device Enumeration {#deviceenumeration}
 ===================
