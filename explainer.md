@@ -580,7 +580,7 @@ dictionary VRSessionCreateParametersInit {
 };
 
 interface VRSessionCreateParameters {
-  readonly boolean exclusive;
+  readonly attribute boolean exclusive;
 };
 
 interface VRSession : EventTarget {
