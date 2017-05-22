@@ -657,18 +657,18 @@ interface VRWebGLLayer : VRLayer {
   readonly attribute boolean alpha;
   readonly attribute boolean multiview;
 
-  readonly attribute int framebufferWidth;
-  readonly attribute int framebufferHeight;
+  readonly attribute long framebufferWidth;
+  readonly attribute long framebufferHeight;
   readonly attribute WebGLFramebuffer framebuffer;
 
   void requestViewportScaling(double viewportScaleFactor);
 };
 
 interface VRWebGLViewport {
-  readonly attribute int x;
-  readonly attribute int y;
-  readonly attribute int width;
-  readonly attribute int height;
+  readonly attribute long x;
+  readonly attribute long y;
+  readonly attribute long width;
+  readonly attribute long height;
 };
 
 //
