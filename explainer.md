@@ -621,7 +621,7 @@ enum VREye {
 };
 
 interface VRView {
-  readonly attribute VREye? eye;
+  readonly attribute VREye eye;
   readonly attribute Float32Array projectionMatrix;
 
   VRViewport? getViewport(VRLayer layer);
