@@ -588,8 +588,8 @@ interface VRDevice : EventTarget {
   attribute EventHandler onactivate;
   attribute EventHandler ondeactivate;
 
-  Promise<boolean> supportsSession(VRSessionCreateParametersInit parameters);
-  Promise<VRSession> requestSession(VRSessionCreateParametersInit parameters);
+  Promise<boolean> supportsSession(optional VRSessionCreateParametersInit parameters);
+  Promise<VRSession> requestSession(optional VRSessionCreateParametersInit parameters);
 };
 
 //
