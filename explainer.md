@@ -586,9 +586,6 @@ interface VR : EventTarget {
 // Device
 //
 
-typedef (WebGLRenderingContext or
-         WebGL2RenderingContext) VRWebGLRenderingContext;
-
 interface VRDevice : EventTarget {
   readonly attribute DOMString deviceName;
   readonly attribute boolean isExternal;
@@ -684,6 +681,9 @@ dictionary VRWebGLLayerInit {
   boolean multiview = false;
   double framebufferScaleFactor;
 };
+
+typedef (WebGLRenderingContext or
+         WebGL2RenderingContext) VRWebGLRenderingContext;
 
 [Constructor(VRSession session,
              VRWebGLRenderingContext context,
