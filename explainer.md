@@ -479,28 +479,6 @@ function onDrawFrame() {
 }
 ```
 
-### Presenting automatically when the user interacts with the headset
-
-Many VR devices have some way of detecting when the user has put the headset on or is otherwise trying to use the hardware. For example: an Oculus Rift or Vive have proximity sensors that indicate when the headset is being worn. And a Daydream device uses NFC tags to inform the phone when it's been placed in a headset. In both of these cases the user is showing a clear intent to begin using VR. A well behaved WebVR application should ideally begin presenting automatically in these scenarios. The `activate` event fired from the `VRDevice` can be used to accomplish that.
-
-```js
-vrDevice.addEventListener('activate', vrDeviceEvent => {
-  // The activate event acts as a user gesture, so exclusive access can be
-  // requested in the even handler.
-  vrDevice.requestSession().then(OnSessionStarted);
-});
-```
-
-Similarly, the `deactivate` event can be used to detect when the user removes the headset, at which point the application may want to end the session.
-
-```js
-vrDevice.addEventListener('deactivate', vrDeviceEvent => {
-  if (vrSession) {
-    vrSession.endSession().then(OnSessionEnded);
-  }
-});
-```
-
 ### Responding to a reset pose
 
 Most VR systems have a mechanism for allowing the user to reset which direction is "forward." For security and comfort reasons the WebVR API has no mechanism to trigger a pose reset programatically, but it can still be useful to know when it happens. Pages may want to take advantage of the visual discontinuity to reposition the user or other elements in the scene into a more natural position for the new orientation. Pages may also want to use the opportunity to clear or reset any additional transforms that have been applied if no longer needed.
@@ -512,27 +490,6 @@ vrSession.addEventListener('resetpose', vrSessionEvent => {
   // For an app that allows artificial Yaw rotation, this would be a perfect
   // time to reset that.
   ResetYawTransform();
-});
-```
-
-### Page navigation
-
-WebVR applications can, like any web page, link to other pages. In the context of a VR scene this is handled by setting `window.location` to the desired URL when the user performs some action. If the page being linked to is not VR-capable the user will either have to remove the VR device to view it (which the UA should explicitly instruct them to do) or the page could be shown as a 2D page in a VR browser.
-
-If the page being navigated to is VR capable, however, it's frequently desirable to allow the user to immediately begin using a VR session for that page as well, so that the user feels as though they are navigating through a single continuous VR experience. To achieve this the page can handle the `navigate` event, fired on the `navigator.vr` object. This event provides a `VRSession` for the `VRDevice` that the previous page was presenting to.
-
-The `VRDevice` and `VRSession` must not retain any state set by the previous page, and need not make any guarantees about consistency of pose data between pages. They should maintain the same general implementation between pages for basic usage consistency. For example: The user agent should not switch users from the Oculus SDK to OpenVR between pages, or from Daydream to Cardboard, even though in both cases the users device could technically be used with either.
-
-To indicate to indicate that you wish to continue presenting VR content on this page the handler must call `event.preventDefault()`.
-
-```js
-navigator.vr.addEventListener('navigate', vrSessionEvent => {
-  vrSessionEvent.preventDefault();
-  vrSession = vrSessionEvent.session;
-  vrDevice = vrSession.device;
-
-  // Ensure content is loaded and begin drawing.
-  onDrawFrame();
 });
 ```
 
@@ -578,7 +535,6 @@ partial interface Navigator {
 interface VR : EventTarget {
   attribute EventHandler ondeviceconnect;
   attribute EventHandler ondevicedisconnect;
-  attribute EventHandler onnavigate;
 
   Promise<sequence<VRDevice>> getDevices();
 };
@@ -590,9 +546,6 @@ interface VR : EventTarget {
 interface VRDevice : EventTarget {
   readonly attribute DOMString deviceName;
   readonly attribute boolean isExternal;
-
-  attribute EventHandler onactivate;
-  attribute EventHandler ondeactivate;
 
   Promise<void> supportsSession(optional VRSessionCreateParametersInit parameters);
   Promise<VRSession> requestSession(optional VRSessionCreateParametersInit parameters);
