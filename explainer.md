@@ -629,7 +629,7 @@ interface VRLayer {};
 
 dictionary VRWebGLLayerInit {
   boolean antialias = true;
-  boolean depth = false;
+  boolean depth = true;
   boolean stencil = false;
   boolean alpha = true;
   boolean multiview = false;
