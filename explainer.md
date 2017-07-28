@@ -652,6 +652,7 @@ callback VRFrameRequestCallback = void (VRPresentationFrame frame);
 //
 
 interface VRPresentationFrame {
+  readonly attribute VRSession session;
   readonly attribute FrozenArray<VRView> views;
 
   VRDevicePose? getDevicePose(VRCoordinateSystem coordinateSystem);
