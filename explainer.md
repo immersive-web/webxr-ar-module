@@ -279,12 +279,12 @@ function EndVRSession() {
   // Do we have an active session?
   if (vrSession) {
     // End VR mode now.
-    vrSession.endSession().then(OnSessionEnded);
+    vrSession.endSession().then(OnSessionEnd);
   }
 }
 
 // Restore the page to normal after exclusive access has been released.
-function OnSessionEnded() {
+function OnSessionEnd() {
   vrSession = null;
 
   // Ending the session stops executing callbacks passed to requestFrame().
@@ -293,10 +293,10 @@ function OnSessionEnded() {
 }
 ```
 
-The UA may end a session at any time for a variety of reasons. For example: The user may forcibly end presentation via a gesture to the UA, other native applications may take exclusive access of the VR hardware device, or the VR hardware device may become disconnected from the system. Well behaved applications should monitor the `ended` event on the `VRSession` to detect when that happens.
+The UA may end a session at any time for a variety of reasons. For example: The user may forcibly end presentation via a gesture to the UA, other native applications may take exclusive access of the VR hardware device, or the VR hardware device may become disconnected from the system. Well behaved applications should monitor the `end` event on the `VRSession` to detect when that happens.
 
 ```js
-vrSession.addEventListener('ended', OnSessionEnded);
+vrSession.addEventListener('end', OnSessionEnd);
 ```
 
 If the UA needs to halt use of a session temporarily the session should be suspended instead of ended. (See previous section.)
@@ -635,7 +635,7 @@ interface VRSession : EventTarget {
   attribute EventHandler onblur;
   attribute EventHandler onfocus;
   attribute EventHandler onresetpose;
-  attribute EventHandler onended;
+  attribute EventHandler onend;
 
   Promise<VRFrameOfReference> requestFrameOfReference(VRFrameOfReferenceType type);
 

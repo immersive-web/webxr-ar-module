@@ -238,7 +238,7 @@ interface VRSession : EventTarget {
   attribute EventHandler onblur;
   attribute EventHandler onfocus;
   attribute EventHandler onresetpose;
-  attribute EventHandler onended;
+  attribute EventHandler onend;
 };
 </pre>
 
@@ -276,7 +276,7 @@ Issue: Document effects when we <dfn>blur the active session</dfn>
 
 <dfn attribute for="VRSession">onresetpose</dfn> is an <a>Event handler IDL attribute</a> for the {{resetpose}} event type.
 
-<dfn attribute for="VRSession">onended</dfn> is an <a>Event handler IDL attribute</a> for the {{ended}} event type.
+<dfn attribute for="VRSession">onend</dfn> is an <a>Event handler IDL attribute</a> for the {{end}} event type.
 
 Issue: Example of acquiring a session here.
 
@@ -693,7 +693,7 @@ A UA MAY dispatch a <dfn event for="VRSession">focus</dfn> event on a {{VRSessio
 
 A UA MUST dispatch a <dfn event for="VRSession">resetpose</dfn> event on a {{VRSession}} when the system resets the {{VRDevice}}'s position or orientation. The event MUST be of type {{VRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="VRSession">ended</dfn> event on a {{VRSession}} when the session is ended, either by the application or the UA. The event MUST be of type {{VRSessionEvent}}.
+A UA MUST dispatch a <dfn event for="VRSession">end</dfn> event on a {{VRSession}} when the session ends, either by the application or the UA. The event MUST be of type {{VRSessionEvent}}.
 
 A UA MUST dispatch a <dfn event for="VRFrameOfReference">boundschange</dfn> event on a {{VRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{VRCoordinateSystemEvent}}.
 
