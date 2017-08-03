@@ -543,11 +543,11 @@ WebGL Context Compatiblity {#contextcompatibility}
 
 <pre class="idl">
 partial dictionary WebGLContextAttributes {
-    VRDevice compatibleVrDevice = null;
+    VRDevice compatibleVRDevice = null;
 };
 
 partial interface WebGLRenderingContextBase {
-    Promise&lt;void&gt; setCompatibleVrDevice(VRDevice device);
+    Promise&lt;void&gt; setCompatibleVRDevice(VRDevice device);
 };
 </pre>
 

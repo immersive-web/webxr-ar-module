@@ -168,7 +168,7 @@ When it comes to ensuring canvas compatibility there's two broad categories that
 
 **VR Enhanced:** The app can take advantage of VR, but it's used as a progressive enhancement rather than a core part of the experience. Most users will probably not interact with the app's VR features, and as such asking them to make VR-centric decisions early in the app lifetime would be confusing and inappropriate. An example would be a news site with an embedded 360 photo gallery or video. (We expect the large majority of early WebVR content to fall into this category.)
 
-This style of application should call `WebGLRenderingContextBase.setCompatibleVrDevice` with the `VRDevice` in question. This will set a compatibility bit on the context that allows it to be used. Contexts without the compatibility bit will fail when attempting to create a `VRLayer` with them. In the event that a context is not already compatible with the `VRDisplay` the [context will be lost and attempt to recreate itself](https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.13) using the compatible graphics adapter. It is the page's responsibility to handle WebGL context loss properly, recreating any necessary WebGL resources in response. If the context loss is not handled by the page, the promise returned by `setCompatibleVrDevice` will fail. The promise may also fail for a variety of other reasons, such as the context being actively used by a different, incompatible `VRDevice`.
+This style of application should call `WebGLRenderingContextBase.setCompatibleVRDevice` with the `VRDevice` in question. This will set a compatibility bit on the context that allows it to be used. Contexts without the compatibility bit will fail when attempting to create a `VRLayer` with them. In the event that a context is not already compatible with the `VRDisplay` the [context will be lost and attempt to recreate itself](https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.13) using the compatible graphics adapter. It is the page's responsibility to handle WebGL context loss properly, recreating any necessary WebGL resources in response. If the context loss is not handled by the page, the promise returned by `setCompatibleVRDevice` will fail. The promise may also fail for a variety of other reasons, such as the context being actively used by a different, incompatible `VRDevice`.
 
 ```js
 let glCanvas = document.createElement("canvas");
@@ -176,7 +176,7 @@ let gl = glCanvas.getContext("webgl");
 
 function setupWebGLLayer() {
   // Make sure the canvas context we want to use is compatible with the device.
-  return gl.setCompatibleVrDevice(vrDevice).then(() => {
+  return gl.setCompatibleVRDevice(vrDevice).then(() => {
     // The content that will be shown on the device is defined by the session's
     // baseLayer.
     vrSession.baseLayer = new VRWebGLLayer(vrSession, gl);
@@ -184,10 +184,10 @@ function setupWebGLLayer() {
 }
 ```
 
-**VR Centric:** The app's primary use case is VR, and as such it doesn't mind initializing resources in a VR-centric fashion, which may include asking users to select a headset as soon as the app starts. An example would be a game which is dependent on VR presentation and input. These types of applications can to avoid the need to call `setCompatibleVrDevice` and the possible context loss that it may trigger by passing the `VRDevice` that the context will be used with as a context creation argument.
+**VR Centric:** The app's primary use case is VR, and as such it doesn't mind initializing resources in a VR-centric fashion, which may include asking users to select a headset as soon as the app starts. An example would be a game which is dependent on VR presentation and input. These types of applications can to avoid the need to call `setCompatibleVRDevice` and the possible context loss that it may trigger by passing the `VRDevice` that the context will be used with as a context creation argument.
 
 ```js
-let gl = glCanvas.getContext("webgl", { compatibleVrDevice: vrDevice });
+let gl = glCanvas.getContext("webgl", { compatibleVRDevice: vrDevice });
 ```
 
 Ensuring context compatibility with a `VRDisplay` through either method may have side effects on other graphics resources in the page, such as causing the entire user agent to switch from rendering using an integrated GPU to a discreet GPU.
@@ -457,7 +457,7 @@ When `VRWebGLLayer.multiview` is true:
 
 ```js
 function setupWebGLLayer() {
-  return gl.setCompatibleVrDevice(vrDevice).then(() => {
+  return gl.setCompatibleVRDevice(vrDevice).then(() => {
     // VRWebGLLayer allows for the optional use of the WEBGL_multiview extension
     vrSession.baseLayer = new VRWebGLLayer(vrSession, gl, { multiview: true });
   });
@@ -516,7 +516,7 @@ The first scaling mechanism is done by specifying a `framebufferScaleFactor` at 
 
 ```js
 function setupWebGLLayer() {
-  return gl.setCompatibleVrDevice(vrDevice).then(() => {
+  return gl.setCompatibleVRDevice(vrDevice).then(() => {
     vrSession.baseLayer = new VRWebGLLayer(vrSession, gl, { framebufferScaleFactor:0.8 });
   });
 ```
@@ -782,11 +782,11 @@ dictionary VRCoordinateSystemEventInit : EventInit {
 // WebGL
 //
 partial dictionary WebGLContextAttributes {
-    VRDevice compatibleVrDevice = null;
+    VRDevice compatibleVRDevice = null;
 };
 
 partial interface WebGLRenderingContextBase {
-    Promise<void> setCompatibleVrDevice(VRDevice device);
+    Promise<void> setCompatibleVRDevice(VRDevice device);
 };
 
 //
