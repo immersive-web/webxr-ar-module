@@ -272,14 +272,14 @@ vrSession.addEventListener('focus', vrSessionEvent => {
 
 A `VRSession` is "ended" when it is no longer expected to be used. An ended session object becomes detached and all operations on the object will fail. Ended sessions cannot be restored, and if a new active session is needed it must be requested from `VRDevice.requestSession()`.
 
-To manually end a session the application calls [`VRSession.endSession`](https://w3c.github.io/webvr/#dom-vrsession-endsession). This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
+To manually end a session the application calls [`VRSession.end`](https://w3c.github.io/webvr/#dom-vrsession-end). This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
 
 ```js
 function EndVRSession() {
   // Do we have an active session?
   if (vrSession) {
     // End VR mode now.
-    vrSession.endSession().then(OnSessionEnd);
+    vrSession.end().then(OnSessionEnd);
   }
 }
 
@@ -642,7 +642,7 @@ interface VRSession : EventTarget {
   long requestFrame(VRFrameRequestCallback callback);
   void cancelFrame(long handle);
 
-  Promise<void> endSession();
+  Promise<void> end();
 };
 
 callback VRFrameRequestCallback = void (VRPresentationFrame frame);

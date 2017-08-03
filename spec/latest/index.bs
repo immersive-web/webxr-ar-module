@@ -232,7 +232,7 @@ interface VRSession : EventTarget {
   long requestFrame(VRFrameRequestCallback callback);
   void cancelFrame(long handle);
 
-  Promise&lt;void&gt; endSession();
+  Promise&lt;void&gt; end();
 
   // Events
   attribute EventHandler onblur;
@@ -264,7 +264,7 @@ The UA, when possible, SHOULD NOT initialize device tracking or rendering capabi
 
 Issue: Document how to <dfn>poll the device pose</dfn>
 
-<dfn method for="VRSession">endSession()</dfn>
+<dfn method for="VRSession">end()</dfn>
 
 Issue: Document what happens when we <dfn>end the session</dfn>
 
