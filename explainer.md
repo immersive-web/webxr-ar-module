@@ -615,7 +615,7 @@ interface VRDevice : EventTarget {
 
 dictionary VRSessionCreateParametersInit {
   boolean exclusive = true;
-  VRPresentationContext outputContext = null;
+  VRPresentationContext outputContext;
 };
 
 interface VRSessionCreateParameters {
@@ -695,7 +695,7 @@ dictionary VRWebGLLayerInit {
   boolean stencil = false;
   boolean alpha = true;
   boolean multiview = false;
-  double framebufferScaleFactor;
+  [EnforceRange] double framebufferScaleFactor;
 };
 
 typedef (WebGLRenderingContext or
@@ -712,8 +712,8 @@ interface VRWebGLLayer : VRLayer {
   readonly attribute boolean alpha;
   readonly attribute boolean multiview;
 
-  readonly attribute long framebufferWidth;
-  readonly attribute long framebufferHeight;
+  readonly attribute unsigned long framebufferWidth;
+  readonly attribute unsigned long framebufferHeight;
   readonly attribute WebGLFramebuffer framebuffer;
 
   void requestViewportScaling(double viewportScaleFactor);

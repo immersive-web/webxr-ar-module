@@ -474,8 +474,8 @@ interface VRWebGLLayer : VRLayer {
   readonly attribute boolean multiview;
 
   readonly attribute WebGLFramebuffer framebuffer;
-  readonly attribute long framebufferWidth;
-  readonly attribute long framebufferHeight;
+  readonly attribute unsigned long framebufferWidth;
+  readonly attribute unsigned long framebufferHeight;
 
   // Methods
   void requestViewportScaling(double viewportScaleFactor);
@@ -532,7 +532,7 @@ dictionary VRWebGLLayerInit {
   boolean stencil = false;
   boolean alpha = true;
   boolean multiview = false;
-  double framebufferScaleFactor;
+  [EnforceRange] double framebufferScaleFactor;
 };
 </pre>
 
