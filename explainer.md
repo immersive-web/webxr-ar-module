@@ -130,7 +130,7 @@ function beginVRSession() {
 Once the session has started, some setup must be done to prepare for rendering.
 - A `VRFrameOfReference` must be created to define the coordinate system in which the `VRDevicePose` objects will be defined. See the Advanced Functionality section for more details about frames of reference.
 - The depth range of the session should be set to something appropriate for the application. This range will be used in the construction of the projection matricies provided by `VRPresentationFrame`.
-- A `VRLayer` must be created and assigned to the `VRSession.baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layers, at which point this would act like the `firstChild` attribute of a DOM element.)
+- A `VRLayer` must be created and assigned to the `VRSession`'s `baseLayer` attribute. (`baseLayer` because future versions of the spec will likely enable multiple layers, at which point this would act like the `firstChild` attribute of a DOM element.)
 
 ```js
 let vrSession = null;
@@ -162,7 +162,7 @@ function onSessionStarted(session) {
 
 ### Setting up a VRLayer
 
-The content to present to the device is defined by a [`VRLayer`](https://w3c.github.io/webvr/#interface-vrlayer). In the initial version of the spec only one layer type, `VRWebGLLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession.baseLayer` attribute. Future iterations of the spec will define new types of `VRLayer`s. For example: a new layer type would be added to enable use with any new graphics APIs that get added to the browser. The ability to use multiple layers at once and have them composited by the UA will likely also be added in a future API revision.
+The content to present to the device is defined by a [`VRLayer`](https://w3c.github.io/webvr/#interface-vrlayer). In the initial version of the spec only one layer type, `VRWebGLLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession`'s `baseLayer` attribute. Future iterations of the spec will define new types of `VRLayer`s. For example: a new layer type would be added to enable use with any new graphics APIs that get added to the browser. The ability to use multiple layers at once and have them composited by the UA will likely also be added in a future API revision.
 
 In order for a WebGL canvas to be used with a `VRWebGLLayer`, its context must be _compatible_ with the `VRDevice`. This can mean different things for different environments. For example, on a desktop computer this may mean the context must be created against the graphics adapter that the `VRDevice` is physically plugged into. On most mobile devices though, that's not a concern and so the context will always be compatible. In either case, the WebVR application must take steps to ensure WebGL context compatibility before using it with a `VRWebGLLayer`.
 
@@ -170,7 +170,7 @@ When it comes to ensuring canvas compatibility there's two broad categories that
 
 **VR Enhanced:** The app can take advantage of VR, but it's used as a progressive enhancement rather than a core part of the experience. Most users will probably not interact with the app's VR features, and as such asking them to make VR-centric decisions early in the app lifetime would be confusing and inappropriate. An example would be a news site with an embedded 360 photo gallery or video. (We expect the large majority of early WebVR content to fall into this category.)
 
-This style of application should call `WebGLRenderingContextBase.setCompatibleVRDevice` with the `VRDevice` in question. This will set a compatibility bit on the context that allows it to be used. Contexts without the compatibility bit will fail when attempting to create a `VRLayer` with them. In the event that a context is not already compatible with the `VRDevice` the [context will be lost and attempt to recreate itself](https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.13) using the compatible graphics adapter. It is the page's responsibility to handle WebGL context loss properly, recreating any necessary WebGL resources in response. If the context loss is not handled by the page, the promise returned by `setCompatibleVRDevice` will fail. The promise may also fail for a variety of other reasons, such as the context being actively used by a different, incompatible `VRDevice`.
+This style of application should call `WebGLRenderingContextBase`'s `setCompatibleVRDevice` method with the `VRDevice` in question. This will set a compatibility bit on the context that allows it to be used. Contexts without the compatibility bit will fail when attempting to create a `VRLayer` with them. In the event that a context is not already compatible with the `VRDevice` the [context will be lost and attempt to recreate itself](https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.13) using the compatible graphics adapter. It is the page's responsibility to handle WebGL context loss properly, recreating any necessary WebGL resources in response. If the context loss is not handled by the page, the promise returned by `setCompatibleVRDevice` will fail. The promise may also fail for a variety of other reasons, such as the context being actively used by a different, incompatible `VRDevice`.
 
 ```js
 let glCanvas = document.createElement("canvas");
@@ -196,9 +196,9 @@ Ensuring context compatibility with a `VRDevice` through either method may have 
 
 ### Main render loop
 
-WebVR provides information about the current frame to be rendered via the [`VRPresentationFrame`] object which developers must examine each frame. The [`VRDevicePose`](https://w3c.github.io/webvr/#interface-vrdevicepose) contains the informaton about all views which must be rendered and targets into which this rendering must be done.
+WebVR provides information about the current frame to be rendered via the `VRPresentationFrame` object which developers must examine each frame. The [`VRDevicePose`](https://w3c.github.io/webvr/#interface-vrdevicepose) contains the informaton about all views which must be rendered and targets into which this rendering must be done.
 
-`VRWebGLLayer` objects are not updated automatically. To present new frames, developers must use `VRSession.requestFrame()`. When the callback function is run, it passes fresh rendering data that must be used to draw into the `VRWebGLLayer.framebuffer` during the callback. This framebuffer is created by the UA and behaves similarly to a canvas's default framebuffer. Using framebufferTexture2D, framebufferRenderbuffer, getFramebufferAttachmentParameter, and getRenderbufferParameter will all generate an INVALID_OPERATION error. Additionally, attempting to render to this framebuffer outside of the `requestFrame()` callback will generate an INVALID_OPERATION error. 
+`VRWebGLLayer` objects are not updated automatically. To present new frames, developers must use `VRSession`'s `requestFrame()` method. When the callback function is run, it passes fresh rendering data that must be used to draw into the `VRWebGLLayer`'s `framebuffer` during the callback. This framebuffer is created by the UA and behaves similarly to a canvas's default framebuffer. Using framebufferTexture2D, framebufferRenderbuffer, getFramebufferAttachmentParameter, and getRenderbufferParameter will all generate an INVALID_OPERATION error. Additionally, attempting to render to this framebuffer outside of the `requestFrame()` callback will generate an INVALID_OPERATION error. 
 
 Once drawn to, the VR device will continue displaying the contents of the `VRWebGLLayer` framebuffer, potentially reprojected to match head motion, regardless of whether or not the page continues processing new frames. Potentially future spec iterations could enable additional types of layers, such as video layers, that could automatically be synchronized to the device's refresh rate.
 
@@ -274,7 +274,7 @@ vrSession.addEventListener('focus', vrSessionEvent => {
 
 A `VRSession` is "ended" when it is no longer expected to be used. An ended session object becomes detached and all operations on the object will fail. Ended sessions cannot be restored, and if a new active session is needed it must be requested from `VRDevice.requestSession()`.
 
-To manually end a session the application calls [`VRSession.end`](https://w3c.github.io/webvr/#dom-vrsession-end). This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
+To manually end a session the application calls [`VRSession`'s `end()` method](https://w3c.github.io/webvr/#dom-vrsession-end). This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
 
 ```js
 function endVRSession() {
@@ -305,7 +305,7 @@ If the UA needs to halt use of a session temporarily the session should be suspe
 
 ## Rendering to the Page
 
-There are a couple of scenarios in which developers may want to present content rendered with the WebVR API on the page instead of (or in addition to) a headset: Mirroring and "Magic Window". Both methods display WebVR content on the page via a Canvas element with a `VRPresentationContext`. Like a `WebGLRenderingContext`, developers acquire a `VRPresentationContext` by calling `HTMLCanvasElement.getContext()` or `OffscreenCanvas.getContext()` with the context id of "vrpresent". The returned `VRPresentationContext` is permenantly bound to the canvas.
+There are a couple of scenarios in which developers may want to present content rendered with the WebVR API on the page instead of (or in addition to) a headset: Mirroring and "Magic Window". Both methods display WebVR content on the page via a Canvas element with a `VRPresentationContext`. Like a `WebGLRenderingContext`, developers acquire a `VRPresentationContext` by calling the `HTMLCanvasElement` or `OffscreenCanvas` `getContext()` method with the context id of "vrpresent". The returned `VRPresentationContext` is permenantly bound to the canvas.
 
 A `VRPresentationContext` can only be supplied imagery by a `VRSession`, though the exact behavior depends on the scenario in which it's being used.
 
@@ -341,7 +341,7 @@ There are several scenarios where it's beneficial to render a scene whose view i
 
 These scenarios can make use of non-exclusive sessions to render tracked content to the page. While `deviceorientation` events can be used to facilitate the first case the other two need the additional tracking support that WebVR provides. Also, using a non-exclusive session also enables content to use a single rendering path for both magic window and VR presentation modes and makes switching between magic window content and VR presentation of that content easier.
 
-Similar to mirroring, to make use of this mode a `VRPresentationContext` is provided as the `outputContext` at session creation time, as well as the `exclusive: false` flag. At that point content rendered to the `VRSession.baseLayer` will be rendered to the canvas associated with the `outputContext`. The UA is also allowed to composite in additional content if desired. In the future, if multiple `VRLayers` are used their composited result will be what is displayed in the `outputContext`. Requests to create a non-exclusive session without an output context will be rejected.
+Similar to mirroring, to make use of this mode a `VRPresentationContext` is provided as the `outputContext` at session creation time, as well as the `exclusive: false` flag. At that point content rendered to the `VRSession`'s `baseLayer` will be rendered to the canvas associated with the `outputContext`. The UA is also allowed to composite in additional content if desired. In the future, if multiple `VRLayers` are used their composited result will be what is displayed in the `outputContext`. Requests to create a non-exclusive session without an output context will be rejected.
 
 Exclusive and non-exclusive sessions can use the same render loop, but there are some differences in behavior to be aware of. The sessions may run their render loops at at different rates. During exclusive sessions the UA runs the rendering loop at the `VRDevice`'s native refresh rate. During non-exclusive sessions the UA runs the rendering loop at the refresh rate of page (aligned with `window.requestAnimationFrame`.) The method of computation of `VRView` projection and view matrices also differs between exclusive and non-exclusive sessions, with non-exclusive sessions taking into account the output canvas dimensions and possibly the position of the users head in relation to the canvas if that can be determined.
 
@@ -454,7 +454,7 @@ vrFrameOfRef.addEventListener('boundschange', onBoundsUpdate);
 Developers may optionally take advantage of the [WEBGL_multiview extension](https://www.khronos.org/registry/webgl/extensions/proposals/WEBGL_multiview/) to both WebGL 1.0 and WebGL 2.0 for optimized multiview rendering. The UA may not honor this request (e.g. when the supplied context does not support this extension) and the `VRWebGLLayer` will fallback to using a framebuffer that is not multiview-aware. As such, developers must query the `VRWebGLLayer.multiview` property after the `VRWebGLLayer` is constructed and respond accordingly.
 
 When `VRWebGLLayer.multiview` is false:
-- The `VRWebGLLayer.framebuffer` will be created in a side-by-side configuration.
+- The `VRWebGLLayer`'s `framebuffer` will be created in a side-by-side configuration.
 - Calling `VRView.getViewport()` with this type of `VRWebGLLayer` will return a different `VRViewport` for each `VRView`.
 
 When `VRWebGLLayer.multiview` is true:
@@ -527,7 +527,7 @@ function setupWebGLLayer() {
   });
 ```
 
-The second scaling mechanism is to request a scaled viewport into the `VRWebGLLayer.framebuffer`. For example, under times of heavy load the developer may choose to temporarily render fewer pixels. To do so, developers should call `VRWebGLLayer.requestViewportScaling()` and supply a value between 0.0 and 1.0. The UA may then respond by changing the `VRWebGLLayer.framebuffer` and/or the `VRViewport` values in future VR rendering frames. It is worth noting that the UA may change the viewports for reasons other than developer request, and that not all UAs will respect requested viewport changes; as such, developers must always query the viewport values on each VR rendering frame.
+The second scaling mechanism is to request a scaled viewport into the `VRWebGLLayer`'s `framebuffer`. For example, under times of heavy load the developer may choose to temporarily render fewer pixels. To do so, developers should call `VRWebGLLayer.requestViewportScaling()` and supply a value between 0.0 and 1.0. The UA may then respond by changing the `VRWebGLLayer`'s `framebuffer` and/or the `VRViewport` values in future VR rendering frames. It is worth noting that the UA may change the viewports for reasons other than developer request, and that not all UAs will respect requested viewport changes; as such, developers must always query the viewport values on each VR rendering frame.
 
 ```js
 function onDrawFrame() {
