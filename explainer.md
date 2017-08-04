@@ -55,7 +55,7 @@ The basic steps any WebVR application will go through are:
 
 The first thing that any VR-enabled page will want to do is enumerate the available VR hardware and, if present, advertise VR functionality to the user.
 
-[`navigator.vr.getDevices`](https://w3c.github.io/webvr/#navigator-getvrdevices-attribute) returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to a list of available devices. Each [`VRDevice`](https://w3c.github.io/webvr/#interface-vrdevice) represents a physical unit of VR hardware that can present imagery to the user somehow, referred to here as a "VR hardware device". On desktop clients this will usually be a headset peripheral; on mobile clients it may represent the mobile device itself in conjunction with a viewer harness (e.g., Google Cardboard or Samsung Gear VR). It may also represent devices without stereo presentation capabilities but more advanced tracking, such as Tango devices.
+`navigator.vr.getDevices` returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to a list of available devices. Each `VRDevice` represents a physical unit of VR hardware that can present imagery to the user somehow, referred to here as a "VR hardware device". On desktop clients this will usually be a headset peripheral; on mobile clients it may represent the mobile device itself in conjunction with a viewer harness (e.g., Google Cardboard or Samsung Gear VR). It may also represent devices without stereo presentation capabilities but more advanced tracking, such as Tango devices.
 
 ```js
 let vrDevice = null;
@@ -78,7 +78,7 @@ navigator.vr.getDevices().then(devices => {
 
 ### Sessions
 
-A `VRDevice` indicates the presence of a VR hardware device but provides very little information about it outside of a name that could be used to select it from a list. In order to do anything that involves the hardware's presentation or tracking capabilities the application will need to request a [`VRSession`](https://w3c.github.io/webvr/#interface-vrsession) from the `VRDevice`.
+A `VRDevice` indicates the presence of a VR hardware device but provides very little information about it outside of a name that could be used to select it from a list. In order to do anything that involves the hardware's presentation or tracking capabilities the application will need to request a `VRSession` from the `VRDevice`.
 
 Sessions can be created with one of two levels of access:
 
@@ -112,7 +112,7 @@ async function onVRAvailable() {
 
 ### Beginning a VR session
 
-Clicking the "Enter VR" button in the previous sample will attempt to acquire a `VRSession` by callling `VRDevice`'s `requestSession` method. This returns a promise that resolves to a `VRSession` upon success. When requesting a session, the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` resolved for a given dictionary, then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture for an exclusive session.) The UA is ultimately responsible for determining if it can honor the request.
+Clicking the "Enter VR" button in the previous sample will attempt to acquire a `VRSession` by callling `VRDevice`'s `requestSession()` method. This returns a promise that resolves to a `VRSession` upon success. When requesting a session, the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` resolved for a given dictionary, then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture for an exclusive session.) The UA is ultimately responsible for determining if it can honor the request.
 
 ```js
 function beginVRSession() {
@@ -162,7 +162,7 @@ function onSessionStarted(session) {
 
 ### Setting up a VRLayer
 
-The content to present to the device is defined by a [`VRLayer`](https://w3c.github.io/webvr/#interface-vrlayer). In the initial version of the spec only one layer type, `VRWebGLLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession`'s `baseLayer` attribute. Future iterations of the spec will define new types of `VRLayer`s. For example: a new layer type would be added to enable use with any new graphics APIs that get added to the browser. The ability to use multiple layers at once and have them composited by the UA will likely also be added in a future API revision.
+The content to present to the device is defined by a `VRLayer`. In the initial version of the spec only one layer type, `VRWebGLLayer`, is defined and only one layer can be used at a time. This is set via the `VRSession`'s `baseLayer` attribute. Future iterations of the spec will define new types of `VRLayer`s. For example: a new layer type would be added to enable use with any new graphics APIs that get added to the browser. The ability to use multiple layers at once and have them composited by the UA will likely also be added in a future API revision.
 
 In order for a WebGL canvas to be used with a `VRWebGLLayer`, its context must be _compatible_ with the `VRDevice`. This can mean different things for different environments. For example, on a desktop computer this may mean the context must be created against the graphics adapter that the `VRDevice` is physically plugged into. On most mobile devices though, that's not a concern and so the context will always be compatible. In either case, the WebVR application must take steps to ensure WebGL context compatibility before using it with a `VRWebGLLayer`.
 
@@ -170,7 +170,7 @@ When it comes to ensuring canvas compatibility there's two broad categories that
 
 **VR Enhanced:** The app can take advantage of VR, but it's used as a progressive enhancement rather than a core part of the experience. Most users will probably not interact with the app's VR features, and as such asking them to make VR-centric decisions early in the app lifetime would be confusing and inappropriate. An example would be a news site with an embedded 360 photo gallery or video. (We expect the large majority of early WebVR content to fall into this category.)
 
-This style of application should call `WebGLRenderingContextBase`'s `setCompatibleVRDevice` method with the `VRDevice` in question. This will set a compatibility bit on the context that allows it to be used. Contexts without the compatibility bit will fail when attempting to create a `VRLayer` with them. In the event that a context is not already compatible with the `VRDevice` the [context will be lost and attempt to recreate itself](https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.13) using the compatible graphics adapter. It is the page's responsibility to handle WebGL context loss properly, recreating any necessary WebGL resources in response. If the context loss is not handled by the page, the promise returned by `setCompatibleVRDevice` will fail. The promise may also fail for a variety of other reasons, such as the context being actively used by a different, incompatible `VRDevice`.
+This style of application should call `WebGLRenderingContextBase`'s `setCompatibleVRDevice()` method with the `VRDevice` in question. This will set a compatibility bit on the context that allows it to be used. Contexts without the compatibility bit will fail when attempting to create a `VRLayer` with them. In the event that a context is not already compatible with the `VRDevice` the [context will be lost and attempt to recreate itself](https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.13) using the compatible graphics adapter. It is the page's responsibility to handle WebGL context loss properly, recreating any necessary WebGL resources in response. If the context loss is not handled by the page, the promise returned by `setCompatibleVRDevice` will fail. The promise may also fail for a variety of other reasons, such as the context being actively used by a different, incompatible `VRDevice`.
 
 ```js
 let glCanvas = document.createElement("canvas");
@@ -196,7 +196,7 @@ Ensuring context compatibility with a `VRDevice` through either method may have 
 
 ### Main render loop
 
-WebVR provides information about the current frame to be rendered via the `VRPresentationFrame` object which developers must examine each frame. The [`VRDevicePose`](https://w3c.github.io/webvr/#interface-vrdevicepose) contains the informaton about all views which must be rendered and targets into which this rendering must be done.
+WebVR provides information about the current frame to be rendered via the `VRPresentationFrame` object which developers must examine each frame. The `VRDevicePose` contains the informaton about all views which must be rendered and targets into which this rendering must be done.
 
 `VRWebGLLayer` objects are not updated automatically. To present new frames, developers must use `VRSession`'s `requestFrame()` method. When the callback function is run, it passes fresh rendering data that must be used to draw into the `VRWebGLLayer`'s `framebuffer` during the callback. This framebuffer is created by the UA and behaves similarly to a canvas's default framebuffer. Using framebufferTexture2D, framebufferRenderbuffer, getFramebufferAttachmentParameter, and getRenderbufferParameter will all generate an INVALID_OPERATION error. Additionally, attempting to render to this framebuffer outside of the `requestFrame()` callback will generate an INVALID_OPERATION error. 
 
@@ -274,7 +274,7 @@ vrSession.addEventListener('focus', vrSessionEvent => {
 
 A `VRSession` is "ended" when it is no longer expected to be used. An ended session object becomes detached and all operations on the object will fail. Ended sessions cannot be restored, and if a new active session is needed it must be requested from `VRDevice.requestSession()`.
 
-To manually end a session the application calls [`VRSession`'s `end()` method](https://w3c.github.io/webvr/#dom-vrsession-end). This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
+To manually end a session the application calls `VRSession`'s `end()` method. This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
 
 ```js
 function endVRSession() {
