@@ -66,7 +66,7 @@ navigator.vr.getDevices().then(devices => {
     // devices are present, you may want to provide the user a way of choosing
     // which device to use.
     vrDevice = devices[0];
-    OnVRAvailable();
+    onVRAvailable();
   } else {
     // Could not find any VR hardware connected.
   }
@@ -93,7 +93,7 @@ If a `VRDevice` is available and able to create an exclusive session, the applic
 In the following examples we will focus on using exclusive sessions, and cover non-exclusive session use in the [`Advanced Functionality`](#non-exclusive-sessions-magic-windows) section. With that in mind, we ask here if the `VRDevice` supports sessions with `exclusive` access (the default), since we want the ability to display imagery on the headset.
 
 ```js
-async function OnVRAvailable() {
+async function onVRAvailable() {
   // Most (but not all) VRDevices are capable of granting exclusive access to
   // the device, which is necessary to show imagery in a headset. If the device
   // has that capability the page will want to add an "Enter VR" button (similar
@@ -102,7 +102,7 @@ async function OnVRAvailable() {
   vrDevice.supportsSession().then(() => {
     var enterVrBtn = document.createElement("button");
     enterVrBtn.innerHTML = "Enter VR";
-    enterVrBtn.addEventListener("click", BeginVRSession);
+    enterVrBtn.addEventListener("click", beginVRSession);
     document.body.appendChild(enterVrBtn);
   }).catch((reason) => {
     console.log("Session not supported: " + reason);
@@ -115,11 +115,11 @@ async function OnVRAvailable() {
 Clicking the "Enter VR" button in the previous sample will attempt to acquire a `VRSession` by callling `VRDisplay.requestSession`. This returns a promise that resolves to a `VRSession` upon success. When requesting a session, the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` resolved for a given dictionary, then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture for an exclusive session.) The UA is ultimately responsible for determining if it can honor the request.
 
 ```js
-function BeginVRSession() {
+function beginVRSession() {
   // VRDevice.requestSession must be called within a user gesture event
   // like click or touch when requesting exclusive access.
   vrDevice.requestSession()
-      .then(OnSessionStarted)
+      .then(onSessionStarted)
       .catch(err => {
         // May fail for a variety of reasons. Probably just want to
         // render the scene normally without any tracking at this point.
@@ -136,7 +136,7 @@ Once the session has started, some setup must be done to prepare for rendering.
 let vrSession = null;
 let vrFrameOfRef = null;
 
-function OnSessionStarted(session) {
+function onSessionStarted(session) {
   // Store the session for use later.
   vrSession = session;
 
@@ -258,13 +258,13 @@ Some applications may wish to respond to session suspension by halting game logi
 
 ```js
 vrSession.addEventListener('blur', vrSessionEvent => {
-  PauseMedia();
+  pauseMedia();
   // Allow the render loop to keep running, but just keep rendering the last frame.
   // Render loop may not run at full framerate.
 });
 
 vrSession.addEventListener('focus', vrSessionEvent => {
-  ResumeMedia();
+  resumeMedia();
 });
 ```
 
@@ -275,16 +275,16 @@ A `VRSession` is "ended" when it is no longer expected to be used. An ended sess
 To manually end a session the application calls [`VRSession.end`](https://w3c.github.io/webvr/#dom-vrsession-end). This returns a promise that, when resolved, indicates that presentation to the VR hardware device by that session has stopped. Once the session has ended any continued animation the application's requires should be done using `window.requestAnimationFrame()`.
 
 ```js
-function EndVRSession() {
+function endVRSession() {
   // Do we have an active session?
   if (vrSession) {
     // End VR mode now.
-    vrSession.end().then(OnSessionEnd);
+    vrSession.end().then(onSessionEnd);
   }
 }
 
 // Restore the page to normal after exclusive access has been released.
-function OnSessionEnd() {
+function onSessionEnd() {
   vrSession = null;
 
   // Ending the session stops executing callbacks passed to requestFrame().
@@ -296,7 +296,7 @@ function OnSessionEnd() {
 The UA may end a session at any time for a variety of reasons. For example: The user may forcibly end presentation via a gesture to the UA, other native applications may take exclusive access of the VR hardware device, or the VR hardware device may become disconnected from the system. Well behaved applications should monitor the `end` event on the `VRSession` to detect when that happens.
 
 ```js
-vrSession.addEventListener('end', OnSessionEnd);
+vrSession.addEventListener('end', onSessionEnd);
 ```
 
 If the UA needs to halt use of a session temporarily the session should be suspended instead of ended. (See previous section.)
@@ -318,13 +318,13 @@ When mirroring only one eye's content will be shown, and it should be shown with
 The UA may also choose to ignore the `outputCanvas` on systems where mirroring is inappropriate, such as devices without an external display to mirror to like mobile or all-in-one systems.
 
 ```js
-function BeginVRSession() {
+function beginVRSession() {
   let mirrorCanvas = document.createElement('canvas');
   let mirrorCtx = mirrorCanvas.getContext('vrpresent');
   document.body.appendChild(mirrorCanvas);
 
   vrDevice.requestSession({ outputContext: mirrorCtx })
-      .then(OnSessionStarted)
+      .then(onSessionStarted)
       .catch((reason) => { console.log("requestSession failed: " + reason); });
 }
 ```
@@ -352,7 +352,7 @@ let magicWindowCanvas = document.createElement('canvas');
 let magicWindowCtx = magicWindowCanvas.getContext('vrpresent');
 document.body.appendChild(magicWindowCanvas);
 
-function BeginMagicWindowVRSession() {
+function beginMagicWindowVRSession() {
   // Request a non-exclusive session for magic window rendering.
   vrDevice.requestSession({ exclusive: false, outputContext: magicWindowCtx })
       .then(OnSessionStarted)
@@ -363,7 +363,7 @@ function BeginMagicWindowVRSession() {
 The UA may reject requests for a non-exclusive sessions for a variety of reasons, such as the inability of the underlying hardware to provide tracking data without actively rendering to the device. Pages should be designed to robustly handle the inability to acquire non-exclusive sessions. 'VRDevice.supportsSession()` can be used if a page wants to test for non-exclusive session support before attempting to create the `VRSession`.
 
 ```js
-function CheckMagicWindowSupport() {
+function checkMagicWindowSupport() {
   // Check to see if the UA can support a non-exclusive sessions with the given output context.
   return vrDevice.supportsSession({ exclusive: false, outputContext: magicWindowCtx })
       .then(() => { console.log("Magic Window content is supported!"); })
@@ -412,7 +412,7 @@ If the `bounds` are available the application should try to ensure that all cont
 
 ```js
 // Demonstrated here using a fictional 3D library to simplify the example code.
-function OnBoundsUpdate() {
+function onBoundsUpdate() {
   if (frameOfRef.bounds) {
     // Visualize the bounds geometry as 2 meter high quads
     boundsMesh.clear();
@@ -440,7 +440,7 @@ function OnBoundsUpdate() {
 Changes to the bounds while a session is active should be a relatively rare occurance, but it can be monitored by listening for the frame of reference's `boundschange` event.
 
 ```js
-frameOfRef.addEventListener('boundschange', OnBoundsUpdate);
+frameOfRef.addEventListener('boundschange', onBoundsUpdate);
 ```
 
 ### Multiview rendering
@@ -517,7 +517,7 @@ The first scaling mechanism is done by specifying a `framebufferScaleFactor` at 
 ```js
 function setupWebGLLayer() {
   return gl.setCompatibleVRDevice(vrDevice).then(() => {
-    vrSession.baseLayer = new VRWebGLLayer(vrSession, gl, { framebufferScaleFactor:0.8 });
+    vrSession.baseLayer = new VRWebGLLayer(vrSession, gl, { framebufferScaleFactor: 0.8 });
   });
 ```
 
@@ -547,7 +547,7 @@ A page can be notified when a pose reset happens by listening for the 'resetpose
 vrSession.addEventListener('resetpose', vrSessionEvent => {
   // For an app that allows artificial Yaw rotation, this would be a perfect
   // time to reset that.
-  ResetYawTransform();
+  resetYawTransform();
 });
 ```
 
