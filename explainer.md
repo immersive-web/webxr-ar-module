@@ -140,21 +140,23 @@ function onSessionStarted(session) {
   // Store the session for use later.
   vrSession = session;
 
-  // The `VRFrameOfReference` provides the coordinate system in which
-  // `getViewMatrix()` and the `poseModelMatrix` are defined. For more
-  // information on this see the `Advanced functionality` section
-  frameOfRef = await vrSession.requestFrameOfReference("headModel");
-
   // The depth range of the scene should be set so that the projection
   // matrices returned by the session are correct.
   vrSession.depthNear = 0.1;
   vrSession.depthFar = 100.0;
 
-  // Ensure the canvas context is compatible and create the VRLayer.
-  setupWebGLLayer().then(() => {
-    // Start the render loop
-    vrSession.requestFrame(onDrawFrame);
-  });
+  // The `VRFrameOfReference` provides the coordinate system in which
+  // `getViewMatrix()` and the `poseModelMatrix` are defined. For more
+  // information on this see the `Advanced functionality` section
+  vrSession.requestFrameOfReference("headModel")
+    .then((frameOfRef) => {
+      vrFrameOfRef = frameOfRef;
+    })
+    .then(setupWebGLLayer) // Create a compatible VRWebGLLayer.
+    .then(() => {
+      // Start the render loop
+      vrSession.requestFrame(onDrawFrame);
+    });
 }
 ```
 
@@ -380,9 +382,11 @@ Beyond the core APIs described above, the WebVR API also exposes several options
 A viewer for 360 photos or videos should not respond to head translation, since the source material is intended to be viewed from a single point. While some headsets naturally function this way (Daydream, Gear VR, Cardboard) it can be useful for app developers to specify that they don't want any positional tracking in the matrices they receive. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "headModel" `VRFrameOfReference`.
 
 ```js
-let frameOfRef = await vrSession.requestFrameOfReference("headModel");
+vrSession.requestFrameOfReference("headModel").then((frameOfRef) => {
+  vrFrameOfRef = frameOfRef;
+});
 
-// Use frameOfRef as detailed above.
+// Use vrFrameOfRef as detailed above.
 ```
 
 ### Room-scale tracking and boundaries
@@ -391,19 +395,21 @@ Some VR devices have been configured with details about the area they are being 
 
 ```js
 // Try to get a frame of reference where the floor is at Y = 0
-vrSession.requestFrameOfReference("stage").then(frame => {
-  frameOfRef = frame;
-}).catch(err => {
+vrSession.requestFrameOfReference("stage").then((frameOfRef) => {
+  vrFrameOfRef = frameOfRef;
+}).catch((err) => {
   // "stage" VRFrameOfReference is not supported.
 
   // In this case the application will want to estimate the position of the
   // floor, perhaps by asking the user's height, and translate the reported
   // values upward by that distance so that the floor appears in approximately
   // the correct position.
-  frameOfRef = await vrSession.requestFrameOfReference("eyeLevel");
+  vrSession.requestFrameOfReference("eyeLevel").then((frameOfRef) => {
+    vrFrameOfRef = frameOfRef;
+  });
 });
 
-// Use frameOfRef as detailed above, but render the floor of the virtual space at Y = 0;
+// Use vrFrameOfRef as detailed above, but render the floor of the virtual space at Y = 0;
 ```
 
 When using a stage `VRFrameOfReference` the device will frequently have a configured "safe area" that the user can move around in without fear of bumping into real world objects. WebVR can communicate the rough boundaries of this space via the `VRFrameOfReference.bounds` attribute. It provides a polygonal boundary given in the 'geometry' point array, which represents a loop of points at the edges of the safe space. The points are given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The shape it describes is not guaranteed to be convex. The values reported are relative to the stage origin, but do not necessarily contain it. The `bounds` attribute is null if the bounds are unavailable for the current frame of reference.
@@ -413,20 +419,20 @@ If the `bounds` are available the application should try to ensure that all cont
 ```js
 // Demonstrated here using a fictional 3D library to simplify the example code.
 function onBoundsUpdate() {
-  if (frameOfRef.bounds) {
+  if (vrFrameOfRef.bounds) {
     // Visualize the bounds geometry as 2 meter high quads
     boundsMesh.clear();
-    let pointCount = frameOfRef.bounds.geometry.length;
+    let pointCount = vrFrameOfRef.bounds.geometry.length;
     for (let i = 0; i < pointCount - 1; ++i) {
-      let pointA = frameOfRef.bounds.geometry[i];
-      let pointB = frameOfRef.bounds.geometry[i+1];
+      let pointA = vrFrameOfRef.bounds.geometry[i];
+      let pointB = vrFrameOfRef.bounds.geometry[i+1];
       boundsMesh.addQuad(
           pointA.x, 0, pointA.z, // Quad Corner 1
           pointB.x, 2.0, pointB.z) // Quad Corner 2
     }
     // Close the loop
-    let pointA = frameOfRef.bounds.geometry[pointCount-1];
-    let pointB = frameOfRef.bounds.geometry[0];
+    let pointA = vrFrameOfRef.bounds.geometry[pointCount-1];
+    let pointB = vrFrameOfRef.bounds.geometry[0];
     boundsMesh.addQuad(
           pointA.x, 0, pointA.z, // Quad Corner 1
           pointB.x, 2.0, pointB.z) // Quad Corner 2
@@ -440,7 +446,7 @@ function onBoundsUpdate() {
 Changes to the bounds while a session is active should be a relatively rare occurance, but it can be monitored by listening for the frame of reference's `boundschange` event.
 
 ```js
-frameOfRef.addEventListener('boundschange', onBoundsUpdate);
+vrFrameOfRef.addEventListener('boundschange', onBoundsUpdate);
 ```
 
 ### Multiview rendering
