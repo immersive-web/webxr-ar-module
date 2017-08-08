@@ -712,7 +712,7 @@ partial interface Navigator {
 Acknowledgements {#ack}
 ===================
 
-The following individuals have contributed to the design of the WebVR standard:
+The following individuals have contributed to the design of the WebVR specification:
 
 * Sebastian Sylvan, Microsoft https://microsoft.com/, ssylvan@microsoft.com
 
