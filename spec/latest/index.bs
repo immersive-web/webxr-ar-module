@@ -164,9 +164,13 @@ A {{VRDevice}} represents a physical unit of VR hardware that can present imager
 
 <dfn attribute for="VRDevice">deviceName</dfn> returns a human readable string describing the {{VRDevice}}.
 
-<dfn attribute for="VRDevice">isExternal</dfn> returns true if the {{VRDevice}} hardware is a separate physical device from the system's main device.
+<dfn attribute for="VRDevice">isExternal</dfn> returns <code>true</code> if the {{VRDevice}} hardware has a separate physical display from the system's main display.
 
-Issue: There's no longer a concept of a display having a single active session. This entire section needs to be updated to reflect that.
+<div class="example">
+A VR headset connected to a desktop PC would typically set {{isExternal}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{isExternal}} to <code>false</code>.
+</div>
+
+<!--Issue: There's no longer a concept of a display having a single active session. This entire section needs to be updated to reflect that.
 
 A {{VRDevice}} has an <dfn for="VRDevice">active session</dfn>, initially <code>null</code>, which is the {{VRSession}} that is currently accessing and/or presenting to the device. Only one session per page can be active for a given device at a time.
 
@@ -180,10 +184,11 @@ In order to set or retrieve the [=active session=] a page must <dfn>request a se
  1. Let |prevSession| be the current [=active session=].
  1. Set the [=active session=] to |nextSession|.
  1. If |prevSession| is not null, [=end the session=].
- 1. <a>Resolve</a> |promise| with the [=active session=].
+ 1. <a>Resolve</a> |promise| with the [=active session=].-->
 
 When the <dfn method for="VRDevice">supportsSession()</dfn> method is invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
+ 1. 
  1. If the requested [=session description=] is supported by the device, <a>resolve</a> |promise|.
  1. Else <a>reject</a> |promise|.
 
@@ -394,7 +399,7 @@ A {{VRView}} describes a single view into a VR scene. It provides several values
 
 The <dfn attribute for="VRView">projectionMatrix</dfn> is a [=matrix=] describing the projection to be used for the view's rendering. It is highly recommended that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
 
-<dfn method for="VRView">getViewport()</dfn>
+<dfn method for="VRView">getViewport()</dfn> 
 
 VRViewport {#vrviewport-interface}
 ------
