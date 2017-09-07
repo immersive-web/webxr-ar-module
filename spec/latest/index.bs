@@ -152,8 +152,8 @@ VRDevice {#vrdevice-interface}
   readonly attribute boolean isExternal;
 
   // Methods
-  Promise&lt;boolean&gt; supportsSession(VRSessionCreateParametersInit parameters);
-  Promise&lt;VRSession&gt; requestSession(VRSessionCreateParametersInit parameters);
+  Promise&lt;void&gt; supportsSession(optional VRSessionCreationOptions parameters);
+  Promise&lt;VRSession&gt; requestSession(optional VRSessionCreationOptions parameters);
 
   // Events
   attribute EventHandler ondeactivate;
@@ -184,8 +184,8 @@ In order to set or retrieve the [=active session=] a page must <dfn>request a se
 
 When the <dfn method for="VRDevice">supportsSession()</dfn> method is invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
- 1. If the requested [=session description=] is supported by the device, <a>resolve</a> |promise| with true.
- 1. Else <a>resolve</a> |promise| with false.
+ 1. If the requested [=session description=] is supported by the device, <a>resolve</a> |promise|.
+ 1. Else <a>reject</a> |promise|.
 
 The <dfn attribute for="VRDevice">activeSession</dfn> IDL attribute's getter
 MUST return the {{VRDevice}}'s [=active session=].
@@ -220,14 +220,15 @@ VRSession {#vrsession-interface}
 [Exposed=Window] interface VRSession : EventTarget {
   // Attributes
   readonly attribute VRDevice device;
-  readonly attribute VRSessionCreateParameters createParameters;
+  readonly attribute boolean exclusive;
+  readonly attribute VRPresentationContext outputContext;
 
   attribute double depthNear;
   attribute double depthFar;
   attribute VRLayer baseLayer;
 
   // Methods
-  Promise&lt;VRFrameOfReference&gt; requestFrameOfReference(VRFrameOfReferenceType type);
+  Promise&lt;VRFrameOfReference&gt; requestFrameOfReference(VRFrameOfReferenceType type, optional VRFrameOfReferenceOptions options);
 
   long requestFrame(VRFrameRequestCallback callback);
   void cancelFrame(long handle);
@@ -248,7 +249,9 @@ The UA, when possible, SHOULD NOT initialize device tracking or rendering capabi
 
 <dfn attribute for="VRSession">device</dfn>
 
-<dfn attribute for="VRSession">createParameters</dfn>
+<dfn attribute for="VRSession">exclusive</dfn>
+
+<dfn attribute for="VRSession">outputContext</dfn>
 
 <dfn attribute for="VRSession">depthNear</dfn>
 
@@ -280,24 +283,23 @@ Issue: Document effects when we <dfn>blur the active session</dfn>
 
 Issue: Example of acquiring a session here.
 
-VRSessionCreateParameters {#vrsessioncreateparameters-interface}
+VRSessionCreationOptions {#vrsessioncreationoptions-interface}
 -------------------------
 
-The {{VRSessionCreateParameters}} interface
+The {{VRSessionCreationOptions}} interface
 
 <pre class="idl">
-dictionary VRSessionCreateParametersInit {
-  required boolean exclusive = true;
-};
-
-[Exposed=Window] interface VRSessionCreateParameters {
-  readonly attribute boolean exclusive;
+dictionary VRSessionCreationOptions {
+  boolean exclusive = false;
+  VRPresentationContext outputContext;
 };
 </pre>
 
-The {{VRSessionCreateParametersInit}} dictionary provides a <dfn>session description</dfn>, indicating the desired capabilities of a session to be returned from {{requestSession()}}.
+The {{VRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
 
-<dfn attribute for="VRSessionCreateParameters">exclusive</dfn>
+<dfn attribute for="VRSessionCreationOptions">exclusive</dfn>
+
+<dfn attribute for="VRSessionCreationOptions">outputContext</dfn>
 
 Issue: Document restrictions and capabilities of an <dfn>exclusive session</dfn>
 
@@ -553,6 +555,19 @@ partial interface WebGLRenderingContextBase {
 
 Issue: Describe context compatibility requirements
 
+<dfn method for="WebGLRenderingContextBase">setCompatibleVRDevice()</dfn>
+
+Canvas Rendering Context {#canvas-rendering-context}
+========================
+
+<pre class="idl">
+[Exposed=Window] interface VRPresentationContext {
+  readonly attribute HTMLCanvasElement canvas;
+};
+</pre>
+
+<dfn attribute for="VRPresentationContext">canvas</dfn>
+
 Coordinate Systems {#coordinatesystems}
 ==================
 
@@ -579,13 +594,22 @@ enum VRFrameOfReferenceType {
   "stage",
 };
 
+dictionary VRFrameOfReferenceOptions {
+  boolean disableStageEmulation = false;
+  [EnforceRange] double stageEmulationHeight = 0.0;
+};
+
 [Exposed=Window] interface VRFrameOfReference : VRCoordinateSystem {
   readonly attribute VRStageBounds? bounds;
+  readonly attribute double emulatedHeight;
+
   attribute EventHandler onboundschange;
 };
 </pre>
 
 <dfn attribute for="VRFrameOfReference">bounds</dfn>
+
+<dfn attribute for="VRFrameOfReference">emulatedHeight</dfn>
 
 <dfn attribute for="VRFrameOfReference">onboundschange</dfn>
 
@@ -708,6 +732,7 @@ partial interface Navigator {
 };
 </pre>
 
+<dfn attribute for="Navigator">vr</dfn>
 
 Acknowledgements {#ack}
 ===================
