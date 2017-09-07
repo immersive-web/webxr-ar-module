@@ -596,7 +596,7 @@ partial interface Navigator {
   readonly attribute VR vr;
 };
 
-interface VR : EventTarget {
+[Exposed=Window] interface VR : EventTarget {
   attribute EventHandler ondeviceconnect;
   attribute EventHandler ondevicedisconnect;
 
@@ -607,7 +607,7 @@ interface VR : EventTarget {
 // Device
 //
 
-interface VRDevice : EventTarget {
+[Exposed=Window] interface VRDevice : EventTarget {
   readonly attribute DOMString deviceName;
   readonly attribute boolean isExternal;
 
@@ -624,7 +624,7 @@ dictionary VRSessionCreationOptions {
   VRPresentationContext outputContext;
 };
 
-interface VRSession : EventTarget {
+[Exposed=Window] interface VRSession : EventTarget {
   readonly attribute VRDevice device;
   readonly attribute boolean exclusive;
   readonly attribute VRPresentationContext outputContext;
@@ -653,7 +653,7 @@ callback VRFrameRequestCallback = void (VRPresentationFrame frame);
 // Frame, Device Pose, and Views
 //
 
-interface VRPresentationFrame {
+[Exposed=Window] interface VRPresentationFrame {
   readonly attribute VRSession session;
   readonly attribute FrozenArray<VRView> views;
 
@@ -665,21 +665,21 @@ enum VREye {
   "right"
 };
 
-interface VRView {
+[Exposed=Window] interface VRView {
   readonly attribute VREye eye;
   readonly attribute Float32Array projectionMatrix;
 
   VRViewport? getViewport(VRLayer layer);
 };
 
-interface VRViewport {
+[Exposed=Window] interface VRViewport {
   readonly attribute long x;
   readonly attribute long y;
   readonly attribute long width;
   readonly attribute long height;
 };
 
-interface VRDevicePose {
+[Exposed=Window] interface VRDevicePose {
   readonly attribute Float32Array poseModelMatrix;
 
   Float32Array getViewMatrix(VRView view);
@@ -689,7 +689,7 @@ interface VRDevicePose {
 // Layers
 //
 
-interface VRLayer {};
+[Exposed=Window] interface VRLayer {};
 
 dictionary VRWebGLLayerInit {
   boolean antialias = true;
@@ -703,7 +703,8 @@ dictionary VRWebGLLayerInit {
 typedef (WebGLRenderingContext or
          WebGL2RenderingContext) VRWebGLRenderingContext;
 
-[Constructor(VRSession session,
+[Exposed=Window,
+ Constructor(VRSession session,
              VRWebGLRenderingContext context,
              optional VRWebGLLayerInit layerInit)]
 interface VRWebGLLayer : VRLayer {
@@ -725,7 +726,7 @@ interface VRWebGLLayer : VRLayer {
 // Coordinate Systems
 //
 
-interface VRCoordinateSystem : EventTarget {
+[Exposed=Window] interface VRCoordinateSystem : EventTarget {
   Float32Array? getTransformTo(VRCoordinateSystem other);
 };
 
@@ -735,16 +736,16 @@ enum VRFrameOfReferenceType {
   "stage",
 };
 
-interface VRFrameOfReference : VRCoordinateSystem {
+[Exposed=Window] interface VRFrameOfReference : VRCoordinateSystem {
   readonly attribute VRStageBounds? bounds;
   attribute EventHandler onboundschange;
 };
 
-interface VRStageBounds {
+[Exposed=Window] interface VRStageBounds {
   readonly attribute FrozenArray<VRStageBoundsPoint> geometry;
 };
 
-interface VRStageBoundsPoint {
+[Exposed=Window] interface VRStageBoundsPoint {
   readonly attribute double x;
   readonly attribute double z;
 };
@@ -753,7 +754,7 @@ interface VRStageBoundsPoint {
 // Events
 //
 
-[Constructor(DOMString type, VRDeviceEventInit eventInitDict)]
+[Exposed=Window, Constructor(DOMString type, VRDeviceEventInit eventInitDict)]
 interface VRDeviceEvent : Event {
   readonly attribute VRDevice device;
 };
@@ -762,7 +763,7 @@ dictionary VRDeviceEventInit : EventInit {
   required VRDevice device;
 };
 
-[Constructor(DOMString type, VRSessionEventInit eventInitDict)]
+[Exposed=Window, Constructor(DOMString type, VRSessionEventInit eventInitDict)]
 interface VRSessionEvent : Event {
   readonly attribute VRSession session;
 };
@@ -771,7 +772,8 @@ dictionary VRSessionEventInit : EventInit {
   required VRSession session;
 };
 
-[Constructor(DOMString type, VRCoordinateSystemEventInit eventInitDict)]
+[Exposed=Window,
+ Constructor(DOMString type, VRCoordinateSystemEventInit eventInitDict)]
 interface VRCoordinateSystemEvent : Event {
   readonly attribute VRCoordinateSystem coordinateSystem;
 };
@@ -794,7 +796,7 @@ partial interface WebGLRenderingContextBase {
 //
 // RenderingContext
 //
-interface VRPresentationContext {
+[Exposed=Window] interface VRPresentationContext {
   readonly attribute HTMLCanvasElement canvas;
 };
 ```
