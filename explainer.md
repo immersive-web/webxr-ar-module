@@ -596,7 +596,7 @@ partial interface Navigator {
   readonly attribute VR vr;
 };
 
-[Exposed=Window] interface VR : EventTarget {
+[SecureContext, Exposed=Window] interface VR : EventTarget {
   attribute EventHandler ondeviceconnect;
   attribute EventHandler ondevicedisconnect;
 
@@ -607,7 +607,7 @@ partial interface Navigator {
 // Device
 //
 
-[Exposed=Window] interface VRDevice : EventTarget {
+[SecureContext, Exposed=Window] interface VRDevice : EventTarget {
   readonly attribute DOMString deviceName;
   readonly attribute boolean isExternal;
 
@@ -624,7 +624,7 @@ dictionary VRSessionCreationOptions {
   VRPresentationContext outputContext;
 };
 
-[Exposed=Window] interface VRSession : EventTarget {
+[SecureContext, Exposed=Window] interface VRSession : EventTarget {
   readonly attribute VRDevice device;
   readonly attribute boolean exclusive;
   readonly attribute VRPresentationContext outputContext;
@@ -653,7 +653,7 @@ callback VRFrameRequestCallback = void (VRPresentationFrame frame);
 // Frame, Device Pose, and Views
 //
 
-[Exposed=Window] interface VRPresentationFrame {
+[SecureContext, Exposed=Window] interface VRPresentationFrame {
   readonly attribute VRSession session;
   readonly attribute FrozenArray<VRView> views;
 
@@ -665,21 +665,21 @@ enum VREye {
   "right"
 };
 
-[Exposed=Window] interface VRView {
+[SecureContext, Exposed=Window] interface VRView {
   readonly attribute VREye eye;
   readonly attribute Float32Array projectionMatrix;
 
   VRViewport? getViewport(VRLayer layer);
 };
 
-[Exposed=Window] interface VRViewport {
+[SecureContext, Exposed=Window] interface VRViewport {
   readonly attribute long x;
   readonly attribute long y;
   readonly attribute long width;
   readonly attribute long height;
 };
 
-[Exposed=Window] interface VRDevicePose {
+[SecureContext, Exposed=Window] interface VRDevicePose {
   readonly attribute Float32Array poseModelMatrix;
 
   Float32Array getViewMatrix(VRView view);
@@ -689,7 +689,7 @@ enum VREye {
 // Layers
 //
 
-[Exposed=Window] interface VRLayer {};
+[SecureContext, Exposed=Window] interface VRLayer {};
 
 dictionary VRWebGLLayerInit {
   boolean antialias = true;
@@ -703,7 +703,7 @@ dictionary VRWebGLLayerInit {
 typedef (WebGLRenderingContext or
          WebGL2RenderingContext) VRWebGLRenderingContext;
 
-[Exposed=Window,
+[SecureContext, Exposed=Window,
  Constructor(VRSession session,
              VRWebGLRenderingContext context,
              optional VRWebGLLayerInit layerInit)]
@@ -726,7 +726,7 @@ interface VRWebGLLayer : VRLayer {
 // Coordinate Systems
 //
 
-[Exposed=Window] interface VRCoordinateSystem : EventTarget {
+[SecureContext, Exposed=Window] interface VRCoordinateSystem : EventTarget {
   Float32Array? getTransformTo(VRCoordinateSystem other);
 };
 
@@ -736,16 +736,16 @@ enum VRFrameOfReferenceType {
   "stage",
 };
 
-[Exposed=Window] interface VRFrameOfReference : VRCoordinateSystem {
+[SecureContext, Exposed=Window] interface VRFrameOfReference : VRCoordinateSystem {
   readonly attribute VRStageBounds? bounds;
   attribute EventHandler onboundschange;
 };
 
-[Exposed=Window] interface VRStageBounds {
+[SecureContext, Exposed=Window] interface VRStageBounds {
   readonly attribute FrozenArray<VRStageBoundsPoint> geometry;
 };
 
-[Exposed=Window] interface VRStageBoundsPoint {
+[SecureContext, Exposed=Window] interface VRStageBoundsPoint {
   readonly attribute double x;
   readonly attribute double z;
 };
@@ -754,7 +754,7 @@ enum VRFrameOfReferenceType {
 // Events
 //
 
-[Exposed=Window, Constructor(DOMString type, VRDeviceEventInit eventInitDict)]
+[SecureContext, Exposed=Window, Constructor(DOMString type, VRDeviceEventInit eventInitDict)]
 interface VRDeviceEvent : Event {
   readonly attribute VRDevice device;
 };
@@ -763,7 +763,7 @@ dictionary VRDeviceEventInit : EventInit {
   required VRDevice device;
 };
 
-[Exposed=Window, Constructor(DOMString type, VRSessionEventInit eventInitDict)]
+[SecureContext, Exposed=Window, Constructor(DOMString type, VRSessionEventInit eventInitDict)]
 interface VRSessionEvent : Event {
   readonly attribute VRSession session;
 };
@@ -772,7 +772,7 @@ dictionary VRSessionEventInit : EventInit {
   required VRSession session;
 };
 
-[Exposed=Window,
+[SecureContext, Exposed=Window,
  Constructor(DOMString type, VRCoordinateSystemEventInit eventInitDict)]
 interface VRCoordinateSystemEvent : Event {
   readonly attribute VRCoordinateSystem coordinateSystem;
@@ -796,7 +796,7 @@ partial interface WebGLRenderingContextBase {
 //
 // RenderingContext
 //
-[Exposed=Window] interface VRPresentationContext {
+[SecureContext, Exposed=Window] interface VRPresentationContext {
   readonly attribute HTMLCanvasElement canvas;
 };
 ```
