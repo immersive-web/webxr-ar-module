@@ -640,7 +640,7 @@ partial interface Navigator {
 //
 
 [SecureContext, Exposed=Window] interface VRDevice : EventTarget {
-  readonly attribute boolean isExternal;
+  readonly attribute boolean external;
 
   Promise<void> supportsSession(optional VRSessionCreationOptions parameters);
   Promise<VRSession> requestSession(optional VRSessionCreationOptions parameters);
