@@ -40,45 +40,49 @@ VR provides an interesting canvas for artists looking to explore the possibiliti
 
 ## Lifetime of a VR web app
 
-The basic steps any WebVR application will go through are:
+The basic steps most WebVR applications will go through are:
 
- 1. Request a list of the available VR devices.
- 2. Checks to see if the desired device supports the presentation modes the application needs.
- 3. If so, application advertises VR functionality to the user.
- 4. User performs an action that indicates they want to enter VR mode.
- 5. Request a VR session to present VR content with.
- 6. Begin a render loop that produces graphical frames to be displayed on the VR device.
- 7. Continue producing frames until the user indicates that they wish to exit VR mode.
- 8. End the VR session.
+ 1. Request a VR device.
+ 1. If a device is available, application advertises VR functionality to the user.
+ 1. Request an exclusive VR session from the device in response to a [user-activation event](https://html.spec.whatwg.org/multipage/interaction.html#activation).
+ 1. Use the session to run a render loop that produces graphical frames to be displayed on the VR device.
+ 1. Continue producing frames until the user indicates that they wish to exit VR mode.
+ 1. End the VR session.
 
-### Device enumeration
+### Acquiring a Device
 
-The first thing that any VR-enabled page will want to do is enumerate the available VR hardware and, if present, advertise VR functionality to the user.
+The first thing that any VR-enabled page will want to do is request a `VRDevice` and, if one is available, advertise VR functionality to the user. (For example, by adding a button to the page that the user can click to start VR content.)
 
-`navigator.vr.getDevices` returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to a list of available devices. Each `VRDevice` represents a physical unit of VR hardware that can present imagery to the user somehow, referred to here as a "VR hardware device". On desktop clients this will usually be a headset peripheral; on mobile clients it may represent the mobile device itself in conjunction with a viewer harness (e.g., Google Cardboard or Samsung Gear VR). It may also represent devices without stereo presentation capabilities but more advanced tracking, such as Tango devices.
+`navigator.vr.requestDevice` returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to a `VRDevice` if one is available. If no `VRDevice` is available, it will resolve to null. The promise will be rejected if an error occurs, such as the the page not having the appropriate permissions to access VR capabilities.
+
+A `VRDevice` represents a physical unit of VR hardware that can present imagery to the user somehow, referred to here as a "VR hardware device". On desktop clients this will usually be a headset peripheral; on mobile clients it may represent the mobile device itself in conjunction with a viewer harness (e.g., Google Cardboard/Daydream or Samsung Gear VR). It may also represent devices without stereo-presentation capabilities but with more advanced tracking, such as ARCore/ARKit-compatible devices.
 
 ```js
-let vrDevice = null;
+function checkForVR() {
+  navigator.vr.requestDevice().then(device => {
+    if (device) {
+      onVRAvailable(device);
+    }
+  }, err => {
+    // An error occurred while requesting a VRDevice.
+    console.error('Unable to request a VR device:', err);
+  });
+}
+```
 
-navigator.vr.getDevices().then(devices => {
-  if (devices.length > 0) {
-    // Use the first device in the array if one is available. If multiple
-    // devices are present, you may want to provide the user a way of choosing
-    // which device to use.
-    vrDevice = devices[0];
-    onVRAvailable();
-  } else {
-    // Could not find any VR hardware connected.
-  }
-}, err => {
-  // An error occurred querying VR hardware. May be the result of blocked
-  // permissions by a parent frame.
-});
+Future revisions of the API may add filter criteria to `navigator.vr.requestDevice`.
+
+> **Non-normative Note:** If there are multiple VR devices available, the UA will need to pick which one to return. The UA is allowed to use any criteria it wishes to select which device is returned, including settings UI that allows users to manage device priority. Calling `navigator.vr.requestDevice` should not trigger device-selection UI, however, as this would cause many sites to display VR-specific dialogs early in the document lifecycle without user activation.
+
+It's possible that even if no VR device is available initially, one may become available while the application is running, or that a previously available device becomes unavailable. This will be most common with PC peripherals that can be connected or disconnected at any time. Pages can listen to the `devicechange` event emitted on `navigator.vr` to respond to changes in device availability after the page loads. (VR devices already available when the page loads will not cause a `devicechange` event to be fired.)
+
+```js
+navigator.vr.addEventListener('devicechange', checkForVR);
 ```
 
 ### Sessions
 
-A `VRDevice` indicates the presence of a VR hardware device but provides very little information about it outside of a name that could be used to select it from a list. In order to do anything that involves the hardware's presentation or tracking capabilities the application will need to request a `VRSession` from the `VRDevice`.
+A `VRDevice` indicates only the availability of a VR device. In order to do anything that involves the device's presentation or tracking capabilities, the application will need to request a `VRSession` from the `VRDevice`.
 
 Sessions can be created with one of two levels of access:
 
@@ -93,7 +97,11 @@ If a `VRDevice` is available and able to create an exclusive session, the applic
 In the following examples we will focus on using exclusive sessions, and cover non-exclusive session use in the [`Advanced Functionality`](#non-exclusive-sessions-magic-windows) section. With that in mind, we ask here if the `VRDevice` supports sessions with `exclusive` access (the default), since we want the ability to display imagery on the headset.
 
 ```js
-async function onVRAvailable() {
+let vrDevice = null;
+
+async function onVRAvailable(device) {
+  vrDevice = device;
+
   // Most (but not all) VRDevices are capable of granting exclusive access to
   // the device, which is necessary to show imagery in a headset. If the device
   // has that capability the page will want to add an "Enter VR" button (similar
@@ -623,10 +631,8 @@ partial interface Navigator {
 };
 
 [SecureContext, Exposed=Window] interface VR : EventTarget {
-  attribute EventHandler ondeviceconnect;
-  attribute EventHandler ondevicedisconnect;
-
-  Promise<sequence<VRDevice>> getDevices();
+  attribute EventHandler ondevicechange;
+  Promise<VRDevice> requestDevice();
 };
 
 //
@@ -634,7 +640,6 @@ partial interface Navigator {
 //
 
 [SecureContext, Exposed=Window] interface VRDevice : EventTarget {
-  readonly attribute DOMString deviceName;
   readonly attribute boolean isExternal;
 
   Promise<void> supportsSession(optional VRSessionCreationOptions parameters);
