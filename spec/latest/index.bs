@@ -92,7 +92,7 @@ Gaze Tracking {#gazetracking-security}
 
 While the API does not yet expose eye tracking capabilites a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of VR devices that have limited input capabilities, such as Google Carboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
 
-To prevent this risk the UA MUST [=blur the active session=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the UA MUST [=blur the active session=] on non-focused pages.
+To prevent this risk the UA MUST [=blur active sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the UA MUST [=blur active sessions=] on non-focused pages.
 
 Trusted Environment {#trustedenvironment-security}
 -------------------
@@ -113,7 +113,7 @@ Also, to prevent CORS-related vulnerabilities each page will see a new instance 
 Fingerprinting {#fingerprinting-security}
 --------------
 
-Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue such as ensuring that device names are reasonably generic and don't contain unique IDs. (For example: "Daydream View" instead of "Daydream View, Pixel XL (Black) - Serial: 1234-56-7890")
+Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue. This spec limits reporting of available hardware to only a single device at a time, which prevents using the rare cases of multiple headsets being connected as a fingerprinting signal. Also, the devices that are reported have no string identifiers and expose very little information about the devices capabilities until a VRSession is created, which may only be triggered via user activation in the most sensitive case.
 
 Issue: Discuss use of sensor activity as a possible fingerprinting vector.
 
@@ -126,20 +126,17 @@ VR {#vr-interface}
 <pre class="idl">
 [SecureContext, Exposed=Window] interface VR : EventTarget {
   // Methods
-  Promise&lt;sequence&lt;VRDevice&gt;&gt; getDevices();
+  Promise&lt;VRDevice&gt; requestDevice();
 
   // Events
-  attribute EventHandler ondeviceconnect;
-  attribute EventHandler ondevicedisconnect;
+  attribute EventHandler ondevicechange;
 };
 </pre>
 
-<dfn method for="VR">getDevices()</dfn>
-Return a Promise which resolves to a list of available {{VRDevice}}s.
+<dfn method for="VR">requestDevice()</dfn>
+Return a Promise which resolves to an available {{VRDevice}}.
 
-<dfn attribute for="VR">ondeviceconnect</dfn> is an <a>Event handler IDL attribute</a> for the {{deviceconnect}} event type.
-
-<dfn attribute for="VR">ondevicedisconnect</dfn> is an <a>Event handler IDL attribute</a> for the {{devicedisconnect}} event type.
+<dfn attribute for="VR">ondevicechange</dfn> is an <a>Event handler IDL attribute</a> for the {{devicechange}} event type.
 
 
 VRDevice {#vrdevice-interface}
@@ -149,7 +146,7 @@ VRDevice {#vrdevice-interface}
 [SecureContext, Exposed=Window] interface VRDevice : EventTarget {
   // Attributes
   readonly attribute DOMString deviceName;
-  readonly attribute boolean isExternal;
+  readonly attribute boolean external;
 
   // Methods
   Promise&lt;void&gt; supportsSession(optional VRSessionCreationOptions parameters);
@@ -164,15 +161,15 @@ A {{VRDevice}} represents a physical unit of VR hardware that can present imager
 
 <dfn attribute for="VRDevice">deviceName</dfn> returns a human readable string describing the {{VRDevice}}.
 
-<dfn attribute for="VRDevice">isExternal</dfn> returns <code>true</code> if the {{VRDevice}} hardware has a separate physical display from the system's main display.
+<dfn attribute for="VRDevice">external</dfn> returns <code>true</code> if the {{VRDevice}} hardware has a separate physical display from the system's main display.
 
 <div class="example">
-A VR headset connected to a desktop PC would typically set {{isExternal}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{isExternal}} to <code>false</code>.
+A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
 </div>
 
 <!--Issue: There's no longer a concept of a display having a single active session. This entire section needs to be updated to reflect that.
 
-A {{VRDevice}} has an <dfn for="VRDevice">active session</dfn>, initially <code>null</code>, which is the {{VRSession}} that is currently accessing and/or presenting to the device. Only one session per page can be active for a given device at a time.
+A {{VRDevice}} may have an <dfn for="VRDevice">active session</dfn>, initially <code>null</code>, which is the {{VRSession}} that is currently accessing and/or presenting to the device. Only one session per page can be active for a given device at a time.
 
 In order to set or retrieve the [=active session=] a page must <dfn>request a session</dfn> from the device using the <dfn method for="VRDevice">requestSession()</dfn> method. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
@@ -191,9 +188,6 @@ When the <dfn method for="VRDevice">supportsSession()</dfn> method is invoked it
  1. 
  1. If the requested [=session description=] is supported by the device, <a>resolve</a> |promise|.
  1. Else <a>reject</a> |promise|.
-
-The <dfn attribute for="VRDevice">activeSession</dfn> IDL attribute's getter
-MUST return the {{VRDevice}}'s [=active session=].
 
 <dfn attribute for="VRDevice">ondeactivate</dfn> is an <a>Event handler IDL attribute</a> for the {{deactivate}} event type.
 
@@ -248,7 +242,7 @@ VRSession {#vrsession-interface}
 };
 </pre>
 
-A {{VRSession}} is the interface through with most interaction with a {{VRDevice}} happens. A page must [=request a session=] from the {{VRDevice}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{VRDevice}}.
+A {{VRSession}} is the interface through with most interaction with a {{VRDevice}} happens. A page must request a session from the {{VRDevice}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{VRDevice}}.
 
 The UA, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the VR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of VR hardware in order to advertise VR features. Not all VR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
 
@@ -278,7 +272,7 @@ Issue: Document what happens when we <dfn>end the session</dfn>
 
 <dfn attribute for="VRSession">onblur</dfn> is an <a>Event handler IDL attribute</a> for the {{blur}} event type.
 
-Issue: Document effects when we <dfn>blur the active session</dfn>
+Issue: Document effects when we <dfn>blur active sessions</dfn>
 
 <dfn attribute for="VRSession">onfocus</dfn> is an <a>Event handler IDL attribute</a> for the {{focus}} event type.
 
@@ -704,17 +698,9 @@ Event Types {#event-types}
 
 The UA MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.
 
-The UA MAY fire a <dfn event for="VR">deviceconnect</dfn> event on the {{VR}} object to indicate that a {{VRDevice}} has been connected. The event MUST be of type {{VRDeviceEvent}}.
+The UA MAY fire a <dfn event for="VR">devicechange</dfn> event on the {{VR}} object to indicate that the availability of {{VRDevice}}s has been changed. The event MUST be of type {{Event}}.
 
-The UA MAY dispatch a <dfn event for="VR">devicedisconnect</dfn> event on the {{VR}} object to indicate that a {{VRDevice}} has been disconnected. The event MUST be of type {{VRDeviceEvent}}.
-
-<!--The UA MAY dispatch a <dfn event for="VR">navigate</dfn> event on the {{VR}} object to indicate that the current page has been navigated to from a browsing context that was actively presenting VR content. The event's {{VRSessionEvent/session}} MUST be an instance of a {{VRSession}} with identical capabilities to the [=active session=] from the previous page, such that presenting to the session will feel like a seamless transition to the user. The event MUST be of type {{VRSessionEvent}}.
-
-The UA MUST dispatch a <dfn event for="VRDevice">sessionchange</dfn> event on a {{VRDevice}} to indicate that the {{VRDevice}} has begun or ended a new {{VRSession}}. This event should not fire on subsequent calls to {{requestSession()}} if the returned session is the same as the current {{activeSession}}. The event MUST be of type {{VRSessionEvent}}.
-
-The UA MAY dispatch a <dfn event for="VRDevice">activate</dfn> event on a {{VRDevice}} to indicate that something has occurred which suggests the {{VRDevice}} should be begin an [=exclusive session=]. For example, if the {{VRDevice}} is capable of detecting when the user has put it on, this event SHOULD fire when they do so. The event MUST be of type {{VRDeviceEvent}}.-->
-
-The UA MAY dispatch a <dfn event for="VRDevice">deactivate</dfn> event on a {{VRDevice}} to indicate that something has occurred which suggests the {{VRDevice}} should end the active session. For example, if the {{VRDevice}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{VRDeviceEvent}}.
+The UA MAY dispatch a <dfn event for="VRDevice">deactivate</dfn> event on a {{VRDevice}} to indicate that something has occurred which suggests the {{VRDevice}} should end the exclusive session. For example, if the {{VRDevice}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{VRDeviceEvent}}.
 
 A UA MAY dispatch a <dfn event for="VRSession">blur</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has been suspended by the UA, OS, or VR hardware. While a {{VRSession}} is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type {{VRSessionEvent}}.
 
