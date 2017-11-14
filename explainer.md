@@ -163,7 +163,7 @@ function onSessionStarted(session) {
     .then(setupWebGLLayer) // Create a compatible VRWebGLLayer.
     .then(() => {
       // Start the render loop
-      vrSession.requestFrame(onDrawFrame);
+      vrSession.requestAnimationFrame(onDrawFrame);
     });
 }
 ```
@@ -206,7 +206,7 @@ Ensuring context compatibility with a `VRDevice` through either method may have 
 
 WebVR provides information about the current frame to be rendered via the `VRPresentationFrame` object which developers must examine each frame. The `VRDevicePose` contains the information about all views which must be rendered and targets into which this rendering must be done.
 
-`VRWebGLLayer` objects are not updated automatically. To present new frames, developers must use `VRSession`'s `requestFrame()` method. When the callback function is run, it passes fresh rendering data that must be used to draw into the `VRWebGLLayer`'s `framebuffer` during the callback. This framebuffer is created by the UA and behaves similarly to a canvas's default framebuffer. Using framebufferTexture2D, framebufferRenderbuffer, getFramebufferAttachmentParameter, and getRenderbufferParameter will all generate an INVALID_OPERATION error. Additionally, attempting to render to this framebuffer outside of the `requestFrame()` callback will generate an INVALID_OPERATION error. 
+`VRWebGLLayer` objects are not updated automatically. To present new frames, developers must use `VRSession`'s `requestAnimationFrame()` method. When the callback function is run, it is passed both a timestamp and a `VRPresentationFrame` containing fresh rendering data that must be used to draw into the `VRWebGLLayer`'s `framebuffer` during the callback. (Timestamp is given for compatibility with `window.requestAnimationFrame()`. Reserved for future use and will be `0` until that time.) This framebuffer is created by the UA and behaves similarly to a canvas's default framebuffer. Using `framebufferTexture2D`, `framebufferRenderbuffer`, `getFramebufferAttachmentParameter`, and `getRenderbufferParameter` will all generate an INVALID_OPERATION error. Additionally, attempting to render to this framebuffer outside of the `requestAnimationFrame()` callback will generate an INVALID_OPERATION error. 
 
 Once drawn to, the VR device will continue displaying the contents of the `VRWebGLLayer` framebuffer, potentially reprojected to match head motion, regardless of whether or not the page continues processing new frames. Potentially future spec iterations could enable additional types of layers, such as video layers, that could automatically be synchronized to the device's refresh rate.
 
@@ -226,7 +226,7 @@ function onDrawFrame(vrFrame) {
     }
 
     // Request the next VR callback
-    vrSession.requestFrame(onDrawFrame);
+    vrSession.requestAnimationFrame(onDrawFrame);
   } else {
     // No session available, so render a default mono view.
     gl.viewport(0, 0, glCanvas.width, glCanvas.height);
@@ -297,8 +297,9 @@ function endVRSession() {
 function onSessionEnd() {
   vrSession = null;
 
-  // Ending the session stops executing callbacks passed to requestFrame().
-  // To continue rendering, use the window's AnimationFrame callback
+  // Ending the session stops executing callbacks passed to the VRSession's
+  // requestAnimationFrame(). To continue rendering, use the window's
+  // requestAnimationFrame() function.
   window.requestAnimationFrame(onDrawFrame);
 }
 ```
@@ -524,7 +525,7 @@ function onDrawFrame(vrFrame) {
     }
 
     // Request the next VR callback
-    vrSession.requestFrame(onDrawFrame);
+    vrSession.requestAnimationFrame(onDrawFrame);
 
   } else {
     // No session available, so render a default mono view.
@@ -573,7 +574,7 @@ function onDrawFrame() {
   layer.requestViewportScaling(0.5);
 
   // Register for next frame callback
-  vrSession.requestFrame(onDrawFrame);
+  vrSession.requestAnimationFrame(onDrawFrame);
 }
 ```
 
@@ -672,13 +673,15 @@ dictionary VRSessionCreationOptions {
 
   Promise<VRFrameOfReference> requestFrameOfReference(VRFrameOfReferenceType type, optional VRFrameOfReferenceOptions options);
 
-  long requestFrame(VRFrameRequestCallback callback);
-  void cancelFrame(long handle);
+  long requestAnimationFrame(VRFrameRequestCallback callback);
+  void cancelAnimationFrame(long handle);
 
   Promise<void> end();
 };
 
-callback VRFrameRequestCallback = void (VRPresentationFrame frame);
+// Timestamp is passed as part of the callback to make the signature compatible
+// with the window's FrameRequestCallback.
+callback VRFrameRequestCallback = void (DOMHighResTimeStamp time, VRPresentationFrame frame);
 
 //
 // Frame, Device Pose, and Views
