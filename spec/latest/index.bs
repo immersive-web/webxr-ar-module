@@ -165,7 +165,6 @@ VRDevice {#vrdevice-interface}
 <pre class="idl">
 [SecureContext, Exposed=Window] interface VRDevice : EventTarget {
   // Attributes
-  readonly attribute DOMString deviceName;
   readonly attribute boolean external;
 
   // Methods
@@ -178,8 +177,6 @@ VRDevice {#vrdevice-interface}
 </pre>
 
 A {{VRDevice}} represents a physical unit of VR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.
-
-<dfn attribute for="VRDevice">deviceName</dfn> returns a human readable string describing the {{VRDevice}}.
 
 <dfn attribute for="VRDevice">external</dfn> returns <code>true</code> if the {{VRDevice}} hardware has a separate physical display from the system's main display.
 
@@ -209,6 +206,18 @@ When the <dfn method for="VRDevice">supportsSession()</dfn> method is invoked it
  1. Else <a>reject</a> |promise|.
 
 <dfn attribute for="VRDevice">ondeactivate</dfn> is an <a>Event handler IDL attribute</a> for the {{deactivate}} event type.
+
+<div class="example">
+The following code finds an available {{VRDevice}}.
+
+<pre highlight="js">
+let vrDevice;
+
+navigator.vr.getDevice().then((device) => {
+  vrDevice = device;
+});
+</pre>
+</div>
 
 Session {#session}
 =======
