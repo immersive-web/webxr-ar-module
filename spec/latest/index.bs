@@ -213,11 +213,12 @@ The following code finds an available {{VRDevice}}.
 <pre highlight="js">
 let vrDevice;
 
-navigator.vr.getDevice().then((device) => {
+navigator.vr.requestDevice().then((device) => {
   vrDevice = device;
 });
 </pre>
 </div>
+
 
 Session {#session}
 =======
