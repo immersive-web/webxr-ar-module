@@ -1,25 +1,21 @@
 <pre class="metadata">
-Shortname: webvr
-Title: WebVR
-Group: webvr
-Status: ED
-ED: https://w3c.github.io/webvr/
-Repository: w3c/webvr
+Shortname: webxr
+Title: WebXR Device API
+Group: immersiveweb
+Status: w3c/ED
+ED: https://immersive-web.github.io/webxr/
+Repository: immersive-web/webxr
 Level: 1
 Mailing List Archives: https://lists.w3.org/Archives/Public/public-webvr/
-Mailing List: public-webvr@mozilla.org
 
-!Participate: <a href="https://github.com/w3c/webvr/issues/new">File an issue</a> (<a href="https://github.com/w3c/webvr/issues">open issues</a>)
+!Participate: <a href="https://github.com/immersive-web/webxr/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/webxr/issues">open issues</a>)
 !Participate: <a href="https://lists.w3.org/Archives/Public/public-webvr/">Mailing list archive</a>
 !Participate: <a href="irc://irc.w3.org:6665/">W3C's #webvr IRC</a>
 
-Editor: Vladimir Vukicevic, Mozilla https://mozilla.org/, vladimir@mozilla.com
 Editor: Brandon Jones, Google http://google.com/, bajones@google.com
-Editor: Kearwood Gilbert, Mozilla https://mozilla.org/, kgilbert@mozilla.com
-Editor: Chris Van Wiemeersch, Mozilla https://mozilla.org/, cvan@mozilla.com
 Editor: Nell Waliczek, Microsoft https://microsoft.com/, nell.waliczek@microsoft.com
-Editor: Rafael Cintron, Microsoft https://microsoft.com/, rafael.cintron@microsoft.com
-Abstract: This specification describes support for accessing virtual reality (VR) devices, including sensors and head-mounted displays on the Web.
+
+Abstract: This specification describes support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web.
 </pre>
 
 <pre class="anchors">
@@ -69,116 +65,123 @@ spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
 
 <b style="color: red; font-size: 1.3em">DO NOT IMPLEMENT</b>
 
-<b>The version of the WebVR API represented in this document is incomplete and changing rapidly. Do not implement it at this time.</b>
+<b>The version of the WebXR Device API represented in this document is incomplete and changing rapidly. Do not implement it at this time.</b>
 
 <section class="unstable">
 
 Introduction {#intro}
 =============
 
-Hardware that enables Virtual Reality applications requires high-precision, low-latency interfaces to deliver an acceptable experience.
-Other interfaces, such as device orientation events, can be repurposed to surface VR input but doing so dilutes the interface's original
-intent and often does not provide the precision necessary for high-quality VR. The WebVR API provides purpose-built interfaces
-to VR hardware to allow developers to build compelling, comfortable VR experiences.
+Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications requires high-precision, low-latency interfaces to deliver an acceptable experience. Other interfaces, such as device orientation events, can be repurposed to surface input from these devices but doing so dilutes the interface's original intent and often does not provide the precision necessary for high-quality immersive experiences. The WebXR Device API provides purpose-built interfaces to VR/AR hardware to allow developers to build compelling, comfortable immersive experiences.
+
+Terminology {#terminology}
+-----------
+
+This document uses the term "XR" throughout to refer to the spectrum of hardware, applications, and techniques used for Virtual Reality, Augmented Reality, and other related technologies. Examples include, but are not limited to:
+
+ * Head mounted displays, whether they are opaque, transparent, or utilize video passthrough
+ * Mobile devices with positional tracking
+ * Fixed displays with head tracking capabilities
+
+The important commonality between them being that they offer some degree of spatial tracking with which to simulate a view of virtual content.
+
+Terms like "XR Device", "XR Application", etc. are generally understood to apply to any of the above. Portions of this document that only apply to a subset of these devices will indicate so as appropriate.
 
 
 Security, Privacy, and Comfort Considerations {#security}
 =============================================
 
-The WebVR API provides powerful new features which bring with them several unique privacy, security, and comfort risks that user agents must take steps to mitigate.
+The WebXR Device API provides powerful new features which bring with them several unique privacy, security, and comfort risks that user agents must take steps to mitigate.
 
 Gaze Tracking {#gazetracking-security}
 -------------
 
-While the API does not yet expose eye tracking capabilites a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of VR devices that have limited input capabilities, such as Google Carboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
+While the API does not yet expose eye tracking capabilites a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of XR devices that have limited input capabilities, such as Google Carboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
 
 To prevent this risk the UA MUST [=blur active sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the UA MUST [=blur active sessions=] on non-focused pages.
 
 Trusted Environment {#trustedenvironment-security}
 -------------------
 
-If the virtual environment does not consistently track the user's head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the UA MUST provide a tracked, trusted environment and a [=VR Compositor=] which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the UA should be able to continue presenting a responsive, trusted UI.
+If the virtual environment does not consistently track the user's head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the UA MUST provide a tracked, trusted environment and an [=XR Compositor=] which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the UA should be able to continue presenting a responsive, trusted UI.
 
-Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the VR experience. Removing the VR device in these cases may not always be a fast or practical option. To accomodate this the UA SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebVR content and displays the UA's trusted UI.
+Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the XR experience. Removing the XR device in these cases may not always be a fast or practical option. To accomodate this the UA SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebXR content and displays the UA's trusted UI.
 
-When navigating between pages in VR the UA should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
+When navigating between pages in XR the UA should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
 
 Context Isolation {#contextisolation-security}
 -----------------
 
 The trusted UI must be drawing by an independent rendering context whose state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
 
-Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{VRDevice}} and {{VRSession}}. Attributes such as the {{VRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The UA MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
+Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{XRDevice}} and {{XRSession}}. Attributes such as the {{XRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The UA MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
 
 Fingerprinting {#fingerprinting-security}
 --------------
 
-Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue. This spec limits reporting of available hardware to only a single device at a time, which prevents using the rare cases of multiple headsets being connected as a fingerprinting signal. Also, the devices that are reported have no string identifiers and expose very little information about the devices capabilities until a VRSession is created, which may only be triggered via user activation in the most sensitive case.
+Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue. This spec limits reporting of available hardware to only a single device at a time, which prevents using the rare cases of multiple headsets being connected as a fingerprinting signal. Also, the devices that are reported have no string identifiers and expose very little information about the devices capabilities until an XRSession is created, which may only be triggered via user activation in the most sensitive case.
 
 Issue: Discuss use of sensor activity as a possible fingerprinting vector.
 
 Device Enumeration {#deviceenumeration}
 ===================
 
-VR {#vr-interface}
+XR {#xr-interface}
 ----
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VR : EventTarget {
+[SecureContext, Exposed=Window] interface XR : EventTarget {
   // Methods
-  Promise&lt;VRDevice?&gt; requestDevice();
+  Promise&lt;XRDevice?&gt; requestDevice();
 
   // Events
   attribute EventHandler ondevicechange;
 };
 </pre>
 
-<dfn method for="VR">requestDevice()</dfn>
-Return a Promise which resolves to an available {{VRDevice}}.
+<dfn method for="XR">requestDevice()</dfn>
+Return a Promise which resolves to an available {{XRDevice}}.
 
-Calling {{VR/requestDevice()}} should not trigger device-selection UI as this would cause many sites to display VR-specific dialogs early in the document lifecycle without user activation.
+Calling {{XR/requestDevice()}} should not trigger device-selection UI as this would cause many sites to display XR-specific dialogs early in the document lifecycle without user activation.
 
-Note: If there are multiple VR devices available, the UA will need to pick which one to return. The UA is allowed to use any criteria it wishes to select which device is returned, including settings UI that allows users to manage device priority.
+Note: If there are multiple XR devices available, the UA will need to pick which one to return. The UA is allowed to use any criteria it wishes to select which device is returned, including settings UI that allows users to manage device priority.
 
 <div class="example">
-The following code finds an available {{VRDevice}}.
+The following code finds an available {{XRDevice}}.
 
 <pre highlight="js">
-navigator.vr.requestDevice().then(device => {
-  // Resolves to a VRDevice if one is available, or to null otherwise.
+navigator.xr.requestDevice().then(device => {
+  // Resolves to an XRDevice if one is available, or to null otherwise.
   if (device) {
-    onVRAvailable(device);
+    onXRAvailable(device);
   }
 }).catch(error => {
-  // An error occurred while requesting a VRDevice.
-  console.error('Unable to request a VR device: ', error);
+  // An error occurred while requesting an XRDevice.
+  console.error('Unable to request an XR device: ', error);
 });
 </pre>
 </div>
 
-<dfn attribute for="VR">ondevicechange</dfn> is an <a>Event handler IDL attribute</a> for the {{devicechange}} event type.
+<dfn attribute for="XR">ondevicechange</dfn> is an <a>Event handler IDL attribute</a> for the {{devicechange}} event type.
 
 
-VRDevice {#vrdevice-interface}
+XRDevice {#xrdevice-interface}
 ---------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRDevice : EventTarget {
+[SecureContext, Exposed=Window] interface XRDevice : EventTarget {
   // Attributes
   readonly attribute boolean external;
 
   // Methods
-  Promise&lt;void&gt; supportsSession(optional VRSessionCreationOptions parameters);
-  Promise&lt;VRSession&gt; requestSession(optional VRSessionCreationOptions parameters);
-
-  // Events
-  attribute EventHandler ondeactivate;
+  Promise&lt;void&gt; supportsSession(optional XRSessionCreationOptions parameters);
+  Promise&lt;XRSession&gt; requestSession(optional XRSessionCreationOptions parameters);
 };
 </pre>
 
-A {{VRDevice}} represents a physical unit of VR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.
+An {{XRDevice}} represents a physical unit of XR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.
 
-<dfn attribute for="VRDevice">external</dfn> returns <code>true</code> if the {{VRDevice}} hardware has a separate physical display from the system's main display.
+<dfn attribute for="XRDevice">external</dfn> returns <code>true</code> if the {{XRDevice}} hardware has a separate physical display from the system's main display.
 
 <div class="example">
 A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
@@ -186,35 +189,33 @@ A VR headset connected to a desktop PC would typically set {{external}} to <code
 
 <!--Issue: There's no longer a concept of a display having a single active session. This entire section needs to be updated to reflect that.
 
-A {{VRDevice}} may have an <dfn for="VRDevice">active session</dfn>, initially <code>null</code>, which is the {{VRSession}} that is currently accessing and/or presenting to the device. Only one session per page can be active for a given device at a time.
+An {{XRDevice}} may have an <dfn for="XRDevice">active session</dfn>, initially <code>null</code>, which is the {{XRSession}} that is currently accessing and/or presenting to the device. Only one session per page can be active for a given device at a time.
 
-In order to set or retrieve the [=active session=] a page must <dfn>request a session</dfn> from the device using the <dfn method for="VRDevice">requestSession()</dfn> method. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+In order to set or retrieve the [=active session=] a page must <dfn>request a session</dfn> from the device using the <dfn method for="XRDevice">requestSession()</dfn> method. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
  1. If the requested [=session description=] is not supported by the device, <a>reject</a> |promise| and abort these steps.
  1. If the device's [=active session=] matches the requested [=session description=], <a>resolve</a> |promise| with the [=active session=] and abort these steps.
  1. If the requested [=session description=] requires a user gesture and the algorithm is not <a>triggered by user activation</a> <a>reject</a> |promise| and abort these steps.
  1. If another page has an [=exclusive session=] for the device, <a>reject</a> |promise| and abort these steps.
- 1. Let |nextSession| be a new {{VRSession}} which matches the [=session description=].
+ 1. Let |nextSession| be a new {{XRSession}} which matches the [=session description=].
  1. Let |prevSession| be the current [=active session=].
  1. Set the [=active session=] to |nextSession|.
  1. If |prevSession| is not null, [=end the session=].
  1. <a>Resolve</a> |promise| with the [=active session=].-->
 
-When the <dfn method for="VRDevice">supportsSession()</dfn> method is invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+When the <dfn method for="XRDevice">supportsSession()</dfn> method is invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
  1. If the requested [=session description=] is supported by the device, <a>resolve</a> |promise|.
  1. Else <a>reject</a> |promise|.
 
-<dfn attribute for="VRDevice">ondeactivate</dfn> is an <a>Event handler IDL attribute</a> for the {{deactivate}} event type.
-
 <div class="example">
-The following code finds an available {{VRDevice}}.
+The following code finds an available {{XRDevice}}.
 
 <pre highlight="js">
-let vrDevice;
+let xrDevice;
 
-navigator.vr.requestDevice().then((device) => {
-  vrDevice = device;
+navigator.xr.requestDevice().then((device) => {
+  xrDevice = device;
 });
 </pre>
 </div>
@@ -223,25 +224,25 @@ navigator.vr.requestDevice().then((device) => {
 Session {#session}
 =======
 
-VRSession {#vrsession-interface}
+XRSession {#xrsession-interface}
 ---------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRSession : EventTarget {
+[SecureContext, Exposed=Window] interface XRSession : EventTarget {
   // Attributes
-  readonly attribute VRDevice device;
+  readonly attribute XRDevice device;
   readonly attribute boolean exclusive;
-  readonly attribute VRPresentationContext outputContext;
+  readonly attribute XRPresentationContext outputContext;
 
   attribute double depthNear;
   attribute double depthFar;
-  attribute VRLayer baseLayer;
+  attribute XRLayer baseLayer;
 
   // Methods
-  Promise&lt;VRFrameOfReference&gt; requestFrameOfReference(VRFrameOfReferenceType type, optional VRFrameOfReferenceOptions options);
+  Promise&lt;XRFrameOfReference&gt; requestFrameOfReference(XRFrameOfReferenceType type, optional XRFrameOfReferenceOptions options);
 
-  long requestFrame(VRFrameRequestCallback callback);
-  void cancelFrame(long handle);
+  long requestAnimationFrame(XRFrameRequestCallback callback);
+  void cancelAnimationFrame(long handle);
 
   Promise&lt;void&gt; end();
 
@@ -253,74 +254,70 @@ VRSession {#vrsession-interface}
 };
 </pre>
 
-A {{VRSession}} is the interface through with most interaction with a {{VRDevice}} happens. A page must request a session from the {{VRDevice}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{VRDevice}}.
+An {{XRSession}} is the interface through with most interaction with an {{XRDevice}} happens. A page must request a session from the {{XRDevice}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{XRDevice}}.
 
-The UA, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the VR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of VR hardware in order to advertise VR features. Not all VR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
+The UA, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
 
-<dfn attribute for="VRSession">device</dfn>
+<dfn attribute for="XRSession">device</dfn>
 
-<dfn attribute for="VRSession">exclusive</dfn>
+<dfn attribute for="XRSession">exclusive</dfn>
 
-<dfn attribute for="VRSession">outputContext</dfn>
+<dfn attribute for="XRSession">outputContext</dfn>
 
-<dfn attribute for="VRSession">depthNear</dfn>
+<dfn attribute for="XRSession">depthNear</dfn>
 
-<dfn attribute for="VRSession">depthFar</dfn>
+<dfn attribute for="XRSession">depthFar</dfn>
 
-<dfn attribute for="VRSession">baseLayer</dfn>
+<dfn attribute for="XRSession">baseLayer</dfn>
 
-<dfn method for="VRSession">requestFrameOfReference()</dfn>
+<dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
 
-<dfn method for="VRSession">requestFrame()</dfn>
+<dfn method for="XRSession">requestAnimationFrame(callback)</dfn>
 
-<dfn method for="VRSession">cancelFrame()</dfn>
+<dfn method for="XRSession">cancelAnimationFrame(handle)</dfn>
 
 Issue: Document how to <dfn>poll the device pose</dfn>
 
-<dfn method for="VRSession">end()</dfn>
+<dfn method for="XRSession">end()</dfn>
 
 Issue: Document what happens when we <dfn>end the session</dfn>
 
-<dfn attribute for="VRSession">onblur</dfn> is an <a>Event handler IDL attribute</a> for the {{blur}} event type.
+<dfn attribute for="XRSession">onblur</dfn> is an <a>Event handler IDL attribute</a> for the {{blur}} event type.
 
 Issue: Document effects when we <dfn>blur active sessions</dfn>
 
-<dfn attribute for="VRSession">onfocus</dfn> is an <a>Event handler IDL attribute</a> for the {{focus}} event type.
+<dfn attribute for="XRSession">onfocus</dfn> is an <a>Event handler IDL attribute</a> for the {{focus}} event type.
 
-<dfn attribute for="VRSession">onresetpose</dfn> is an <a>Event handler IDL attribute</a> for the {{resetpose}} event type.
+<dfn attribute for="XRSession">onresetpose</dfn> is an <a>Event handler IDL attribute</a> for the {{resetpose}} event type.
 
-<dfn attribute for="VRSession">onend</dfn> is an <a>Event handler IDL attribute</a> for the {{end}} event type.
+<dfn attribute for="XRSession">onend</dfn> is an <a>Event handler IDL attribute</a> for the {{end}} event type.
 
 Issue: Example of acquiring a session here.
 
-VRSessionCreationOptions {#vrsessioncreationoptions-interface}
+XRSessionCreationOptions {#xrsessioncreationoptions-interface}
 -------------------------
 
-The {{VRSessionCreationOptions}} interface
+The {{XRSessionCreationOptions}} interface
 
 <pre class="idl">
-dictionary VRSessionCreationOptions {
+dictionary XRSessionCreationOptions {
   boolean exclusive = false;
-  VRPresentationContext outputContext;
+  XRPresentationContext outputContext;
 };
 </pre>
 
-The {{VRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
-
-<dfn attribute for="VRSessionCreationOptions">exclusive</dfn>
-
-<dfn attribute for="VRSessionCreationOptions">outputContext</dfn>
+The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
 
 Issue: Document restrictions and capabilities of an <dfn>exclusive session</dfn>
 
-The VR Compositor {#compositor}
+The XR Compositor {#compositor}
 -----------------
 
 Issue: This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.
 
-The UA MUST maintain a <dfn>VR Compositor</dfn> which handles layer composition and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of the WebGL contexts provided as {{VRWebGLLayer}} sources to prevent the page from corruption the compositor state or reading back content from other pages.
+The UA MUST maintain an <dfn>XR Compositor</dfn> which handles layer composition and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of the WebGL contexts provided as {{XRWebGLLayer}} sources to prevent the page from corruption the compositor state or reading back content from other pages.
 
-<!--There are no direct interfaces to the compositor, but applications may submit bitmaps to be composited via the layer system and observe the frame timing via calls to {{VRSession/requestFrame()}}. The compositor consists of two different loops, assumed to be running in separate threads or processes. The <dfn>Frame Loop</dfn>, which drives the page script, and the <dfn>Render Loop</dfn>, which continuously presents imagery provided by the Frame Loop to the VR device. The render loop maintains its own copy of the session's layer list. Communication between the two loops is synchronized with a lock that limits access to the render loop's layer list.
+<!--There are no direct interfaces to the compositor, but applications may submit bitmaps to be composited via the layer system and observe the frame timing via calls to {{XRSession/requestAnimationFrame()}}. The compositor consists of two different loops, assumed to be running in separate threads or processes. The <dfn>Frame Loop</dfn>, which drives the page script, and the <dfn>Render Loop</dfn>, which continuously presents imagery provided by the Frame Loop to the XR device. The render loop maintains its own copy of the session's layer list. Communication between the two loops is synchronized with a lock that limits access to the render loop's layer list.
 
 Both loops are started when a session is successfully created. The compositor's render loop goes through the following steps:
 
@@ -330,11 +327,11 @@ Both loops are started when a session is successfully created. The compositor's 
  1. Notify the frame loop that a frame has been completed.
  1. return to step 1.
 
-The render loop MUST throttle its throughput to the refresh rate of the VR device. The exact point in the loop that is most effective to block at may differ between platforms, so no perscription is made for when that should happen.
+The render loop MUST throttle its throughput to the refresh rate of the XR device. The exact point in the loop that is most effective to block at may differ between platforms, so no perscription is made for when that should happen.
 
 Upon session creation, the following steps are taken to start the frame loop:
 
- 1. A new promise is created and set as the session's current frame promise. The current frame promise is returned any time VRCanvasLayer/commit() is called.
+ 1. A new promise is created and set as the session's current frame promise. The current frame promise is returned any time XRCanvasLayer/commit() is called.
  1. The {{sessionchange}} event is fired.
  1. The promise returned from {{requestSession()}} is resolved.
 
@@ -352,65 +349,65 @@ Then, the frame loop performs the following steps while the session is active:
 Frame Loop {#frame}
 ==========
 
-VRFrameRequestCallback {#vrframerequestcallback}
+XRFrameRequestCallback {#xrframerequestcallback}
 -------------------
 
 <pre class="idl">
-callback VRFrameRequestCallback = void (VRPresentationFrame frame);
+callback XRFrameRequestCallback = void (DOMHighResTimeStamp time, XRPresentationFrame frame);
 </pre>
 
-Each {{VRFrameRequestCallback}} object has a <dfn for="VRFrameRequestCallback">cancelled</dfn> boolean flag. This flag is initially false and is not exposed by any interface.
+Each {{XRFrameRequestCallback}} object has a <dfn for="XRFrameRequestCallback">cancelled</dfn> boolean flag. This flag is initially false and is not exposed by any interface.
 
-VRPresentationFrame {#vrpresentationframe-interface}
+XRPresentationFrame {#xrpresentationframe-interface}
 -------------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRPresentationFrame {
-  readonly attribute FrozenArray&lt;VRView&gt; views;
+[SecureContext, Exposed=Window] interface XRPresentationFrame {
+  readonly attribute FrozenArray&lt;XRView&gt; views;
 
-  VRDevicePose? getDevicePose(VRCoordinateSystem coordinateSystem);
+  XRDevicePose? getDevicePose(XRCoordinateSystem coordinateSystem);
 };
 </pre>
 
-A {{VRPresentationFrame}} provides all the values needed to render a single frame of a VR scene to the {{VRDevice}}'s display. Applications can only aquire a {{VRPresentationFrame}} by calling {{VRSession/requestFrame()}} on a {{VRSession}} with a {{VRFrameRequestCallback}}. When the callback is called it will be passed a {{VRPresentationFrame}}.
+An {{XRPresentationFrame}} provides all the values needed to render a single frame of an XR scene to the {{XRDevice}}'s display. Applications can only aquire an {{XRPresentationFrame}} by calling {{XRSession/requestAnimationFrame()}} on an {{XRSession}} with an {{XRFrameRequestCallback}}. When the callback is called it will be passed an {{XRPresentationFrame}}.
 
-<dfn attribute for="VRPresentationFrame">views</dfn>
+<dfn attribute for="XRPresentationFrame">views</dfn>
 
-<dfn method for="VRPresentationFrame">getDevicePose()</dfn>
+<dfn method for="XRPresentationFrame">getDevicePose(coordinateSystem)</dfn>
 
 Views {#view}
 =====
 
-VRView {#vrview-interface}
+XRView {#xrview-interface}
 ------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRView {
-  readonly attribute VREye eye;
+[SecureContext, Exposed=Window] interface XRView {
+  readonly attribute XREye eye;
   readonly attribute Float32Array projectionMatrix;
 
-  VRViewport? getViewport(VRLayer layer);
+  XRViewport? getViewport(XRLayer layer);
 };
 
-enum VREye {
+enum XREye {
   "left",
   "right"
 };
 </pre>
 
-A {{VRView}} describes a single view into a VR scene. It provides several values directly, and acts as a key to query view-specific values from other interfaces.
+An {{XRView}} describes a single view into an XR scene. It provides several values directly, and acts as a key to query view-specific values from other interfaces.
 
-<dfn attribute for="VRView">eye</dfn> describes the eye that this view is expected to be shown to. This value is primarily to ensure that prerendered stereo content can present the correct portion of the content to the correct eye.
+<dfn attribute for="XRView">eye</dfn> describes the eye that this view is expected to be shown to. This value is primarily to ensure that prerendered stereo content can present the correct portion of the content to the correct eye.
 
-The <dfn attribute for="VRView">projectionMatrix</dfn> is a [=matrix=] describing the projection to be used for the view's rendering. It is highly recommended that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
+The <dfn attribute for="XRView">projectionMatrix</dfn> is a [=matrix=] describing the projection to be used for the view's rendering. It is highly recommended that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
 
-<dfn method for="VRView">getViewport()</dfn> 
+<dfn method for="XRView">getViewport(layer)</dfn> 
 
-VRViewport {#vrviewport-interface}
+XRViewport {#xrviewport-interface}
 ------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRViewport {
+[SecureContext, Exposed=Window] interface XRViewport {
   readonly attribute long x;
   readonly attribute long y;
   readonly attribute long width;
@@ -418,13 +415,13 @@ VRViewport {#vrviewport-interface}
 };
 </pre>
 
-<dfn attribute for="VRViewport">x</dfn>
+<dfn attribute for="XRViewport">x</dfn>
 
-<dfn attribute for="VRViewport">y</dfn>
+<dfn attribute for="XRViewport">y</dfn>
 
-<dfn attribute for="VRViewport">width</dfn>
+<dfn attribute for="XRViewport">width</dfn>
 
-<dfn attribute for="VRViewport">height</dfn>
+<dfn attribute for="XRViewport">height</dfn>
 
 Pose {#pose}
 ====
@@ -432,52 +429,52 @@ Pose {#pose}
 Matrices {#matrices}
 --------
 
-WebVR provides various transforms in the form of <dfn lt="matrix|matrices">matrices</dfn>. WebVR matrices are always 4x4 and given as 16 element {{Float32Array}}s in column major order. They may be passed directly to WebGL's {{uniformMatrix4fv}} function, used to create an equivalent {{DOMMatrix}}, or used with a variety of third party math libraries.
+WebXR provides various transforms in the form of <dfn lt="matrix|matrices">matrices</dfn>. WebXR matrices are always 4x4 and given as 16 element {{Float32Array}}s in column major order. They may be passed directly to WebGL's {{uniformMatrix4fv}} function, used to create an equivalent {{DOMMatrix}}, or used with a variety of third party math libraries.
 
-Translations specified by WebVR matrices are always given in meters.
+Translations specified by WebXR matrices are always given in meters.
 
-VRDevicePose {#vrdevicepose-interface}
+XRDevicePose {#xrdevicepose-interface}
 -------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRDevicePose {
+[SecureContext, Exposed=Window] interface XRDevicePose {
   readonly attribute Float32Array poseModelMatrix;
 
-  Float32Array getViewMatrix(VRView view);
+  Float32Array getViewMatrix(XRView view);
 };
 </pre>
 
-A {{VRDevicePose}} describes the position and orientation of a {{VRDevice}} relative to the {{VRCoordinateSystem}} it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of a VR scene.
+An {{XRDevicePose}} describes the position and orientation of an {{XRDevice}} relative to the {{XRCoordinateSystem}} it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of an XR scene.
 
-<dfn attribute for="VRDevicePose">poseModelMatrix</dfn>
+<dfn attribute for="XRDevicePose">poseModelMatrix</dfn>
 
-The <dfn method for="VRDevicePose">getViewMatrix()</dfn> method returns a [=matrix=] describing the view transform to be used when rendering the passed {{VRView}}. The matrices represent the inverse of the model matrix of the associated viewpoint.
+The <dfn method for="XRDevicePose">getViewMatrix(view)</dfn> method returns a [=matrix=] describing the view transform to be used when rendering the passed {{XRView}}. The matrices represent the inverse of the model matrix of the associated viewpoint.
 
 Layers {#layers}
 ======
 
-VRLayer {#vrlayer-interface}
+XRLayer {#xrlayer-interface}
 -------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRLayer {};
+[SecureContext, Exposed=Window] interface XRLayer {};
 </pre>
 
-A {{VRLayer}} defines a source of bitmap images and a description of how the image is to be rendered in the {{VRDevice}}. Initially only one type of layer, the {{VRWebGLLayer}}, is defined but future revisions of the spec may extend the available layer types.
+An {{XRLayer}} defines a source of bitmap images and a description of how the image is to be rendered in the {{XRDevice}}. Initially only one type of layer, the {{XRWebGLLayer}}, is defined but future revisions of the spec may extend the available layer types.
 
-VRWebGLLayer {#vrwebgllayer-interface}
+XRWebGLLayer {#xrwebgllayer-interface}
 -------
 
 <pre class="idl">
 typedef (WebGLRenderingContext or
-         WebGL2RenderingContext) VRWebGLRenderingContext;
+         WebGL2RenderingContext) XRWebGLRenderingContext;
 
-[SecureContext, Exposed=Window, Constructor(VRSession session,
-             VRWebGLRenderingContext context,
-             optional VRWebGLLayerInit layerInit)]
-interface VRWebGLLayer : VRLayer {
+[SecureContext, Exposed=Window, Constructor(XRSession session,
+             XRWebGLRenderingContext context,
+             optional XRWebGLLayerInit layerInit)]
+interface XRWebGLLayer : XRLayer {
   // Attributes
-  readonly attribute VRWebGLRenderingContext context;
+  readonly attribute XRWebGLRenderingContext context;
 
   readonly attribute boolean antialias;
   readonly attribute boolean depth;
@@ -494,51 +491,51 @@ interface VRWebGLLayer : VRLayer {
 };
 </pre>
 
-The <dfn attribute for="VRWebGLLayer">context</dfn> defines the WebGL or WebGL 2 context that is rendering the visuals for this layer.
+The <dfn attribute for="XRWebGLLayer">context</dfn> defines the WebGL or WebGL 2 context that is rendering the visuals for this layer.
 
-<--Upon being set as the source of a VRCanvasLayer the source's context MAY be lost. Additionally the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
+<!--Upon being set as the source of an XRCanvasLayer the source's context MAY be lost. Additionally the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
 
 Note: In order to make use of a canvas in the event of context loss, the application should handle the <code>webglcontextlost</code> event on the source canvas and prevent the event's default behavior. The application should then listen for a <code>webglcontextrestored</code> event to be fired and reload any necessary graphical resources in response.-->
 
-<dfn attribute for="VRWebGLLayer">antialias</dfn>
+<dfn attribute for="XRWebGLLayer">antialias</dfn>
 
-<dfn attribute for="VRWebGLLayer">depth</dfn>
+<dfn attribute for="XRWebGLLayer">depth</dfn>
 
-<dfn attribute for="VRWebGLLayer">stencil</dfn>
+<dfn attribute for="XRWebGLLayer">stencil</dfn>
 
-<dfn attribute for="VRWebGLLayer">alpha</dfn>
+<dfn attribute for="XRWebGLLayer">alpha</dfn>
 
-<dfn attribute for="VRWebGLLayer">multiview</dfn>
+<dfn attribute for="XRWebGLLayer">multiview</dfn>
 
-<dfn attribute for="VRWebGLLayer">framebuffer</dfn>
+<dfn attribute for="XRWebGLLayer">framebuffer</dfn>
 
-<dfn attribute for="VRWebGLLayer">framebufferWidth</dfn>
+<dfn attribute for="XRWebGLLayer">framebufferWidth</dfn>
 
-<dfn attribute for="VRWebGLLayer">framebufferHeight</dfn>
+<dfn attribute for="XRWebGLLayer">framebufferHeight</dfn>
 
-<dfn method for="VRWebGLLayer">requestViewportScaling()</dfn>
+<dfn method for="XRWebGLLayer">requestViewportScaling(viewportScaleFactor)</dfn>
 
-<--The layer describes two viewports: the <dfn for="VRCanvasLayer">Left Bounds</dfn> and <dfn for="VRCanvasLayer">Right Bounds</dfn>. Each bounds contians four values (|left|, |bottom|, |right|, |top|) defining the texture bounds within the source canvas to present to the related eye in UV space (0.0 - 1.0) with the bottom left corner of the canvas at (0, 0) and the top right corner of the canvas at (1, 1). If the left bound is greater or equal to the right bound or the bottom bound is greater than or equal to the top bound the viewport is considered to be empty and no content from this layer will be shown on the related eye of the {{VRDevice}}.
+<!--The layer describes two viewports: the <dfn for="XRCanvasLayer">Left Bounds</dfn> and <dfn for="XRCanvasLayer">Right Bounds</dfn>. Each bounds contians four values (|left|, |bottom|, |right|, |top|) defining the texture bounds within the source canvas to present to the related eye in UV space (0.0 - 1.0) with the bottom left corner of the canvas at (0, 0) and the top right corner of the canvas at (1, 1). If the left bound is greater or equal to the right bound or the bottom bound is greater than or equal to the top bound the viewport is considered to be empty and no content from this layer will be shown on the related eye of the {{XRDevice}}.
 
 The [=left bounds=] MUST default to <code>[0.0, 0.0, 0.5, 1.0]</code> and the [=right bounds=] MUST default to <code>[0.5, 0.0, 1.0, 1.0]</code>.
 
-Invoking the <dfn method for="VRCanvasLayer">setLeftBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=left bounds=] |left|, |bottom|, |right|, and |top| respectively.
+Invoking the <dfn method for="XRCanvasLayer">setLeftBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=left bounds=] |left|, |bottom|, |right|, and |top| respectively.
 
-Invoking the <dfn method for="VRCanvasLayer">setRightBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=right bounds=] |left|, |bottom|, |right|, and |top| respectively.
+Invoking the <dfn method for="XRCanvasLayer">setRightBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=right bounds=] |left|, |bottom|, |right|, and |top| respectively.
 
-Invoking the <dfn method for="VRCanvasLayer">getLeftBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=left bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
+Invoking the <dfn method for="XRCanvasLayer">getLeftBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=left bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
 
-Invoking the <dfn method for="VRCanvasLayer">getRightBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=right bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
+Invoking the <dfn method for="XRCanvasLayer">getRightBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=right bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
 
-<dfn method for="VRCanvasLayer">commit()</dfn> captures the VRCanvasLayer/source canvas's bitmap and submits it to the [=VR compositor=]. Calling {{commit()}} has the same effect on the source canvas as any other operation that uses its bitmap, and canvases created without <code>preserveDrawingBuffer</code> set to <code>true</code> will be cleared.-->
+<dfn method for="XRCanvasLayer">commit()</dfn> captures the XRCanvasLayer/source canvas's bitmap and submits it to the [=XR compositor=]. Calling {{commit()}} has the same effect on the source canvas as any other operation that uses its bitmap, and canvases created without <code>preserveDrawingBuffer</code> set to <code>true</code> will be cleared.-->
 
-Issue: Need an example snippet of setting up and using a {{VRWebGLLayer}}.
+Issue: Need an example snippet of setting up and using an {{XRWebGLLayer}}.
 
-VRWebGLLayerInit {#vrwebgllayerinit-dictionary}
+XRWebGLLayerInit {#xrwebgllayerinit-dictionary}
 -------------------------
 
 <pre class="idl">
-dictionary VRWebGLLayerInit {
+dictionary XRWebGLLayerInit {
   boolean antialias = true;
   boolean depth = false;
   boolean stencil = false;
@@ -548,180 +545,163 @@ dictionary VRWebGLLayerInit {
 };
 </pre>
 
-The {{VRWebGLLayerInit}} dictionary indicates the desired properites of a {{VRWebGLLayer}}'s framebuffer.
+The {{XRWebGLLayerInit}} dictionary indicates the desired properites of an {{XRWebGLLayer}}'s framebuffer.
 
 WebGL Context Compatiblity {#contextcompatibility}
 ==========================
 
 <pre class="idl">
 partial dictionary WebGLContextAttributes {
-    VRDevice compatibleVRDevice = null;
+    XRDevice compatibleXRDevice = null;
 };
 
 partial interface WebGLRenderingContextBase {
-    Promise&lt;void&gt; setCompatibleVRDevice(VRDevice device);
+    Promise&lt;void&gt; setCompatibleXRDevice(XRDevice device);
 };
 </pre>
 
 Issue: Describe context compatibility requirements
 
-<dfn method for="WebGLRenderingContextBase">setCompatibleVRDevice()</dfn>
+<dfn method for="WebGLRenderingContextBase">setCompatibleXRDevice(device)</dfn>
 
 Canvas Rendering Context {#canvas-rendering-context}
 ========================
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRPresentationContext {
+[SecureContext, Exposed=Window] interface XRPresentationContext {
   readonly attribute HTMLCanvasElement canvas;
 };
 </pre>
 
-<dfn attribute for="VRPresentationContext">canvas</dfn>
+<dfn attribute for="XRPresentationContext">canvas</dfn>
 
 Coordinate Systems {#coordinatesystems}
 ==================
 
 Issue: Pretty much nothing in this section is documented
 
-VRCoordinateSystem {#vrcoordinatesystem-interface}
+XRCoordinateSystem {#xrcoordinatesystem-interface}
 ------------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRCoordinateSystem : EventTarget {
-  Float32Array? getTransformTo(VRCoordinateSystem other);
+[SecureContext, Exposed=Window] interface XRCoordinateSystem : EventTarget {
+  Float32Array? getTransformTo(XRCoordinateSystem other);
 };
 </pre>
 
-<dfn method for="VRCoordinateSystem">getTransformTo()</dfn>
+<dfn method for="XRCoordinateSystem">getTransformTo(other)</dfn>
 
-VRFrameOfReference {#vrframeofreference-interface}
+XRFrameOfReference {#xrframeofreference-interface}
 ------------------
 
 <pre class="idl">
-enum VRFrameOfReferenceType {
+enum XRFrameOfReferenceType {
   "headModel",
   "eyeLevel",
   "stage",
 };
 
-dictionary VRFrameOfReferenceOptions {
+dictionary XRFrameOfReferenceOptions {
   boolean disableStageEmulation = false;
   double stageEmulationHeight = 0.0;
 };
 
-[SecureContext, Exposed=Window] interface VRFrameOfReference : VRCoordinateSystem {
-  readonly attribute VRStageBounds? bounds;
+[SecureContext, Exposed=Window] interface XRFrameOfReference : XRCoordinateSystem {
+  readonly attribute XRStageBounds? bounds;
   readonly attribute double emulatedHeight;
 
   attribute EventHandler onboundschange;
 };
 </pre>
 
-<dfn attribute for="VRFrameOfReference">bounds</dfn>
+<dfn attribute for="XRFrameOfReference">bounds</dfn>
 
-<dfn attribute for="VRFrameOfReference">emulatedHeight</dfn>
+<dfn attribute for="XRFrameOfReference">emulatedHeight</dfn>
 
-<dfn attribute for="VRFrameOfReference">onboundschange</dfn>
+<dfn attribute for="XRFrameOfReference">onboundschange</dfn>
 
-VRStageBounds {#vrstagebounds-interface}
+XRStageBounds {#xrstagebounds-interface}
 -------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRStageBounds {
-  readonly attribute FrozenArray&lt;VRStageBoundsPoint&gt; geometry;
+[SecureContext, Exposed=Window] interface XRStageBounds {
+  readonly attribute FrozenArray&lt;XRStageBoundsPoint&gt; geometry;
 };
 </pre>
 
-The {{VRStageBounds}} interface describes a space known as a "<dfn for="VRStageBounds">Stage</dfn>". The [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other VR platforms sometimes refer to this concept as "room scale" or "standing VR".
+The {{XRStageBounds}} interface describes a space known as a "<dfn for="XRStageBounds">Stage</dfn>". The [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
 
-A polygonal boundary is given by the <dfn attribute for="VRStageBounds">geometry</dfn> point array, which represents a loop of points at the edges of the safe space. The points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The bounds are assumed to originate at the floor (Y == 0) and extend infinitely high. The shape it describes MAY not be convex. The values reported are relative to the [=stage=] origin, but MAY not contain it.
+A polygonal boundary is given by the <dfn attribute for="XRStageBounds">geometry</dfn> point array, which represents a loop of points at the edges of the safe space. The points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The bounds are assumed to originate at the floor (Y == 0) and extend infinitely high. The shape it describes MAY not be convex. The values reported are relative to the [=stage=] origin, but MAY not contain it.
 
 Note: Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe if their physical surroundings allow for it.
 
-VRStageBoundsPoint {#vrstageboundspoint-interface}
+XRStageBoundsPoint {#xrstageboundspoint-interface}
 ------------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface VRStageBoundsPoint {
+[SecureContext, Exposed=Window] interface XRStageBoundsPoint {
   readonly attribute double x;
   readonly attribute double z;
 };
 </pre>
 
-The <dfn attribute for="VRStageBoundsPoint">x</dfn> and <dfn attribute for="VRStageBoundsPoint">z</dfn> values of a {{VRStageBoundsPoint}} describe the offset from the [=stage=] origin along the X and Z axes respectively of the point, given in meters.
+The <dfn attribute for="XRStageBoundsPoint">x</dfn> and <dfn attribute for="XRStageBoundsPoint">z</dfn> values of an {{XRStageBoundsPoint}} describe the offset from the [=stage=] origin along the X and Z axes respectively of the point, given in meters.
 
 Events {#events}
 ========
 
-VRDeviceEvent {#vrdeviceevent-interface}
--------
-
-<pre class="idl">
-[SecureContext, Exposed=Window, Constructor(DOMString type, VRDeviceEventInit eventInitDict)]
-interface VRDeviceEvent : Event {
-  readonly attribute VRDevice device;
-};
-
-dictionary VRDeviceEventInit : EventInit {
-  required VRDevice device;
-};
-</pre>
-
-<dfn attribute for="VRDeviceEvent">device</dfn>
-The {{VRDevice}} associated with this event.
-
-VRSessionEvent {#vrsessionevent-interface}
+XRSessionEvent {#xrsessionevent-interface}
 --------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window, Constructor(DOMString type, VRSessionEventInit eventInitDict)]
-interface VRSessionEvent : Event {
-  readonly attribute VRSession session;
+[SecureContext, Exposed=Window, Constructor(DOMString type, XRSessionEventInit eventInitDict)]
+interface XRSessionEvent : Event {
+  readonly attribute XRSession session;
 };
 
-dictionary VRSessionEventInit : EventInit {
-  required VRSession session;
+dictionary XRSessionEventInit : EventInit {
+  required XRSession session;
 };
 </pre>
 
-<dfn attribute for="VRSessionEvent">session</dfn>
-The {{VRSession}} associated with this event.
+<dfn attribute for="XRSessionEvent">session</dfn>
+The {{XRSession}} associated with this event.
 
-VRCoordinateSystemEvent {#vrcoordinatesystemevent-interface}
+XRCoordinateSystemEvent {#xrcoordinatesystemevent-interface}
 -----------------------
 
 <pre class="idl">
-[SecureContext, Exposed=Window, Constructor(DOMString type, VRCoordinateSystemEventInit eventInitDict)]
-interface VRCoordinateSystemEvent : Event {
-  readonly attribute VRCoordinateSystem coordinateSystem;
+[SecureContext, Exposed=Window, Constructor(DOMString type, XRCoordinateSystemEventInit eventInitDict)]
+interface XRCoordinateSystemEvent : Event {
+  readonly attribute XRCoordinateSystem coordinateSystem;
 };
 
-dictionary VRCoordinateSystemEventInit : EventInit {
-  required VRCoordinateSystem coordinateSystem;
+dictionary XRCoordinateSystemEventInit : EventInit {
+  required XRCoordinateSystem coordinateSystem;
 };
 </pre>
 
-<dfn attribute for="VRCoordinateSystemEvent">coordinateSystem</dfn>
-The {{VRCoordinateSystem}} associated with this event.
+<dfn attribute for="XRCoordinateSystemEvent">coordinateSystem</dfn>
+The {{XRCoordinateSystem}} associated with this event.
 
 Event Types {#event-types}
 -----------
 
 The UA MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.
 
-The UA MAY fire a <dfn event for="VR">devicechange</dfn> event on the {{VR}} object to indicate that the availability of {{VRDevice}}s has been changed. The event MUST be of type {{Event}}.
+The UA MAY fire a <dfn event for="XR">devicechange</dfn> event on the {{XR}} object to indicate that the availability of {{XRDevice}}s has been changed. The event MUST be of type {{Event}}.
 
-The UA MAY dispatch a <dfn event for="VRDevice">deactivate</dfn> event on a {{VRDevice}} to indicate that something has occurred which suggests the {{VRDevice}} should end the exclusive session. For example, if the {{VRDevice}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{VRDeviceEvent}}.
+<!--The UA MAY dispatch a <dfn event for="XRSession">deactivate</dfn> event on an {{XRSession}} to indicate that something has occurred which suggests the {{XRSession}} should end. For example, if the {{XRDevice}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{XRSessionEvent}}.-->
 
-A UA MAY dispatch a <dfn event for="VRSession">blur</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has been suspended by the UA, OS, or VR hardware. While a {{VRSession}} is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type {{VRSessionEvent}}.
+A UA MAY dispatch a <dfn event for="XRSession">blur</dfn> event on an {{XRSession}} to indicate that presentation to the {{XRSession}} by the page has been suspended by the UA, OS, or XR hardware. While an {{XRSession}} is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MAY dispatch a <dfn event for="VRSession">focus</dfn> event on a {{VRSession}} to indicate that presentation to the {{VRSession}} by the page has resumed after being suspended. The event MUST be of type {{VRSessionEvent}}.
+A UA MAY dispatch a <dfn event for="XRSession">focus</dfn> event on an {{XRSession}} to indicate that presentation to the {{XRSession}} by the page has resumed after being suspended. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="VRSession">resetpose</dfn> event on a {{VRSession}} when the system resets the {{VRDevice}}'s position or orientation. The event MUST be of type {{VRSessionEvent}}.
+A UA MUST dispatch a <dfn event for="XRSession">resetpose</dfn> event on an {{XRSession}} when the system resets the {{XRDevice}}'s position or orientation. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="VRSession">end</dfn> event on a {{VRSession}} when the session ends, either by the application or the UA. The event MUST be of type {{VRSessionEvent}}.
+A UA MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{XRSession}} when the session ends, either by the application or the UA. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="VRFrameOfReference">boundschange</dfn> event on a {{VRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{VRCoordinateSystemEvent}}.
+A UA MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
 
 Navigator interface extension {#navigator-interface}
 =============================
@@ -730,17 +710,22 @@ Issue: Navigator interface is all alone. :( Does this belong somewhere else, or 
 
 <pre class="idl">
 partial interface Navigator {
-  [SameObject] readonly attribute VR vr;
+  [SameObject] readonly attribute XR xr;
 };
 </pre>
 
-<dfn attribute for="Navigator">vr</dfn>
+<dfn attribute for="Navigator">xr</dfn>
 
 Acknowledgements {#ack}
 ===================
 
-The following individuals have contributed to the design of the WebVR specification:
+The following individuals have contributed to the design of the WebXR Device API specification:
 
-* Sebastian Sylvan, Microsoft https://microsoft.com/, ssylvan@microsoft.com
+* <a href="mailto:cvan@mozilla.com">Chris Van Wiemeersch</a> (<a href="https://mozilla.org/">Mozilla</a>)
+* <a href="mailto:kgilbert@mozilla.com">Kearwood Gilbert</a> (<a href="https://mozilla.org/">Mozilla</a>)
+* <a href="mailto:rafael.cintron@microsoft.com">Rafael Cintron</a> (<a href="https://microsoft.com/">Microsoft</a>)
+* <a href="mailto:ssylvan@microsoft.com">Sebastian Sylvan</a> (<a href="https://microsoft.com/">Microsoft</a>)
+
+And a special thanks to <a href="mailto:vladv@unity3d.com">Vladimir Vukicevic</a> (<a href="https://unity3d.com/">Unity</a>) for kick-starting this whole adventure!
 
 </section>
