@@ -1,7 +1,7 @@
 {
-  "name": "webvr",
-  "description": "WebVR Community Group & Specification",
-  "version": "2.0.0",
+  "name": "webxr",
+  "description": "WebXR Device API Specification",
+  "version": "0.0.1",
   "devDependencies": {
     "browser-sync": "^2.18.8",
     "shelljs": "^0.7.7"
