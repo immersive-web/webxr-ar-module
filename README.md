@@ -1,8 +1,10 @@
-# WebVR Community Group & Specification
+# WebXR Device API Specification
 
-WebVR is driving support for accessing virtual reality (VR) devices, including sensors and head-mounted displays on the Web.
+WebXR is driving support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays on the Web.
 
-This is the repository for the [WebVR Community Group](https://www.w3.org/community/webvr/) and the [WebVR Specification](https://w3c.github.io/webvr/). We have a [charter](https://w3c.github.io/webvr/charter/) (in progress).
+This is currently the repository for the [WebVR Community Group](https://www.w3.org/community/webvr/) and the [WebXR Specification](https://immersive-web.github.io/webxr/). We have a [charter](https://w3c.github.io/webvr/charter/) (in progress).
+
+The specification has recently undergone a name change, so expect to see multiple references to "WebVR" sprinkled throughout.
 
 
 ## Specifications
