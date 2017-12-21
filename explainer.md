@@ -12,7 +12,7 @@ WebXR, at least initially, is aimed at letting you create VR/AR experiences that
 
 There's a lot of "_____ Reality" buzzwords flying around today. Virtual Reality, Augmented Reality, Mixed Reality... it can be hard to keep track, even though there's a lot of similarities between them. This API aims to provide foundational elements with which to do all of the above. And since we don't want to be limited to just one facet of VR or AR (or anything in between) we use "X" not as part of an acronym but as an algebraic variable of sorts to indicate "Your Reality Here". We've also heard it called "Extended Reality" and "Cross Reality", which seem fine too, but really the X is whatever you want it to be!
 
-### Are you affiliated with OpenXR?
+### Is this API affiliated with OpenXR?
 
 Khronos' upcoming [OpenXR API](https://www.khronos.org/openxr) does cover the same basic capabilities as the WebXR Device API for native applictions. As such it may seem like WebXR and OpenXR have a relationship like WebGL and OpenGL, where the web API is a near 1:1 mapping of the native API. This is **not** the case with WebXR and OpenXR, as they are distinct APIs being developed by different standards bodies.
 

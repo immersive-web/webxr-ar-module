@@ -43,6 +43,10 @@ urlPrefix: https://drafts.fxtf.org/geometry/
 spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
     type: interface
         text: Promise; url:sec-promise-objects
+
+spec: WebIDL; urlPrefix: https://www.w3.org/TR/WebIDL-1/#
+    type: dfn
+        text: invoke the Web IDL callback function; url:es-invoking-callback-functions
 </pre>
 
 <style>
@@ -75,15 +79,17 @@ Introduction {#intro}
 Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications requires high-precision, low-latency interfaces to deliver an acceptable experience. Other interfaces, such as device orientation events, can be repurposed to surface input from these devices but doing so dilutes the interface's original intent and often does not provide the precision necessary for high-quality immersive experiences. The WebXR Device API provides purpose-built interfaces to VR/AR hardware to allow developers to build compelling, comfortable immersive experiences.
 
 Terminology {#terminology}
------------
+===========
 
-This document uses the term "XR" throughout to refer to the spectrum of hardware, applications, and techniques used for Virtual Reality, Augmented Reality, and other related technologies. Examples include, but are not limited to:
+This document uses the term <def>XR</def> throughout to refer to the spectrum of hardware, applications, and techniques used for Virtual Reality, Augmented Reality, and other related technologies. Examples include, but are not limited to:
 
  * Head mounted displays, whether they are opaque, transparent, or utilize video passthrough
  * Mobile devices with positional tracking
  * Fixed displays with head tracking capabilities
 
 The important commonality between them being that they offer some degree of spatial tracking with which to simulate a view of virtual content.
+
+An <def>XR Device</def>
 
 Terms like "XR Device", "XR Application", etc. are generally understood to apply to any of the above. Portions of this document that only apply to a subset of these devices will indicate so as appropriate.
 
@@ -98,23 +104,23 @@ Gaze Tracking {#gazetracking-security}
 
 While the API does not yet expose eye tracking capabilites a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of XR devices that have limited input capabilities, such as Google Carboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
 
-To prevent this risk the UA MUST [=blur active sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the UA MUST [=blur active sessions=] on non-focused pages.
+To prevent this risk the user agent MUST [=blur active sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST [=blur active sessions=] on non-focused pages.
 
 Trusted Environment {#trustedenvironment-security}
 -------------------
 
-If the virtual environment does not consistently track the user's head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the UA MUST provide a tracked, trusted environment and an [=XR Compositor=] which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the UA should be able to continue presenting a responsive, trusted UI.
+If the virtual environment does not consistently track the user's head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the user agent MUST provide a tracked, trusted environment and an [=XR Compositor=] which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the user agent should be able to continue presenting a responsive, trusted UI.
 
-Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the XR experience. Removing the XR device in these cases may not always be a fast or practical option. To accomodate this the UA SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebXR content and displays the UA's trusted UI.
+Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the XR experience. Removing the XR device in these cases may not always be a fast or practical option. To accomodate this the user agent SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebXR content and displays the user agent's trusted UI.
 
-When navigating between pages in XR the UA should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
+When navigating between pages in XR the user agent should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
 
 Context Isolation {#contextisolation-security}
 -----------------
 
 The trusted UI must be drawing by an independent rendering context whose state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
 
-Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{XRDevice}} and {{XRSession}}. Attributes such as the {{XRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The UA MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
+Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{XRDevice}} and {{XRSession}}. Attributes such as the {{XRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The user agent MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
 
 Fingerprinting {#fingerprinting-security}
 --------------
@@ -139,12 +145,22 @@ XR {#xr-interface}
 };
 </pre>
 
-<dfn method for="XR">requestDevice()</dfn>
-Return a Promise which resolves to an available {{XRDevice}}.
+The {{Navigator/xr}} object has an <dfn>list of XR devices</dfn>, which MUST be initially empty.
 
-Calling {{XR/requestDevice()}} should not trigger device-selection UI as this would cause many sites to display XR-specific dialogs early in the document lifecycle without user activation.
+The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
-Note: If there are multiple XR devices available, the UA will need to pick which one to return. The UA is allowed to use any criteria it wishes to select which device is returned, including settings UI that allows users to manage device priority.
+ 1. If this is the first time the method has been called [=enumerate XR devices=] to populate the [=list of XR devices=]
+ 1. If the [=list of XR devices=] is empty <a>resolve</a> |promise| with <code>null</code>.
+ 1. Else [=select a default XR device=] from the [=list of XR devices=] and let it be |device|. 
+ 1. <a>Resolve</a> |promise| with |device|.
+
+Calling {{XR/requestDevice()}} MUST NOT trigger device-selection UI as this would cause many sites to display XR-specific dialogs early in the document lifecycle without user activation.
+
+NOTE: The user agent is allowed to use any criteria it wishes to <dfn>select a default XR device</dfn> when the [=list of XR devices=] contains multiple items. For example, the user agent may provide settings UI that allows users to manage device priority as long as that UI is not shown upon calling {{XR/requestDevice()}}
+
+ISSUE: Describe the process to <dfn>enumerate XR devices</dfn>.
+
+ISSUE: Take permissions into account when calling {{XR/requestDevice}}.
 
 <div class="example">
 The following code finds an available {{XRDevice}}.
@@ -174,8 +190,8 @@ XRDevice {#xrdevice-interface}
   readonly attribute boolean external;
 
   // Methods
-  Promise&lt;void&gt; supportsSession(optional XRSessionCreationOptions parameters);
-  Promise&lt;XRSession&gt; requestSession(optional XRSessionCreationOptions parameters);
+  Promise&lt;void&gt; supportsSession(optional XRSessionCreationOptions options);
+  Promise&lt;XRSession&gt; requestSession(optional XRSessionCreationOptions options);
 };
 </pre>
 
@@ -187,26 +203,25 @@ An {{XRDevice}} represents a physical unit of XR hardware that can present image
 A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
 </div>
 
-<!--Issue: There's no longer a concept of a display having a single active session. This entire section needs to be updated to reflect that.
+Each {{XRDevice}} has a <dfn>supports exclusive</dfn> value, which is a boolean which MUST be set to <code>true</code> if the device can support exclusive sessions and <code>false</code> if it cannot.
 
-An {{XRDevice}} may have an <dfn for="XRDevice">active session</dfn>, initially <code>null</code>, which is the {{XRSession}} that is currently accessing and/or presenting to the device. Only one session per page can be active for a given device at a time.
+Each {{XRDevice}} has an <dfn>exclusive session</dfn>, which MUST be initially <code>null</code>, and a <dfn>list of non-exclusive sessions</dfn>, which MUST be initially empty.
 
-In order to set or retrieve the [=active session=] a page must <dfn>request a session</dfn> from the device using the <dfn method for="XRDevice">requestSession()</dfn> method. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+When the <dfn method for="XRDevice">supportsSession(options)</dfn> method is invoked on {{XRDevice}} |device|, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
- 1. If the requested [=session description=] is not supported by the device, <a>reject</a> |promise| and abort these steps.
- 1. If the device's [=active session=] matches the requested [=session description=], <a>resolve</a> |promise| with the [=active session=] and abort these steps.
- 1. If the requested [=session description=] requires a user gesture and the algorithm is not <a>triggered by user activation</a> <a>reject</a> |promise| and abort these steps.
- 1. If another page has an [=exclusive session=] for the device, <a>reject</a> |promise| and abort these steps.
- 1. Let |nextSession| be a new {{XRSession}} which matches the [=session description=].
- 1. Let |prevSession| be the current [=active session=].
- 1. Set the [=active session=] to |nextSession|.
- 1. If |prevSession| is not null, [=end the session=].
- 1. <a>Resolve</a> |promise| with the [=active session=].-->
+ 1. If the |options| are not [=supported by the device=] |device|, <a>reject</a> |promise| with <code>null</code>.
+ 1. Else <a>resolve</a> |promise| with <code>null</code>.
 
-When the <dfn method for="XRDevice">supportsSession()</dfn> method is invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+When the <dfn method for="XRDevice">requestSession(options)</dfn> method is invoked on {{XRDevice}} |device|, the user agent MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
- 1. If the requested [=session description=] is supported by the device, <a>resolve</a> |promise|.
- 1. Else <a>reject</a> |promise|.
+ 1. If the |options| are not [=supported by the device=] |device|, <a>reject</a> |promise| with a {{NotSupportedError}} and abort these steps.
+ 1. Let |exclusive| be the {{XRSessionCreationOptions/exclusive}} attribute of the |options| argument.
+ 1. If |exclusive| is <code>true</code> and |device|'s [=exclusive session=] is not <code>null</code>, <a>reject</a> |promise| with an {{InvalidStateError}} and abort these steps.
+ 1. If |exclusive| is <code>true</code> and the algorithm is not <a>triggered by user activation</a>, <a>reject</a> |promise| with a {{SecurityError}} and abort these steps.
+ 1. Let |session| be a new {{XRSession}} matching the [=session description=] given by |options|.
+ 1. If |exclusive| is <code>true</code> set the |device|'s [=exclusive session=] to |session|.
+ 1. Else append |session| to |device|'s [=list of non-exclusive sessions=].
+ 1. <a>Resolve</a> |promise| with |session|.
 
 <div class="example">
 The following code finds an available {{XRDevice}}.
@@ -256,7 +271,7 @@ XRSession {#xrsession-interface}
 
 An {{XRSession}} is the interface through with most interaction with an {{XRDevice}} happens. A page must request a session from the {{XRDevice}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{XRDevice}}.
 
-The UA, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
+The user agent, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
 
 <dfn attribute for="XRSession">device</dfn>
 
@@ -271,10 +286,6 @@ The UA, when possible, SHOULD NOT initialize device tracking or rendering capabi
 <dfn attribute for="XRSession">baseLayer</dfn>
 
 <dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
-
-<dfn method for="XRSession">requestAnimationFrame(callback)</dfn>
-
-<dfn method for="XRSession">cancelAnimationFrame(handle)</dfn>
 
 Issue: Document how to <dfn>poll the device pose</dfn>
 
@@ -294,6 +305,29 @@ Issue: Document effects when we <dfn>blur active sessions</dfn>
 
 Issue: Example of acquiring a session here.
 
+Animation Frames {#animation-frames}
+----------------
+
+Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which MUST be initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number which MUST initially be zero.
+
+When the <dfn method for="XRSession">requestAnimationFrame(callback)</dfn> method is called on an {{XRSession}} |session|, the user agent MUST run the following steps:
+ 
+ 1. Increment |session|'s [=animation frame callback identifier=] by one.
+ 1. Append the method’s |callback| argument to |session|'s [=list of animation frame callbacks=], associated with |session|'s [=animation frame callback identifier=]’s current value.
+ 1. Return |session|'s [=animation frame callback identifier=]’s current value.
+
+When the <dfn method for="XRSession">cancelAnimationFrame(handle)</dfn> method is called on an {{XRSession}} |session|, the user agent must run the following steps:
+
+ 1. Find the entry in |session|'s [=list of animation frame callbacks=] that is associated with the value given by the method’s |handle| argument.
+ 1. If there is such an entry, remove it from |session|'s [=list of animation frame callbacks=].
+
+When the user agent is to <dfn>run the animation frame callbacks</dfn> for an {{XRSession}} |session| with a timestamp |now| and an {{XRPresentationFrame}} |frame|, it must run the following steps:
+
+ 1. Let |callbacks| be a list of the entries in |session|'s [=list of animation frame callback=], in the order in which they were added to the list.
+ 1. Set |session|'s [=list of animation frame callbacks=] to the empty list.
+ 1. For each entry in |callbacks|, in order: <a>invoke the Web IDL callback function</a>, passing |now| and |frame| as the  arguments, and if an exception is thrown, <a>report the exception</a>.
+
+
 XRSessionCreationOptions {#xrsessioncreationoptions-interface}
 -------------------------
 
@@ -308,14 +342,21 @@ dictionary XRSessionCreationOptions {
 
 The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
 
-Issue: Document restrictions and capabilities of an <dfn>exclusive session</dfn>
+To determine if a {{XRSessionCreationOptions}} |options| is <dfn>supported by the device</dfn> |device| run the following steps:
+
+ 1. Let |exclusive| be the {{XRSessionCreationOptions/exclusive}} attribute of the |parameters| argument.
+ 1. Let |outputContext| be the {{XRSessionCreationOptions/outputContext}} attribute of the |parameters| argument.
+ 1. If |exclusive| is <code>true</code> and the |device|'s [=supports exclusive=] value is <code>false</code> return <code>false</code>.
+ 1. If |exclusive| is <code>false</code> and |outputContext| is <code>null</code>, return <code>false</code>
+
+Issue: Document restrictions and capabilities of an [=exclusive session=]
 
 The XR Compositor {#compositor}
 -----------------
 
 Issue: This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.
 
-The UA MUST maintain an <dfn>XR Compositor</dfn> which handles layer composition and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of the WebGL contexts provided as {{XRWebGLLayer}} sources to prevent the page from corruption the compositor state or reading back content from other pages.
+The user agent MUST maintain an <dfn>XR Compositor</dfn> which handles layer composition and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as {{XRWebGLLayer}} sources to prevent the page from corrupting the compositor state or reading back content from other pages.
 
 <!--There are no direct interfaces to the compositor, but applications may submit bitmaps to be composited via the layer system and observe the frame timing via calls to {{XRSession/requestAnimationFrame()}}. The compositor consists of two different loops, assumed to be running in separate threads or processes. The <dfn>Frame Loop</dfn>, which drives the page script, and the <dfn>Render Loop</dfn>, which continuously presents imagery provided by the Frame Loop to the XR device. The render loop maintains its own copy of the session's layer list. Communication between the two loops is synchronized with a lock that limits access to the render loop's layer list.
 
@@ -374,6 +415,7 @@ An {{XRPresentationFrame}} provides all the values needed to render a single fra
 <dfn attribute for="XRPresentationFrame">views</dfn>
 
 <dfn method for="XRPresentationFrame">getDevicePose(coordinateSystem)</dfn>
+
 
 Views {#view}
 =====
@@ -687,21 +729,21 @@ The {{XRCoordinateSystem}} associated with this event.
 Event Types {#event-types}
 -----------
 
-The UA MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.
+The user agent MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.
 
-The UA MAY fire a <dfn event for="XR">devicechange</dfn> event on the {{XR}} object to indicate that the availability of {{XRDevice}}s has been changed. The event MUST be of type {{Event}}.
+The user agent MAY fire a <dfn event for="XR">devicechange</dfn> event on the {{XR}} object to indicate that the availability of {{XRDevice}}s has been changed. The event MUST be of type {{Event}}.
 
-<!--The UA MAY dispatch a <dfn event for="XRSession">deactivate</dfn> event on an {{XRSession}} to indicate that something has occurred which suggests the {{XRSession}} should end. For example, if the {{XRDevice}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{XRSessionEvent}}.-->
+<!--The user agent MAY dispatch a <dfn event for="XRSession">deactivate</dfn> event on an {{XRSession}} to indicate that something has occurred which suggests the {{XRSession}} should end. For example, if the {{XRDevice}} is capable of detecting when the user has taken it off, this event SHOULD fire when they do so. The event MUST be of type {{XRSessionEvent}}.-->
 
-A UA MAY dispatch a <dfn event for="XRSession">blur</dfn> event on an {{XRSession}} to indicate that presentation to the {{XRSession}} by the page has been suspended by the UA, OS, or XR hardware. While an {{XRSession}} is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The UA SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type {{XRSessionEvent}}.
+A user agent MAY dispatch a <dfn event for="XRSession">blur</dfn> event on an {{XRSession}} to indicate that presentation to the {{XRSession}} by the page has been suspended by the user agent, OS, or XR hardware. While an {{XRSession}} is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MAY dispatch a <dfn event for="XRSession">focus</dfn> event on an {{XRSession}} to indicate that presentation to the {{XRSession}} by the page has resumed after being suspended. The event MUST be of type {{XRSessionEvent}}.
+A user agent MAY dispatch a <dfn event for="XRSession">focus</dfn> event on an {{XRSession}} to indicate that presentation to the {{XRSession}} by the page has resumed after being suspended. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="XRSession">resetpose</dfn> event on an {{XRSession}} when the system resets the {{XRDevice}}'s position or orientation. The event MUST be of type {{XRSessionEvent}}.
+A user agent MUST dispatch a <dfn event for="XRSession">resetpose</dfn> event on an {{XRSession}} when the system resets the {{XRDevice}}'s position or orientation. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{XRSession}} when the session ends, either by the application or the UA. The event MUST be of type {{XRSessionEvent}}.
+A user agent MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{XRSession}} when the session ends, either by the application or the user agent. The event MUST be of type {{XRSessionEvent}}.
 
-A UA MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
+A user agent MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
 
 Navigator interface extension {#navigator-interface}
 =============================
