@@ -47,6 +47,12 @@ spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
 spec: WebIDL; urlPrefix: https://www.w3.org/TR/WebIDL-1/#
     type: dfn
         text: invoke the Web IDL callback function; url:es-invoking-callback-functions
+
+spec: Feature Policy; urlPrefix: https://wicg.github.io/feature-policy/#
+    type: dfn
+        text: default allowlist
+        text: feature
+        text: feature name
 </pre>
 
 <style>
@@ -141,9 +147,14 @@ XR {#xr-interface}
   // Events
   attribute EventHandler ondevicechange;
 };
+
+[SecureContext]
+partial interface Navigator {
+  [SameObject] readonly attribute XR xr;
+};
 </pre>
 
-The {{Navigator/xr}} object has an <dfn>list of XR devices</dfn>, which MUST be initially empty.
+The <dfn attribute for="Navigator">xr</dfn> object has an <dfn>list of XR devices</dfn>, which MUST be initially empty.
 
 The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
@@ -743,18 +754,16 @@ A user agent MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{
 
 A user agent MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
 
-Navigator interface extension {#navigator-interface}
-=============================
+Integrations {#integrations}
+============
 
-Issue: Navigator interface is all alone. :( Does this belong somewhere else, or is this reasonable? This is about how WebUSB and WebBluetooth handle it.
+Feature Policy {#feature-policy}
+--------------
+This specification defines a <a>feature</a> that controls whether the {{Navigator/xr}} attribute is exposed on the {{Navigator}} object.
 
-<pre class="idl">
-partial interface Navigator {
-  [SameObject] readonly attribute XR xr;
-};
-</pre>
+The <a>feature name</a> for this feature is <code>"xr"</code>.
 
-<dfn attribute for="Navigator">xr</dfn>
+The <a>default allowlist</a> for this feature is <code>["self"]</code>.
 
 Acknowledgements {#ack}
 ===================
