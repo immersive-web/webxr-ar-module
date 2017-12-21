@@ -81,15 +81,13 @@ Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applicatio
 Terminology {#terminology}
 ===========
 
-This document uses the term <def>XR</def> throughout to refer to the spectrum of hardware, applications, and techniques used for Virtual Reality, Augmented Reality, and other related technologies. Examples include, but are not limited to:
+This document uses the acronym <b>XR</b> throughout to refer to the spectrum of hardware, applications, and techniques used for Virtual Reality, Augmented Reality, and other related technologies. Examples include, but are not limited to:
 
  * Head mounted displays, whether they are opaque, transparent, or utilize video passthrough
  * Mobile devices with positional tracking
  * Fixed displays with head tracking capabilities
 
 The important commonality between them being that they offer some degree of spatial tracking with which to simulate a view of virtual content.
-
-An <def>XR Device</def>
 
 Terms like "XR Device", "XR Application", etc. are generally understood to apply to any of the above. Portions of this document that only apply to a subset of these devices will indicate so as appropriate.
 
