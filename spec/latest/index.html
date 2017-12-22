@@ -1612,24 +1612,35 @@ Parts of this work may be from another specification document.  If so, those par
   [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject" id="ref-for-SameObject">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xr" id="ref-for-xr">XR</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XR" href="#dom-navigator-xr" id="ref-for-dom-navigator-xr">xr</a>;
 };
 </pre>
-    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" id="dom-navigator-xr"><code>xr</code></dfn> object has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-xr-devices">list of XR devices</dfn>, which MUST be initially empty.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" id="dom-navigator-xr"><code>xr</code></dfn> object is the entry point to the API, used to query for <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②">XRDevice</a></code>s available to the user agent. It has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-xr-devices">list of XR devices</dfn>, which MUST be initially empty, and a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="default-device">default device</dfn> which MUST be initially <code>null</code>.</p>
+    <p>The user agent MUST be able to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="enumerate-xr-devices">enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices">list of XR devices</a>. Subsequent algorithms requesting enumeration MAY reuse the cached <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices①">list of XR devices</a>. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices②">list of XR devices</a> and removing disconnected devices. Each time the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices③">list of XR devices</a> changes the user agent should <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="select-a-default-xr-device">select a default XR device</dfn> by running the following steps:</p>
+    <ol>
+     <li data-md="">
+      <p>Let <var>oldDefaultDevice</var> be the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device">default device</a>.</p>
+     <li data-md="">
+      <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices④">list of XR devices</a> is empty set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device①">default device</a> to <code>null</code>.</p>
+     <li data-md="">
+      <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑤">list of XR devices</a> contains one device set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device②">default device</a> to that device.</p>
+     <li data-md="">
+      <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑥">list of XR devices</a> contains multiple devices set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device③">default device</a> to a device of the user agent’s choosing.</p>
+     <li data-md="">
+      <p>If <var>oldDefaultDevice</var> does not equal the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device④">default device</a> queue a task that fires a simple event named <code class="idl"><a data-link-type="idl" href="#eventdef-xr-devicechange" id="ref-for-eventdef-xr-devicechange">devicechange</a></code> on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr①">XR</a></code> object.</p>
+    </ol>
+    <p class="note" role="note"><span>NOTE:</span> The user agent is allowed to use any criteria it wishes to <a data-link-type="dfn" href="#select-a-default-xr-device" id="ref-for-select-a-default-xr-device">select a default XR device</a> when the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑦">list of XR devices</a> contains multiple devices. For example, the user agent may always select the first item in the list, or provide settings UI that allows users to manage device priority. Ideally the algorithm used to select the default device is stable and will result in the same device being selected across multiple browsing sessions.</p>
     <p>The page can <dfn data-dfn-type="dfn" data-noexport="" id="request-a-device">request a device<a class="self-link" href="#request-a-device"></a></dfn> by calling the <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="method" data-export="" id="dom-xr-requestdevice"><code>requestDevice()</code></dfn> method on the <code class="idl"><a data-link-type="idl" href="#dom-navigator-xr" id="ref-for-dom-navigator-xr①">xr</a></code> object. When invoked it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel">in parallel</a>:</p>
     <ol>
      <li data-md="">
-      <p>If this is the first time the method has been called <a data-link-type="dfn" href="#enumerate-xr-devices" id="ref-for-enumerate-xr-devices">enumerate XR devices</a> to populate the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices">list of XR devices</a></p>
+      <p><a data-link-type="dfn" href="#enumerate-xr-devices" id="ref-for-enumerate-xr-devices">Enumerate XR devices</a>.</p>
      <li data-md="">
-      <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices①">list of XR devices</a> is empty <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise">resolve</a> <var>promise</var> with <code>null</code>.</p>
+      <p><a data-link-type="dfn" href="#select-a-default-xr-device" id="ref-for-select-a-default-xr-device①">Select a default XR device</a> from the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑧">list of XR devices</a>.</p>
      <li data-md="">
-      <p>Else <a data-link-type="dfn" href="#select-a-default-xr-device" id="ref-for-select-a-default-xr-device">select a default XR device</a> from the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices②">list of XR devices</a> and let it be <var>device</var>.</p>
-     <li data-md="">
-      <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise①">Resolve</a> <var>promise</var> with <var>device</var>.</p>
+      <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise">Resolve</a> <var>promise</var> with the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device⑤">default device</a>.</p>
     </ol>
     <p>Calling <code class="idl"><a data-link-type="idl" href="#dom-xr-requestdevice" id="ref-for-dom-xr-requestdevice①">requestDevice()</a></code> MUST NOT trigger device-selection UI as this would cause many sites to display XR-specific dialogs early in the document lifecycle without user activation.</p>
-    <p class="note" role="note"><span>NOTE:</span> The user agent is allowed to use any criteria it wishes to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="select-a-default-xr-device">select a default XR device</dfn> when the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices③">list of XR devices</a> contains multiple items. For example, the user agent may provide settings UI that allows users to manage device priority as long as that UI is not shown upon calling <code class="idl"><a data-link-type="idl" href="#dom-xr-requestdevice" id="ref-for-dom-xr-requestdevice②">requestDevice()</a></code></p>
-    <p class="issue" id="issue-781a6fd3"><a class="self-link" href="#issue-781a6fd3"></a> Describe the process to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="enumerate-xr-devices">enumerate XR devices</dfn>.</p>
-    <p class="issue" id="issue-c3b1af99"><a class="self-link" href="#issue-c3b1af99"></a> Take permissions into account when calling <code class="idl"><a data-link-type="idl" href="#dom-xr-requestdevice" id="ref-for-dom-xr-requestdevice③">requestDevice</a></code>.</p>
+    <p class="issue" id="issue-c3b1af99"><a class="self-link" href="#issue-c3b1af99"></a> Take permissions into account when calling <code class="idl"><a data-link-type="idl" href="#dom-xr-requestdevice" id="ref-for-dom-xr-requestdevice②">requestDevice</a></code>.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="attribute" data-export="" id="dom-xr-ondevicechange"><code>ondevicechange</code></dfn> attribute is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xr-devicechange" id="ref-for-eventdef-xr-devicechange①">devicechange</a></code> event type.</p>
     <div class="example" id="example-ab5d91a0">
-     <a class="self-link" href="#example-ab5d91a0"></a> The following code finds an available <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②">XRDevice</a></code>. 
+     <a class="self-link" href="#example-ab5d91a0"></a> The following code finds an available <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice③">XRDevice</a></code>. 
 <pre class="highlight">navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span class="p">().</span>then<span class="p">(</span>device <span class="p">=></span> <span class="p">{</span>
   <span class="c1">// Resolves to an XRDevice if one is available, or to null otherwise.</span>
 <span class="c1"></span>  <span class="k">if</span> <span class="p">(</span>device<span class="p">)</span> <span class="p">{</span>
@@ -1641,7 +1652,6 @@ Parts of this work may be from another specification document.  If so, those par
 <span class="p">});</span>
 </pre>
     </div>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="attribute" data-export="" id="dom-xr-ondevicechange"><code>ondevicechange</code></dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xr-devicechange" id="ref-for-eventdef-xr-devicechange">devicechange</a></code> event type.</p>
     <h3 class="heading settled" data-level="4.2" id="xrdevice-interface"><span class="secno">4.2. </span><span class="content">XRDevice</span><a class="self-link" href="#xrdevice-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext②">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrdevice"><code>XRDevice</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget①">EventTarget</a> {
   // Attributes
@@ -1652,19 +1662,19 @@ Parts of this work may be from another specification document.  If so, those par
   <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①">XRSession</a>> <a class="nv idl-code" data-link-type="method" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession">requestSession</a>(<span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions①">XRSessionCreationOptions</a> <dfn class="nv idl-code" data-dfn-for="XRDevice/requestSession(options), XRDevice/requestSession()" data-dfn-type="argument" data-export="" id="dom-xrdevice-requestsession-options-options"><code>options</code><a class="self-link" href="#dom-xrdevice-requestsession-options-options"></a></dfn>);
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice③">XRDevice</a></code> represents a physical unit of XR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.</p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="attribute" data-export="" id="dom-xrdevice-external"><code>external</code></dfn> returns <code>true</code> if the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice④">XRDevice</a></code> hardware has a separate physical display from the system’s main display.</p>
-    <div class="example" id="example-c7b93dc4"><a class="self-link" href="#example-c7b93dc4"></a> A VR headset connected to a desktop PC would typically set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external①">external</a></code> to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external②">external</a></code> to <code>false</code>. </div>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice④">XRDevice</a></code> represents a physical unit of XR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.</p>
     <p>Each <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑤">XRDevice</a></code> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="supports-exclusive">supports exclusive</dfn> value, which is a boolean which MUST be set to <code>true</code> if the device can support exclusive sessions and <code>false</code> if it cannot.</p>
     <p>Each <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑥">XRDevice</a></code> has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="exclusive-session">exclusive session</dfn>, which MUST be initially <code>null</code>, and a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-non-exclusive-sessions">list of non-exclusive sessions</dfn>, which MUST be initially empty.</p>
-    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="method" data-export="" data-lt="supportsSession(options)|supportsSession()" id="dom-xrdevice-supportssession"><code>supportsSession(options)</code></dfn> method is invoked on <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑦">XRDevice</a></code> <var>device</var>, it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise①">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel①">in parallel</a>:</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="attribute" data-export="" id="dom-xrdevice-external"><code>external</code></dfn> attribute SHOULD be <code>true</code> if the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑦">XRDevice</a></code> hardware has a separate physical display from the system’s main display and <code>false</code> otherwise.</p>
+    <p class="note" role="note"><span>NOTE:</span> A VR headset connected to a desktop PC would typically set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external①">external</a></code> to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external②">external</a></code> to <code>false</code>.</p>
+    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="method" data-export="" data-lt="supportsSession(options)|supportsSession()" id="dom-xrdevice-supportssession"><code>supportsSession(options)</code></dfn> method is invoked on <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑧">XRDevice</a></code> <var>device</var>, it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise①">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel①">in parallel</a>:</p>
     <ol>
      <li data-md="">
       <p>If the <var>options</var> are not <a data-link-type="dfn" href="#supported-by-the-device" id="ref-for-supported-by-the-device">supported by the device</a> <var>device</var>, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise">reject</a> <var>promise</var> with <code>null</code>.</p>
      <li data-md="">
-      <p>Else <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise②">resolve</a> <var>promise</var> with <code>null</code>.</p>
+      <p>Else <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise①">resolve</a> <var>promise</var> with <code>null</code>.</p>
     </ol>
-    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="method" data-export="" data-lt="requestSession(options)|requestSession()" id="dom-xrdevice-requestsession"><code>requestSession(options)</code></dfn> method is invoked on <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑧">XRDevice</a></code> <var>device</var>, the user agent MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise②">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel②">in parallel</a>:</p>
+    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="method" data-export="" data-lt="requestSession(options)|requestSession()" id="dom-xrdevice-requestsession"><code>requestSession(options)</code></dfn> method is invoked on <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑨">XRDevice</a></code> <var>device</var>, the user agent MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise②">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel②">in parallel</a>:</p>
     <ol>
      <li data-md="">
       <p>If the <var>options</var> are not <a data-link-type="dfn" href="#supported-by-the-device" id="ref-for-supported-by-the-device①">supported by the device</a> <var>device</var>, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise①">reject</a> <var>promise</var> with a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror" id="ref-for-notsupportederror">NotSupportedError</a></code> and abort these steps.</p>
@@ -1681,10 +1691,10 @@ Parts of this work may be from another specification document.  If so, those par
      <li data-md="">
       <p>Else append <var>session</var> to <var>device</var>’s <a data-link-type="dfn" href="#list-of-non-exclusive-sessions" id="ref-for-list-of-non-exclusive-sessions">list of non-exclusive sessions</a>.</p>
      <li data-md="">
-      <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise③">Resolve</a> <var>promise</var> with <var>session</var>.</p>
+      <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise②">Resolve</a> <var>promise</var> with <var>session</var>.</p>
     </ol>
     <div class="example" id="example-c3f32221">
-     <a class="self-link" href="#example-c3f32221"></a> The following code finds an available <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑨">XRDevice</a></code>. 
+     <a class="self-link" href="#example-c3f32221"></a> The following code finds an available <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⓪">XRDevice</a></code>. 
 <pre class="highlight"><span class="kd">let</span> xrDevice<span class="p">;</span>
 
 navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span class="p">().</span>then<span class="p">((</span>device<span class="p">)</span> <span class="p">=></span> <span class="p">{</span>
@@ -1696,7 +1706,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <h3 class="heading settled" data-level="5.1" id="xrsession-interface"><span class="secno">5.1. </span><span class="content">XRSession</span><a class="self-link" href="#xrsession-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext③">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed②">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrsession"><code>XRSession</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget②">EventTarget</a> {
   // Attributes
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⓪">XRDevice</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device">device</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①①">XRDevice</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device">device</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean①"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-xrsession-exclusive" id="ref-for-dom-xrsession-exclusive">exclusive</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext">XRPresentationContext</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRPresentationContext" href="#dom-xrsession-outputcontext" id="ref-for-dom-xrsession-outputcontext">outputContext</a>;
 
@@ -1719,7 +1729,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler" id="ref-for-eventhandler④">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-xrsession-onend" id="ref-for-dom-xrsession-onend">onend</a>;
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession③">XRSession</a></code> is the interface through with most interaction with an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①①">XRDevice</a></code> happens. A page must request a session from the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①②">XRDevice</a></code>, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to <a data-link-type="dfn" href="#poll-the-device-pose" id="ref-for-poll-the-device-pose">poll the device pose</a>, query information about the user’s environment and, if it’s an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session②">exclusive session</a>, define imagery to show on the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①③">XRDevice</a></code>.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession③">XRSession</a></code> is the interface through with most interaction with an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①②">XRDevice</a></code> happens. A page must request a session from the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①③">XRDevice</a></code>, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to <a data-link-type="dfn" href="#poll-the-device-pose" id="ref-for-poll-the-device-pose">poll the device pose</a>, query information about the user’s environment and, if it’s an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session②">exclusive session</a>, define imagery to show on the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①④">XRDevice</a></code>.</p>
     <p>The user agent, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they’re not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware’s presence without initializing tracking, however, so this is only a strong recommendation.</p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-device"><code>device</code></dfn></p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-exclusive"><code>exclusive</code></dfn></p>
@@ -1775,13 +1785,9 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <p>To determine if a <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions④">XRSessionCreationOptions</a></code> <var>options</var> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="supported-by-the-device">supported by the device</dfn> <var>device</var> run the following steps:</p>
     <ol>
      <li data-md="">
-      <p>Let <var>exclusive</var> be the <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive①">exclusive</a></code> attribute of the <var>parameters</var> argument.</p>
+      <p>If <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive①">exclusive</a></code> is <code>true</code> and the <var>device</var>’s <a data-link-type="dfn" href="#supports-exclusive" id="ref-for-supports-exclusive">supports exclusive</a> value is <code>false</code> return <code>false</code>.</p>
      <li data-md="">
-      <p>Let <var>outputContext</var> be the <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-outputcontext" id="ref-for-dom-xrsessioncreationoptions-outputcontext">outputContext</a></code> attribute of the <var>parameters</var> argument.</p>
-     <li data-md="">
-      <p>If <var>exclusive</var> is <code>true</code> and the <var>device</var>’s <a data-link-type="dfn" href="#supports-exclusive" id="ref-for-supports-exclusive">supports exclusive</a> value is <code>false</code> return <code>false</code>.</p>
-     <li data-md="">
-      <p>If <var>exclusive</var> is <code>false</code> and <var>outputContext</var> is <code>null</code>, return <code>false</code></p>
+      <p>If <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive②">exclusive</a></code> is <code>false</code> and <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-outputcontext" id="ref-for-dom-xrsessioncreationoptions-outputcontext">outputContext</a></code> is <code>null</code>, return <code>false</code></p>
     </ol>
     <p class="issue" id="issue-5e06fb11"><a class="self-link" href="#issue-5e06fb11"></a> Document restrictions and capabilities of an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session③">exclusive session</a></p>
     <h3 class="heading settled" data-level="5.4" id="compositor"><span class="secno">5.4. </span><span class="content">The XR Compositor</span><a class="self-link" href="#compositor"></a></h3>
@@ -1799,7 +1805,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <a class="n" data-link-type="idl-name" href="#xrdevicepose" id="ref-for-xrdevicepose">XRDevicePose</a>? <a class="nv idl-code" data-link-type="method" href="#dom-xrpresentationframe-getdevicepose" id="ref-for-dom-xrpresentationframe-getdevicepose">getDevicePose</a>(<a class="n" data-link-type="idl-name" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem">XRCoordinateSystem</a> <dfn class="nv idl-code" data-dfn-for="XRPresentationFrame/getDevicePose(coordinateSystem)" data-dfn-type="argument" data-export="" id="dom-xrpresentationframe-getdevicepose-coordinatesystem-coordinatesystem"><code>coordinateSystem</code><a class="self-link" href="#dom-xrpresentationframe-getdevicepose-coordinatesystem-coordinatesystem"></a></dfn>);
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe②">XRPresentationFrame</a></code> provides all the values needed to render a single frame of an XR scene to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①④">XRDevice</a></code>'s display. Applications can only aquire an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe③">XRPresentationFrame</a></code> by calling <code class="idl"><a data-link-type="idl" href="#dom-xrsession-requestanimationframe" id="ref-for-dom-xrsession-requestanimationframe①">requestAnimationFrame()</a></code> on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑧">XRSession</a></code> with an <code class="idl"><a data-link-type="idl" href="#callbackdef-xrframerequestcallback" id="ref-for-callbackdef-xrframerequestcallback②">XRFrameRequestCallback</a></code>. When the callback is called it will be passed an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe④">XRPresentationFrame</a></code>.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe②">XRPresentationFrame</a></code> provides all the values needed to render a single frame of an XR scene to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑤">XRDevice</a></code>'s display. Applications can only aquire an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe③">XRPresentationFrame</a></code> by calling <code class="idl"><a data-link-type="idl" href="#dom-xrsession-requestanimationframe" id="ref-for-dom-xrsession-requestanimationframe①">requestAnimationFrame()</a></code> on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑧">XRSession</a></code> with an <code class="idl"><a data-link-type="idl" href="#callbackdef-xrframerequestcallback" id="ref-for-callbackdef-xrframerequestcallback②">XRFrameRequestCallback</a></code>. When the callback is called it will be passed an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe④">XRPresentationFrame</a></code>.</p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRPresentationFrame" data-dfn-type="attribute" data-export="" id="dom-xrpresentationframe-views"><code>views</code></dfn></p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRPresentationFrame" data-dfn-type="method" data-export="" id="dom-xrpresentationframe-getdevicepose"><code>getDevicePose(coordinateSystem)</code></dfn></p>
     <h2 class="heading settled" data-level="7" id="view"><span class="secno">7. </span><span class="content">Views</span><a class="self-link" href="#view"></a></h2>
@@ -1843,14 +1849,14 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array" id="ref-for-idl-Float32Array③"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="method" href="#dom-xrdevicepose-getviewmatrix" id="ref-for-dom-xrdevicepose-getviewmatrix">getViewMatrix</a>(<a class="n" data-link-type="idl-name" href="#xrview" id="ref-for-xrview②">XRView</a> <dfn class="nv idl-code" data-dfn-for="XRDevicePose/getViewMatrix(view)" data-dfn-type="argument" data-export="" id="dom-xrdevicepose-getviewmatrix-view-view"><code>view</code><a class="self-link" href="#dom-xrdevicepose-getviewmatrix-view-view"></a></dfn>);
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrdevicepose" id="ref-for-xrdevicepose①">XRDevicePose</a></code> describes the position and orientation of an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑤">XRDevice</a></code> relative to the <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem①">XRCoordinateSystem</a></code> it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of an XR scene.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrdevicepose" id="ref-for-xrdevicepose①">XRDevicePose</a></code> describes the position and orientation of an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑥">XRDevice</a></code> relative to the <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem①">XRCoordinateSystem</a></code> it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of an XR scene.</p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRDevicePose" data-dfn-type="attribute" data-export="" id="dom-xrdevicepose-posemodelmatrix"><code>poseModelMatrix</code></dfn></p>
     <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevicePose" data-dfn-type="method" data-export="" id="dom-xrdevicepose-getviewmatrix"><code>getViewMatrix(view)</code></dfn> method returns a <a data-link-type="dfn" href="#matrix" id="ref-for-matrix①">matrix</a> describing the view transform to be used when rendering the passed <code class="idl"><a data-link-type="idl" href="#xrview" id="ref-for-xrview③">XRView</a></code>. The matrices represent the inverse of the model matrix of the associated viewpoint.</p>
     <h2 class="heading settled" data-level="9" id="layers"><span class="secno">9. </span><span class="content">Layers</span><a class="self-link" href="#layers"></a></h2>
     <h3 class="heading settled" data-level="9.1" id="xrlayer-interface"><span class="secno">9.1. </span><span class="content">XRLayer</span><a class="self-link" href="#xrlayer-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext⑧">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑦">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrlayer"><code>XRLayer</code></dfn> {};
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrlayer" id="ref-for-xrlayer②">XRLayer</a></code> defines a source of bitmap images and a description of how the image is to be rendered in the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑥">XRDevice</a></code>. Initially only one type of layer, the <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer①">XRWebGLLayer</a></code>, is defined but future revisions of the spec may extend the available layer types.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrlayer" id="ref-for-xrlayer②">XRLayer</a></code> defines a source of bitmap images and a description of how the image is to be rendered in the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑦">XRDevice</a></code>. Initially only one type of layer, the <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer①">XRWebGLLayer</a></code>, is defined but future revisions of the spec may extend the available layer types.</p>
     <h3 class="heading settled" data-level="9.2" id="xrwebgllayer-interface"><span class="secno">9.2. </span><span class="content">XRWebGLLayer</span><a class="self-link" href="#xrwebgllayer-interface"></a></h3>
 <pre class="idl highlight def"><span class="kt">typedef</span> (<a class="n" data-link-type="idl-name" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontext" id="ref-for-webglrenderingcontext">WebGLRenderingContext</a> <span class="kt">or</span>
          <a class="n" data-link-type="idl-name" href="https://www.khronos.org/registry/webgl/specs/latest/2.0/#webgl2renderingcontext" id="ref-for-webgl2renderingcontext">WebGL2RenderingContext</a>) <dfn class="nv dfn-paneled idl-code" data-dfn-type="typedef" data-export="" id="typedefdef-xrwebglrenderingcontext"><code>XRWebGLRenderingContext</code></dfn>;
@@ -1900,11 +1906,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-xrwebgllayerinit" id="ref-for-dictdef-xrwebgllayerinit①">XRWebGLLayerInit</a></code> dictionary indicates the desired properites of an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer③">XRWebGLLayer</a></code>'s framebuffer.</p>
     <h2 class="heading settled" data-level="10" id="contextcompatibility"><span class="secno">10. </span><span class="content">WebGL Context Compatiblity</span><a class="self-link" href="#contextcompatibility"></a></h2>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">dictionary</span> <a class="nv idl-code" data-link-type="dictionary" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglcontextattributes" id="ref-for-webglcontextattributes">WebGLContextAttributes</a> {
-    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑦">XRDevice</a> <dfn class="nv idl-code" data-default="null" data-dfn-for="WebGLContextAttributes" data-dfn-type="dict-member" data-export="" data-type="XRDevice " id="dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code><a class="self-link" href="#dom-webglcontextattributes-compatiblexrdevice"></a></dfn> = <span class="kt">null</span>;
+    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧">XRDevice</a> <dfn class="nv idl-code" data-default="null" data-dfn-for="WebGLContextAttributes" data-dfn-type="dict-member" data-export="" data-type="XRDevice " id="dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code><a class="self-link" href="#dom-webglcontextattributes-compatiblexrdevice"></a></dfn> = <span class="kt">null</span>;
 };
 
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase">WebGLRenderingContextBase</a> {
-    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧">XRDevice</a> <dfn class="nv idl-code" data-dfn-for="WebGLRenderingContextBase/setCompatibleXRDevice(device)" data-dfn-type="argument" data-export="" id="dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code><a class="self-link" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"></a></dfn>);
+    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑨">XRDevice</a> <dfn class="nv idl-code" data-dfn-for="WebGLRenderingContextBase/setCompatibleXRDevice(device)" data-dfn-type="argument" data-export="" id="dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code><a class="self-link" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"></a></dfn>);
 };
 </pre>
     <p class="issue" id="issue-b6e56ea3"><a class="self-link" href="#issue-b6e56ea3"></a> Describe context compatibility requirements</p>
@@ -1985,10 +1991,10 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRCoordinateSystemEvent" data-dfn-type="attribute" data-export="" id="dom-xrcoordinatesystemevent-coordinatesystem"><code>coordinateSystem</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem⑥">XRCoordinateSystem</a></code> associated with this event.</p>
     <h3 class="heading settled" data-level="13.3" id="event-types"><span class="secno">13.3. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
     <p>The user agent MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.</p>
-    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr①">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑨">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
+    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
     <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-blur"><code>blur</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①③">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①④">XRSession</a></code> by the page has been suspended by the user agent, OS, or XR hardware. While an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑤">XRSession</a></code> is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent">XRSessionEvent</a></code>.</p>
     <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-focus"><code>focus</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑥">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑦">XRSession</a></code> by the page has resumed after being suspended. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent①">XRSessionEvent</a></code>.</p>
-    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑧">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
+    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑧">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②①">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-end"><code>end</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑨">XRSession</a></code> when the session ends, either by the application or the user agent. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent③">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="idl-code" data-dfn-for="XRFrameOfReference" data-dfn-type="event" data-export="" id="eventdef-xrframeofreference-boundschange"><code>boundschange</code><a class="self-link" href="#eventdef-xrframeofreference-boundschange"></a></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrframeofreference" id="ref-for-xrframeofreference①">XRFrameOfReference</a></code> when the <a data-link-type="dfn" href="#xrstagebounds-stage" id="ref-for-xrstagebounds-stage③">stage</a> <code class="idl"><a data-link-type="idl" href="#dom-xrframeofreference-bounds" id="ref-for-dom-xrframeofreference-bounds①">bounds</a></code> change. This includes changes to the <code class="idl"><a data-link-type="idl" href="#dom-xrstagebounds-geometry" id="ref-for-dom-xrstagebounds-geometry①">geometry</a></code> points or the <code class="idl"><a data-link-type="idl" href="#dom-xrframeofreference-bounds" id="ref-for-dom-xrframeofreference-bounds②">bounds</a></code> attribute changing to or from <code>null</code>. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystemevent" id="ref-for-xrcoordinatesystemevent">XRCoordinateSystemEvent</a></code>.</p>
     <h2 class="heading settled" data-level="14" id="integrations"><span class="secno">14. </span><span class="content">Integrations</span><a class="self-link" href="#integrations"></a></h2>
@@ -2189,6 +2195,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li><a href="#dom-xrcoordinatesystemeventinit-coordinatesystem">dict-member for XRCoordinateSystemEventInit</a><span>, in §13.2</span>
      <li><a href="#dom-xrcoordinatesystemevent-coordinatesystem">attribute for XRCoordinateSystemEvent</a><span>, in §13.2</span>
     </ul>
+   <li><a href="#default-device">default device</a><span>, in §4.1</span>
    <li>
     depth
     <ul>
@@ -2403,7 +2410,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <h2 class="no-num no-ref heading settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑦">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①⑥">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <a class="nv" href="#xr"><code>XR</code></a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget④">EventTarget</a> {
   // Methods
-  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①①⓪">XRDevice</a>?> <a class="nv idl-code" data-link-type="method" href="#dom-xr-requestdevice" id="ref-for-dom-xr-requestdevice④">requestDevice</a>();
+  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①①⓪">XRDevice</a>?> <a class="nv idl-code" data-link-type="method" href="#dom-xr-requestdevice" id="ref-for-dom-xr-requestdevice③">requestDevice</a>();
 
   // Events
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler" id="ref-for-eventhandler⑥">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-xr-ondevicechange" id="ref-for-dom-xr-ondevicechange①">ondevicechange</a>;
@@ -2411,7 +2418,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑧">SecureContext</a>]
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://html.spec.whatwg.org/multipage/system-state.html#navigator" id="ref-for-navigator②">Navigator</a> {
-  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject" id="ref-for-SameObject①">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xr" id="ref-for-xr②">XR</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XR" href="#dom-navigator-xr" id="ref-for-dom-navigator-xr③">xr</a>;
+  [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SameObject" id="ref-for-SameObject①">SameObject</a>] <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xr" id="ref-for-xr③">XR</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XR" href="#dom-navigator-xr" id="ref-for-dom-navigator-xr③">xr</a>;
 };
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext②①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①⑦">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <a class="nv" href="#xrdevice"><code>XRDevice</code></a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget①①">EventTarget</a> {
@@ -2425,7 +2432,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext③①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed②①">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <a class="nv" href="#xrsession"><code>XRSession</code></a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget②①">EventTarget</a> {
   // Attributes
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⓪①">XRDevice</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device①">device</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①①①">XRDevice</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device①">device</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean①④"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-xrsession-exclusive" id="ref-for-dom-xrsession-exclusive①">exclusive</a>;
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext②">XRPresentationContext</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRPresentationContext" href="#dom-xrsession-outputcontext" id="ref-for-dom-xrsession-outputcontext①">outputContext</a>;
 
@@ -2522,11 +2529,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 };
 
 <span class="kt">partial</span> <span class="kt">dictionary</span> <a class="nv idl-code" data-link-type="dictionary" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglcontextattributes" id="ref-for-webglcontextattributes①">WebGLContextAttributes</a> {
-    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑦①">XRDevice</a> <a class="nv" data-default="null" data-type="XRDevice " href="#dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code></a> = <span class="kt">null</span>;
+    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧①">XRDevice</a> <a class="nv" data-default="null" data-type="XRDevice " href="#dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code></a> = <span class="kt">null</span>;
 };
 
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase①">WebGLRenderingContextBase</a> {
-    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice①">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧①">XRDevice</a> <a class="nv" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code></a>);
+    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice①">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑨①">XRDevice</a> <a class="nv" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code></a>);
 };
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⓪①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑨①">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <a class="nv" href="#xrpresentationcontext"><code>XRPresentationContext</code></a> {
@@ -2586,7 +2593,6 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
   <div style="counter-reset:issue">
    <div class="issue"> Discuss use of sensor activity as a possible fingerprinting vector.<a href="#issue-5bd3ee1f"> ↵ </a></div>
-   <div class="issue"> Describe the process to <span>enumerate XR devices</span>.<a href="#issue-781a6fd3"> ↵ </a></div>
    <div class="issue"> Take permissions into account when calling <code class="idl"><a data-link-type="idl" href="#dom-xr-requestdevice">requestDevice</a></code>.<a href="#issue-c3b1af99"> ↵ </a></div>
    <div class="issue"> Document how to <span>poll the device pose</span><a href="#issue-cdb417b3"> ↵ </a></div>
    <div class="issue"> Document what happens when we <span>end the session</span><a href="#issue-398b8983"> ↵ </a></div>
@@ -2601,8 +2607,8 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="xr">
    <b><a href="#xr">#xr</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xr">4.1. XR</a>
-    <li><a href="#ref-for-xr①">13.3. Event Types</a>
+    <li><a href="#ref-for-xr">4.1. XR</a> <a href="#ref-for-xr①">(2)</a>
+    <li><a href="#ref-for-xr②">13.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-navigator-xr">
@@ -2615,25 +2621,31 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="list-of-xr-devices">
    <b><a href="#list-of-xr-devices">#list-of-xr-devices</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-list-of-xr-devices">4.1. XR</a> <a href="#ref-for-list-of-xr-devices①">(2)</a> <a href="#ref-for-list-of-xr-devices②">(3)</a> <a href="#ref-for-list-of-xr-devices③">(4)</a>
+    <li><a href="#ref-for-list-of-xr-devices">4.1. XR</a> <a href="#ref-for-list-of-xr-devices①">(2)</a> <a href="#ref-for-list-of-xr-devices②">(3)</a> <a href="#ref-for-list-of-xr-devices③">(4)</a> <a href="#ref-for-list-of-xr-devices④">(5)</a> <a href="#ref-for-list-of-xr-devices⑤">(6)</a> <a href="#ref-for-list-of-xr-devices⑥">(7)</a> <a href="#ref-for-list-of-xr-devices⑦">(8)</a> <a href="#ref-for-list-of-xr-devices⑧">(9)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="dom-xr-requestdevice">
-   <b><a href="#dom-xr-requestdevice">#dom-xr-requestdevice</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="default-device">
+   <b><a href="#default-device">#default-device</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xr-requestdevice">4.1. XR</a> <a href="#ref-for-dom-xr-requestdevice①">(2)</a> <a href="#ref-for-dom-xr-requestdevice②">(3)</a> <a href="#ref-for-dom-xr-requestdevice③">(4)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="select-a-default-xr-device">
-   <b><a href="#select-a-default-xr-device">#select-a-default-xr-device</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-select-a-default-xr-device">4.1. XR</a>
+    <li><a href="#ref-for-default-device">4.1. XR</a> <a href="#ref-for-default-device①">(2)</a> <a href="#ref-for-default-device②">(3)</a> <a href="#ref-for-default-device③">(4)</a> <a href="#ref-for-default-device④">(5)</a> <a href="#ref-for-default-device⑤">(6)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="enumerate-xr-devices">
    <b><a href="#enumerate-xr-devices">#enumerate-xr-devices</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-enumerate-xr-devices">4.1. XR</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="select-a-default-xr-device">
+   <b><a href="#select-a-default-xr-device">#select-a-default-xr-device</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-select-a-default-xr-device">4.1. XR</a> <a href="#ref-for-select-a-default-xr-device①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xr-requestdevice">
+   <b><a href="#dom-xr-requestdevice">#dom-xr-requestdevice</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xr-requestdevice">4.1. XR</a> <a href="#ref-for-dom-xr-requestdevice①">(2)</a> <a href="#ref-for-dom-xr-requestdevice②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xr-ondevicechange">
@@ -2646,20 +2658,14 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <b><a href="#xrdevice">#xrdevice</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-xrdevice">3.3. Context Isolation</a>
-    <li><a href="#ref-for-xrdevice①">4.1. XR</a> <a href="#ref-for-xrdevice②">(2)</a>
-    <li><a href="#ref-for-xrdevice③">4.2. XRDevice</a> <a href="#ref-for-xrdevice④">(2)</a> <a href="#ref-for-xrdevice⑤">(3)</a> <a href="#ref-for-xrdevice⑥">(4)</a> <a href="#ref-for-xrdevice⑦">(5)</a> <a href="#ref-for-xrdevice⑧">(6)</a> <a href="#ref-for-xrdevice⑨">(7)</a>
-    <li><a href="#ref-for-xrdevice①⓪">5.1. XRSession</a> <a href="#ref-for-xrdevice①①">(2)</a> <a href="#ref-for-xrdevice①②">(3)</a> <a href="#ref-for-xrdevice①③">(4)</a>
-    <li><a href="#ref-for-xrdevice①④">6.2. XRPresentationFrame</a>
-    <li><a href="#ref-for-xrdevice①⑤">8.2. XRDevicePose</a>
-    <li><a href="#ref-for-xrdevice①⑥">9.1. XRLayer</a>
-    <li><a href="#ref-for-xrdevice①⑦">10. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑧">(2)</a>
-    <li><a href="#ref-for-xrdevice①⑨">13.3. Event Types</a> <a href="#ref-for-xrdevice②⓪">(2)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrdevice-external">
-   <b><a href="#dom-xrdevice-external">#dom-xrdevice-external</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrdevice-external">4.2. XRDevice</a> <a href="#ref-for-dom-xrdevice-external①">(2)</a> <a href="#ref-for-dom-xrdevice-external②">(3)</a>
+    <li><a href="#ref-for-xrdevice①">4.1. XR</a> <a href="#ref-for-xrdevice②">(2)</a> <a href="#ref-for-xrdevice③">(3)</a>
+    <li><a href="#ref-for-xrdevice④">4.2. XRDevice</a> <a href="#ref-for-xrdevice⑤">(2)</a> <a href="#ref-for-xrdevice⑥">(3)</a> <a href="#ref-for-xrdevice⑦">(4)</a> <a href="#ref-for-xrdevice⑧">(5)</a> <a href="#ref-for-xrdevice⑨">(6)</a> <a href="#ref-for-xrdevice①⓪">(7)</a>
+    <li><a href="#ref-for-xrdevice①①">5.1. XRSession</a> <a href="#ref-for-xrdevice①②">(2)</a> <a href="#ref-for-xrdevice①③">(3)</a> <a href="#ref-for-xrdevice①④">(4)</a>
+    <li><a href="#ref-for-xrdevice①⑤">6.2. XRPresentationFrame</a>
+    <li><a href="#ref-for-xrdevice①⑥">8.2. XRDevicePose</a>
+    <li><a href="#ref-for-xrdevice①⑦">9.1. XRLayer</a>
+    <li><a href="#ref-for-xrdevice①⑧">10. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑨">(2)</a>
+    <li><a href="#ref-for-xrdevice②⓪">13.3. Event Types</a> <a href="#ref-for-xrdevice②①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="supports-exclusive">
@@ -2680,6 +2686,12 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <b><a href="#list-of-non-exclusive-sessions">#list-of-non-exclusive-sessions</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-list-of-non-exclusive-sessions">4.2. XRDevice</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrdevice-external">
+   <b><a href="#dom-xrdevice-external">#dom-xrdevice-external</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrdevice-external">4.2. XRDevice</a> <a href="#ref-for-dom-xrdevice-external①">(2)</a> <a href="#ref-for-dom-xrdevice-external②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrdevice-supportssession">
@@ -2828,7 +2840,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <b><a href="#dom-xrsessioncreationoptions-exclusive">#dom-xrsessioncreationoptions-exclusive</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive">4.2. XRDevice</a>
-    <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive①">5.3. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive①">5.3. XRSessionCreationOptions</a> <a href="#ref-for-dom-xrsessioncreationoptions-exclusive②">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsessioncreationoptions-outputcontext">
@@ -3216,7 +3228,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="eventdef-xr-devicechange">
    <b><a href="#eventdef-xr-devicechange">#eventdef-xr-devicechange</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eventdef-xr-devicechange">4.1. XR</a>
+    <li><a href="#ref-for-eventdef-xr-devicechange">4.1. XR</a> <a href="#ref-for-eventdef-xr-devicechange①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eventdef-xrsession-blur">

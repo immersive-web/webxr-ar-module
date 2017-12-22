@@ -154,22 +154,29 @@ partial interface Navigator {
 };
 </pre>
 
-The <dfn attribute for="Navigator">xr</dfn> object has an <dfn>list of XR devices</dfn>, which MUST be initially empty.
+The <dfn attribute for="Navigator">xr</dfn> object is the entry point to the API, used to query for {{XRDevice}}s available to the user agent. It has a <dfn>list of XR devices</dfn>, which MUST be initially empty, and a <dfn>default device</dfn> which MUST be initially <code>null</code>.
+
+The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MAY reuse the cached [=list of XR devices=]. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices. Each time the [=list of XR devices=] changes the user agent should <dfn>select a default XR device</dfn> by running the following steps:
+
+ 1. Let |oldDefaultDevice| be the [=default device=].
+ 1. If the [=list of XR devices=] is empty set the [=default device=] to <code>null</code>.
+ 1. If the [=list of XR devices=] contains one device set the [=default device=] to that device.
+ 1. If the [=list of XR devices=] contains multiple devices set the [=default device=] to a device of the user agent's choosing.
+ 1. If |oldDefaultDevice| does not equal the [=default device=] queue a task that fires a simple event named {{devicechange}} on the {{XR}} object.
+
+NOTE: The user agent is allowed to use any criteria it wishes to [=select a default XR device=] when the [=list of XR devices=] contains multiple devices. For example, the user agent may always select the first item in the list, or provide settings UI that allows users to manage device priority. Ideally the algorithm used to select the default device is stable and will result in the same device being selected across multiple browsing sessions.
 
 The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
- 1. If this is the first time the method has been called [=enumerate XR devices=] to populate the [=list of XR devices=]
- 1. If the [=list of XR devices=] is empty <a>resolve</a> |promise| with <code>null</code>.
- 1. Else [=select a default XR device=] from the [=list of XR devices=] and let it be |device|. 
- 1. <a>Resolve</a> |promise| with |device|.
+ 1. [=Enumerate XR devices=].
+ 1. [=Select a default XR device=] from the [=list of XR devices=].
+ 1. <a>Resolve</a> |promise| with the [=default device=].
 
 Calling {{XR/requestDevice()}} MUST NOT trigger device-selection UI as this would cause many sites to display XR-specific dialogs early in the document lifecycle without user activation.
 
-NOTE: The user agent is allowed to use any criteria it wishes to <dfn>select a default XR device</dfn> when the [=list of XR devices=] contains multiple items. For example, the user agent may provide settings UI that allows users to manage device priority as long as that UI is not shown upon calling {{XR/requestDevice()}}
-
-ISSUE: Describe the process to <dfn>enumerate XR devices</dfn>.
-
 ISSUE: Take permissions into account when calling {{XR/requestDevice}}.
+
+The <dfn attribute for="XR">ondevicechange</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{devicechange}} event type.
 
 <div class="example">
 The following code finds an available {{XRDevice}}.
@@ -186,8 +193,6 @@ navigator.xr.requestDevice().then(device => {
 });
 </pre>
 </div>
-
-<dfn attribute for="XR">ondevicechange</dfn> is an <a>Event handler IDL attribute</a> for the {{devicechange}} event type.
 
 
 XRDevice {#xrdevice-interface}
@@ -206,15 +211,13 @@ XRDevice {#xrdevice-interface}
 
 An {{XRDevice}} represents a physical unit of XR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.
 
-<dfn attribute for="XRDevice">external</dfn> returns <code>true</code> if the {{XRDevice}} hardware has a separate physical display from the system's main display.
-
-<div class="example">
-A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
-</div>
-
 Each {{XRDevice}} has a <dfn>supports exclusive</dfn> value, which is a boolean which MUST be set to <code>true</code> if the device can support exclusive sessions and <code>false</code> if it cannot.
 
 Each {{XRDevice}} has an <dfn>exclusive session</dfn>, which MUST be initially <code>null</code>, and a <dfn>list of non-exclusive sessions</dfn>, which MUST be initially empty.
+
+The <dfn attribute for="XRDevice">external</dfn> attribute SHOULD be <code>true</code> if the {{XRDevice}} hardware has a separate physical display from the system's main display and <code>false</code> otherwise.
+
+NOTE: A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
 
 When the <dfn method for="XRDevice">supportsSession(options)</dfn> method is invoked on {{XRDevice}} |device|, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
@@ -353,10 +356,8 @@ The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description<
 
 To determine if a {{XRSessionCreationOptions}} |options| is <dfn>supported by the device</dfn> |device| run the following steps:
 
- 1. Let |exclusive| be the {{XRSessionCreationOptions/exclusive}} attribute of the |parameters| argument.
- 1. Let |outputContext| be the {{XRSessionCreationOptions/outputContext}} attribute of the |parameters| argument.
- 1. If |exclusive| is <code>true</code> and the |device|'s [=supports exclusive=] value is <code>false</code> return <code>false</code>.
- 1. If |exclusive| is <code>false</code> and |outputContext| is <code>null</code>, return <code>false</code>
+ 1. If {{XRSessionCreationOptions/exclusive}} is <code>true</code> and the |device|'s [=supports exclusive=] value is <code>false</code> return <code>false</code>.
+ 1. If {{XRSessionCreationOptions/exclusive}} is <code>false</code> and {{XRSessionCreationOptions/outputContext}} is <code>null</code>, return <code>false</code>
 
 Issue: Document restrictions and capabilities of an [=exclusive session=]
 
