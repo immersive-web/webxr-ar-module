@@ -108,7 +108,7 @@ Gaze Tracking {#gazetracking-security}
 
 While the API does not yet expose eye tracking capabilites a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of XR devices that have limited input capabilities, such as Google Carboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
 
-To prevent this risk the user agent MUST [=blur active sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST [=blur active sessions=] on non-focused pages.
+To prevent this risk the user agent MUST [=blur all sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST [=blur all sessions=] on non-focused pages.
 
 Trusted Environment {#trustedenvironment-security}
 -------------------
@@ -156,13 +156,13 @@ partial interface Navigator {
 
 The <dfn attribute for="Navigator">xr</dfn> object is the entry point to the API, used to query for {{XRDevice}}s available to the user agent. It has a <dfn>list of XR devices</dfn>, which MUST be initially empty, and a <dfn>default device</dfn> which MUST be initially <code>null</code>.
 
-The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MAY reuse the cached [=list of XR devices=]. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices. Each time the [=list of XR devices=] changes the user agent should <dfn>select a default XR device</dfn> by running the following steps:
+The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MAY reuse the cached [=list of XR devices=]. Enumerating the devices [=should not initialize device tracking=]. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices. Each time the [=list of XR devices=] changes the user agent should <dfn>select a default XR device</dfn> by running the following steps:
 
  1. Let |oldDefaultDevice| be the [=default device=].
  1. If the [=list of XR devices=] is empty set the [=default device=] to <code>null</code>.
  1. If the [=list of XR devices=] contains one device set the [=default device=] to that device.
  1. If the [=list of XR devices=] contains multiple devices set the [=default device=] to a device of the user agent's choosing.
- 1. If |oldDefaultDevice| does not equal the [=default device=] queue a task that fires a simple event named {{devicechange}} on the {{XR}} object.
+ 1. If this is not the first time devices have been enumerated and |oldDefaultDevice| does not equal the [=default device=] queue a task that fires a simple event named {{devicechange}} on the {{XR}} object.
 
 NOTE: The user agent is allowed to use any criteria it wishes to [=select a default XR device=] when the [=list of XR devices=] contains multiple devices. For example, the user agent may always select the first item in the list, or provide settings UI that allows users to manage device priority. Ideally the algorithm used to select the default device is stable and will result in the same device being selected across multiple browsing sessions.
 
@@ -230,19 +230,20 @@ When the <dfn method for="XRDevice">requestSession(options)</dfn> method is invo
  1. Let |exclusive| be the {{XRSessionCreationOptions/exclusive}} attribute of the |options| argument.
  1. If |exclusive| is <code>true</code> and |device|'s [=exclusive session=] is not <code>null</code>, <a>reject</a> |promise| with an {{InvalidStateError}} and abort these steps.
  1. If |exclusive| is <code>true</code> and the algorithm is not <a>triggered by user activation</a>, <a>reject</a> |promise| with a {{SecurityError}} and abort these steps.
- 1. Let |session| be a new {{XRSession}} matching the [=session description=] given by |options|.
+ 1. Let |session| be a new {{XRSession}}.
+ 1. [=Initialize the session=] |session| with the [=session description=] given by |options|.
  1. If |exclusive| is <code>true</code> set the |device|'s [=exclusive session=] to |session|.
  1. Else append |session| to |device|'s [=list of non-exclusive sessions=].
  1. <a>Resolve</a> |promise| with |session|.
 
 <div class="example">
-The following code finds an available {{XRDevice}}.
+The following code attempts to retrieve an exclusive {{XRSession}}.
 
 <pre highlight="js">
-let xrDevice;
+let xrSession;
 
-navigator.xr.requestDevice().then((device) => {
-  xrDevice = device;
+xrDevice.requestSession({ exclusive: true }).then((session) => {
+  xrSession = session;
 });
 </pre>
 </div>
@@ -250,6 +251,25 @@ navigator.xr.requestDevice().then((device) => {
 
 Session {#session}
 =======
+
+XRSessionCreationOptions {#xrsessioncreationoptions-interface}
+-------------------------
+
+<pre class="idl">
+dictionary XRSessionCreationOptions {
+  boolean exclusive = false;
+  XRPresentationContext outputContext;
+};
+</pre>
+
+The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
+
+To determine if an {{XRSessionCreationOptions}} |options| is <dfn>supported by the device</dfn> |device| run the following steps:
+
+ 1. If {{XRSessionCreationOptions/exclusive}} is <code>true</code> and the |device|'s [=supports exclusive=] value is <code>false</code> return <code>false</code>.
+ 1. If {{XRSessionCreationOptions/exclusive}} is <code>false</code> and {{XRSessionCreationOptions/outputContext}} is <code>null</code>, return <code>false</code>
+
+Issue: Document restrictions and capabilities of an [=exclusive session=]
 
 XRSession {#xrsession-interface}
 ---------
@@ -281,46 +301,58 @@ XRSession {#xrsession-interface}
 };
 </pre>
 
-An {{XRSession}} is the interface through with most interaction with an {{XRDevice}} happens. A page must request a session from the {{XRDevice}}, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, if it's an [=exclusive session=], define imagery to show on the {{XRDevice}}.
+Any interaction with XR hardware outside of enumeration is done via an {{XRSession}} object, which can only be retrieved by calling {{requestSession()}} on an {{XRDevice}}. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, present imagery to the user.
 
-The user agent, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
+The user agent, when possible, <dfn>SHOULD NOT initialize device tracking</dfn> or rendering capabilities until an {{XRSession}} has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
 
-<dfn attribute for="XRSession">device</dfn>
+When an {{XRSession}} is created by an {{XRDevice}} |device|, the user agent MUST <dfn>initialize the session</dfn> by running the following steps:
 
-<dfn attribute for="XRSession">exclusive</dfn>
+ 1. Let |session| be the newly created session.
+ 1. Let |options| be the {{XRSessionCreationOptions}} passed to {{requestSession()}}.
+ 1. Let |session|'s {{XRSession/device}} be |device|.
+ 1. Let |session|'s {{XRSession/exclusive}} be |options| {{XRSessionCreationOptions/exclusive}} value.
+ 1. Let |session|'s {{XRSession/outputContext}} be |options| {{XRSessionCreationOptions/outputContext}} value.
+ 1. Let |session|'s {{XRSession/depthNear}} be <code>0.1</code>.
+ 1. Let |session|'s {{XRSession/depthFar}} be <code>1000.0</code>.
+ 1. Let |session|'s {{XRSession/baseLayer}} be <code>null</code>.
+ 1. If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device's tracking and rendering capabilities.
 
-<dfn attribute for="XRSession">outputContext</dfn>
+A number of diffrent circumstances may <dfn>shut down the session</dfn>, which is permanent and irreversable. Once a session has been shut down the only way to access the {{XRDevice}}'s tracking or rendering capabilities again is to request a new session. Each {{XRSession}} has an <dfn>ended</dfn> value that indicates if it has been shut down, which is a boolean which MUST be initialized to <code>false</code>. When an {{XRSession}} is shut down the following steps are run:
 
-<dfn attribute for="XRSession">depthNear</dfn>
+ 1. Let |session| be the target {{XRSession}} object.
+ 1. Let |device| be |session|'s {{XRSession/device}} attribute's value.
+ 1. Set |session|'s [=ended=] value to <code>true</code>.
+ 1. If |device|'s [=exclusive session=] is equal to |session|, set |device|'s [=exclusive session=] to <code>null</code>.
+ 1. If |device|'s [=list of non-exclusive sessions=] contains |session|, remove it from the list.
+ 1. If no other features of the user agent are actively using them, perform the necessary platform-specific steps to shut down the device's tracking and rendering capabilities.
 
-<dfn attribute for="XRSession">depthFar</dfn>
+The <dfn method for="XRSession">end()</dfn> method provides a way to manually shut down a session. When invoked, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
-<dfn attribute for="XRSession">baseLayer</dfn>
+ 1. [=Shut down the session=] that the method was invoked on.
+ 1. <a>Resolve</a> |promise|.
 
 <dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
 
-Issue: Document how to <dfn>poll the device pose</dfn>
+The <dfn attribute for="XRSession">onblur</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{blur}} event type.
 
-<dfn method for="XRSession">end()</dfn>
+The <dfn attribute for="XRSession">onfocus</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{focus}} event type.
+
+The <dfn attribute for="XRSession">onresetpose</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{resetpose}} event type.
+
+The <dfn attribute for="XRSession">onend</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{end}} event type.
+
+Issue: Example of acquiring a session here.
 
 Issue: Document what happens when we <dfn>end the session</dfn>
 
-<dfn attribute for="XRSession">onblur</dfn> is an <a>Event handler IDL attribute</a> for the {{blur}} event type.
+Issue: Document effects when we <dfn lt="blur all sessions">blur the session</dfn>
 
-Issue: Document effects when we <dfn>blur active sessions</dfn>
-
-<dfn attribute for="XRSession">onfocus</dfn> is an <a>Event handler IDL attribute</a> for the {{focus}} event type.
-
-<dfn attribute for="XRSession">onresetpose</dfn> is an <a>Event handler IDL attribute</a> for the {{resetpose}} event type.
-
-<dfn attribute for="XRSession">onend</dfn> is an <a>Event handler IDL attribute</a> for the {{end}} event type.
-
-Issue: Example of acquiring a session here.
+Issue: Document how to <dfn>poll the device pose</dfn>
 
 Animation Frames {#animation-frames}
 ----------------
 
-Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which MUST be initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number which MUST initially be zero.
+Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which MUST be initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number which MUST initially be zero. Each {{XRSession}} also has a <dfn>processing frame</dfn> value, which is a boolean which MUST initially be set to <code>false</code>.
 
 When the <dfn method for="XRSession">requestAnimationFrame(callback)</dfn> method is called on an {{XRSession}} |session|, the user agent MUST run the following steps:
  
@@ -337,29 +369,10 @@ When the user agent is to <dfn>run the animation frame callbacks</dfn> for an {{
 
  1. Let |callbacks| be a list of the entries in |session|'s [=list of animation frame callback=], in the order in which they were added to the list.
  1. Set |session|'s [=list of animation frame callbacks=] to the empty list.
+ 1. Set |session|'s [=processing frame=] value to <code>true</code>.
  1. For each entry in |callbacks|, in order: <a>invoke the Web IDL callback function</a>, passing |now| and |frame| as the  arguments, and if an exception is thrown, <a>report the exception</a>.
+ 1. Set |session|'s [=processing frame=] value to <code>false</code>.
 
-
-XRSessionCreationOptions {#xrsessioncreationoptions-interface}
--------------------------
-
-The {{XRSessionCreationOptions}} interface
-
-<pre class="idl">
-dictionary XRSessionCreationOptions {
-  boolean exclusive = false;
-  XRPresentationContext outputContext;
-};
-</pre>
-
-The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
-
-To determine if a {{XRSessionCreationOptions}} |options| is <dfn>supported by the device</dfn> |device| run the following steps:
-
- 1. If {{XRSessionCreationOptions/exclusive}} is <code>true</code> and the |device|'s [=supports exclusive=] value is <code>false</code> return <code>false</code>.
- 1. If {{XRSessionCreationOptions/exclusive}} is <code>false</code> and {{XRSessionCreationOptions/outputContext}} is <code>null</code>, return <code>false</code>
-
-Issue: Document restrictions and capabilities of an [=exclusive session=]
 
 The XR Compositor {#compositor}
 -----------------

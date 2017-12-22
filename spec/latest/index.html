@@ -1440,7 +1440,7 @@ pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebXR Device API</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-12-21">21 December 2017</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2017-12-22">22 December 2017</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1462,7 +1462,7 @@ pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 21 December 2017,
+In addition, as of 22 December 2017,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1495,9 +1495,9 @@ Parts of this work may be from another specification document.  If so, those par
     <li>
      <a href="#session"><span class="secno">5</span> <span class="content">Session</span></a>
      <ol class="toc">
-      <li><a href="#xrsession-interface"><span class="secno">5.1</span> <span class="content">XRSession</span></a>
-      <li><a href="#animation-frames"><span class="secno">5.2</span> <span class="content">Animation Frames</span></a>
-      <li><a href="#xrsessioncreationoptions-interface"><span class="secno">5.3</span> <span class="content">XRSessionCreationOptions</span></a>
+      <li><a href="#xrsessioncreationoptions-interface"><span class="secno">5.1</span> <span class="content">XRSessionCreationOptions</span></a>
+      <li><a href="#xrsession-interface"><span class="secno">5.2</span> <span class="content">XRSession</span></a>
+      <li><a href="#animation-frames"><span class="secno">5.3</span> <span class="content">Animation Frames</span></a>
       <li><a href="#compositor"><span class="secno">5.4</span> <span class="content">The XR Compositor</span></a>
      </ol>
     <li>
@@ -1586,7 +1586,7 @@ Parts of this work may be from another specification document.  If so, those par
     <p>The WebXR Device API provides powerful new features which bring with them several unique privacy, security, and comfort risks that user agents must take steps to mitigate.</p>
     <h3 class="heading settled" data-level="3.1" id="gazetracking-security"><span class="secno">3.1. </span><span class="content">Gaze Tracking</span><a class="self-link" href="#gazetracking-security"></a></h3>
     <p>While the API does not yet expose eye tracking capabilites a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of XR devices that have limited input capabilities, such as Google Carboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent’s URL bar.</p>
-    <p>To prevent this risk the user agent MUST <a data-link-type="dfn" href="#blur-active-sessions" id="ref-for-blur-active-sessions">blur active sessions</a> when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST <a data-link-type="dfn" href="#blur-active-sessions" id="ref-for-blur-active-sessions①">blur active sessions</a> on non-focused pages.</p>
+    <p>To prevent this risk the user agent MUST <a data-link-type="dfn" href="#blur-all-sessions" id="ref-for-blur-all-sessions">blur all sessions</a> when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST <a data-link-type="dfn" href="#blur-all-sessions" id="ref-for-blur-all-sessions①">blur all sessions</a> on non-focused pages.</p>
     <h3 class="heading settled" data-level="3.2" id="trustedenvironment-security"><span class="secno">3.2. </span><span class="content">Trusted Environment</span><a class="self-link" href="#trustedenvironment-security"></a></h3>
     <p>If the virtual environment does not consistently track the user’s head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the user agent MUST provide a tracked, trusted environment and an <a data-link-type="dfn" href="#xr-compositor" id="ref-for-xr-compositor">XR Compositor</a> which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the user agent should be able to continue presenting a responsive, trusted UI.</p>
     <p>Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the XR experience. Removing the XR device in these cases may not always be a fast or practical option. To accomodate this the user agent SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebXR content and displays the user agent’s trusted UI.</p>
@@ -1613,7 +1613,7 @@ Parts of this work may be from another specification document.  If so, those par
 };
 </pre>
     <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="Navigator" data-dfn-type="attribute" data-export="" id="dom-navigator-xr"><code>xr</code></dfn> object is the entry point to the API, used to query for <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②">XRDevice</a></code>s available to the user agent. It has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-xr-devices">list of XR devices</dfn>, which MUST be initially empty, and a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="default-device">default device</dfn> which MUST be initially <code>null</code>.</p>
-    <p>The user agent MUST be able to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="enumerate-xr-devices">enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices">list of XR devices</a>. Subsequent algorithms requesting enumeration MAY reuse the cached <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices①">list of XR devices</a>. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices②">list of XR devices</a> and removing disconnected devices. Each time the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices③">list of XR devices</a> changes the user agent should <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="select-a-default-xr-device">select a default XR device</dfn> by running the following steps:</p>
+    <p>The user agent MUST be able to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="enumerate-xr-devices">enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices">list of XR devices</a>. Subsequent algorithms requesting enumeration MAY reuse the cached <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices①">list of XR devices</a>. Enumerating the devices <a data-link-type="dfn" href="#should-not-initialize-device-tracking" id="ref-for-should-not-initialize-device-tracking">should not initialize device tracking</a>. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices②">list of XR devices</a> and removing disconnected devices. Each time the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices③">list of XR devices</a> changes the user agent should <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="select-a-default-xr-device">select a default XR device</dfn> by running the following steps:</p>
     <ol>
      <li data-md="">
       <p>Let <var>oldDefaultDevice</var> be the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device">default device</a>.</p>
@@ -1624,7 +1624,7 @@ Parts of this work may be from another specification document.  If so, those par
      <li data-md="">
       <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑥">list of XR devices</a> contains multiple devices set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device③">default device</a> to a device of the user agent’s choosing.</p>
      <li data-md="">
-      <p>If <var>oldDefaultDevice</var> does not equal the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device④">default device</a> queue a task that fires a simple event named <code class="idl"><a data-link-type="idl" href="#eventdef-xr-devicechange" id="ref-for-eventdef-xr-devicechange">devicechange</a></code> on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr①">XR</a></code> object.</p>
+      <p>If this is not the first time devices have been enumerated and <var>oldDefaultDevice</var> does not equal the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device④">default device</a> queue a task that fires a simple event named <code class="idl"><a data-link-type="idl" href="#eventdef-xr-devicechange" id="ref-for-eventdef-xr-devicechange">devicechange</a></code> on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr①">XR</a></code> object.</p>
     </ol>
     <p class="note" role="note"><span>NOTE:</span> The user agent is allowed to use any criteria it wishes to <a data-link-type="dfn" href="#select-a-default-xr-device" id="ref-for-select-a-default-xr-device">select a default XR device</a> when the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑦">list of XR devices</a> contains multiple devices. For example, the user agent may always select the first item in the list, or provide settings UI that allows users to manage device priority. Ideally the algorithm used to select the default device is stable and will result in the same device being selected across multiple browsing sessions.</p>
     <p>The page can <dfn data-dfn-type="dfn" data-noexport="" id="request-a-device">request a device<a class="self-link" href="#request-a-device"></a></dfn> by calling the <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="method" data-export="" id="dom-xr-requestdevice"><code>requestDevice()</code></dfn> method on the <code class="idl"><a data-link-type="idl" href="#dom-navigator-xr" id="ref-for-dom-navigator-xr①">xr</a></code> object. When invoked it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel">in parallel</a>:</p>
@@ -1685,7 +1685,9 @@ Parts of this work may be from another specification document.  If so, those par
      <li data-md="">
       <p>If <var>exclusive</var> is <code>true</code> and the algorithm is not <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/interaction.html#triggered-by-user-activation" id="ref-for-triggered-by-user-activation">triggered by user activation</a>, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise③">reject</a> <var>promise</var> with a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#securityerror" id="ref-for-securityerror">SecurityError</a></code> and abort these steps.</p>
      <li data-md="">
-      <p>Let <var>session</var> be a new <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②">XRSession</a></code> matching the <a data-link-type="dfn" href="#session-description" id="ref-for-session-description">session description</a> given by <var>options</var>.</p>
+      <p>Let <var>session</var> be a new <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②">XRSession</a></code>.</p>
+     <li data-md="">
+      <p><a data-link-type="dfn" href="#initialize-the-session" id="ref-for-initialize-the-session">Initialize the session</a> <var>session</var> with the <a data-link-type="dfn" href="#session-description" id="ref-for-session-description">session description</a> given by <var>options</var>.</p>
      <li data-md="">
       <p>If <var>exclusive</var> is <code>true</code> set the <var>device</var>’s <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session①">exclusive session</a> to <var>session</var>.</p>
      <li data-md="">
@@ -1693,26 +1695,41 @@ Parts of this work may be from another specification document.  If so, those par
      <li data-md="">
       <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise②">Resolve</a> <var>promise</var> with <var>session</var>.</p>
     </ol>
-    <div class="example" id="example-c3f32221">
-     <a class="self-link" href="#example-c3f32221"></a> The following code finds an available <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⓪">XRDevice</a></code>. 
-<pre class="highlight"><span class="kd">let</span> xrDevice<span class="p">;</span>
+    <div class="example" id="example-c61b7d0e">
+     <a class="self-link" href="#example-c61b7d0e"></a> The following code attempts to retrieve an exclusive <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession③">XRSession</a></code>. 
+<pre class="highlight"><span class="kd">let</span> xrSession<span class="p">;</span>
 
-navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span class="p">().</span>then<span class="p">((</span>device<span class="p">)</span> <span class="p">=></span> <span class="p">{</span>
-  xrDevice <span class="o">=</span> device<span class="p">;</span>
+xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusive<span class="o">:</span> <span class="kc">true</span> <span class="p">}).</span>then<span class="p">((</span>session<span class="p">)</span> <span class="p">=></span> <span class="p">{</span>
+  xrSession <span class="o">=</span> session<span class="p">;</span>
 <span class="p">});</span>
 </pre>
     </div>
     <h2 class="heading settled" data-level="5" id="session"><span class="secno">5. </span><span class="content">Session</span><a class="self-link" href="#session"></a></h2>
-    <h3 class="heading settled" data-level="5.1" id="xrsession-interface"><span class="secno">5.1. </span><span class="content">XRSession</span><a class="self-link" href="#xrsession-interface"></a></h3>
+    <h3 class="heading settled" data-level="5.1" id="xrsessioncreationoptions-interface"><span class="secno">5.1. </span><span class="content">XRSessionCreationOptions</span><a class="self-link" href="#xrsessioncreationoptions-interface"></a></h3>
+<pre class="idl highlight def"><span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-xrsessioncreationoptions"><code>XRSessionCreationOptions</code></dfn> {
+  <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean①"><span class="kt">boolean</span></a> <dfn class="nv dfn-paneled idl-code" data-default="false" data-dfn-for="XRSessionCreationOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-xrsessioncreationoptions-exclusive"><code>exclusive</code></dfn> = <span class="kt">false</span>;
+  <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext">XRPresentationContext</a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSessionCreationOptions" data-dfn-type="dict-member" data-export="" data-type="XRPresentationContext " id="dom-xrsessioncreationoptions-outputcontext"><code>outputContext</code></dfn>;
+};
+</pre>
+    <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions②">XRSessionCreationOptions</a></code> dictionary provides a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="session-description">session description</dfn>, indicating the desired properties of a session to be returned from <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession①">requestSession()</a></code>.</p>
+    <p>To determine if an <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions③">XRSessionCreationOptions</a></code> <var>options</var> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="supported-by-the-device">supported by the device</dfn> <var>device</var> run the following steps:</p>
+    <ol>
+     <li data-md="">
+      <p>If <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive①">exclusive</a></code> is <code>true</code> and the <var>device</var>’s <a data-link-type="dfn" href="#supports-exclusive" id="ref-for-supports-exclusive">supports exclusive</a> value is <code>false</code> return <code>false</code>.</p>
+     <li data-md="">
+      <p>If <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive②">exclusive</a></code> is <code>false</code> and <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-outputcontext" id="ref-for-dom-xrsessioncreationoptions-outputcontext">outputContext</a></code> is <code>null</code>, return <code>false</code></p>
+    </ol>
+    <p class="issue" id="issue-5e06fb11"><a class="self-link" href="#issue-5e06fb11"></a> Document restrictions and capabilities of an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session②">exclusive session</a></p>
+    <h3 class="heading settled" data-level="5.2" id="xrsession-interface"><span class="secno">5.2. </span><span class="content">XRSession</span><a class="self-link" href="#xrsession-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext③">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed②">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrsession"><code>XRSession</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget②">EventTarget</a> {
   // Attributes
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①①">XRDevice</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device">device</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean①"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-xrsession-exclusive" id="ref-for-dom-xrsession-exclusive">exclusive</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext">XRPresentationContext</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRPresentationContext" href="#dom-xrsession-outputcontext" id="ref-for-dom-xrsession-outputcontext">outputContext</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⓪">XRDevice</a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" data-readonly="" data-type="XRDevice" id="dom-xrsession-device"><code>device</code></dfn>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean②"><span class="kt">boolean</span></a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" data-readonly="" data-type="boolean" id="dom-xrsession-exclusive"><code>exclusive</code></dfn>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext①">XRPresentationContext</a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" data-readonly="" data-type="XRPresentationContext" id="dom-xrsession-outputcontext"><code>outputContext</code></dfn>;
 
-  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-type="double" href="#dom-xrsession-depthnear" id="ref-for-dom-xrsession-depthnear">depthNear</a>;
-  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double①"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-type="double" href="#dom-xrsession-depthfar" id="ref-for-dom-xrsession-depthfar">depthFar</a>;
-  <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrlayer" id="ref-for-xrlayer">XRLayer</a> <a class="nv idl-code" data-link-type="attribute" data-type="XRLayer" href="#dom-xrsession-baselayer" id="ref-for-dom-xrsession-baselayer">baseLayer</a>;
+  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double"><span class="kt">double</span></a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" data-type="double" id="dom-xrsession-depthnear"><code>depthNear</code></dfn>;
+  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double①"><span class="kt">double</span></a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" data-type="double" id="dom-xrsession-depthfar"><code>depthFar</code></dfn>;
+  <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrlayer" id="ref-for-xrlayer">XRLayer</a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" data-type="XRLayer" id="dom-xrsession-baselayer"><code>baseLayer</code></dfn>;
 
   // Methods
   <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrframeofreference" id="ref-for-xrframeofreference">XRFrameOfReference</a>> <a class="nv idl-code" data-link-type="method" href="#dom-xrsession-requestframeofreference" id="ref-for-dom-xrsession-requestframeofreference">requestFrameOfReference</a>(<a class="n" data-link-type="idl-name" href="#enumdef-xrframeofreferencetype" id="ref-for-enumdef-xrframeofreferencetype">XRFrameOfReferenceType</a> <dfn class="nv idl-code" data-dfn-for="XRSession/requestFrameOfReference(type, options), XRSession/requestFrameOfReference(type)" data-dfn-type="argument" data-export="" id="dom-xrsession-requestframeofreference-type-options-type"><code>type</code><a class="self-link" href="#dom-xrsession-requestframeofreference-type-options-type"></a></dfn>, <span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrframeofreferenceoptions" id="ref-for-dictdef-xrframeofreferenceoptions">XRFrameOfReferenceOptions</a> <dfn class="nv idl-code" data-dfn-for="XRSession/requestFrameOfReference(type, options), XRSession/requestFrameOfReference(type)" data-dfn-type="argument" data-export="" id="dom-xrsession-requestframeofreference-type-options-options"><code>options</code><a class="self-link" href="#dom-xrsession-requestframeofreference-type-options-options"></a></dfn>);
@@ -1729,27 +1746,63 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler" id="ref-for-eventhandler④">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-xrsession-onend" id="ref-for-dom-xrsession-onend">onend</a>;
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession③">XRSession</a></code> is the interface through with most interaction with an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①②">XRDevice</a></code> happens. A page must request a session from the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①③">XRDevice</a></code>, which may reject the request for a number of reasons. Once a session has been successfully acquired it can be used to <a data-link-type="dfn" href="#poll-the-device-pose" id="ref-for-poll-the-device-pose">poll the device pose</a>, query information about the user’s environment and, if it’s an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session②">exclusive session</a>, define imagery to show on the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①④">XRDevice</a></code>.</p>
-    <p>The user agent, when possible, SHOULD NOT initialize device tracking or rendering capabilities until a session has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they’re not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware’s presence without initializing tracking, however, so this is only a strong recommendation.</p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-device"><code>device</code></dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-exclusive"><code>exclusive</code></dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-outputcontext"><code>outputContext</code></dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-depthnear"><code>depthNear</code></dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-depthfar"><code>depthFar</code></dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-baselayer"><code>baseLayer</code></dfn></p>
+    <p>Any interaction with XR hardware outside of enumeration is done via an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession④">XRSession</a></code> object, which can only be retrieved by calling <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession②">requestSession()</a></code> on an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①①">XRDevice</a></code>. Once a session has been successfully acquired it can be used to <a data-link-type="dfn" href="#poll-the-device-pose" id="ref-for-poll-the-device-pose">poll the device pose</a>, query information about the user’s environment and, present imagery to the user.</p>
+    <p>The user agent, when possible, <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="should-not-initialize-device-tracking">SHOULD NOT initialize device tracking</dfn> or rendering capabilities until an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑤">XRSession</a></code> has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they’re not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware’s presence without initializing tracking, however, so this is only a strong recommendation.</p>
+    <p>When an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑥">XRSession</a></code> is created by an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①②">XRDevice</a></code> <var>device</var>, the user agent MUST <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="initialize-the-session">initialize the session</dfn> by running the following steps:</p>
+    <ol>
+     <li data-md="">
+      <p>Let <var>session</var> be the newly created session.</p>
+     <li data-md="">
+      <p>Let <var>options</var> be the <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions④">XRSessionCreationOptions</a></code> passed to <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession③">requestSession()</a></code>.</p>
+     <li data-md="">
+      <p>Let <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device">device</a></code> be <var>device</var>.</p>
+     <li data-md="">
+      <p>Let <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-exclusive" id="ref-for-dom-xrsession-exclusive">exclusive</a></code> be <var>options</var> <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive③">exclusive</a></code> value.</p>
+     <li data-md="">
+      <p>Let <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-outputcontext" id="ref-for-dom-xrsession-outputcontext">outputContext</a></code> be <var>options</var> <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-outputcontext" id="ref-for-dom-xrsessioncreationoptions-outputcontext①">outputContext</a></code> value.</p>
+     <li data-md="">
+      <p>Let <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-depthnear" id="ref-for-dom-xrsession-depthnear">depthNear</a></code> be <code>0.1</code>.</p>
+     <li data-md="">
+      <p>Let <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-depthfar" id="ref-for-dom-xrsession-depthfar">depthFar</a></code> be <code>1000.0</code>.</p>
+     <li data-md="">
+      <p>Let <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-baselayer" id="ref-for-dom-xrsession-baselayer">baseLayer</a></code> be <code>null</code>.</p>
+     <li data-md="">
+      <p>If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device’s tracking and rendering capabilities.</p>
+    </ol>
+    <p>A number of diffrent circumstances may <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="shut-down-the-session">shut down the session</dfn>, which is permanent and irreversable. Once a session has been shut down the only way to access the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①③">XRDevice</a></code>'s tracking or rendering capabilities again is to request a new session. Each <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑦">XRSession</a></code> has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="ended">ended</dfn> value that indicates if it has been shut down, which is a boolean which MUST be initialized to <code>false</code>. When an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑧">XRSession</a></code> is shut down the following steps are run:</p>
+    <ol>
+     <li data-md="">
+      <p>Let <var>session</var> be the target <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑨">XRSession</a></code> object.</p>
+     <li data-md="">
+      <p>Let <var>device</var> be <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device①">device</a></code> attribute’s value.</p>
+     <li data-md="">
+      <p>Set <var>session</var>’s <a data-link-type="dfn" href="#ended" id="ref-for-ended">ended</a> value to <code>true</code>.</p>
+     <li data-md="">
+      <p>If <var>device</var>’s <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session③">exclusive session</a> is equal to <var>session</var>, set <var>device</var>’s <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session④">exclusive session</a> to <code>null</code>.</p>
+     <li data-md="">
+      <p>If <var>device</var>’s <a data-link-type="dfn" href="#list-of-non-exclusive-sessions" id="ref-for-list-of-non-exclusive-sessions①">list of non-exclusive sessions</a> contains <var>session</var>, remove it from the list.</p>
+     <li data-md="">
+      <p>If no other features of the user agent are actively using them, perform the necessary platform-specific steps to shut down the device’s tracking and rendering capabilities.</p>
+    </ol>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" id="dom-xrsession-end"><code>end()</code></dfn> method provides a way to manually shut down a session. When invoked, it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise③">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel③">in parallel</a>:</p>
+    <ol>
+     <li data-md="">
+      <p><a data-link-type="dfn" href="#shut-down-the-session" id="ref-for-shut-down-the-session">Shut down the session</a> that the method was invoked on.</p>
+     <li data-md="">
+      <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise③">Resolve</a> <var>promise</var>.</p>
+    </ol>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" data-lt="requestFrameOfReference(type, options)|requestFrameOfReference(type)" id="dom-xrsession-requestframeofreference"><code>requestFrameOfReference(type, options)</code></dfn></p>
-    <p class="issue" id="issue-cdb417b3"><a class="self-link" href="#issue-cdb417b3"></a> Document how to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="poll-the-device-pose">poll the device pose</dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" id="dom-xrsession-end"><code>end()</code></dfn></p>
-    <p class="issue" id="issue-398b8983"><a class="self-link" href="#issue-398b8983"></a> Document what happens when we <dfn data-dfn-type="dfn" data-noexport="" id="end-the-session">end the session<a class="self-link" href="#end-the-session"></a></dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onblur"><code>onblur</code></dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes①">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-blur" id="ref-for-eventdef-xrsession-blur">blur</a></code> event type.</p>
-    <p class="issue" id="issue-8e3cf368"><a class="self-link" href="#issue-8e3cf368"></a> Document effects when we <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="blur-active-sessions">blur active sessions</dfn></p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onfocus"><code>onfocus</code></dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes②">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-focus" id="ref-for-eventdef-xrsession-focus">focus</a></code> event type.</p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onresetpose"><code>onresetpose</code></dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes③">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-resetpose" id="ref-for-eventdef-xrsession-resetpose">resetpose</a></code> event type.</p>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onend"><code>onend</code></dfn> is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes④">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-end" id="ref-for-eventdef-xrsession-end">end</a></code> event type.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onblur"><code>onblur</code></dfn> attribute is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes①">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-blur" id="ref-for-eventdef-xrsession-blur">blur</a></code> event type.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onfocus"><code>onfocus</code></dfn> attribute is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes②">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-focus" id="ref-for-eventdef-xrsession-focus">focus</a></code> event type.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onresetpose"><code>onresetpose</code></dfn> attribute is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes③">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-resetpose" id="ref-for-eventdef-xrsession-resetpose">resetpose</a></code> event type.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export="" id="dom-xrsession-onend"><code>onend</code></dfn> attribute is an <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-idl-attributes" id="ref-for-event-handler-idl-attributes④">Event handler IDL attribute</a> for the <code class="idl"><a data-link-type="idl" href="#eventdef-xrsession-end" id="ref-for-eventdef-xrsession-end">end</a></code> event type.</p>
     <p class="issue" id="issue-2db59f6a"><a class="self-link" href="#issue-2db59f6a"></a> Example of acquiring a session here.</p>
-    <h3 class="heading settled" data-level="5.2" id="animation-frames"><span class="secno">5.2. </span><span class="content">Animation Frames</span><a class="self-link" href="#animation-frames"></a></h3>
-    <p>Each <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession④">XRSession</a></code> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-animation-frame-callbacks">list of animation frame callbacks</dfn>, which MUST be initially empty, and an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="animation-frame-callback-identifier">animation frame callback identifier</dfn>, which is a number which MUST initially be zero.</p>
-    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" id="dom-xrsession-requestanimationframe"><code>requestAnimationFrame(callback)</code></dfn> method is called on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑤">XRSession</a></code> <var>session</var>, the user agent MUST run the following steps:</p>
+    <p class="issue" id="issue-398b8983"><a class="self-link" href="#issue-398b8983"></a> Document what happens when we <dfn data-dfn-type="dfn" data-noexport="" id="end-the-session">end the session<a class="self-link" href="#end-the-session"></a></dfn></p>
+    <p class="issue" id="issue-5edd6583"><a class="self-link" href="#issue-5edd6583"></a> Document effects when we <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="blur all sessions" data-noexport="" id="blur-all-sessions">blur the session</dfn></p>
+    <p class="issue" id="issue-cdb417b3"><a class="self-link" href="#issue-cdb417b3"></a> Document how to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="poll-the-device-pose">poll the device pose</dfn></p>
+    <h3 class="heading settled" data-level="5.3" id="animation-frames"><span class="secno">5.3. </span><span class="content">Animation Frames</span><a class="self-link" href="#animation-frames"></a></h3>
+    <p>Each <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⓪">XRSession</a></code> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-animation-frame-callbacks">list of animation frame callbacks</dfn>, which MUST be initially empty, and an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="animation-frame-callback-identifier">animation frame callback identifier</dfn>, which is a number which MUST initially be zero. Each <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①①">XRSession</a></code> also has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="processing-frame">processing frame</dfn> value, which is a boolean which MUST initially be set to <code>false</code>.</p>
+    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" id="dom-xrsession-requestanimationframe"><code>requestAnimationFrame(callback)</code></dfn> method is called on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①②">XRSession</a></code> <var>session</var>, the user agent MUST run the following steps:</p>
     <ol>
      <li data-md="">
       <p>Increment <var>session</var>’s <a data-link-type="dfn" href="#animation-frame-callback-identifier" id="ref-for-animation-frame-callback-identifier">animation frame callback identifier</a> by one.</p>
@@ -1758,38 +1811,26 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li data-md="">
       <p>Return <var>session</var>’s <a data-link-type="dfn" href="#animation-frame-callback-identifier" id="ref-for-animation-frame-callback-identifier②">animation frame callback identifier</a>’s current value.</p>
     </ol>
-    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" id="dom-xrsession-cancelanimationframe"><code>cancelAnimationFrame(handle)</code></dfn> method is called on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑥">XRSession</a></code> <var>session</var>, the user agent must run the following steps:</p>
+    <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export="" id="dom-xrsession-cancelanimationframe"><code>cancelAnimationFrame(handle)</code></dfn> method is called on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①③">XRSession</a></code> <var>session</var>, the user agent must run the following steps:</p>
     <ol>
      <li data-md="">
       <p>Find the entry in <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks①">list of animation frame callbacks</a> that is associated with the value given by the method’s <var>handle</var> argument.</p>
      <li data-md="">
       <p>If there is such an entry, remove it from <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks②">list of animation frame callbacks</a>.</p>
     </ol>
-    <p>When the user agent is to <dfn data-dfn-type="dfn" data-noexport="" id="run-the-animation-frame-callbacks">run the animation frame callbacks<a class="self-link" href="#run-the-animation-frame-callbacks"></a></dfn> for an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑦">XRSession</a></code> <var>session</var> with a timestamp <var>now</var> and an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe">XRPresentationFrame</a></code> <var>frame</var>, it must run the following steps:</p>
+    <p>When the user agent is to <dfn data-dfn-type="dfn" data-noexport="" id="run-the-animation-frame-callbacks">run the animation frame callbacks<a class="self-link" href="#run-the-animation-frame-callbacks"></a></dfn> for an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①④">XRSession</a></code> <var>session</var> with a timestamp <var>now</var> and an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe">XRPresentationFrame</a></code> <var>frame</var>, it must run the following steps:</p>
     <ol>
      <li data-md="">
       <p>Let <var>callbacks</var> be a list of the entries in <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks③">list of animation frame callback</a>, in the order in which they were added to the list.</p>
      <li data-md="">
       <p>Set <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks④">list of animation frame callbacks</a> to the empty list.</p>
      <li data-md="">
+      <p>Set <var>session</var>’s <a data-link-type="dfn" href="#processing-frame" id="ref-for-processing-frame">processing frame</a> value to <code>true</code>.</p>
+     <li data-md="">
       <p>For each entry in <var>callbacks</var>, in order: <a data-link-type="dfn" href="https://www.w3.org/TR/WebIDL-1/#es-invoking-callback-functions" id="ref-for-es-invoking-callback-functions">invoke the Web IDL callback function</a>, passing <var>now</var> and <var>frame</var> as the  arguments, and if an exception is thrown, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception" id="ref-for-report-the-exception">report the exception</a>.</p>
-    </ol>
-    <h3 class="heading settled" data-level="5.3" id="xrsessioncreationoptions-interface"><span class="secno">5.3. </span><span class="content">XRSessionCreationOptions</span><a class="self-link" href="#xrsessioncreationoptions-interface"></a></h3>
-    <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions②">XRSessionCreationOptions</a></code> interface</p>
-<pre class="idl highlight def"><span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-xrsessioncreationoptions"><code>XRSessionCreationOptions</code></dfn> {
-  <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean②"><span class="kt">boolean</span></a> <dfn class="nv dfn-paneled idl-code" data-default="false" data-dfn-for="XRSessionCreationOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-xrsessioncreationoptions-exclusive"><code>exclusive</code></dfn> = <span class="kt">false</span>;
-  <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext①">XRPresentationContext</a> <dfn class="nv dfn-paneled idl-code" data-dfn-for="XRSessionCreationOptions" data-dfn-type="dict-member" data-export="" data-type="XRPresentationContext " id="dom-xrsessioncreationoptions-outputcontext"><code>outputContext</code></dfn>;
-};
-</pre>
-    <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions③">XRSessionCreationOptions</a></code> dictionary provides a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="session-description">session description</dfn>, indicating the desired properties of a session to be returned from <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession①">requestSession()</a></code>.</p>
-    <p>To determine if a <code class="idl"><a data-link-type="idl" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions④">XRSessionCreationOptions</a></code> <var>options</var> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="supported-by-the-device">supported by the device</dfn> <var>device</var> run the following steps:</p>
-    <ol>
      <li data-md="">
-      <p>If <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive①">exclusive</a></code> is <code>true</code> and the <var>device</var>’s <a data-link-type="dfn" href="#supports-exclusive" id="ref-for-supports-exclusive">supports exclusive</a> value is <code>false</code> return <code>false</code>.</p>
-     <li data-md="">
-      <p>If <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-exclusive" id="ref-for-dom-xrsessioncreationoptions-exclusive②">exclusive</a></code> is <code>false</code> and <code class="idl"><a data-link-type="idl" href="#dom-xrsessioncreationoptions-outputcontext" id="ref-for-dom-xrsessioncreationoptions-outputcontext">outputContext</a></code> is <code>null</code>, return <code>false</code></p>
+      <p>Set <var>session</var>’s <a data-link-type="dfn" href="#processing-frame" id="ref-for-processing-frame①">processing frame</a> value to <code>false</code>.</p>
     </ol>
-    <p class="issue" id="issue-5e06fb11"><a class="self-link" href="#issue-5e06fb11"></a> Document restrictions and capabilities of an <a data-link-type="dfn" href="#exclusive-session" id="ref-for-exclusive-session③">exclusive session</a></p>
     <h3 class="heading settled" data-level="5.4" id="compositor"><span class="secno">5.4. </span><span class="content">The XR Compositor</span><a class="self-link" href="#compositor"></a></h3>
     <p class="issue" id="issue-88218c4e"><a class="self-link" href="#issue-88218c4e"></a> This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.</p>
     <p>The user agent MUST maintain an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="xr-compositor">XR Compositor</dfn> which handles layer composition and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer">XRWebGLLayer</a></code> sources to prevent the page from corrupting the compositor state or reading back content from other pages.</p>
@@ -1805,7 +1846,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <a class="n" data-link-type="idl-name" href="#xrdevicepose" id="ref-for-xrdevicepose">XRDevicePose</a>? <a class="nv idl-code" data-link-type="method" href="#dom-xrpresentationframe-getdevicepose" id="ref-for-dom-xrpresentationframe-getdevicepose">getDevicePose</a>(<a class="n" data-link-type="idl-name" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem">XRCoordinateSystem</a> <dfn class="nv idl-code" data-dfn-for="XRPresentationFrame/getDevicePose(coordinateSystem)" data-dfn-type="argument" data-export="" id="dom-xrpresentationframe-getdevicepose-coordinatesystem-coordinatesystem"><code>coordinateSystem</code><a class="self-link" href="#dom-xrpresentationframe-getdevicepose-coordinatesystem-coordinatesystem"></a></dfn>);
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe②">XRPresentationFrame</a></code> provides all the values needed to render a single frame of an XR scene to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑤">XRDevice</a></code>'s display. Applications can only aquire an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe③">XRPresentationFrame</a></code> by calling <code class="idl"><a data-link-type="idl" href="#dom-xrsession-requestanimationframe" id="ref-for-dom-xrsession-requestanimationframe①">requestAnimationFrame()</a></code> on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession⑧">XRSession</a></code> with an <code class="idl"><a data-link-type="idl" href="#callbackdef-xrframerequestcallback" id="ref-for-callbackdef-xrframerequestcallback②">XRFrameRequestCallback</a></code>. When the callback is called it will be passed an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe④">XRPresentationFrame</a></code>.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe②">XRPresentationFrame</a></code> provides all the values needed to render a single frame of an XR scene to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①④">XRDevice</a></code>'s display. Applications can only aquire an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe③">XRPresentationFrame</a></code> by calling <code class="idl"><a data-link-type="idl" href="#dom-xrsession-requestanimationframe" id="ref-for-dom-xrsession-requestanimationframe①">requestAnimationFrame()</a></code> on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑤">XRSession</a></code> with an <code class="idl"><a data-link-type="idl" href="#callbackdef-xrframerequestcallback" id="ref-for-callbackdef-xrframerequestcallback②">XRFrameRequestCallback</a></code>. When the callback is called it will be passed an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe④">XRPresentationFrame</a></code>.</p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRPresentationFrame" data-dfn-type="attribute" data-export="" id="dom-xrpresentationframe-views"><code>views</code></dfn></p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRPresentationFrame" data-dfn-type="method" data-export="" id="dom-xrpresentationframe-getdevicepose"><code>getDevicePose(coordinateSystem)</code></dfn></p>
     <h2 class="heading settled" data-level="7" id="view"><span class="secno">7. </span><span class="content">Views</span><a class="self-link" href="#view"></a></h2>
@@ -1849,19 +1890,19 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-Float32Array" id="ref-for-idl-Float32Array③"><span class="kt">Float32Array</span></a> <a class="nv idl-code" data-link-type="method" href="#dom-xrdevicepose-getviewmatrix" id="ref-for-dom-xrdevicepose-getviewmatrix">getViewMatrix</a>(<a class="n" data-link-type="idl-name" href="#xrview" id="ref-for-xrview②">XRView</a> <dfn class="nv idl-code" data-dfn-for="XRDevicePose/getViewMatrix(view)" data-dfn-type="argument" data-export="" id="dom-xrdevicepose-getviewmatrix-view-view"><code>view</code><a class="self-link" href="#dom-xrdevicepose-getviewmatrix-view-view"></a></dfn>);
 };
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrdevicepose" id="ref-for-xrdevicepose①">XRDevicePose</a></code> describes the position and orientation of an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑥">XRDevice</a></code> relative to the <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem①">XRCoordinateSystem</a></code> it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of an XR scene.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrdevicepose" id="ref-for-xrdevicepose①">XRDevicePose</a></code> describes the position and orientation of an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑤">XRDevice</a></code> relative to the <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem①">XRCoordinateSystem</a></code> it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of an XR scene.</p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRDevicePose" data-dfn-type="attribute" data-export="" id="dom-xrdevicepose-posemodelmatrix"><code>poseModelMatrix</code></dfn></p>
     <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevicePose" data-dfn-type="method" data-export="" id="dom-xrdevicepose-getviewmatrix"><code>getViewMatrix(view)</code></dfn> method returns a <a data-link-type="dfn" href="#matrix" id="ref-for-matrix①">matrix</a> describing the view transform to be used when rendering the passed <code class="idl"><a data-link-type="idl" href="#xrview" id="ref-for-xrview③">XRView</a></code>. The matrices represent the inverse of the model matrix of the associated viewpoint.</p>
     <h2 class="heading settled" data-level="9" id="layers"><span class="secno">9. </span><span class="content">Layers</span><a class="self-link" href="#layers"></a></h2>
     <h3 class="heading settled" data-level="9.1" id="xrlayer-interface"><span class="secno">9.1. </span><span class="content">XRLayer</span><a class="self-link" href="#xrlayer-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext⑧">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑦">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrlayer"><code>XRLayer</code></dfn> {};
 </pre>
-    <p>An <code class="idl"><a data-link-type="idl" href="#xrlayer" id="ref-for-xrlayer②">XRLayer</a></code> defines a source of bitmap images and a description of how the image is to be rendered in the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑦">XRDevice</a></code>. Initially only one type of layer, the <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer①">XRWebGLLayer</a></code>, is defined but future revisions of the spec may extend the available layer types.</p>
+    <p>An <code class="idl"><a data-link-type="idl" href="#xrlayer" id="ref-for-xrlayer②">XRLayer</a></code> defines a source of bitmap images and a description of how the image is to be rendered in the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑥">XRDevice</a></code>. Initially only one type of layer, the <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer①">XRWebGLLayer</a></code>, is defined but future revisions of the spec may extend the available layer types.</p>
     <h3 class="heading settled" data-level="9.2" id="xrwebgllayer-interface"><span class="secno">9.2. </span><span class="content">XRWebGLLayer</span><a class="self-link" href="#xrwebgllayer-interface"></a></h3>
 <pre class="idl highlight def"><span class="kt">typedef</span> (<a class="n" data-link-type="idl-name" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontext" id="ref-for-webglrenderingcontext">WebGLRenderingContext</a> <span class="kt">or</span>
          <a class="n" data-link-type="idl-name" href="https://www.khronos.org/registry/webgl/specs/latest/2.0/#webgl2renderingcontext" id="ref-for-webgl2renderingcontext">WebGL2RenderingContext</a>) <dfn class="nv dfn-paneled idl-code" data-dfn-type="typedef" data-export="" id="typedefdef-xrwebglrenderingcontext"><code>XRWebGLRenderingContext</code></dfn>;
 
-[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext⑨">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑧">Exposed</a>=<span class="n">Window</span>, <dfn class="nv idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="constructor" data-export="" data-lt="XRWebGLLayer(session, context, layerInit)|XRWebGLLayer(session, context)" id="dom-xrwebgllayer-xrwebgllayer"><code>Constructor</code><a class="self-link" href="#dom-xrwebgllayer-xrwebgllayer"></a></dfn>(<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession⑨">XRSession</a> <dfn class="nv idl-code" data-dfn-for="XRWebGLLayer/XRWebGLLayer(session, context, layerInit)" data-dfn-type="argument" data-export="" id="dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-session"><code>session</code><a class="self-link" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-session"></a></dfn>,
+[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext⑨">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑧">Exposed</a>=<span class="n">Window</span>, <dfn class="nv idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="constructor" data-export="" data-lt="XRWebGLLayer(session, context, layerInit)|XRWebGLLayer(session, context)" id="dom-xrwebgllayer-xrwebgllayer"><code>Constructor</code><a class="self-link" href="#dom-xrwebgllayer-xrwebgllayer"></a></dfn>(<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⑥">XRSession</a> <dfn class="nv idl-code" data-dfn-for="XRWebGLLayer/XRWebGLLayer(session, context, layerInit)" data-dfn-type="argument" data-export="" id="dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-session"><code>session</code><a class="self-link" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-session"></a></dfn>,
              <a class="n" data-link-type="idl-name" href="#typedefdef-xrwebglrenderingcontext" id="ref-for-typedefdef-xrwebglrenderingcontext">XRWebGLRenderingContext</a> <dfn class="nv idl-code" data-dfn-for="XRWebGLLayer/XRWebGLLayer(session, context, layerInit)" data-dfn-type="argument" data-export="" id="dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-context"><code>context</code><a class="self-link" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-context"></a></dfn>,
              <span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrwebgllayerinit" id="ref-for-dictdef-xrwebgllayerinit">XRWebGLLayerInit</a> <dfn class="nv idl-code" data-dfn-for="XRWebGLLayer/XRWebGLLayer(session, context, layerInit)" data-dfn-type="argument" data-export="" id="dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-layerinit"><code>layerInit</code><a class="self-link" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-layerinit"></a></dfn>)]
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrwebgllayer"><code>XRWebGLLayer</code></dfn> : <a class="n" data-link-type="idl-name" href="#xrlayer" id="ref-for-xrlayer③">XRLayer</a> {
@@ -1906,11 +1947,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <p>The <code class="idl"><a data-link-type="idl" href="#dictdef-xrwebgllayerinit" id="ref-for-dictdef-xrwebgllayerinit①">XRWebGLLayerInit</a></code> dictionary indicates the desired properites of an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer③">XRWebGLLayer</a></code>'s framebuffer.</p>
     <h2 class="heading settled" data-level="10" id="contextcompatibility"><span class="secno">10. </span><span class="content">WebGL Context Compatiblity</span><a class="self-link" href="#contextcompatibility"></a></h2>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">dictionary</span> <a class="nv idl-code" data-link-type="dictionary" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglcontextattributes" id="ref-for-webglcontextattributes">WebGLContextAttributes</a> {
-    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧">XRDevice</a> <dfn class="nv idl-code" data-default="null" data-dfn-for="WebGLContextAttributes" data-dfn-type="dict-member" data-export="" data-type="XRDevice " id="dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code><a class="self-link" href="#dom-webglcontextattributes-compatiblexrdevice"></a></dfn> = <span class="kt">null</span>;
+    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑦">XRDevice</a> <dfn class="nv idl-code" data-default="null" data-dfn-for="WebGLContextAttributes" data-dfn-type="dict-member" data-export="" data-type="XRDevice " id="dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code><a class="self-link" href="#dom-webglcontextattributes-compatiblexrdevice"></a></dfn> = <span class="kt">null</span>;
 };
 
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase">WebGLRenderingContextBase</a> {
-    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑨">XRDevice</a> <dfn class="nv idl-code" data-dfn-for="WebGLRenderingContextBase/setCompatibleXRDevice(device)" data-dfn-type="argument" data-export="" id="dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code><a class="self-link" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"></a></dfn>);
+    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧">XRDevice</a> <dfn class="nv idl-code" data-dfn-for="WebGLRenderingContextBase/setCompatibleXRDevice(device)" data-dfn-type="argument" data-export="" id="dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code><a class="self-link" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"></a></dfn>);
 };
 </pre>
     <p class="issue" id="issue-b6e56ea3"><a class="self-link" href="#issue-b6e56ea3"></a> Describe context compatibility requirements</p>
@@ -1970,14 +2011,14 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <h3 class="heading settled" data-level="13.1" id="xrsessionevent-interface"><span class="secno">13.1. </span><span class="content">XRSessionEvent</span><a class="self-link" href="#xrsessionevent-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑤">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①④">Exposed</a>=<span class="n">Window</span>, <dfn class="nv idl-code" data-dfn-for="XRSessionEvent" data-dfn-type="constructor" data-export="" data-lt="XRSessionEvent(type, eventInitDict)" id="dom-xrsessionevent-xrsessionevent"><code>Constructor</code><a class="self-link" href="#dom-xrsessionevent-xrsessionevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="XRSessionEvent/XRSessionEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrsessionevent-xrsessionevent-type-eventinitdict-type"><code>type</code><a class="self-link" href="#dom-xrsessionevent-xrsessionevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioneventinit" id="ref-for-dictdef-xrsessioneventinit">XRSessionEventInit</a> <dfn class="nv idl-code" data-dfn-for="XRSessionEvent/XRSessionEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrsessionevent-xrsessionevent-type-eventinitdict-eventinitdict"><code>eventInitDict</code><a class="self-link" href="#dom-xrsessionevent-xrsessionevent-type-eventinitdict-eventinitdict"></a></dfn>)]
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrsessionevent"><code>XRSessionEvent</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event" id="ref-for-event">Event</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⓪">XRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRSession" href="#dom-xrsessionevent-session" id="ref-for-dom-xrsessionevent-session">session</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⑦">XRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRSession" href="#dom-xrsessionevent-session" id="ref-for-dom-xrsessionevent-session">session</a>;
 };
 
 <span class="kt">dictionary</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-xrsessioneventinit"><code>XRSessionEventInit</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit" id="ref-for-dictdef-eventinit">EventInit</a> {
-  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①①">XRSession</a> <dfn class="nv idl-code" data-dfn-for="XRSessionEventInit" data-dfn-type="dict-member" data-export="" data-type="XRSession " id="dom-xrsessioneventinit-session"><code>session</code><a class="self-link" href="#dom-xrsessioneventinit-session"></a></dfn>;
+  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⑧">XRSession</a> <dfn class="nv idl-code" data-dfn-for="XRSessionEventInit" data-dfn-type="dict-member" data-export="" data-type="XRSession " id="dom-xrsessioneventinit-session"><code>session</code><a class="self-link" href="#dom-xrsessioneventinit-session"></a></dfn>;
 };
 </pre>
-    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSessionEvent" data-dfn-type="attribute" data-export="" id="dom-xrsessionevent-session"><code>session</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①②">XRSession</a></code> associated with this event.</p>
+    <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSessionEvent" data-dfn-type="attribute" data-export="" id="dom-xrsessionevent-session"><code>session</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑨">XRSession</a></code> associated with this event.</p>
     <h3 class="heading settled" data-level="13.2" id="xrcoordinatesystemevent-interface"><span class="secno">13.2. </span><span class="content">XRCoordinateSystemEvent</span><a class="self-link" href="#xrcoordinatesystemevent-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑥">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①⑤">Exposed</a>=<span class="n">Window</span>, <dfn class="nv idl-code" data-dfn-for="XRCoordinateSystemEvent" data-dfn-type="constructor" data-export="" data-lt="XRCoordinateSystemEvent(type, eventInitDict)" id="dom-xrcoordinatesystemevent-xrcoordinatesystemevent"><code>Constructor</code><a class="self-link" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString①"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="XRCoordinateSystemEvent/XRCoordinateSystemEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-type"><code>type</code><a class="self-link" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-xrcoordinatesystemeventinit" id="ref-for-dictdef-xrcoordinatesystemeventinit">XRCoordinateSystemEventInit</a> <dfn class="nv idl-code" data-dfn-for="XRCoordinateSystemEvent/XRCoordinateSystemEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-eventinitdict"><code>eventInitDict</code><a class="self-link" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-eventinitdict"></a></dfn>)]
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrcoordinatesystemevent"><code>XRCoordinateSystemEvent</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event" id="ref-for-event①">Event</a> {
@@ -1991,11 +2032,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRCoordinateSystemEvent" data-dfn-type="attribute" data-export="" id="dom-xrcoordinatesystemevent-coordinatesystem"><code>coordinateSystem</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem⑥">XRCoordinateSystem</a></code> associated with this event.</p>
     <h3 class="heading settled" data-level="13.3" id="event-types"><span class="secno">13.3. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
     <p>The user agent MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.</p>
-    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
-    <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-blur"><code>blur</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①③">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①④">XRSession</a></code> by the page has been suspended by the user agent, OS, or XR hardware. While an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑤">XRSession</a></code> is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent">XRSessionEvent</a></code>.</p>
-    <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-focus"><code>focus</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑥">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑦">XRSession</a></code> by the page has resumed after being suspended. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent①">XRSessionEvent</a></code>.</p>
-    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑧">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②①">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
-    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-end"><code>end</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①⑨">XRSession</a></code> when the session ends, either by the application or the user agent. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent③">XRSessionEvent</a></code>.</p>
+    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①⑨">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
+    <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-blur"><code>blur</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⓪">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②①">XRSession</a></code> by the page has been suspended by the user agent, OS, or XR hardware. While an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②②">XRSession</a></code> is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent">XRSessionEvent</a></code>.</p>
+    <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-focus"><code>focus</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②③">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②④">XRSession</a></code> by the page has resumed after being suspended. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent①">XRSessionEvent</a></code>.</p>
+    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑤">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
+    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-end"><code>end</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑥">XRSession</a></code> when the session ends, either by the application or the user agent. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent③">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="idl-code" data-dfn-for="XRFrameOfReference" data-dfn-type="event" data-export="" id="eventdef-xrframeofreference-boundschange"><code>boundschange</code><a class="self-link" href="#eventdef-xrframeofreference-boundschange"></a></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrframeofreference" id="ref-for-xrframeofreference①">XRFrameOfReference</a></code> when the <a data-link-type="dfn" href="#xrstagebounds-stage" id="ref-for-xrstagebounds-stage③">stage</a> <code class="idl"><a data-link-type="idl" href="#dom-xrframeofreference-bounds" id="ref-for-dom-xrframeofreference-bounds①">bounds</a></code> change. This includes changes to the <code class="idl"><a data-link-type="idl" href="#dom-xrstagebounds-geometry" id="ref-for-dom-xrstagebounds-geometry①">geometry</a></code> points or the <code class="idl"><a data-link-type="idl" href="#dom-xrframeofreference-bounds" id="ref-for-dom-xrframeofreference-bounds②">bounds</a></code> attribute changing to or from <code>null</code>. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystemevent" id="ref-for-xrcoordinatesystemevent">XRCoordinateSystemEvent</a></code>.</p>
     <h2 class="heading settled" data-level="14" id="integrations"><span class="secno">14. </span><span class="content">Integrations</span><a class="self-link" href="#integrations"></a></h2>
     <h3 class="heading settled" data-level="14.1" id="feature-policy"><span class="secno">14.1. </span><span class="content">Feature Policy</span><a class="self-link" href="#feature-policy"></a></h3>
@@ -2172,19 +2213,19 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li><a href="#dom-xrwebgllayer-alpha">attribute for XRWebGLLayer</a><span>, in §9.2</span>
      <li><a href="#dom-xrwebgllayerinit-alpha">dict-member for XRWebGLLayerInit</a><span>, in §9.3</span>
     </ul>
-   <li><a href="#animation-frame-callback-identifier">animation frame callback identifier</a><span>, in §5.2</span>
+   <li><a href="#animation-frame-callback-identifier">animation frame callback identifier</a><span>, in §5.3</span>
    <li>
     antialias
     <ul>
      <li><a href="#dom-xrwebgllayer-antialias">attribute for XRWebGLLayer</a><span>, in §9.2</span>
      <li><a href="#dom-xrwebgllayerinit-antialias">dict-member for XRWebGLLayerInit</a><span>, in §9.3</span>
     </ul>
-   <li><a href="#dom-xrsession-baselayer">baseLayer</a><span>, in §5.1</span>
+   <li><a href="#dom-xrsession-baselayer">baseLayer</a><span>, in §5.2</span>
    <li><a href="#eventdef-xrsession-blur">blur</a><span>, in §13.3</span>
-   <li><a href="#blur-active-sessions">blur active sessions</a><span>, in §5.1</span>
+   <li><a href="#blur-all-sessions">blur all sessions</a><span>, in §5.2</span>
    <li><a href="#dom-xrframeofreference-bounds">bounds</a><span>, in §12.2</span>
    <li><a href="#eventdef-xrframeofreference-boundschange">boundschange</a><span>, in §13.3</span>
-   <li><a href="#dom-xrsession-cancelanimationframe">cancelAnimationFrame(handle)</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-cancelanimationframe">cancelAnimationFrame(handle)</a><span>, in §5.3</span>
    <li><a href="#xrframerequestcallback-cancelled">cancelled</a><span>, in §6.1</span>
    <li><a href="#dom-xrpresentationcontext-canvas">canvas</a><span>, in §11</span>
    <li><a href="#dom-webglcontextattributes-compatiblexrdevice">compatibleXRDevice</a><span>, in §10</span>
@@ -2202,21 +2243,22 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li><a href="#dom-xrwebgllayer-depth">attribute for XRWebGLLayer</a><span>, in §9.2</span>
      <li><a href="#dom-xrwebgllayerinit-depth">dict-member for XRWebGLLayerInit</a><span>, in §9.3</span>
     </ul>
-   <li><a href="#dom-xrsession-depthfar">depthFar</a><span>, in §5.1</span>
-   <li><a href="#dom-xrsession-depthnear">depthNear</a><span>, in §5.1</span>
-   <li><a href="#dom-xrsession-device">device</a><span>, in §5.1</span>
+   <li><a href="#dom-xrsession-depthfar">depthFar</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-depthnear">depthNear</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-device">device</a><span>, in §5.2</span>
    <li><a href="#eventdef-xr-devicechange">devicechange</a><span>, in §13.3</span>
    <li><a href="#dom-xrframeofreferenceoptions-disablestageemulation">disableStageEmulation</a><span>, in §12.2</span>
    <li><a href="#dom-xrframeofreference-emulatedheight">emulatedHeight</a><span>, in §12.2</span>
-   <li><a href="#dom-xrsession-end">end()</a><span>, in §5.1</span>
+   <li><a href="#dom-xrsession-end">end()</a><span>, in §5.2</span>
    <li><a href="#eventdef-xrsession-end">end</a><span>, in §13.3</span>
-   <li><a href="#end-the-session">end the session</a><span>, in §5.1</span>
+   <li><a href="#ended">ended</a><span>, in §5.2</span>
+   <li><a href="#end-the-session">end the session</a><span>, in §5.2</span>
    <li><a href="#enumerate-xr-devices">enumerate XR devices</a><span>, in §4.1</span>
    <li>
     exclusive
     <ul>
-     <li><a href="#dom-xrsession-exclusive">attribute for XRSession</a><span>, in §5.1</span>
-     <li><a href="#dom-xrsessioncreationoptions-exclusive">dict-member for XRSessionCreationOptions</a><span>, in §5.3</span>
+     <li><a href="#dom-xrsessioncreationoptions-exclusive">dict-member for XRSessionCreationOptions</a><span>, in §5.1</span>
+     <li><a href="#dom-xrsession-exclusive">attribute for XRSession</a><span>, in §5.2</span>
     </ul>
    <li><a href="#exclusive-session">exclusive session</a><span>, in §4.2</span>
    <li><a href="#dom-xrdevice-external">external</a><span>, in §4.2</span>
@@ -2236,9 +2278,10 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <li><a href="#dom-xrframeofreferencetype-headmodel">"headModel"</a><span>, in §12.2</span>
    <li><a href="#dom-xrframeofreferencetype-headmodel">headModel</a><span>, in §12.2</span>
    <li><a href="#dom-xrviewport-height">height</a><span>, in §7.2</span>
+   <li><a href="#initialize-the-session">initialize the session</a><span>, in §5.2</span>
    <li><a href="#dom-xreye-left">"left"</a><span>, in §7.1</span>
    <li><a href="#dom-xreye-left">left</a><span>, in §7.1</span>
-   <li><a href="#list-of-animation-frame-callbacks">list of animation frame callbacks</a><span>, in §5.2</span>
+   <li><a href="#list-of-animation-frame-callbacks">list of animation frame callbacks</a><span>, in §5.3</span>
    <li><a href="#list-of-non-exclusive-sessions">list of non-exclusive sessions</a><span>, in §4.2</span>
    <li><a href="#list-of-xr-devices">list of XR devices</a><span>, in §4.1</span>
    <li><a href="#matrix">matrices</a><span>, in §8.1</span>
@@ -2249,33 +2292,34 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li><a href="#dom-xrwebgllayer-multiview">attribute for XRWebGLLayer</a><span>, in §9.2</span>
      <li><a href="#dom-xrwebgllayerinit-multiview">dict-member for XRWebGLLayerInit</a><span>, in §9.3</span>
     </ul>
-   <li><a href="#dom-xrsession-onblur">onblur</a><span>, in §5.1</span>
+   <li><a href="#dom-xrsession-onblur">onblur</a><span>, in §5.2</span>
    <li><a href="#dom-xrframeofreference-onboundschange">onboundschange</a><span>, in §12.2</span>
    <li><a href="#dom-xr-ondevicechange">ondevicechange</a><span>, in §4.1</span>
-   <li><a href="#dom-xrsession-onend">onend</a><span>, in §5.1</span>
-   <li><a href="#dom-xrsession-onfocus">onfocus</a><span>, in §5.1</span>
-   <li><a href="#dom-xrsession-onresetpose">onresetpose</a><span>, in §5.1</span>
+   <li><a href="#dom-xrsession-onend">onend</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-onfocus">onfocus</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-onresetpose">onresetpose</a><span>, in §5.2</span>
    <li>
     outputContext
     <ul>
-     <li><a href="#dom-xrsession-outputcontext">attribute for XRSession</a><span>, in §5.1</span>
-     <li><a href="#dom-xrsessioncreationoptions-outputcontext">dict-member for XRSessionCreationOptions</a><span>, in §5.3</span>
+     <li><a href="#dom-xrsessioncreationoptions-outputcontext">dict-member for XRSessionCreationOptions</a><span>, in §5.1</span>
+     <li><a href="#dom-xrsession-outputcontext">attribute for XRSession</a><span>, in §5.2</span>
     </ul>
-   <li><a href="#poll-the-device-pose">poll the device pose</a><span>, in §5.1</span>
+   <li><a href="#poll-the-device-pose">poll the device pose</a><span>, in §5.2</span>
    <li><a href="#dom-xrdevicepose-posemodelmatrix">poseModelMatrix</a><span>, in §8.2</span>
+   <li><a href="#processing-frame">processing frame</a><span>, in §5.3</span>
    <li><a href="#dom-xrview-projectionmatrix">projectionMatrix</a><span>, in §7.1</span>
    <li><a href="#request-a-device">request a device</a><span>, in §4.1</span>
-   <li><a href="#dom-xrsession-requestanimationframe">requestAnimationFrame(callback)</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-requestanimationframe">requestAnimationFrame(callback)</a><span>, in §5.3</span>
    <li><a href="#dom-xr-requestdevice">requestDevice()</a><span>, in §4.1</span>
-   <li><a href="#dom-xrsession-requestframeofreference">requestFrameOfReference(type)</a><span>, in §5.1</span>
-   <li><a href="#dom-xrsession-requestframeofreference">requestFrameOfReference(type, options)</a><span>, in §5.1</span>
+   <li><a href="#dom-xrsession-requestframeofreference">requestFrameOfReference(type)</a><span>, in §5.2</span>
+   <li><a href="#dom-xrsession-requestframeofreference">requestFrameOfReference(type, options)</a><span>, in §5.2</span>
    <li><a href="#dom-xrdevice-requestsession">requestSession()</a><span>, in §4.2</span>
    <li><a href="#dom-xrdevice-requestsession">requestSession(options)</a><span>, in §4.2</span>
    <li><a href="#dom-xrwebgllayer-requestviewportscaling">requestViewportScaling(viewportScaleFactor)</a><span>, in §9.2</span>
    <li><a href="#eventdef-xrsession-resetpose">resetpose</a><span>, in §13.3</span>
    <li><a href="#dom-xreye-right">right</a><span>, in §7.1</span>
    <li><a href="#dom-xreye-right">"right"</a><span>, in §7.1</span>
-   <li><a href="#run-the-animation-frame-callbacks">run the animation frame callbacks</a><span>, in §5.2</span>
+   <li><a href="#run-the-animation-frame-callbacks">run the animation frame callbacks</a><span>, in §5.3</span>
    <li><a href="#select-a-default-xr-device">select a default XR device</a><span>, in §4.1</span>
    <li>
     session
@@ -2283,8 +2327,10 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li><a href="#dom-xrsessioneventinit-session">dict-member for XRSessionEventInit</a><span>, in §13.1</span>
      <li><a href="#dom-xrsessionevent-session">attribute for XRSessionEvent</a><span>, in §13.1</span>
     </ul>
-   <li><a href="#session-description">session description</a><span>, in §5.3</span>
+   <li><a href="#session-description">session description</a><span>, in §5.1</span>
    <li><a href="#dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice(device)</a><span>, in §10</span>
+   <li><a href="#should-not-initialize-device-tracking">SHOULD NOT initialize device tracking</a><span>, in §5.2</span>
+   <li><a href="#shut-down-the-session">shut down the session</a><span>, in §5.2</span>
    <li><a href="#dom-xrframeofreferencetype-stage">"stage"</a><span>, in §12.2</span>
    <li><a href="#xrstagebounds-stage">Stage</a><span>, in §12.3</span>
    <li><a href="#dom-xrframeofreferencetype-stage">stage</a><span>, in §12.2</span>
@@ -2295,7 +2341,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
      <li><a href="#dom-xrwebgllayer-stencil">attribute for XRWebGLLayer</a><span>, in §9.2</span>
      <li><a href="#dom-xrwebgllayerinit-stencil">dict-member for XRWebGLLayerInit</a><span>, in §9.3</span>
     </ul>
-   <li><a href="#supported-by-the-device">supported by the device</a><span>, in §5.3</span>
+   <li><a href="#supported-by-the-device">supported by the device</a><span>, in §5.1</span>
    <li><a href="#supports-exclusive">supports exclusive</a><span>, in §4.2</span>
    <li><a href="#dom-xrdevice-supportssession">supportsSession()</a><span>, in §4.2</span>
    <li><a href="#dom-xrdevice-supportssession">supportsSession(options)</a><span>, in §4.2</span>
@@ -2324,8 +2370,8 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <li><a href="#xrlayer">XRLayer</a><span>, in §9.1</span>
    <li><a href="#xrpresentationcontext">XRPresentationContext</a><span>, in §11</span>
    <li><a href="#xrpresentationframe">XRPresentationFrame</a><span>, in §6.2</span>
-   <li><a href="#xrsession">XRSession</a><span>, in §5.1</span>
-   <li><a href="#dictdef-xrsessioncreationoptions">XRSessionCreationOptions</a><span>, in §5.3</span>
+   <li><a href="#xrsession">XRSession</a><span>, in §5.2</span>
+   <li><a href="#dictdef-xrsessioncreationoptions">XRSessionCreationOptions</a><span>, in §5.1</span>
    <li><a href="#xrsessionevent">XRSessionEvent</a><span>, in §13.1</span>
    <li><a href="#dictdef-xrsessioneventinit">XRSessionEventInit</a><span>, in §13.1</span>
    <li><a href="#dom-xrsessionevent-xrsessionevent">XRSessionEvent(type, eventInitDict)</a><span>, in §13.1</span>
@@ -2427,18 +2473,23 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 
   // Methods
   <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-xrdevice-supportssession" id="ref-for-dom-xrdevice-supportssession①">supportsSession</a>(<span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions⑤">XRSessionCreationOptions</a> <a class="nv" href="#dom-xrdevice-supportssession-options-options"><code>options</code></a>);
-  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①①⓪">XRSession</a>> <a class="nv idl-code" data-link-type="method" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession②">requestSession</a>(<span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions①①">XRSessionCreationOptions</a> <a class="nv" href="#dom-xrdevice-requestsession-options-options"><code>options</code></a>);
+  <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①①⓪">XRSession</a>> <a class="nv idl-code" data-link-type="method" href="#dom-xrdevice-requestsession" id="ref-for-dom-xrdevice-requestsession④">requestSession</a>(<span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioncreationoptions" id="ref-for-dictdef-xrsessioncreationoptions①①">XRSessionCreationOptions</a> <a class="nv" href="#dom-xrdevice-requestsession-options-options"><code>options</code></a>);
+};
+
+<span class="kt">dictionary</span> <a class="nv" href="#dictdef-xrsessioncreationoptions"><code>XRSessionCreationOptions</code></a> {
+  <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean①④"><span class="kt">boolean</span></a> <a class="nv" data-default="false" data-type="boolean " href="#dom-xrsessioncreationoptions-exclusive"><code>exclusive</code></a> = <span class="kt">false</span>;
+  <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext②">XRPresentationContext</a> <a class="nv" data-type="XRPresentationContext " href="#dom-xrsessioncreationoptions-outputcontext"><code>outputContext</code></a>;
 };
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext③①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed②①">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <a class="nv" href="#xrsession"><code>XRSession</code></a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#eventtarget" id="ref-for-eventtarget②①">EventTarget</a> {
   // Attributes
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①①①">XRDevice</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device①">device</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean①④"><span class="kt">boolean</span></a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="boolean" href="#dom-xrsession-exclusive" id="ref-for-dom-xrsession-exclusive①">exclusive</a>;
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext②">XRPresentationContext</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRPresentationContext" href="#dom-xrsession-outputcontext" id="ref-for-dom-xrsession-outputcontext①">outputContext</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⓪①">XRDevice</a> <a class="nv" data-readonly="" data-type="XRDevice" href="#dom-xrsession-device"><code>device</code></a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean②①"><span class="kt">boolean</span></a> <a class="nv" data-readonly="" data-type="boolean" href="#dom-xrsession-exclusive"><code>exclusive</code></a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext①①">XRPresentationContext</a> <a class="nv" data-readonly="" data-type="XRPresentationContext" href="#dom-xrsession-outputcontext"><code>outputContext</code></a>;
 
-  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double⑧"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-type="double" href="#dom-xrsession-depthnear" id="ref-for-dom-xrsession-depthnear①">depthNear</a>;
-  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double①①"><span class="kt">double</span></a> <a class="nv idl-code" data-link-type="attribute" data-type="double" href="#dom-xrsession-depthfar" id="ref-for-dom-xrsession-depthfar①">depthFar</a>;
-  <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrlayer" id="ref-for-xrlayer④">XRLayer</a> <a class="nv idl-code" data-link-type="attribute" data-type="XRLayer" href="#dom-xrsession-baselayer" id="ref-for-dom-xrsession-baselayer①">baseLayer</a>;
+  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double⑧"><span class="kt">double</span></a> <a class="nv" data-type="double" href="#dom-xrsession-depthnear"><code>depthNear</code></a>;
+  <span class="kt">attribute</span> <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-double" id="ref-for-idl-double①①"><span class="kt">double</span></a> <a class="nv" data-type="double" href="#dom-xrsession-depthfar"><code>depthFar</code></a>;
+  <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrlayer" id="ref-for-xrlayer④">XRLayer</a> <a class="nv" data-type="XRLayer" href="#dom-xrsession-baselayer"><code>baseLayer</code></a>;
 
   // Methods
   <span class="kt">Promise</span>&lt;<a class="n" data-link-type="idl-name" href="#xrframeofreference" id="ref-for-xrframeofreference②">XRFrameOfReference</a>> <a class="nv idl-code" data-link-type="method" href="#dom-xrsession-requestframeofreference" id="ref-for-dom-xrsession-requestframeofreference①">requestFrameOfReference</a>(<a class="n" data-link-type="idl-name" href="#enumdef-xrframeofreferencetype" id="ref-for-enumdef-xrframeofreferencetype①">XRFrameOfReferenceType</a> <a class="nv" href="#dom-xrsession-requestframeofreference-type-options-type"><code>type</code></a>, <span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrframeofreferenceoptions" id="ref-for-dictdef-xrframeofreferenceoptions①">XRFrameOfReferenceOptions</a> <a class="nv" href="#dom-xrsession-requestframeofreference-type-options-options"><code>options</code></a>);
@@ -2453,11 +2504,6 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler" id="ref-for-eventhandler②①">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-xrsession-onfocus" id="ref-for-dom-xrsession-onfocus①">onfocus</a>;
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler" id="ref-for-eventhandler③①">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-xrsession-onresetpose" id="ref-for-dom-xrsession-onresetpose①">onresetpose</a>;
   <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/webappapis.html#eventhandler" id="ref-for-eventhandler④①">EventHandler</a> <a class="nv idl-code" data-link-type="attribute" data-type="EventHandler" href="#dom-xrsession-onend" id="ref-for-dom-xrsession-onend①">onend</a>;
-};
-
-<span class="kt">dictionary</span> <a class="nv" href="#dictdef-xrsessioncreationoptions"><code>XRSessionCreationOptions</code></a> {
-  <a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean②①"><span class="kt">boolean</span></a> <a class="nv" data-default="false" data-type="boolean " href="#dom-xrsessioncreationoptions-exclusive"><code>exclusive</code></a> = <span class="kt">false</span>;
-  <a class="n" data-link-type="idl-name" href="#xrpresentationcontext" id="ref-for-xrpresentationcontext①①">XRPresentationContext</a> <a class="nv" data-type="XRPresentationContext " href="#dom-xrsessioncreationoptions-outputcontext"><code>outputContext</code></a>;
 };
 
 <span class="kt">callback</span> <a class="nv" href="#callbackdef-xrframerequestcallback"><code>XRFrameRequestCallback</code></a> = <span class="kt">void</span> (<a class="n" data-link-type="idl-name" href="http://www.w3.org/TR/hr-time/#domhighrestimestamp" id="ref-for-domhighrestimestamp①">DOMHighResTimeStamp</a> <a class="nv" href="#dom-xrframerequestcallback-time"><code>time</code></a>, <a class="n" data-link-type="idl-name" href="#xrpresentationframe" id="ref-for-xrpresentationframe①①">XRPresentationFrame</a> <a class="nv" href="#dom-xrframerequestcallback-frame"><code>frame</code></a>);
@@ -2498,7 +2544,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 <span class="kt">typedef</span> (<a class="n" data-link-type="idl-name" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontext" id="ref-for-webglrenderingcontext①">WebGLRenderingContext</a> <span class="kt">or</span>
          <a class="n" data-link-type="idl-name" href="https://www.khronos.org/registry/webgl/specs/latest/2.0/#webgl2renderingcontext" id="ref-for-webgl2renderingcontext①">WebGL2RenderingContext</a>) <a class="nv" href="#typedefdef-xrwebglrenderingcontext"><code>XRWebGLRenderingContext</code></a>;
 
-[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext⑨①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑧①">Exposed</a>=<span class="n">Window</span>, <a class="nv" href="#dom-xrwebgllayer-xrwebgllayer"><code>Constructor</code></a>(<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession⑨①">XRSession</a> <a class="nv" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-session"><code>session</code></a>,
+[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext⑨①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑧①">Exposed</a>=<span class="n">Window</span>, <a class="nv" href="#dom-xrwebgllayer-xrwebgllayer"><code>Constructor</code></a>(<a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⑥①">XRSession</a> <a class="nv" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-session"><code>session</code></a>,
              <a class="n" data-link-type="idl-name" href="#typedefdef-xrwebglrenderingcontext" id="ref-for-typedefdef-xrwebglrenderingcontext②">XRWebGLRenderingContext</a> <a class="nv" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-context"><code>context</code></a>,
              <span class="kt">optional</span> <a class="n" data-link-type="idl-name" href="#dictdef-xrwebgllayerinit" id="ref-for-dictdef-xrwebgllayerinit②">XRWebGLLayerInit</a> <a class="nv" href="#dom-xrwebgllayer-xrwebgllayer-session-context-layerinit-layerinit"><code>layerInit</code></a>)]
 <span class="kt">interface</span> <a class="nv" href="#xrwebgllayer"><code>XRWebGLLayer</code></a> : <a class="n" data-link-type="idl-name" href="#xrlayer" id="ref-for-xrlayer③①">XRLayer</a> {
@@ -2529,11 +2575,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 };
 
 <span class="kt">partial</span> <span class="kt">dictionary</span> <a class="nv idl-code" data-link-type="dictionary" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglcontextattributes" id="ref-for-webglcontextattributes①">WebGLContextAttributes</a> {
-    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧①">XRDevice</a> <a class="nv" data-default="null" data-type="XRDevice " href="#dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code></a> = <span class="kt">null</span>;
+    <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑦①">XRDevice</a> <a class="nv" data-default="null" data-type="XRDevice " href="#dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code></a> = <span class="kt">null</span>;
 };
 
 <span class="kt">partial</span> <span class="kt">interface</span> <a class="nv idl-code" data-link-type="interface" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase①">WebGLRenderingContextBase</a> {
-    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice①">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑨①">XRDevice</a> <a class="nv" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code></a>);
+    <span class="kt">Promise</span>&lt;<span class="kt">void</span>> <a class="nv idl-code" data-link-type="method" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice" id="ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice①">setCompatibleXRDevice</a>(<a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧①">XRDevice</a> <a class="nv" href="#dom-webglrenderingcontextbase-setcompatiblexrdevice-device-device"><code>device</code></a>);
 };
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⓪①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed⑨①">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <a class="nv" href="#xrpresentationcontext"><code>XRPresentationContext</code></a> {
@@ -2573,11 +2619,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑤①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①④①">Exposed</a>=<span class="n">Window</span>, <a class="nv" href="#dom-xrsessionevent-xrsessionevent"><code>Constructor</code></a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString②"><span class="kt">DOMString</span></a> <a class="nv" href="#dom-xrsessionevent-xrsessionevent-type-eventinitdict-type"><code>type</code></a>, <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioneventinit" id="ref-for-dictdef-xrsessioneventinit①">XRSessionEventInit</a> <a class="nv" href="#dom-xrsessionevent-xrsessionevent-type-eventinitdict-eventinitdict"><code>eventInitDict</code></a>)]
 <span class="kt">interface</span> <a class="nv" href="#xrsessionevent"><code>XRSessionEvent</code></a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event" id="ref-for-event③">Event</a> {
-  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⓪①">XRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRSession" href="#dom-xrsessionevent-session" id="ref-for-dom-xrsessionevent-session①">session</a>;
+  <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⑦①">XRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRSession" href="#dom-xrsessionevent-session" id="ref-for-dom-xrsessionevent-session①">session</a>;
 };
 
 <span class="kt">dictionary</span> <a class="nv" href="#dictdef-xrsessioneventinit"><code>XRSessionEventInit</code></a> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#dictdef-eventinit" id="ref-for-dictdef-eventinit②">EventInit</a> {
-  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①①①">XRSession</a> <a class="nv" data-type="XRSession " href="#dom-xrsessioneventinit-session"><code>session</code></a>;
+  <span class="kt">required</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession①⑧①">XRSession</a> <a class="nv" data-type="XRSession " href="#dom-xrsessioneventinit-session"><code>session</code></a>;
 };
 
 [<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑥①">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①⑤①">Exposed</a>=<span class="n">Window</span>, <a class="nv" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent"><code>Constructor</code></a>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString①①"><span class="kt">DOMString</span></a> <a class="nv" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-type"><code>type</code></a>, <a class="n" data-link-type="idl-name" href="#dictdef-xrcoordinatesystemeventinit" id="ref-for-dictdef-xrcoordinatesystemeventinit①">XRCoordinateSystemEventInit</a> <a class="nv" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-eventinitdict"><code>eventInitDict</code></a>)]
@@ -2594,11 +2640,11 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <div style="counter-reset:issue">
    <div class="issue"> Discuss use of sensor activity as a possible fingerprinting vector.<a href="#issue-5bd3ee1f"> ↵ </a></div>
    <div class="issue"> Take permissions into account when calling <code class="idl"><a data-link-type="idl" href="#dom-xr-requestdevice">requestDevice</a></code>.<a href="#issue-c3b1af99"> ↵ </a></div>
-   <div class="issue"> Document how to <span>poll the device pose</span><a href="#issue-cdb417b3"> ↵ </a></div>
-   <div class="issue"> Document what happens when we <span>end the session</span><a href="#issue-398b8983"> ↵ </a></div>
-   <div class="issue"> Document effects when we <span>blur active sessions</span><a href="#issue-8e3cf368"> ↵ </a></div>
-   <div class="issue"> Example of acquiring a session here.<a href="#issue-2db59f6a"> ↵ </a></div>
    <div class="issue"> Document restrictions and capabilities of an <a data-link-type="dfn" href="#exclusive-session">exclusive session</a><a href="#issue-5e06fb11"> ↵ </a></div>
+   <div class="issue"> Example of acquiring a session here.<a href="#issue-2db59f6a"> ↵ </a></div>
+   <div class="issue"> Document what happens when we <span>end the session</span><a href="#issue-398b8983"> ↵ </a></div>
+   <div class="issue"> Document effects when we <span>blur the session</span><a href="#issue-5edd6583"> ↵ </a></div>
+   <div class="issue"> Document how to <span>poll the device pose</span><a href="#issue-cdb417b3"> ↵ </a></div>
    <div class="issue"> This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.<a href="#issue-88218c4e"> ↵ </a></div>
    <div class="issue"> Need an example snippet of setting up and using an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer">XRWebGLLayer</a></code>.<a href="#issue-b1eb838a"> ↵ </a></div>
    <div class="issue"> Describe context compatibility requirements<a href="#issue-b6e56ea3"> ↵ </a></div>
@@ -2659,33 +2705,34 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <ul>
     <li><a href="#ref-for-xrdevice">3.3. Context Isolation</a>
     <li><a href="#ref-for-xrdevice①">4.1. XR</a> <a href="#ref-for-xrdevice②">(2)</a> <a href="#ref-for-xrdevice③">(3)</a>
-    <li><a href="#ref-for-xrdevice④">4.2. XRDevice</a> <a href="#ref-for-xrdevice⑤">(2)</a> <a href="#ref-for-xrdevice⑥">(3)</a> <a href="#ref-for-xrdevice⑦">(4)</a> <a href="#ref-for-xrdevice⑧">(5)</a> <a href="#ref-for-xrdevice⑨">(6)</a> <a href="#ref-for-xrdevice①⓪">(7)</a>
-    <li><a href="#ref-for-xrdevice①①">5.1. XRSession</a> <a href="#ref-for-xrdevice①②">(2)</a> <a href="#ref-for-xrdevice①③">(3)</a> <a href="#ref-for-xrdevice①④">(4)</a>
-    <li><a href="#ref-for-xrdevice①⑤">6.2. XRPresentationFrame</a>
-    <li><a href="#ref-for-xrdevice①⑥">8.2. XRDevicePose</a>
-    <li><a href="#ref-for-xrdevice①⑦">9.1. XRLayer</a>
-    <li><a href="#ref-for-xrdevice①⑧">10. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑨">(2)</a>
-    <li><a href="#ref-for-xrdevice②⓪">13.3. Event Types</a> <a href="#ref-for-xrdevice②①">(2)</a>
+    <li><a href="#ref-for-xrdevice④">4.2. XRDevice</a> <a href="#ref-for-xrdevice⑤">(2)</a> <a href="#ref-for-xrdevice⑥">(3)</a> <a href="#ref-for-xrdevice⑦">(4)</a> <a href="#ref-for-xrdevice⑧">(5)</a> <a href="#ref-for-xrdevice⑨">(6)</a>
+    <li><a href="#ref-for-xrdevice①⓪">5.2. XRSession</a> <a href="#ref-for-xrdevice①①">(2)</a> <a href="#ref-for-xrdevice①②">(3)</a> <a href="#ref-for-xrdevice①③">(4)</a>
+    <li><a href="#ref-for-xrdevice①④">6.2. XRPresentationFrame</a>
+    <li><a href="#ref-for-xrdevice①⑤">8.2. XRDevicePose</a>
+    <li><a href="#ref-for-xrdevice①⑥">9.1. XRLayer</a>
+    <li><a href="#ref-for-xrdevice①⑦">10. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑧">(2)</a>
+    <li><a href="#ref-for-xrdevice①⑨">13.3. Event Types</a> <a href="#ref-for-xrdevice②⓪">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="supports-exclusive">
    <b><a href="#supports-exclusive">#supports-exclusive</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-supports-exclusive">5.3. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-supports-exclusive">5.1. XRSessionCreationOptions</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="exclusive-session">
    <b><a href="#exclusive-session">#exclusive-session</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-exclusive-session">4.2. XRDevice</a> <a href="#ref-for-exclusive-session①">(2)</a>
-    <li><a href="#ref-for-exclusive-session②">5.1. XRSession</a>
-    <li><a href="#ref-for-exclusive-session③">5.3. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-exclusive-session②">5.1. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-exclusive-session③">5.2. XRSession</a> <a href="#ref-for-exclusive-session④">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="list-of-non-exclusive-sessions">
    <b><a href="#list-of-non-exclusive-sessions">#list-of-non-exclusive-sessions</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-list-of-non-exclusive-sessions">4.2. XRDevice</a>
+    <li><a href="#ref-for-list-of-non-exclusive-sessions①">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrdevice-external">
@@ -2704,149 +2751,31 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
    <b><a href="#dom-xrdevice-requestsession">#dom-xrdevice-requestsession</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrdevice-requestsession">4.2. XRDevice</a>
-    <li><a href="#ref-for-dom-xrdevice-requestsession①">5.3. XRSessionCreationOptions</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="xrsession">
-   <b><a href="#xrsession">#xrsession</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-xrsession">3.3. Context Isolation</a>
-    <li><a href="#ref-for-xrsession①">4.2. XRDevice</a> <a href="#ref-for-xrsession②">(2)</a>
-    <li><a href="#ref-for-xrsession③">5.1. XRSession</a>
-    <li><a href="#ref-for-xrsession④">5.2. Animation Frames</a> <a href="#ref-for-xrsession⑤">(2)</a> <a href="#ref-for-xrsession⑥">(3)</a> <a href="#ref-for-xrsession⑦">(4)</a>
-    <li><a href="#ref-for-xrsession⑧">6.2. XRPresentationFrame</a>
-    <li><a href="#ref-for-xrsession⑨">9.2. XRWebGLLayer</a>
-    <li><a href="#ref-for-xrsession①⓪">13.1. XRSessionEvent</a> <a href="#ref-for-xrsession①①">(2)</a> <a href="#ref-for-xrsession①②">(3)</a>
-    <li><a href="#ref-for-xrsession①③">13.3. Event Types</a> <a href="#ref-for-xrsession①④">(2)</a> <a href="#ref-for-xrsession①⑤">(3)</a> <a href="#ref-for-xrsession①⑥">(4)</a> <a href="#ref-for-xrsession①⑦">(5)</a> <a href="#ref-for-xrsession①⑧">(6)</a> <a href="#ref-for-xrsession①⑨">(7)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-device">
-   <b><a href="#dom-xrsession-device">#dom-xrsession-device</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-device">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-exclusive">
-   <b><a href="#dom-xrsession-exclusive">#dom-xrsession-exclusive</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-exclusive">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-outputcontext">
-   <b><a href="#dom-xrsession-outputcontext">#dom-xrsession-outputcontext</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-outputcontext">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-depthnear">
-   <b><a href="#dom-xrsession-depthnear">#dom-xrsession-depthnear</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-depthnear">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-depthfar">
-   <b><a href="#dom-xrsession-depthfar">#dom-xrsession-depthfar</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-depthfar">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-baselayer">
-   <b><a href="#dom-xrsession-baselayer">#dom-xrsession-baselayer</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-baselayer">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-requestframeofreference">
-   <b><a href="#dom-xrsession-requestframeofreference">#dom-xrsession-requestframeofreference</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-requestframeofreference">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="poll-the-device-pose">
-   <b><a href="#poll-the-device-pose">#poll-the-device-pose</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-poll-the-device-pose">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-end">
-   <b><a href="#dom-xrsession-end">#dom-xrsession-end</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-end">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-onblur">
-   <b><a href="#dom-xrsession-onblur">#dom-xrsession-onblur</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-onblur">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="blur-active-sessions">
-   <b><a href="#blur-active-sessions">#blur-active-sessions</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-blur-active-sessions">3.1. Gaze Tracking</a> <a href="#ref-for-blur-active-sessions①">(2)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-onfocus">
-   <b><a href="#dom-xrsession-onfocus">#dom-xrsession-onfocus</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-onfocus">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-onresetpose">
-   <b><a href="#dom-xrsession-onresetpose">#dom-xrsession-onresetpose</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-onresetpose">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-onend">
-   <b><a href="#dom-xrsession-onend">#dom-xrsession-onend</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-onend">5.1. XRSession</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="list-of-animation-frame-callbacks">
-   <b><a href="#list-of-animation-frame-callbacks">#list-of-animation-frame-callbacks</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-list-of-animation-frame-callbacks">5.2. Animation Frames</a> <a href="#ref-for-list-of-animation-frame-callbacks①">(2)</a> <a href="#ref-for-list-of-animation-frame-callbacks②">(3)</a> <a href="#ref-for-list-of-animation-frame-callbacks③">(4)</a> <a href="#ref-for-list-of-animation-frame-callbacks④">(5)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="animation-frame-callback-identifier">
-   <b><a href="#animation-frame-callback-identifier">#animation-frame-callback-identifier</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-animation-frame-callback-identifier">5.2. Animation Frames</a> <a href="#ref-for-animation-frame-callback-identifier①">(2)</a> <a href="#ref-for-animation-frame-callback-identifier②">(3)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-requestanimationframe">
-   <b><a href="#dom-xrsession-requestanimationframe">#dom-xrsession-requestanimationframe</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-requestanimationframe">5.1. XRSession</a>
-    <li><a href="#ref-for-dom-xrsession-requestanimationframe①">6.2. XRPresentationFrame</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="dom-xrsession-cancelanimationframe">
-   <b><a href="#dom-xrsession-cancelanimationframe">#dom-xrsession-cancelanimationframe</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-cancelanimationframe">5.1. XRSession</a>
+    <li><a href="#ref-for-dom-xrdevice-requestsession①">5.1. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-dom-xrdevice-requestsession②">5.2. XRSession</a> <a href="#ref-for-dom-xrdevice-requestsession③">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dictdef-xrsessioncreationoptions">
    <b><a href="#dictdef-xrsessioncreationoptions">#dictdef-xrsessioncreationoptions</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dictdef-xrsessioncreationoptions">4.2. XRDevice</a> <a href="#ref-for-dictdef-xrsessioncreationoptions①">(2)</a>
-    <li><a href="#ref-for-dictdef-xrsessioncreationoptions②">5.3. XRSessionCreationOptions</a> <a href="#ref-for-dictdef-xrsessioncreationoptions③">(2)</a> <a href="#ref-for-dictdef-xrsessioncreationoptions④">(3)</a>
+    <li><a href="#ref-for-dictdef-xrsessioncreationoptions②">5.1. XRSessionCreationOptions</a> <a href="#ref-for-dictdef-xrsessioncreationoptions③">(2)</a>
+    <li><a href="#ref-for-dictdef-xrsessioncreationoptions④">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsessioncreationoptions-exclusive">
    <b><a href="#dom-xrsessioncreationoptions-exclusive">#dom-xrsessioncreationoptions-exclusive</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive">4.2. XRDevice</a>
-    <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive①">5.3. XRSessionCreationOptions</a> <a href="#ref-for-dom-xrsessioncreationoptions-exclusive②">(2)</a>
+    <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive①">5.1. XRSessionCreationOptions</a> <a href="#ref-for-dom-xrsessioncreationoptions-exclusive②">(2)</a>
+    <li><a href="#ref-for-dom-xrsessioncreationoptions-exclusive③">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsessioncreationoptions-outputcontext">
    <b><a href="#dom-xrsessioncreationoptions-outputcontext">#dom-xrsessioncreationoptions-outputcontext</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xrsessioncreationoptions-outputcontext">5.3. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-dom-xrsessioncreationoptions-outputcontext">5.1. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-dom-xrsessioncreationoptions-outputcontext①">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="session-description">
@@ -2861,6 +2790,158 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
     <li><a href="#ref-for-supported-by-the-device">4.2. XRDevice</a> <a href="#ref-for-supported-by-the-device①">(2)</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="xrsession">
+   <b><a href="#xrsession">#xrsession</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-xrsession">3.3. Context Isolation</a>
+    <li><a href="#ref-for-xrsession①">4.2. XRDevice</a> <a href="#ref-for-xrsession②">(2)</a> <a href="#ref-for-xrsession③">(3)</a>
+    <li><a href="#ref-for-xrsession④">5.2. XRSession</a> <a href="#ref-for-xrsession⑤">(2)</a> <a href="#ref-for-xrsession⑥">(3)</a> <a href="#ref-for-xrsession⑦">(4)</a> <a href="#ref-for-xrsession⑧">(5)</a> <a href="#ref-for-xrsession⑨">(6)</a>
+    <li><a href="#ref-for-xrsession①⓪">5.3. Animation Frames</a> <a href="#ref-for-xrsession①①">(2)</a> <a href="#ref-for-xrsession①②">(3)</a> <a href="#ref-for-xrsession①③">(4)</a> <a href="#ref-for-xrsession①④">(5)</a>
+    <li><a href="#ref-for-xrsession①⑤">6.2. XRPresentationFrame</a>
+    <li><a href="#ref-for-xrsession①⑥">9.2. XRWebGLLayer</a>
+    <li><a href="#ref-for-xrsession①⑦">13.1. XRSessionEvent</a> <a href="#ref-for-xrsession①⑧">(2)</a> <a href="#ref-for-xrsession①⑨">(3)</a>
+    <li><a href="#ref-for-xrsession②⓪">13.3. Event Types</a> <a href="#ref-for-xrsession②①">(2)</a> <a href="#ref-for-xrsession②②">(3)</a> <a href="#ref-for-xrsession②③">(4)</a> <a href="#ref-for-xrsession②④">(5)</a> <a href="#ref-for-xrsession②⑤">(6)</a> <a href="#ref-for-xrsession②⑥">(7)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-device">
+   <b><a href="#dom-xrsession-device">#dom-xrsession-device</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-device">5.2. XRSession</a> <a href="#ref-for-dom-xrsession-device①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-exclusive">
+   <b><a href="#dom-xrsession-exclusive">#dom-xrsession-exclusive</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-exclusive">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-outputcontext">
+   <b><a href="#dom-xrsession-outputcontext">#dom-xrsession-outputcontext</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-outputcontext">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-depthnear">
+   <b><a href="#dom-xrsession-depthnear">#dom-xrsession-depthnear</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-depthnear">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-depthfar">
+   <b><a href="#dom-xrsession-depthfar">#dom-xrsession-depthfar</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-depthfar">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-baselayer">
+   <b><a href="#dom-xrsession-baselayer">#dom-xrsession-baselayer</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-baselayer">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="should-not-initialize-device-tracking">
+   <b><a href="#should-not-initialize-device-tracking">#should-not-initialize-device-tracking</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-should-not-initialize-device-tracking">4.1. XR</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="initialize-the-session">
+   <b><a href="#initialize-the-session">#initialize-the-session</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-initialize-the-session">4.2. XRDevice</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="shut-down-the-session">
+   <b><a href="#shut-down-the-session">#shut-down-the-session</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-shut-down-the-session">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="ended">
+   <b><a href="#ended">#ended</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-ended">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-end">
+   <b><a href="#dom-xrsession-end">#dom-xrsession-end</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-end">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-requestframeofreference">
+   <b><a href="#dom-xrsession-requestframeofreference">#dom-xrsession-requestframeofreference</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-requestframeofreference">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-onblur">
+   <b><a href="#dom-xrsession-onblur">#dom-xrsession-onblur</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-onblur">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-onfocus">
+   <b><a href="#dom-xrsession-onfocus">#dom-xrsession-onfocus</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-onfocus">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-onresetpose">
+   <b><a href="#dom-xrsession-onresetpose">#dom-xrsession-onresetpose</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-onresetpose">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-onend">
+   <b><a href="#dom-xrsession-onend">#dom-xrsession-onend</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-onend">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="blur-all-sessions">
+   <b><a href="#blur-all-sessions">#blur-all-sessions</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-blur-all-sessions">3.1. Gaze Tracking</a> <a href="#ref-for-blur-all-sessions①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="poll-the-device-pose">
+   <b><a href="#poll-the-device-pose">#poll-the-device-pose</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-poll-the-device-pose">5.2. XRSession</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="list-of-animation-frame-callbacks">
+   <b><a href="#list-of-animation-frame-callbacks">#list-of-animation-frame-callbacks</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-list-of-animation-frame-callbacks">5.3. Animation Frames</a> <a href="#ref-for-list-of-animation-frame-callbacks①">(2)</a> <a href="#ref-for-list-of-animation-frame-callbacks②">(3)</a> <a href="#ref-for-list-of-animation-frame-callbacks③">(4)</a> <a href="#ref-for-list-of-animation-frame-callbacks④">(5)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="animation-frame-callback-identifier">
+   <b><a href="#animation-frame-callback-identifier">#animation-frame-callback-identifier</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-animation-frame-callback-identifier">5.3. Animation Frames</a> <a href="#ref-for-animation-frame-callback-identifier①">(2)</a> <a href="#ref-for-animation-frame-callback-identifier②">(3)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="processing-frame">
+   <b><a href="#processing-frame">#processing-frame</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-processing-frame">5.3. Animation Frames</a> <a href="#ref-for-processing-frame①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-requestanimationframe">
+   <b><a href="#dom-xrsession-requestanimationframe">#dom-xrsession-requestanimationframe</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-requestanimationframe">5.2. XRSession</a>
+    <li><a href="#ref-for-dom-xrsession-requestanimationframe①">6.2. XRPresentationFrame</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-cancelanimationframe">
+   <b><a href="#dom-xrsession-cancelanimationframe">#dom-xrsession-cancelanimationframe</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-cancelanimationframe">5.2. XRSession</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="xr-compositor">
    <b><a href="#xr-compositor">#xr-compositor</a></b><b>Referenced in:</b>
    <ul>
@@ -2870,7 +2951,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="callbackdef-xrframerequestcallback">
    <b><a href="#callbackdef-xrframerequestcallback">#callbackdef-xrframerequestcallback</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-callbackdef-xrframerequestcallback">5.1. XRSession</a>
+    <li><a href="#ref-for-callbackdef-xrframerequestcallback">5.2. XRSession</a>
     <li><a href="#ref-for-callbackdef-xrframerequestcallback①">6.1. XRFrameRequestCallback</a>
     <li><a href="#ref-for-callbackdef-xrframerequestcallback②">6.2. XRPresentationFrame</a>
    </ul>
@@ -2878,7 +2959,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="xrpresentationframe">
    <b><a href="#xrpresentationframe">#xrpresentationframe</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xrpresentationframe">5.2. Animation Frames</a>
+    <li><a href="#ref-for-xrpresentationframe">5.3. Animation Frames</a>
     <li><a href="#ref-for-xrpresentationframe①">6.1. XRFrameRequestCallback</a>
     <li><a href="#ref-for-xrpresentationframe②">6.2. XRPresentationFrame</a> <a href="#ref-for-xrpresentationframe③">(2)</a> <a href="#ref-for-xrpresentationframe④">(3)</a>
    </ul>
@@ -2986,7 +3067,7 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="xrlayer">
    <b><a href="#xrlayer">#xrlayer</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xrlayer">5.1. XRSession</a>
+    <li><a href="#ref-for-xrlayer">5.2. XRSession</a>
     <li><a href="#ref-for-xrlayer①">7.1. XRView</a>
     <li><a href="#ref-for-xrlayer②">9.1. XRLayer</a>
     <li><a href="#ref-for-xrlayer③">9.2. XRWebGLLayer</a>
@@ -3084,8 +3165,8 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="xrpresentationcontext">
    <b><a href="#xrpresentationcontext">#xrpresentationcontext</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xrpresentationcontext">5.1. XRSession</a>
-    <li><a href="#ref-for-xrpresentationcontext①">5.3. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-xrpresentationcontext">5.1. XRSessionCreationOptions</a>
+    <li><a href="#ref-for-xrpresentationcontext①">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrpresentationcontext-canvas">
@@ -3113,19 +3194,19 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="enumdef-xrframeofreferencetype">
    <b><a href="#enumdef-xrframeofreferencetype">#enumdef-xrframeofreferencetype</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-enumdef-xrframeofreferencetype">5.1. XRSession</a>
+    <li><a href="#ref-for-enumdef-xrframeofreferencetype">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dictdef-xrframeofreferenceoptions">
    <b><a href="#dictdef-xrframeofreferenceoptions">#dictdef-xrframeofreferenceoptions</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dictdef-xrframeofreferenceoptions">5.1. XRSession</a>
+    <li><a href="#ref-for-dictdef-xrframeofreferenceoptions">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrframeofreference">
    <b><a href="#xrframeofreference">#xrframeofreference</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xrframeofreference">5.1. XRSession</a>
+    <li><a href="#ref-for-xrframeofreference">5.2. XRSession</a>
     <li><a href="#ref-for-xrframeofreference①">13.3. Event Types</a>
    </ul>
   </aside>
@@ -3234,25 +3315,25 @@ navigator<span class="p">.</span>xr<span class="p">.</span>requestDevice<span cl
   <aside class="dfn-panel" data-for="eventdef-xrsession-blur">
    <b><a href="#eventdef-xrsession-blur">#eventdef-xrsession-blur</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eventdef-xrsession-blur">5.1. XRSession</a>
+    <li><a href="#ref-for-eventdef-xrsession-blur">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eventdef-xrsession-focus">
    <b><a href="#eventdef-xrsession-focus">#eventdef-xrsession-focus</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eventdef-xrsession-focus">5.1. XRSession</a>
+    <li><a href="#ref-for-eventdef-xrsession-focus">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eventdef-xrsession-resetpose">
    <b><a href="#eventdef-xrsession-resetpose">#eventdef-xrsession-resetpose</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eventdef-xrsession-resetpose">5.1. XRSession</a>
+    <li><a href="#ref-for-eventdef-xrsession-resetpose">5.2. XRSession</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eventdef-xrsession-end">
    <b><a href="#eventdef-xrsession-end">#eventdef-xrsession-end</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eventdef-xrsession-end">5.1. XRSession</a>
+    <li><a href="#ref-for-eventdef-xrsession-end">5.2. XRSession</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
