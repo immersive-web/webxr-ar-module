@@ -1816,7 +1816,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
      <li data-md="">
       <p>Find the entry in <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks①">list of animation frame callbacks</a> that is associated with the value given by the method’s <var>handle</var> argument.</p>
      <li data-md="">
-      <p>If there is such an entry, remove it from <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks②">list of animation frame callbacks</a>.</p>
+      <p>If there is such an entry, set it’s <a data-link-type="dfn" href="#xrframerequestcallback-cancelled" id="ref-for-xrframerequestcallback-cancelled">cancelled</a> flag to <code>true</code> remove it from <var>session</var>’s <a data-link-type="dfn" href="#list-of-animation-frame-callbacks" id="ref-for-list-of-animation-frame-callbacks②">list of animation frame callbacks</a>.</p>
     </ol>
     <p>When the user agent is to <dfn data-dfn-type="dfn" data-noexport="" id="run-the-animation-frame-callbacks">run the animation frame callbacks<a class="self-link" href="#run-the-animation-frame-callbacks"></a></dfn> for an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession①④">XRSession</a></code> <var>session</var> with a timestamp <var>now</var> and an <code class="idl"><a data-link-type="idl" href="#xrpresentationframe" id="ref-for-xrpresentationframe">XRPresentationFrame</a></code> <var>frame</var>, it must run the following steps:</p>
     <ol>
@@ -1827,7 +1827,15 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
      <li data-md="">
       <p>Set <var>session</var>’s <a data-link-type="dfn" href="#processing-frame" id="ref-for-processing-frame">processing frame</a> value to <code>true</code>.</p>
      <li data-md="">
-      <p>For each entry in <var>callbacks</var>, in order: <a data-link-type="dfn" href="https://www.w3.org/TR/WebIDL-1/#es-invoking-callback-functions" id="ref-for-es-invoking-callback-functions">invoke the Web IDL callback function</a>, passing <var>now</var> and <var>frame</var> as the  arguments, and if an exception is thrown, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception" id="ref-for-report-the-exception">report the exception</a>.</p>
+      <p>For each entry in <var>callbacks</var>, in order:</p>
+      <ol>
+       <li data-md="">
+        <p>If the entry’s <a data-link-type="dfn" href="#xrframerequestcallback-cancelled" id="ref-for-xrframerequestcallback-cancelled①">cancelled</a> flag is <code>true</code>, continue to the next entry.</p>
+       <li data-md="">
+        <p><a data-link-type="dfn" href="https://www.w3.org/TR/WebIDL-1/#es-invoking-callback-functions" id="ref-for-es-invoking-callback-functions">Invoke the Web IDL callback function</a>, passing <var>now</var> and <var>frame</var> as the  arguments</p>
+       <li data-md="">
+        <p>If an exception is thrown, <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception" id="ref-for-report-the-exception">report the exception</a>.</p>
+      </ol>
      <li data-md="">
       <p>Set <var>session</var>’s <a data-link-type="dfn" href="#processing-frame" id="ref-for-processing-frame①">processing frame</a> value to <code>false</code>.</p>
     </ol>
@@ -1838,7 +1846,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <h3 class="heading settled" data-level="6.1" id="xrframerequestcallback"><span class="secno">6.1. </span><span class="content">XRFrameRequestCallback</span><a class="self-link" href="#xrframerequestcallback"></a></h3>
 <pre class="idl highlight def"><span class="kt">callback</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="callback" data-export="" id="callbackdef-xrframerequestcallback"><code>XRFrameRequestCallback</code></dfn> = <span class="kt">void</span> (<a class="n" data-link-type="idl-name" href="http://www.w3.org/TR/hr-time/#domhighrestimestamp" id="ref-for-domhighrestimestamp">DOMHighResTimeStamp</a> <dfn class="nv idl-code" data-dfn-for="XRFrameRequestCallback" data-dfn-type="argument" data-export="" id="dom-xrframerequestcallback-time"><code>time</code><a class="self-link" href="#dom-xrframerequestcallback-time"></a></dfn>, <a class="n" data-link-type="idl-name" href="#xrpresentationframe" id="ref-for-xrpresentationframe①">XRPresentationFrame</a> <dfn class="nv idl-code" data-dfn-for="XRFrameRequestCallback" data-dfn-type="argument" data-export="" id="dom-xrframerequestcallback-frame"><code>frame</code><a class="self-link" href="#dom-xrframerequestcallback-frame"></a></dfn>);
 </pre>
-    <p>Each <code class="idl"><a data-link-type="idl" href="#callbackdef-xrframerequestcallback" id="ref-for-callbackdef-xrframerequestcallback①">XRFrameRequestCallback</a></code> object has a <dfn data-dfn-for="XRFrameRequestCallback" data-dfn-type="dfn" data-noexport="" id="xrframerequestcallback-cancelled">cancelled<a class="self-link" href="#xrframerequestcallback-cancelled"></a></dfn> boolean flag. This flag is initially false and is not exposed by any interface.</p>
+    <p>Each <code class="idl"><a data-link-type="idl" href="#callbackdef-xrframerequestcallback" id="ref-for-callbackdef-xrframerequestcallback①">XRFrameRequestCallback</a></code> object has a <dfn class="dfn-paneled" data-dfn-for="XRFrameRequestCallback" data-dfn-type="dfn" data-noexport="" id="xrframerequestcallback-cancelled">cancelled</dfn> boolean flag. This flag is initially false and is not exposed by any interface.</p>
     <h3 class="heading settled" data-level="6.2" id="xrpresentationframe-interface"><span class="secno">6.2. </span><span class="content">XRPresentationFrame</span><a class="self-link" href="#xrpresentationframe-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext④">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed③">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrpresentationframe"><code>XRPresentationFrame</code></dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <span class="kt">FrozenArray</span>&lt;<a class="n" data-link-type="idl-name" href="#xrview" id="ref-for-xrview">XRView</a>> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="FrozenArray<XRView>" href="#dom-xrpresentationframe-views" id="ref-for-dom-xrpresentationframe-views">views</a>;
@@ -2954,6 +2962,12 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-callbackdef-xrframerequestcallback">5.2. XRSession</a>
     <li><a href="#ref-for-callbackdef-xrframerequestcallback①">6.1. XRFrameRequestCallback</a>
     <li><a href="#ref-for-callbackdef-xrframerequestcallback②">6.2. XRPresentationFrame</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="xrframerequestcallback-cancelled">
+   <b><a href="#xrframerequestcallback-cancelled">#xrframerequestcallback-cancelled</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-xrframerequestcallback-cancelled">5.3. Animation Frames</a> <a href="#ref-for-xrframerequestcallback-cancelled①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrpresentationframe">
