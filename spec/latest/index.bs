@@ -485,7 +485,7 @@ dictionary XRFrameOfReferenceOptions {
 };
 </pre>
 
-When an {{XRFrameOfReference}} is created with a "stage" {{XRFrameOfReferenceType}} it describes a space known as a "<dfn for="XRStageBounds">Stage</dfn>". A [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
+When an {{XRFrameOfReference}} is created with a <code>"stage"</code> {{XRFrameOfReferenceType}} it describes a space known as a "<dfn for="XRStageBounds">Stage</dfn>". A [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
 
 Note: A [=stage=] is not intended to describe multi-room spaces, areas with uneven floor levels, or very large open areas. Future iterations of this specification may add more detailed support for tracking in those scenarios.
 
@@ -523,7 +523,7 @@ Note: Content should not require the user to move beyond the [=stage bounds=]; h
 
 Note: Content generally should not provide a visualization of the [=stage bounds=], as it's the user agent's responsibility to ensure that safety critical information is provided to the user.
 
-Views {#view}
+Views {#views}
 =====
 
 XRView {#xrview-interface}
@@ -543,13 +543,21 @@ enum XREye {
 };
 </pre>
 
-An {{XRView}} describes a single view into an XR scene. It provides several values directly, and acts as a key to query view-specific values from other interfaces.
+An {{XRView}} describes a single <dfn>view</dfn> into an XR scene. Each [=view=] corresponds to a display or portion of a display used by an XR device to present imagery to the user. They are used to retrieve all the information necessary to render content that is well aligned to the [=view=]'s physical output properties, including the field of view, eye offset, and other optical properties.
 
-<dfn attribute for="XRView">eye</dfn> describes the eye that this view is expected to be shown to. This value is primarily to ensure that prerendered stereo content can present the correct portion of the content to the correct eye.
+Many HMDs will request that content render two [=views=], one for the left eye and one for the right, while most magic window devices will only request one [=view=]. However, no guarantee is made about the number of [=views=] any XR device uses, nor is the number of [=views=] required to be constant for the duration of an {{XRSession}}. For example: A magic window device may request two views if it is capable of stereo output, but may revert to requesting a single view for performance reasons if the stereo output mode is turned off. Similarly, HMDs may request more than two views to facilitate a wide field of view or displays of different pixel density. [=Views=] may cover overlapping regions of the user's vision and the order is not guaranteed.
 
-The <dfn attribute for="XRView">projectionMatrix</dfn> is a [=matrix=] describing the projection to be used for the view's rendering. It is <b>strongly recommended</b> that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
+The <dfn attribute for="XRView">eye</dfn> attribute describes which eye this view is expected to be shown to. This attribute's primary purpose is to ensure that prerendered stereo content can present the correct portion of the content to the correct eye. If the view does not have an intrinsicly associated eye (the display is monoscopic, for example) this attribute MUST be set to <code>"left"</code>.
 
-<dfn method for="XRView">getViewport(layer)</dfn> 
+The <dfn attribute for="XRView">projectionMatrix</dfn> attribute provides a [=matrix=] describing the projection to be used for the view's rendering. It is <b>strongly recommended</b> that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
+
+The <dfn method for="XRView">getViewport(layer)</dfn> method queries the {{XRViewport}} content for this view should be rendered to for the passed {{XRLayer}}. When the method is invoked, run the following steps:
+
+  1. Let |view| be the target {{XRView}}.
+  1. If |layer| was created with a different {{XRSession}} than the one that produced |view| return <code>null</code>
+  1. ???
+
+ISSUE: Not sure how to best describe remainder of steps here. Seems like deferring to the layer for viewport logic is best.
 
 XRViewport {#xrviewport-interface}
 ------
@@ -563,14 +571,14 @@ XRViewport {#xrviewport-interface}
 };
 </pre>
 
-An {{XRViewport}} object describes a rectangular region of a graphics surface. The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
+An {{XRViewport}} object describes a <dfn>viewport</dfn>, or rectangular region, of a graphics surface. The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
 
 The exact interpretation of the viewport values depends on the conventions of the graphics API the viewport is associated with:
 
  - When used with a {{XRWebGLLayer}} the {{XRViewport/x}} and {{XRViewport/y}} attributes specify the lower left corner of the viewport rectangle, in pixels, with the viewport rectangle extending {{XRViewport/width}} pixels to the right of {{XRViewport/x}} and {{XRViewport/height}} pixels above {{XRViewport/y}}. The values can be passed to the [=WebGL viewport=] function directly.
 
 <div class="example">
-The following code sets the WebGL viewport for an {{XRWebGLLayer}}'s framebuffer using an {{XRViewport}} retrieved from an {{XRView}}.
+The following code sets the [=WebGL viewport=] for an {{XRWebGLLayer}}'s framebuffer using an {{XRViewport}} retrieved from an {{XRView}}.
 
 <pre highlight="js">
 xrSession.requestAnimationFrame((time, xrFrame) => {
@@ -631,6 +639,15 @@ XRWebGLLayer {#xrwebgllayer-interface}
 typedef (WebGLRenderingContext or
          WebGL2RenderingContext) XRWebGLRenderingContext;
 
+dictionary XRWebGLLayerInit {
+  boolean antialias = true;
+  boolean depth = false;
+  boolean stencil = false;
+  boolean alpha = true;
+  boolean multiview = false;
+  double framebufferScaleFactor;
+};
+
 [SecureContext, Exposed=Window, Constructor(XRSession session,
              XRWebGLRenderingContext context,
              optional XRWebGLLayerInit layerInit)]
@@ -677,34 +694,13 @@ Note: In order to make use of a canvas in the event of context loss, the applica
 
 <dfn method for="XRWebGLLayer">requestViewportScaling(viewportScaleFactor)</dfn>
 
-<!--The layer describes two viewports: the <dfn for="XRCanvasLayer">Left Bounds</dfn> and <dfn for="XRCanvasLayer">Right Bounds</dfn>. Each bounds contians four values (|left|, |bottom|, |right|, |top|) defining the texture bounds within the source canvas to present to the related eye in UV space (0.0 - 1.0) with the bottom left corner of the canvas at (0, 0) and the top right corner of the canvas at (1, 1). If the left bound is greater or equal to the right bound or the bottom bound is greater than or equal to the top bound the viewport is considered to be empty and no content from this layer will be shown on the related eye of the {{XRDevice}}.
-
-The [=left bounds=] MUST default to <code>[0.0, 0.0, 0.5, 1.0]</code> and the [=right bounds=] MUST default to <code>[0.5, 0.0, 1.0, 1.0]</code>.
-
-Invoking the <dfn method for="XRCanvasLayer">setLeftBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=left bounds=] |left|, |bottom|, |right|, and |top| respectively.
-
-Invoking the <dfn method for="XRCanvasLayer">setRightBounds()</dfn> method with a given |left|, |bottom|, |right|, and |top| value sets the values of the [=right bounds=] |left|, |bottom|, |right|, and |top| respectively.
-
-Invoking the <dfn method for="XRCanvasLayer">getLeftBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=left bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
-
-Invoking the <dfn method for="XRCanvasLayer">getRightBounds()</dfn> method returns a {{FrozenArray}} of doubles containing the [=right bounds=] to |left|, |bottom|, |right|, and |top| values in that order.
-
-<dfn method for="XRCanvasLayer">commit()</dfn> captures the XRCanvasLayer/source canvas's bitmap and submits it to the [=XR compositor=]. Calling {{commit()}} has the same effect on the source canvas as any other operation that uses its bitmap, and canvases created without <code>preserveDrawingBuffer</code> set to <code>true</code> will be cleared.-->
-
 Issue: Need an example snippet of setting up and using an {{XRWebGLLayer}}.
 
 XRWebGLLayerInit {#xrwebgllayerinit-dictionary}
 -------------------------
 
 <pre class="idl">
-dictionary XRWebGLLayerInit {
-  boolean antialias = true;
-  boolean depth = false;
-  boolean stencil = false;
-  boolean alpha = true;
-  boolean multiview = false;
-  double framebufferScaleFactor;
-};
+
 </pre>
 
 The {{XRWebGLLayerInit}} dictionary indicates the desired properites of an {{XRWebGLLayer}}'s framebuffer.
