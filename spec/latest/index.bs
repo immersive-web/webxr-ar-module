@@ -97,6 +97,11 @@ The important commonality between them being that they offer some degree of spat
 
 Terms like "XR Device", "XR Application", etc. are generally understood to apply to any of the above. Portions of this document that only apply to a subset of these devices will indicate so as appropriate.
 
+The terms <dfn>3DoF</dfn>, short for "Three Degrees of Freedom", and <dfn>6Dof</dfn>, short for "Six Degrees of Freedom", are used throughout this document to describe the tracking capabilities of XR devices.
+
+ - A [=3DoF=] device is one that can only track rotational movement. This is common in devices which rely exclusively on accelerometer and gyroscope readings to provide tracking. [=3DoF=] devices do not respond translational movements from the user, though they may employ algorithms to estimate translational changes based on modeling of the neck or arms.
+ - A [=6DoF=] device is one that can track both rotation and translation, enabling for precise 1:1 tracking in space. This typically requires some level of understanding of the user's environment. That environmental understanding may be achived via <dfn>inside-out tracking</dfn>, where sensors on the tracked device itself (such as cameras or depth sensors) are used to determine the device's position, or <dfn>outside-in tracking</dfn>, where external devices placed in the user's environment (like a camera or light emmiting device) provides a stable point of reference against which the XR device can determine it's position.
+
 
 Security, Privacy, and Comfort Considerations {#security}
 =============================================
@@ -442,6 +447,80 @@ An {{XRPresentationFrame}} provides all the values needed to render a single fra
 
 <dfn method for="XRPresentationFrame">getDevicePose(coordinateSystem)</dfn>
 
+Coordinate Systems {#coordinatesystems}
+==================
+
+XRCoordinateSystem {#xrcoordinatesystem-interface}
+------------------
+
+<pre class="idl">
+[SecureContext, Exposed=Window] interface XRCoordinateSystem : EventTarget {
+  Float32Array? getTransformTo(XRCoordinateSystem other);
+};
+</pre>
+
+<dfn method for="XRCoordinateSystem">getTransformTo(other)</dfn>
+
+XRFrameOfReference {#xrframeofreference-interface}
+------------------
+
+<pre class="idl">
+enum XRFrameOfReferenceType {
+  "headModel",
+  "eyeLevel",
+  "stage",
+};
+
+dictionary XRFrameOfReferenceOptions {
+  boolean disableStageEmulation = false;
+  double stageEmulationHeight = 0.0;
+};
+
+[SecureContext, Exposed=Window] interface XRFrameOfReference : XRCoordinateSystem {
+  readonly attribute XRStageBounds? bounds;
+  readonly attribute double emulatedHeight;
+
+  attribute EventHandler onboundschange;
+};
+</pre>
+
+When an {{XRFrameOfReference}} is created with a "stage" {{XRFrameOfReferenceType}} it describes a space known as a "<dfn for="XRStageBounds">Stage</dfn>". A [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
+
+Note: A [=stage=] is not intended to describe multi-room spaces, areas with uneven floor levels, or very large open areas. Future iterations of this specification may add more detailed support for tracking in those scenarios.
+
+The <dfn lt="stage origin">origin of the stage</dfn> MUST be at floor level, such that Y equals 0 at the floor, is negative below the floor level, and is positive above the floor. The origin on the X and Z axes is determined in a platform-specific manner, but in general if the user is in an enclosed space it's ideal if the X and Z axes originate at or near the center of the room.
+
+The [=stage bounds=] are described by a {{XRFrameOfReference}}'s <dfn attribute for="XRFrameOfReference">bounds</dfn> attribute. If the frame of reference is not a [=stage=] or the [=stage bounds=] cannot be determined the {{bounds}} attribute MUST be <code>null</code>.
+
+Note: When the {{bounds}} for a [=stage=] are <code>null</code> the user should not be required to physically move around their environment in order to interact with content. The device may still support [=6DoF=] tracking, but it can't be assumed that the user will know where they are relative to their environment and as such content that encourages movement beyond leaning is discouraged.
+
+<dfn attribute for="XRFrameOfReference">emulatedHeight</dfn>
+
+The <dfn attribute for="XRFrameOfReference">onboundschange</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{boundschange}} event type.
+
+XRStageBounds {#xrstagebounds-interface}
+-------------
+
+<pre class="idl">
+[SecureContext, Exposed=Window] interface XRStageBounds {
+  readonly attribute FrozenArray&lt;XRStageBoundsPoint&gt; geometry;
+};
+
+[SecureContext, Exposed=Window] interface XRStageBoundsPoint {
+  readonly attribute double x;
+  readonly attribute double z;
+};
+</pre>
+
+The {{XRStageBounds}} interface describes a border around a [=stage=], known as the <dfn>stage bounds</dfn> which the user can be expected to safely be able to move within. 
+
+The polygonal boundary is given by the <dfn attribute for="XRStageBounds">geometry</dfn> array of {{XRStageBoundsPoint}}s, which represents a loop of points at the edges of the safe space. The points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The bounds originate at the floor (Y == 0) and extend infinitely high. The shape it describes MAY not be convex. The values reported are relative to the [=stage origin=], but MAY not contain it.
+
+The <dfn attribute for="XRStageBoundsPoint">x</dfn> and <dfn attribute for="XRStageBoundsPoint">z</dfn> attributes of an {{XRStageBoundsPoint}} describe the offset from the [=stage origin=] along the X and Z axes respectively of the point, given in meters.
+
+Note: Content should not require the user to move beyond the [=stage bounds=]; however, if their physical surroundings allow for it, it is possible for the user to ignore the bounds resulting in position values outside of the polygon they describe. This is not an error condition and should be handled gracefully by page content.
+
+Note: Content generally should not provide a visualization of the [=stage bounds=], as it's the user agent's responsibility to ensure that safety critical information is provided to the user.
 
 Views {#view}
 =====
@@ -450,16 +529,16 @@ XRView {#xrview-interface}
 ------
 
 <pre class="idl">
+enum XREye {
+  "left",
+  "right"
+};
+
 [SecureContext, Exposed=Window] interface XRView {
   readonly attribute XREye eye;
   readonly attribute Float32Array projectionMatrix;
 
   XRViewport? getViewport(XRLayer layer);
-};
-
-enum XREye {
-  "left",
-  "right"
 };
 </pre>
 
@@ -467,7 +546,7 @@ An {{XRView}} describes a single view into an XR scene. It provides several valu
 
 <dfn attribute for="XRView">eye</dfn> describes the eye that this view is expected to be shown to. This value is primarily to ensure that prerendered stereo content can present the correct portion of the content to the correct eye.
 
-The <dfn attribute for="XRView">projectionMatrix</dfn> is a [=matrix=] describing the projection to be used for the view's rendering. It is highly recommended that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
+The <dfn attribute for="XRView">projectionMatrix</dfn> is a [=matrix=] describing the projection to be used for the view's rendering. It is <b>strongly recommended</b> that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
 
 <dfn method for="XRView">getViewport(layer)</dfn> 
 
@@ -497,7 +576,7 @@ Pose {#pose}
 Matrices {#matrices}
 --------
 
-WebXR provides various transforms in the form of <dfn lt="matrix|matrices">matrices</dfn>. WebXR matrices are always 4x4 and given as 16 element {{Float32Array}}s in column major order. They may be passed directly to WebGL's {{uniformMatrix4fv}} function, used to create an equivalent {{DOMMatrix}}, or used with a variety of third party math libraries.
+WebXR provides various transforms in the form of <dfn lt="matrix">matrices</dfn>. WebXR matrices are always 4x4 and given as 16 element {{Float32Array}}s in column major order. They may be passed directly to WebGL's {{uniformMatrix4fv}} function, used to create an equivalent {{DOMMatrix}}, or used with a variety of third party math libraries.
 
 Translations specified by WebXR matrices are always given in meters.
 
@@ -643,78 +722,6 @@ Canvas Rendering Context {#canvas-rendering-context}
 
 <dfn attribute for="XRPresentationContext">canvas</dfn>
 
-Coordinate Systems {#coordinatesystems}
-==================
-
-Issue: Pretty much nothing in this section is documented
-
-XRCoordinateSystem {#xrcoordinatesystem-interface}
-------------------
-
-<pre class="idl">
-[SecureContext, Exposed=Window] interface XRCoordinateSystem : EventTarget {
-  Float32Array? getTransformTo(XRCoordinateSystem other);
-};
-</pre>
-
-<dfn method for="XRCoordinateSystem">getTransformTo(other)</dfn>
-
-XRFrameOfReference {#xrframeofreference-interface}
-------------------
-
-<pre class="idl">
-enum XRFrameOfReferenceType {
-  "headModel",
-  "eyeLevel",
-  "stage",
-};
-
-dictionary XRFrameOfReferenceOptions {
-  boolean disableStageEmulation = false;
-  double stageEmulationHeight = 0.0;
-};
-
-[SecureContext, Exposed=Window] interface XRFrameOfReference : XRCoordinateSystem {
-  readonly attribute XRStageBounds? bounds;
-  readonly attribute double emulatedHeight;
-
-  attribute EventHandler onboundschange;
-};
-</pre>
-
-<dfn attribute for="XRFrameOfReference">bounds</dfn>
-
-<dfn attribute for="XRFrameOfReference">emulatedHeight</dfn>
-
-<dfn attribute for="XRFrameOfReference">onboundschange</dfn>
-
-XRStageBounds {#xrstagebounds-interface}
--------------
-
-<pre class="idl">
-[SecureContext, Exposed=Window] interface XRStageBounds {
-  readonly attribute FrozenArray&lt;XRStageBoundsPoint&gt; geometry;
-};
-</pre>
-
-The {{XRStageBounds}} interface describes a space known as a "<dfn for="XRStageBounds">Stage</dfn>". The [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
-
-A polygonal boundary is given by the <dfn attribute for="XRStageBounds">geometry</dfn> point array, which represents a loop of points at the edges of the safe space. The points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The bounds are assumed to originate at the floor (Y == 0) and extend infinitely high. The shape it describes MAY not be convex. The values reported are relative to the [=stage=] origin, but MAY not contain it.
-
-Note: Content should not require the user to move beyond these bounds; however, it is possible for the user to ignore the bounds resulting in position values outside of the rectangle they describe if their physical surroundings allow for it.
-
-XRStageBoundsPoint {#xrstageboundspoint-interface}
-------------------
-
-<pre class="idl">
-[SecureContext, Exposed=Window] interface XRStageBoundsPoint {
-  readonly attribute double x;
-  readonly attribute double z;
-};
-</pre>
-
-The <dfn attribute for="XRStageBoundsPoint">x</dfn> and <dfn attribute for="XRStageBoundsPoint">z</dfn> values of an {{XRStageBoundsPoint}} describe the offset from the [=stage=] origin along the X and Z axes respectively of the point, given in meters.
-
 Events {#events}
 ========
 
@@ -769,7 +776,7 @@ A user agent MUST dispatch a <dfn event for="XRSession">resetpose</dfn> event on
 
 A user agent MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{XRSession}} when the session ends, either by the application or the user agent. The event MUST be of type {{XRSessionEvent}}.
 
-A user agent MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage=] {{bounds}} change. This includes changes to the {{geometry}} points or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
+A user agent MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage bounds=] change. This includes changes to the {{geometry}} point array or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
 
 Integrations {#integrations}
 ============
