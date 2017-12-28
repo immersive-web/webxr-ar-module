@@ -35,6 +35,7 @@ urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
     type: interface; text: WebGLRenderingContext
     type: interface; text: WebGLRenderingContextBase
     type: dictionary; text: WebGLContextAttributes
+    type: dfn; text: WebGL viewport; url:#5.14.4
 urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/2.0/
     type: interface; text: WebGL2RenderingContext
 urlPrefix: https://drafts.fxtf.org/geometry/
@@ -562,13 +563,27 @@ XRViewport {#xrviewport-interface}
 };
 </pre>
 
-<dfn attribute for="XRViewport">x</dfn>
+An {{XRViewport}} object describes a rectangular region of a graphics surface. The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
 
-<dfn attribute for="XRViewport">y</dfn>
+The exact interpretation of the viewport values depends on the conventions of the graphics API the viewport is associated with:
 
-<dfn attribute for="XRViewport">width</dfn>
+ - When used with a {{XRWebGLLayer}} the {{XRViewport/x}} and {{XRViewport/y}} attributes specify the lower left corner of the viewport rectangle, in pixels, with the viewport rectangle extending {{XRViewport/width}} pixels to the right of {{XRViewport/x}} and {{XRViewport/height}} pixels above {{XRViewport/y}}. The values can be passed to the [=WebGL viewport=] function directly.
 
-<dfn attribute for="XRViewport">height</dfn>
+<div class="example">
+The following code sets the WebGL viewport for an {{XRWebGLLayer}}'s framebuffer using an {{XRViewport}} retrieved from an {{XRView}}.
+
+<pre highlight="js">
+xrSession.requestAnimationFrame((time, xrFrame) => {
+  let xrView = xrFrame.views[0];
+  let xrViewport = xrView.getViewport(xrWebGLLayer);
+
+  gl.bindFramebuffer(xrWebGLLayer.framebuffer);
+  gl.viewport(xrViewport.x, xrViewport.y, xrViewport.width, xrViewport.height);
+
+  // WebGL draw calls will now be rendered into the appropriate viewport.
+});
+</pre>
+</div>
 
 Pose {#pose}
 ====
