@@ -315,12 +315,12 @@ When an {{XRSession}} is created by an {{XRDevice}} |device|, the user agent MUS
 
   1. Let |session| be the newly created session.
   1. Let |options| be the {{XRSessionCreationOptions}} passed to {{requestSession()}}.
-  1. Let |session|'s {{XRSession/device}} be |device|.
-  1. Let |session|'s {{XRSession/exclusive}} be |options| {{XRSessionCreationOptions/exclusive}} value.
-  1. Let |session|'s {{XRSession/outputContext}} be |options| {{XRSessionCreationOptions/outputContext}} value.
-  1. Let |session|'s {{XRSession/depthNear}} be <code>0.1</code>.
-  1. Let |session|'s {{XRSession/depthFar}} be <code>1000.0</code>.
-  1. Let |session|'s {{XRSession/baseLayer}} be <code>null</code>.
+  1. Initialize |session|'s {{XRSession/device}} to |device|.
+  1. Initialize |session|'s {{XRSession/exclusive}} to |options| {{XRSessionCreationOptions/exclusive}} value.
+  1. Initialize |session|'s {{XRSession/outputContext}} to |options| {{XRSessionCreationOptions/outputContext}} value.
+  1. Initialize |session|'s {{XRSession/depthNear}} to <code>0.1</code>.
+  1. Initialize |session|'s {{XRSession/depthFar}} to <code>1000.0</code>.
+  1. Initialize |session|'s {{XRSession/baseLayer}} to <code>null</code>.
   1. If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device's tracking and rendering capabilities.
 
 A number of diffrent circumstances may <dfn>shut down the session</dfn>, which is permanent and irreversable. Once a session has been shut down the only way to access the {{XRDevice}}'s tracking or rendering capabilities again is to request a new session. Each {{XRSession}} has an <dfn>ended</dfn> value that indicates if it has been shut down, which is a boolean which MUST be initialized to <code>false</code>. When an {{XRSession}} is shut down the following steps are run:
@@ -670,40 +670,31 @@ interface XRWebGLLayer : XRLayer {
 };
 </pre>
 
-The <dfn attribute for="XRWebGLLayer">context</dfn> defines the WebGL or WebGL 2 context that is rendering the visuals for this layer.
+The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(session, context, layerInit)</dfn> constructor MUST perform the following steps when invoked:
 
-<!--Upon being set as the source of an XRCanvasLayer the source's context MAY be lost. Additionally the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
+  1. Let |layer| be a new {{XRWebGLLayer}}
+  1. If |context| is not compatible with |session|'s {{XRSession/device}}, throw an {{InvalidStateError}}.
+  1. Initialize |layer|'s {{XRWebGLLayer/context}} to |context|.
+  1. Initialize |layer|'s {{XRWebGLLayer/antialias}} to |layerInit|'s {{XRWebGLLayerInit/antialias}} value.
+  1. Initialize |layer|'s {{XRWebGLLayer/depth}} to |layerInit|'s {{XRWebGLLayerInit/depth}} value.
+  1. Initialize |layer|'s {{XRWebGLLayer/stencil}} to |layerInit|'s {{XRWebGLLayerInit/stencil}} value.
+  1. Initialize |layer|'s {{XRWebGLLayer/alpha}} to |layerInit|'s {{XRWebGLLayerInit/alpha}} value.
+  1. If |context| [=supports multiview=] and |layerInit|'s {{XRWebGLLayerInit/multiview}} value is <code>true</code>, initialize |layer|'s {{XRWebGLLayer/multiview}} to <code>true</code>.
+  1. Else initialize |layer|'s {{XRWebGLLayer/multiview}} to <code>false</code>.
+  1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque=] {{WebGLFramebuffer}} created with |context|.
+  1. Initialize the |layer|'s [=swap chain=].
 
-Note: In order to make use of a canvas in the event of context loss, the application should handle the <code>webglcontextlost</code> event on the source canvas and prevent the event's default behavior. The application should then listen for a <code>webglcontextrestored</code> event to be fired and reload any necessary graphical resources in response.-->
-
-<dfn attribute for="XRWebGLLayer">antialias</dfn>
-
-<dfn attribute for="XRWebGLLayer">depth</dfn>
-
-<dfn attribute for="XRWebGLLayer">stencil</dfn>
-
-<dfn attribute for="XRWebGLLayer">alpha</dfn>
-
-<dfn attribute for="XRWebGLLayer">multiview</dfn>
-
-<dfn attribute for="XRWebGLLayer">framebuffer</dfn>
-
-<dfn attribute for="XRWebGLLayer">framebufferWidth</dfn>
-
-<dfn attribute for="XRWebGLLayer">framebufferHeight</dfn>
+The <dfn attribute for="XRWebGLLayer">framebufferWidth</dfn> and <dfn attribute for="XRWebGLLayer">framebufferHeight</dfn> attributes return the width and height of the [=swap chain=]'s backbuffer, respectively.
 
 <dfn method for="XRWebGLLayer">requestViewportScaling(viewportScaleFactor)</dfn>
 
+Issue: Document what it means when a context <dfn>supports multiview</dfn>.
+
+Issue: Document what an <dfn>opaque</dfn> framebuffer is.
+
+Issue: Document the creation of a <dfn>swap chain</dfn>.
+
 Issue: Need an example snippet of setting up and using an {{XRWebGLLayer}}.
-
-XRWebGLLayerInit {#xrwebgllayerinit-dictionary}
--------------------------
-
-<pre class="idl">
-
-</pre>
-
-The {{XRWebGLLayerInit}} dictionary indicates the desired properites of an {{XRWebGLLayer}}'s framebuffer.
 
 WebGL Context Compatiblity {#contextcompatibility}
 ==========================
@@ -721,6 +712,10 @@ partial interface WebGLRenderingContextBase {
 Issue: Describe context compatibility requirements
 
 <dfn method for="WebGLRenderingContextBase">setCompatibleXRDevice(device)</dfn>
+
+<!--Upon being set as the source of an XRCanvasLayer the source's context MAY be lost. Additionally the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
+
+Note: In order to make use of a canvas in the event of context loss, the application should handle the <code>webglcontextlost</code> event on the source canvas and prevent the event's default behavior. The application should then listen for a <code>webglcontextrestored</code> event to be fired and reload any necessary graphical resources in response.-->
 
 Canvas Rendering Context {#canvas-rendering-context}
 ========================
