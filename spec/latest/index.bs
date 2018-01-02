@@ -176,13 +176,13 @@ The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the s
 
 NOTE: The user agent is allowed to use any criteria it wishes to [=select a default XR device=] when the [=list of XR devices=] contains multiple devices. For example, the user agent may always select the first item in the list, or provide settings UI that allows users to manage device priority. Ideally the algorithm used to select the default device is stable and will result in the same device being selected across multiple browsing sessions.
 
-The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
 <div class="algorithm" data-algorithm="request-device">
 
   1. [=Enumerate XR devices=].
   1. [=Select a default XR device=] from the [=list of XR devices=].
-  1. <a>Resolve</a> |promise| with the [=default device=].
+  1. [=Resolve=] |promise| with the [=default device=].
 
 </div>
 
@@ -190,7 +190,7 @@ Calling {{XR/requestDevice()}} MUST NOT trigger device-selection UI as this woul
 
 ISSUE: Take permissions into account when calling {{XR/requestDevice}}.
 
-The <dfn attribute for="XR">ondevicechange</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{devicechange}} event type.
+The <dfn attribute for="XR">ondevicechange</dfn> attribute is an [=Event handler IDL attribute=] for the {{devicechange}} event type.
 
 <div class="example">
 The following code finds an available {{XRDevice}}.
@@ -233,28 +233,28 @@ The <dfn attribute for="XRDevice">external</dfn> attribute SHOULD be <code>true<
 
 NOTE: A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
 
-When the <dfn method for="XRDevice">supportsSession(options)</dfn> method is invoked on {{XRDevice}} |device|, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+When the <dfn method for="XRDevice">supportsSession(options)</dfn> method is invoked on {{XRDevice}} |device|, it MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
 <div class="algorithm" data-algorithm="supports-session">
 
-  1. If the |options| are not [=supported by the device=] |device|, <a>reject</a> |promise| with <code>null</code>.
-  1. Else <a>resolve</a> |promise| with <code>null</code>.
+  1. If the |options| are not [=supported by the device=] |device|, [=reject=] |promise| with <code>null</code>.
+  1. Else [=resolve=] |promise| with <code>null</code>.
 
 </div>
 
-When the <dfn method for="XRDevice">requestSession(options)</dfn> method is invoked on {{XRDevice}} |device|, the user agent MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+When the <dfn method for="XRDevice">requestSession(options)</dfn> method is invoked on {{XRDevice}} |device|, the user agent MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
 <div class="algorithm" data-algorithm="request-session">
 
-  1. If the |options| are not [=supported by the device=] |device|, <a>reject</a> |promise| with a {{NotSupportedError}} and abort these steps.
+  1. If the |options| are not [=supported by the device=] |device|, [=reject=] |promise| with a {{NotSupportedError}} and abort these steps.
   1. Let |exclusive| be the {{XRSessionCreationOptions/exclusive}} attribute of the |options| argument.
-  1. If |exclusive| is <code>true</code> and |device|'s [=exclusive session=] is not <code>null</code>, <a>reject</a> |promise| with an {{InvalidStateError}} and abort these steps.
-  1. If |exclusive| is <code>true</code> and the algorithm is not <a>triggered by user activation</a>, <a>reject</a> |promise| with a {{SecurityError}} and abort these steps.
+  1. If |exclusive| is <code>true</code> and |device|'s [=exclusive session=] is not <code>null</code>, [=reject=] |promise| with an {{InvalidStateError}} and abort these steps.
+  1. If |exclusive| is <code>true</code> and the algorithm is not [=triggered by user activation=], [=reject=] |promise| with a {{SecurityError}} and abort these steps.
   1. Let |session| be a new {{XRSession}}.
   1. [=Initialize the session=] |session| with the [=session description=] given by |options|.
   1. If |exclusive| is <code>true</code> set the |device|'s [=exclusive session=] to |session|.
   1. Else append |session| to |device|'s [=list of non-exclusive sessions=].
-  1. <a>Resolve</a> |promise| with |session|.
+  1. [=Resolve=] |promise| with |session|.
 
 </div>
 
@@ -360,24 +360,24 @@ A number of diffrent circumstances may <dfn>shut down the session</dfn>, which i
 
 </div>
 
-The <dfn method for="XRSession">end()</dfn> method provides a way to manually shut down a session. When invoked, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+The <dfn method for="XRSession">end()</dfn> method provides a way to manually shut down a session. When invoked, it MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
 <div class="algorithm" data-algorithm="end-session">
 
   1. [=Shut down the session=] that the method was invoked on.
-  1. <a>Resolve</a> |promise|.
+  1. [=Resolve=] |promise|.
 
 </div>
 
 <dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
 
-The <dfn attribute for="XRSession">onblur</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{blur}} event type.
+The <dfn attribute for="XRSession">onblur</dfn> attribute is an [=Event handler IDL attribute=] for the {{blur}} event type.
 
-The <dfn attribute for="XRSession">onfocus</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{focus}} event type.
+The <dfn attribute for="XRSession">onfocus</dfn> attribute is an [=Event handler IDL attribute=] for the {{focus}} event type.
 
-The <dfn attribute for="XRSession">onresetpose</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{resetpose}} event type.
+The <dfn attribute for="XRSession">onresetpose</dfn> attribute is an [=Event handler IDL attribute=] for the {{resetpose}} event type.
 
-The <dfn attribute for="XRSession">onend</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{end}} event type.
+The <dfn attribute for="XRSession">onend</dfn> attribute is an [=Event handler IDL attribute=] for the {{end}} event type.
 
 Issue: Example of acquiring a session here.
 
@@ -426,8 +426,8 @@ When the user agent is to <dfn>run the animation frame callbacks</dfn> for an {{
   1. Set |session|'s [=processing frame=] to <code>true</code>.
   1. For each entry in |callbacks|, in order:
     1. If the entry's [=cancelled=] boolean is <code>true</code>, continue to the next entry.
-    1. <a>Invoke the Web IDL callback function</a>, passing |now| and |frame| as the  arguments
-    1. If an exception is thrown, <a>report the exception</a>.
+    1. [=Invoke the Web IDL callback function=], passing |now| and |frame| as the  arguments
+    1. If an exception is thrown, [=report the exception=].
   1. Set |session|'s [=processing frame=] to <code>false</code>.
 
 </div>
@@ -538,7 +538,7 @@ Note: When the {{bounds}} for a [=stage=] are <code>null</code> the user should 
 
 <dfn attribute for="XRFrameOfReference">emulatedHeight</dfn>
 
-The <dfn attribute for="XRFrameOfReference">onboundschange</dfn> attribute is an <a>Event handler IDL attribute</a> for the {{boundschange}} event type.
+The <dfn attribute for="XRFrameOfReference">onboundschange</dfn> attribute is an [=Event handler IDL attribute=] for the {{boundschange}} event type.
 
 XRStageBounds {#xrstagebounds-interface}
 -------------
@@ -838,11 +838,11 @@ Integrations {#integrations}
 
 Feature Policy {#feature-policy}
 --------------
-This specification defines a <a>feature</a> that controls whether the {{Navigator/xr}} attribute is exposed on the {{Navigator}} object.
+This specification defines a [=feature=] that controls whether the {{Navigator/xr}} attribute is exposed on the {{Navigator}} object.
 
-The <a>feature name</a> for this feature is <code>"xr"</code>.
+The [=feature name=] for this feature is <code>"xr"</code>.
 
-The <a>default allowlist</a> for this feature is <code>["self"]</code>.
+The [=default allowlist=] for this feature is <code>["self"]</code>.
 
 Acknowledgements {#ack}
 ===================
