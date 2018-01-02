@@ -98,10 +98,10 @@ The important commonality between them being that they offer some degree of spat
 
 Terms like "XR Device", "XR Application", etc. are generally understood to apply to any of the above. Portions of this document that only apply to a subset of these devices will indicate so as appropriate.
 
-The terms <dfn>3DoF</dfn>, short for "Three Degrees of Freedom", and <dfn>6Dof</dfn>, short for "Six Degrees of Freedom", are used throughout this document to describe the tracking capabilities of XR devices.
+The terms [=3DoF=] and [=6DoF=] are used throughout this document to describe the tracking capabilities of XR devices.
 
- - A [=3DoF=] device is one that can only track rotational movement. This is common in devices which rely exclusively on accelerometer and gyroscope readings to provide tracking. [=3DoF=] devices do not respond translational movements from the user, though they may employ algorithms to estimate translational changes based on modeling of the neck or arms.
- - A [=6DoF=] device is one that can track both rotation and translation, enabling for precise 1:1 tracking in space. This typically requires some level of understanding of the user's environment. That environmental understanding may be achived via <dfn>inside-out tracking</dfn>, where sensors on the tracked device itself (such as cameras or depth sensors) are used to determine the device's position, or <dfn>outside-in tracking</dfn>, where external devices placed in the user's environment (like a camera or light emmiting device) provides a stable point of reference against which the XR device can determine it's position.
+ - A <dfn>3DoF</dfn> device, short for "Three Degrees of Freedom", is one that can only track rotational movement. This is common in devices which rely exclusively on accelerometer and gyroscope readings to provide tracking. [=3DoF=] devices do not respond translational movements from the user, though they may employ algorithms to estimate translational changes based on modeling of the neck or arms.
+ - A <dfn>6DoF</dfn> device, short for "Six Degrees of Freedom", is one that can track both rotation and translation, enabling for precise 1:1 tracking in space. This typically requires some level of understanding of the user's environment. That environmental understanding may be achived via <dfn>inside-out tracking</dfn>, where sensors on the tracked device itself (such as cameras or depth sensors) are used to determine the device's position, or <dfn>outside-in tracking</dfn>, where external devices placed in the user's environment (like a camera or light emmiting device) provides a stable point of reference against which the XR device can determine it's position.
 
 
 Security, Privacy, and Comfort Considerations {#security}
@@ -128,7 +128,7 @@ When navigating between pages in XR the user agent should display trusted UI ele
 Context Isolation {#contextisolation-security}
 -----------------
 
-The trusted UI must be drawing by an independent rendering context whose state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
+The trusted UI must be drawn by an independent rendering context whose state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
 
 Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{XRDevice}} and {{XRSession}}. Attributes such as the {{XRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The user agent MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
 
@@ -164,19 +164,27 @@ The <dfn attribute for="Navigator">xr</dfn> object is the entry point to the API
 
 The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MAY reuse the cached [=list of XR devices=]. Enumerating the devices [=should not initialize device tracking=]. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices. Each time the [=list of XR devices=] changes the user agent should <dfn>select a default XR device</dfn> by running the following steps:
 
+<div class="algorithm" data-algorithm="default-device-selection">
+
   1. Let |oldDefaultDevice| be the [=default device=].
   1. If the [=list of XR devices=] is empty set the [=default device=] to <code>null</code>.
   1. If the [=list of XR devices=] contains one device set the [=default device=] to that device.
   1. If the [=list of XR devices=] contains multiple devices set the [=default device=] to a device of the user agent's choosing.
   1. If this is not the first time devices have been enumerated and |oldDefaultDevice| does not equal the [=default device=] queue a task that fires a simple event named {{devicechange}} on the {{XR}} object.
 
+</div>
+
 NOTE: The user agent is allowed to use any criteria it wishes to [=select a default XR device=] when the [=list of XR devices=] contains multiple devices. For example, the user agent may always select the first item in the list, or provide settings UI that allows users to manage device priority. Ideally the algorithm used to select the default device is stable and will result in the same device being selected across multiple browsing sessions.
 
 The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
+<div class="algorithm" data-algorithm="request-device">
+
   1. [=Enumerate XR devices=].
   1. [=Select a default XR device=] from the [=list of XR devices=].
   1. <a>Resolve</a> |promise| with the [=default device=].
+
+</div>
 
 Calling {{XR/requestDevice()}} MUST NOT trigger device-selection UI as this would cause many sites to display XR-specific dialogs early in the document lifecycle without user activation.
 
@@ -227,10 +235,16 @@ NOTE: A VR headset connected to a desktop PC would typically set {{external}} to
 
 When the <dfn method for="XRDevice">supportsSession(options)</dfn> method is invoked on {{XRDevice}} |device|, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
 
+<div class="algorithm" data-algorithm="supports-session">
+
   1. If the |options| are not [=supported by the device=] |device|, <a>reject</a> |promise| with <code>null</code>.
   1. Else <a>resolve</a> |promise| with <code>null</code>.
 
+</div>
+
 When the <dfn method for="XRDevice">requestSession(options)</dfn> method is invoked on {{XRDevice}} |device|, the user agent MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+
+<div class="algorithm" data-algorithm="request-session">
 
   1. If the |options| are not [=supported by the device=] |device|, <a>reject</a> |promise| with a {{NotSupportedError}} and abort these steps.
   1. Let |exclusive| be the {{XRSessionCreationOptions/exclusive}} attribute of the |options| argument.
@@ -241,6 +255,8 @@ When the <dfn method for="XRDevice">requestSession(options)</dfn> method is invo
   1. If |exclusive| is <code>true</code> set the |device|'s [=exclusive session=] to |session|.
   1. Else append |session| to |device|'s [=list of non-exclusive sessions=].
   1. <a>Resolve</a> |promise| with |session|.
+
+</div>
 
 <div class="example">
 The following code attempts to retrieve an exclusive {{XRSession}}.
@@ -272,8 +288,12 @@ The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description<
 
 To determine if an {{XRSessionCreationOptions}} |options| is <dfn>supported by the device</dfn> |device| run the following steps:
 
+<div class="algorithm" data-algorithm="supported-by-device">
+
   1. If {{XRSessionCreationOptions/exclusive}} is <code>true</code> and the |device|'s [=supports exclusive=] value is <code>false</code> return <code>false</code>.
   1. If {{XRSessionCreationOptions/exclusive}} is <code>false</code> and {{XRSessionCreationOptions/outputContext}} is <code>null</code>, return <code>false</code>
+
+</div>
 
 Issue: Document restrictions and capabilities of an [=exclusive session=]
 
@@ -313,6 +333,8 @@ The user agent, when possible, <dfn>SHOULD NOT initialize device tracking</dfn> 
 
 When an {{XRSession}} is created by an {{XRDevice}} |device|, the user agent MUST <dfn>initialize the session</dfn> by running the following steps:
 
+<div class="algorithm" data-algorithm="initialize-session">
+
   1. Let |session| be the newly created session.
   1. Let |options| be the {{XRSessionCreationOptions}} passed to {{requestSession()}}.
   1. Initialize |session|'s {{XRSession/device}} to |device|.
@@ -323,7 +345,11 @@ When an {{XRSession}} is created by an {{XRDevice}} |device|, the user agent MUS
   1. Initialize |session|'s {{XRSession/baseLayer}} to <code>null</code>.
   1. If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device's tracking and rendering capabilities.
 
+</div>
+
 A number of diffrent circumstances may <dfn>shut down the session</dfn>, which is permanent and irreversable. Once a session has been shut down the only way to access the {{XRDevice}}'s tracking or rendering capabilities again is to request a new session. Each {{XRSession}} has an <dfn>ended</dfn> value that indicates if it has been shut down, which is a boolean which MUST be initialized to <code>false</code>. When an {{XRSession}} is shut down the following steps are run:
+
+<div class="algorithm" data-algorithm="shut-down-session">
 
   1. Let |session| be the target {{XRSession}} object.
   1. Let |device| be |session|'s {{XRSession/device}} attribute's value.
@@ -332,10 +358,16 @@ A number of diffrent circumstances may <dfn>shut down the session</dfn>, which i
   1. If |device|'s [=list of non-exclusive sessions=] contains |session|, remove it from the list.
   1. If no other features of the user agent are actively using them, perform the necessary platform-specific steps to shut down the device's tracking and rendering capabilities.
 
+</div>
+
 The <dfn method for="XRSession">end()</dfn> method provides a way to manually shut down a session. When invoked, it MUST return <a>a new Promise</a> |promise| and run the following steps <a>in parallel</a>:
+
+<div class="algorithm" data-algorithm="end-session">
 
   1. [=Shut down the session=] that the method was invoked on.
   1. <a>Resolve</a> |promise|.
+
+</div>
 
 <dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
 
@@ -358,29 +390,47 @@ Issue: Document how to <dfn>poll the device pose</dfn>
 Animation Frames {#animation-frames}
 ----------------
 
-Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which MUST be initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number which MUST initially be zero. Each {{XRSession}} also has a <dfn>processing frame</dfn> value, which is a boolean which MUST initially be set to <code>false</code>.
+<pre class="idl">
+callback XRFrameRequestCallback = void (DOMHighResTimeStamp time, XRPresentationFrame frame);
+</pre>
+
+Each {{XRFrameRequestCallback}} object has a <dfn for="XRFrameRequestCallback">cancelled</dfn> boolean initially set to <code>false</code>.
+
+Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which is initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number initially be zero. Each {{XRSession}} also has a <dfn>processing frame</dfn> boolean, which is initially be set to <code>false</code>.
 
 When the <dfn method for="XRSession">requestAnimationFrame(callback)</dfn> method is called on an {{XRSession}} |session|, the user agent MUST run the following steps:
- 
+
+<div class="algorithm" data-algorithm="request-animation-frame">
+
   1. Increment |session|'s [=animation frame callback identifier=] by one.
   1. Append the method’s |callback| argument to |session|'s [=list of animation frame callbacks=], associated with |session|'s [=animation frame callback identifier=]’s current value.
   1. Return |session|'s [=animation frame callback identifier=]’s current value.
 
-When the <dfn method for="XRSession">cancelAnimationFrame(handle)</dfn> method is called on an {{XRSession}} |session|, the user agent must run the following steps:
+</div>
+
+When the <dfn method for="XRSession">cancelAnimationFrame(handle)</dfn> method is called on an {{XRSession}} |session|, the user agent MUST run the following steps:
+
+<div class="algorithm" data-algorithm="cancel-animation-frame">
 
   1. Find the entry in |session|'s [=list of animation frame callbacks=] that is associated with the value given by the method’s |handle| argument.
-  1. If there is such an entry, set it's [=cancelled=] flag to <code>true</code> remove it from |session|'s [=list of animation frame callbacks=].
+  1. If there is such an entry, set it's [=cancelled=] boolean to <code>true</code> and remove it from |session|'s [=list of animation frame callbacks=].
 
-When the user agent is to <dfn>run the animation frame callbacks</dfn> for an {{XRSession}} |session| with a timestamp |now| and an {{XRPresentationFrame}} |frame|, it must run the following steps:
+</div>
+
+When the user agent is to <dfn>run the animation frame callbacks</dfn> for an {{XRSession}} |session| with a timestamp |now| and an {{XRPresentationFrame}} |frame|, it MUST run the following steps:
+
+<div class="algorithm" data-algorithm="run-animation-frames">
 
   1. Let |callbacks| be a list of the entries in |session|'s [=list of animation frame callback=], in the order in which they were added to the list.
   1. Set |session|'s [=list of animation frame callbacks=] to the empty list.
-  1. Set |session|'s [=processing frame=] value to <code>true</code>.
+  1. Set |session|'s [=processing frame=] to <code>true</code>.
   1. For each entry in |callbacks|, in order:
-    1. If the entry's [=cancelled=] flag is <code>true</code>, continue to the next entry.
+    1. If the entry's [=cancelled=] boolean is <code>true</code>, continue to the next entry.
     1. <a>Invoke the Web IDL callback function</a>, passing |now| and |frame| as the  arguments
     1. If an exception is thrown, <a>report the exception</a>.
-  1. Set |session|'s [=processing frame=] value to <code>false</code>.
+  1. Set |session|'s [=processing frame=] to <code>false</code>.
+
+</div>
 
 
 The XR Compositor {#compositor}
@@ -421,15 +471,6 @@ Then, the frame loop performs the following steps while the session is active:
 
 Frame Loop {#frame}
 ==========
-
-XRFrameRequestCallback {#xrframerequestcallback}
--------------------
-
-<pre class="idl">
-callback XRFrameRequestCallback = void (DOMHighResTimeStamp time, XRPresentationFrame frame);
-</pre>
-
-Each {{XRFrameRequestCallback}} object has a <dfn for="XRFrameRequestCallback">cancelled</dfn> boolean flag. This flag is initially false and is not exposed by any interface.
 
 XRPresentationFrame {#xrpresentationframe-interface}
 -------------------
@@ -553,9 +594,13 @@ The <dfn attribute for="XRView">projectionMatrix</dfn> attribute provides a [=ma
 
 The <dfn method for="XRView">getViewport(layer)</dfn> method queries the {{XRViewport}} content for this view should be rendered to for the passed {{XRLayer}}. When the method is invoked, run the following steps:
 
+<div class="algorithm" data-algorithm="get-viewport">
+
   1. Let |view| be the target {{XRView}}.
   1. If |layer| was created with a different {{XRSession}} than the one that produced |view| return <code>null</code>
   1. ???
+
+</div>
 
 ISSUE: Not sure how to best describe remainder of steps here. Seems like deferring to the layer for viewport logic is best.
 
@@ -672,6 +717,8 @@ interface XRWebGLLayer : XRLayer {
 
 The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(session, context, layerInit)</dfn> constructor MUST perform the following steps when invoked:
 
+<div class="algorithm" data-algorithm="construct-webgl-layer">
+
   1. Let |layer| be a new {{XRWebGLLayer}}
   1. If |context| is not compatible with |session|'s {{XRSession/device}}, throw an {{InvalidStateError}}.
   1. Initialize |layer|'s {{XRWebGLLayer/context}} to |context|.
@@ -683,6 +730,8 @@ The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(session, context, layerInit
   1. Else initialize |layer|'s {{XRWebGLLayer/multiview}} to <code>false</code>.
   1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque=] {{WebGLFramebuffer}} created with |context|.
   1. Initialize the |layer|'s [=swap chain=].
+
+</div>
 
 The <dfn attribute for="XRWebGLLayer">framebufferWidth</dfn> and <dfn attribute for="XRWebGLLayer">framebufferHeight</dfn> attributes return the width and height of the [=swap chain=]'s backbuffer, respectively.
 
