@@ -27,6 +27,8 @@ urlPrefix: https://wiki.whatwg.org/wiki/OffscreenCanvas
     type: dfn; text: offscreen canvas
 urlPrefix: https://www.w3.org/TR/html51/webappapis.html
     type: dfn; text: window.requestAnimationFrame
+urlPrefix: https://www.w3.org/TR/html5/semantics-scripting.html
+    type: interface; text: HTMLCanvasElement
 urlPrefix: https://www.w3.org/TR/html5/
     type: interface; text: Document
 urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
@@ -35,6 +37,7 @@ urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
     type: interface; text: WebGLRenderingContext
     type: interface; text: WebGLRenderingContextBase
     type: dictionary; text: WebGLContextAttributes
+    type: dfn; text: Create the WebGL context; url:#2.1
     type: dfn; text: WebGL viewport; url:#5.14.4
     type: dfn; text: WebGL context lost flag; url:#webgl-context-lost-flag
     type: dfn; text: handle the context loss; url:#CONTEXT_LOST
@@ -775,11 +778,24 @@ partial interface WebGLRenderingContextBase {
 
 When a user agent implements this specification it MUST set a <dfn>compatible XR device</dfn>, initially set to <code>null</code>, on every {{WebGLRenderingContextBase}}.
 
-In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn>compatible graphics adapter</dfn> for the {{XRDevice}}. What is considered a [=compatible graphics adapter=] is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the {{XRDevice}} without undue latency. If a WebGL context was not already created on the [=compatible graphics adapter=], it typically must be re-created on the adapter in question before it can be used with an {{XRWebGLLayer}}.
+In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn>compatible graphics adapter</dfn> for the {{XRDevice}}. What is considered a [=compatible graphics adapter=] is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the {{XRDevice}} without undue latency. If a WebGL context was not already created on the [=compatible graphics adapter=], it typically must be re-created on the adapter in question before it can be used with an {{XRWebGLLayer}}. Once the [=compatible XR device=] is set, the context can be used with layers for any {{XRSession}} requested from that {{XRDevice}}.
 
 Note: On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the {{XRDevice}}s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the [=compatible graphics adapter=] since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with {{XRDevice}} physically connected to it is likely to be considered the [=compatible graphics adapter=].
 
-Issue: Describe how to set the [=compatible XR device=] at context creation time.
+The [=compatible XR device=] can be set either at context creation time or after context creation, potentially incurring a context loss. To set the [=compatible XR device=] at context creation time, an {{XRDevice}} is supplied to the {{compatibleXRDevice}} context creation attibute dictionary when requesting a WebGL context.
+
+<div class="algorithm" data-algorithm="create-with-compatible-xr-device">
+
+When the {{HTMLCanvasElement/getContext()}} method is invoked with a {{WebGLContextAttributes}} dictionary that contains a non-null {{compatibleXRDevice}}, run the following steps:
+
+  1. Let |attributes| be the {{WebGLContextAttributes}} passed to the function.
+  1. Let |device| be the |attributes|' {{compatibleXRDevice}}.
+  1. [=Create the WebGL context=] as usual, ensuring it is created on a [=compatible graphics adapter=] for |device|.
+  1. Let |context| be the newly created WebGL context.
+  1. Set |context|'s [=compatible XR device=] to |device|.
+  1. Return |context|.
+
+</div>
 
 <div class="example">
 The following code creates a WebGL context that is compatible with an {{XRDevice}} and then uses it to create an {{XRWebGLLayer}}.
@@ -795,6 +811,8 @@ function onXRSessionStarted(xrSession) {
 }
 </pre>
 </div>
+
+To set the [=compatible XR device=] after the context has been created, the {{setCompatibleXRDevice()}} method is used.
 
 <div class="algorithm" data-algorithm="set-compatible-xr-device">
 
