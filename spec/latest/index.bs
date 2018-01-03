@@ -761,7 +761,7 @@ Issue: Document the creation of a <dfn>swap chain</dfn>.
 Issue: Need an example snippet of setting up and using an {{XRWebGLLayer}}.
 
 WebGL Context Compatiblity {#contextcompatibility}
-==========================
+--------------------------
 
 <pre class="idl">
 partial dictionary WebGLContextAttributes {
@@ -780,6 +780,21 @@ In order for a WebGL context to be used as a source for XR imagery it must be cr
 Note: On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the {{XRDevice}}s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the [=compatible graphics adapter=] since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with {{XRDevice}} physically connected to it is likely to be considered the [=compatible graphics adapter=].
 
 Issue: Describe how to set the [=compatible XR device=] at context creation time.
+
+<div class="example">
+The following code creates a WebGL context that is compatible with an {{XRDevice}} and then uses it to create an {{XRWebGLLayer}}.
+
+<pre highlight="js">
+function onXRSessionStarted(xrSession) {
+  let glCanvas = document.createElement("canvas");
+  let gl = glCanvas.getContext("webgl", { compatibleXRDevice: xrSession.device });
+
+  loadWebGLResources();
+
+  xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
+}
+</pre>
+</div>
 
 <div class="algorithm" data-algorithm="set-compatible-xr-device">
 
@@ -808,9 +823,34 @@ Additionally, when any WebGL [=handle the context loss|context is lost=] run the
 
 </div>
 
-<!--Upon being set as the source of an XRCanvasLayer the source's context MAY be lost. Additionally the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
+<div class="example">
+The following code creates an {{XRWebGLLayer}} from a pre-existing WebGL context.
 
-Note: In order to make use of a canvas in the event of context loss, the application should handle the <code>webglcontextlost</code> event on the source canvas and prevent the event's default behavior. The application should then listen for a <code>webglcontextrestored</code> event to be fired and reload any necessary graphical resources in response.-->
+<pre highlight="js">
+let glCanvas = document.createElement("canvas");
+let gl = glCanvas.getContext("webgl");
+
+loadWebGLResources();
+
+glCanvas.addEventListener("webglcontextlost", (event) => {
+  // Indicates that the WebGL context can be restored.
+  event.canceled = true;
+});
+
+glCanvas.addEventListener("webglcontextrestored", (event) => {
+  // WebGL resources need to be re-created after a context loss.
+  loadWebGLResources();
+});
+
+function onXRSessionStarted(xrSession) {
+  // Make sure the canvas context we want to use is compatible with the device.
+  // May trigger a context loss.
+  return gl.setCompatibleXRDevice(xrSession.device).then(() => {
+    xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
+  });
+}
+</pre>
+</div>
 
 Canvas Rendering Context {#canvas-rendering-context}
 ========================

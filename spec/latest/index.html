@@ -1529,22 +1529,22 @@ Parts of this work may be from another specification document.  If so, those par
      <ol class="toc">
       <li><a href="#xrlayer-interface"><span class="secno">10.1</span> <span class="content">XRLayer</span></a>
       <li><a href="#xrwebgllayer-interface"><span class="secno">10.2</span> <span class="content">XRWebGLLayer</span></a>
+      <li><a href="#contextcompatibility"><span class="secno">10.3</span> <span class="content">WebGL Context Compatiblity</span></a>
      </ol>
-    <li><a href="#contextcompatibility"><span class="secno">11</span> <span class="content">WebGL Context Compatiblity</span></a>
-    <li><a href="#canvas-rendering-context"><span class="secno">12</span> <span class="content">Canvas Rendering Context</span></a>
+    <li><a href="#canvas-rendering-context"><span class="secno">11</span> <span class="content">Canvas Rendering Context</span></a>
     <li>
-     <a href="#events"><span class="secno">13</span> <span class="content">Events</span></a>
+     <a href="#events"><span class="secno">12</span> <span class="content">Events</span></a>
      <ol class="toc">
-      <li><a href="#xrsessionevent-interface"><span class="secno">13.1</span> <span class="content">XRSessionEvent</span></a>
-      <li><a href="#xrcoordinatesystemevent-interface"><span class="secno">13.2</span> <span class="content">XRCoordinateSystemEvent</span></a>
-      <li><a href="#event-types"><span class="secno">13.3</span> <span class="content">Event Types</span></a>
+      <li><a href="#xrsessionevent-interface"><span class="secno">12.1</span> <span class="content">XRSessionEvent</span></a>
+      <li><a href="#xrcoordinatesystemevent-interface"><span class="secno">12.2</span> <span class="content">XRCoordinateSystemEvent</span></a>
+      <li><a href="#event-types"><span class="secno">12.3</span> <span class="content">Event Types</span></a>
      </ol>
     <li>
-     <a href="#integrations"><span class="secno">14</span> <span class="content">Integrations</span></a>
+     <a href="#integrations"><span class="secno">13</span> <span class="content">Integrations</span></a>
      <ol class="toc">
-      <li><a href="#feature-policy"><span class="secno">14.1</span> <span class="content">Feature Policy</span></a>
+      <li><a href="#feature-policy"><span class="secno">13.1</span> <span class="content">Feature Policy</span></a>
      </ol>
-    <li><a href="#ack"><span class="secno">15</span> <span class="content">Acknowledgements</span></a>
+    <li><a href="#ack"><span class="secno">14</span> <span class="content">Acknowledgements</span></a>
     <li><a href="#conformance"><span class="secno"></span> <span class="content"> Conformance</span></a>
     <li>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
@@ -2088,7 +2088,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <p class="issue" id="issue-bb06cca0"><a class="self-link" href="#issue-bb06cca0"></a> Document what an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="opaque">opaque</dfn> framebuffer is.</p>
     <p class="issue" id="issue-fbb18bd5"><a class="self-link" href="#issue-fbb18bd5"></a> Document the creation of a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="swap-chain">swap chain</dfn>.</p>
     <p class="issue" id="issue-b1eb838a"><a class="self-link" href="#issue-b1eb838a"></a> Need an example snippet of setting up and using an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer⑤">XRWebGLLayer</a></code>.</p>
-    <h2 class="heading settled" data-level="11" id="contextcompatibility"><span class="secno">11. </span><span class="content">WebGL Context Compatiblity</span><a class="self-link" href="#contextcompatibility"></a></h2>
+    <h3 class="heading settled" data-level="10.3" id="contextcompatibility"><span class="secno">10.3. </span><span class="content">WebGL Context Compatiblity</span><a class="self-link" href="#contextcompatibility"></a></h3>
 <pre class="idl highlight def"><span class="kt">partial</span> <span class="kt">dictionary</span> <a class="nv idl-code" data-link-type="dictionary" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglcontextattributes" id="ref-for-webglcontextattributes">WebGLContextAttributes</a> {
     <a class="n" data-link-type="idl-name" href="#xrdevice" id="ref-for-xrdevice①⑧">XRDevice</a> <dfn class="nv idl-code" data-default="null" data-dfn-for="WebGLContextAttributes" data-dfn-type="dict-member" data-export="" data-type="XRDevice " id="dom-webglcontextattributes-compatiblexrdevice"><code>compatibleXRDevice</code><a class="self-link" href="#dom-webglcontextattributes-compatiblexrdevice"></a></dfn> = <span class="kt">null</span>;
 };
@@ -2101,6 +2101,18 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <p>In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="compatible-graphics-adapter">compatible graphics adapter</dfn> for the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>. What is considered a <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter">compatible graphics adapter</a> is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②①">XRDevice</a></code> without undue latency. If a WebGL context was not already created on the <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter①">compatible graphics adapter</a>, it typically must be re-created on the adapter in question before it can be used with an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer⑥">XRWebGLLayer</a></code>.</p>
     <p class="note" role="note"><span>Note:</span> On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②②">XRDevice</a></code>s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter②">compatible graphics adapter</a> since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②③">XRDevice</a></code> physically connected to it is likely to be considered the <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter③">compatible graphics adapter</a>.</p>
     <p class="issue" id="issue-0c404f7c"><a class="self-link" href="#issue-0c404f7c"></a> Describe how to set the <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device①">compatible XR device</a> at context creation time.</p>
+    <div class="example" id="example-9fe68985">
+     <a class="self-link" href="#example-9fe68985"></a> The following code creates a WebGL context that is compatible with an <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②④">XRDevice</a></code> and then uses it to create an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer⑦">XRWebGLLayer</a></code>. 
+<pre class="highlight"><span class="kd">function</span> onXRSessionStarted<span class="p">(</span>xrSession<span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> glCanvas <span class="o">=</span> document<span class="p">.</span>createElement<span class="p">(</span><span class="s2">"canvas"</span><span class="p">);</span>
+  <span class="kd">let</span> gl <span class="o">=</span> glCanvas<span class="p">.</span>getContext<span class="p">(</span><span class="s2">"webgl"</span><span class="p">,</span> <span class="p">{</span> compatibleXRDevice<span class="o">:</span> xrSession<span class="p">.</span>device <span class="p">});</span>
+
+  loadWebGLResources<span class="p">();</span>
+
+  xrSession<span class="p">.</span>baseLayer <span class="o">=</span> <span class="k">new</span> XRWebGLLayer<span class="p">(</span>xrSession<span class="p">,</span> gl<span class="p">);</span>
+<span class="p">}</span>
+</pre>
+    </div>
     <div class="algorithm" data-algorithm="set-compatible-xr-device">
      <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="WebGLRenderingContextBase" data-dfn-type="method" data-export="" id="dom-webglrenderingcontextbase-setcompatiblexrdevice"><code>setCompatibleXRDevice(<var>device</var>)</code></dfn> method is invoked, the user agent MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise④">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel④">in parallel</a>:</p>
      <ol>
@@ -2141,14 +2153,40 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
        <p>Set the context’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device⑤">compatible XR device</a> to <code>null</code>.</p>
      </ol>
     </div>
-    <h2 class="heading settled" data-level="12" id="canvas-rendering-context"><span class="secno">12. </span><span class="content">Canvas Rendering Context</span><a class="self-link" href="#canvas-rendering-context"></a></h2>
+    <div class="example" id="example-f1661a9c">
+     <a class="self-link" href="#example-f1661a9c"></a> The following code creates an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer⑧">XRWebGLLayer</a></code> from a pre-existing WebGL context. 
+<pre class="highlight"><span class="kd">let</span> glCanvas <span class="o">=</span> document<span class="p">.</span>createElement<span class="p">(</span><span class="s2">"canvas"</span><span class="p">);</span>
+<span class="kd">let</span> gl <span class="o">=</span> glCanvas<span class="p">.</span>getContext<span class="p">(</span><span class="s2">"webgl"</span><span class="p">);</span>
+
+loadWebGLResources<span class="p">();</span>
+
+glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span class="s2">"webglcontextlost"</span><span class="p">,</span> <span class="p">(</span>event<span class="p">)</span> <span class="p">=></span> <span class="p">{</span>
+  <span class="c1">// Indicates that the WebGL context can be restored.</span>
+<span class="c1"></span>  event<span class="p">.</span>canceled <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">});</span>
+
+glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span class="s2">"webglcontextrestored"</span><span class="p">,</span> <span class="p">(</span>event<span class="p">)</span> <span class="p">=></span> <span class="p">{</span>
+  <span class="c1">// WebGL resources need to be re-created after a context loss.</span>
+<span class="c1"></span>  loadWebGLResources<span class="p">();</span>
+<span class="p">});</span>
+
+<span class="kd">function</span> onXRSessionStarted<span class="p">(</span>xrSession<span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Make sure the canvas context we want to use is compatible with the device.</span>
+<span class="c1"></span>  <span class="c1">// May trigger a context loss.</span>
+<span class="c1"></span>  <span class="k">return</span> gl<span class="p">.</span>setCompatibleXRDevice<span class="p">(</span>xrSession<span class="p">.</span>device<span class="p">).</span>then<span class="p">(()</span> <span class="p">=></span> <span class="p">{</span>
+    xrSession<span class="p">.</span>baseLayer <span class="o">=</span> <span class="k">new</span> XRWebGLLayer<span class="p">(</span>xrSession<span class="p">,</span> gl<span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre>
+    </div>
+    <h2 class="heading settled" data-level="11" id="canvas-rendering-context"><span class="secno">11. </span><span class="content">Canvas Rendering Context</span><a class="self-link" href="#canvas-rendering-context"></a></h2>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①④">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①③">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrpresentationcontext"><code>XRPresentationContext</code></dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/canvas.html#htmlcanvaselement" id="ref-for-htmlcanvaselement">HTMLCanvasElement</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLCanvasElement" href="#dom-xrpresentationcontext-canvas" id="ref-for-dom-xrpresentationcontext-canvas">canvas</a>;
 };
 </pre>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRPresentationContext" data-dfn-type="attribute" data-export="" id="dom-xrpresentationcontext-canvas"><code>canvas</code></dfn></p>
-    <h2 class="heading settled" data-level="13" id="events"><span class="secno">13. </span><span class="content">Events</span><a class="self-link" href="#events"></a></h2>
-    <h3 class="heading settled" data-level="13.1" id="xrsessionevent-interface"><span class="secno">13.1. </span><span class="content">XRSessionEvent</span><a class="self-link" href="#xrsessionevent-interface"></a></h3>
+    <h2 class="heading settled" data-level="12" id="events"><span class="secno">12. </span><span class="content">Events</span><a class="self-link" href="#events"></a></h2>
+    <h3 class="heading settled" data-level="12.1" id="xrsessionevent-interface"><span class="secno">12.1. </span><span class="content">XRSessionEvent</span><a class="self-link" href="#xrsessionevent-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑤">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①④">Exposed</a>=<span class="n">Window</span>, <dfn class="nv idl-code" data-dfn-for="XRSessionEvent" data-dfn-type="constructor" data-export="" data-lt="XRSessionEvent(type, eventInitDict)" id="dom-xrsessionevent-xrsessionevent"><code>Constructor</code><a class="self-link" href="#dom-xrsessionevent-xrsessionevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="XRSessionEvent/XRSessionEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrsessionevent-xrsessionevent-type-eventinitdict-type"><code>type</code><a class="self-link" href="#dom-xrsessionevent-xrsessionevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-xrsessioneventinit" id="ref-for-dictdef-xrsessioneventinit">XRSessionEventInit</a> <dfn class="nv idl-code" data-dfn-for="XRSessionEvent/XRSessionEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrsessionevent-xrsessionevent-type-eventinitdict-eventinitdict"><code>eventInitDict</code><a class="self-link" href="#dom-xrsessionevent-xrsessionevent-type-eventinitdict-eventinitdict"></a></dfn>)]
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrsessionevent"><code>XRSessionEvent</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event" id="ref-for-event">Event</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrsession" id="ref-for-xrsession②①">XRSession</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRSession" href="#dom-xrsessionevent-session" id="ref-for-dom-xrsessionevent-session">session</a>;
@@ -2159,7 +2197,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
 };
 </pre>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRSessionEvent" data-dfn-type="attribute" data-export="" id="dom-xrsessionevent-session"><code>session</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②③">XRSession</a></code> associated with this event.</p>
-    <h3 class="heading settled" data-level="13.2" id="xrcoordinatesystemevent-interface"><span class="secno">13.2. </span><span class="content">XRCoordinateSystemEvent</span><a class="self-link" href="#xrcoordinatesystemevent-interface"></a></h3>
+    <h3 class="heading settled" data-level="12.2" id="xrcoordinatesystemevent-interface"><span class="secno">12.2. </span><span class="content">XRCoordinateSystemEvent</span><a class="self-link" href="#xrcoordinatesystemevent-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①⑥">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①⑤">Exposed</a>=<span class="n">Window</span>, <dfn class="nv idl-code" data-dfn-for="XRCoordinateSystemEvent" data-dfn-type="constructor" data-export="" data-lt="XRCoordinateSystemEvent(type, eventInitDict)" id="dom-xrcoordinatesystemevent-xrcoordinatesystemevent"><code>Constructor</code><a class="self-link" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent"></a></dfn>(<a class="n idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString①"><span class="kt">DOMString</span></a> <dfn class="nv idl-code" data-dfn-for="XRCoordinateSystemEvent/XRCoordinateSystemEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-type"><code>type</code><a class="self-link" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-type"></a></dfn>, <a class="n" data-link-type="idl-name" href="#dictdef-xrcoordinatesystemeventinit" id="ref-for-dictdef-xrcoordinatesystemeventinit">XRCoordinateSystemEventInit</a> <dfn class="nv idl-code" data-dfn-for="XRCoordinateSystemEvent/XRCoordinateSystemEvent(type, eventInitDict)" data-dfn-type="argument" data-export="" id="dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-eventinitdict"><code>eventInitDict</code><a class="self-link" href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent-type-eventinitdict-eventinitdict"></a></dfn>)]
 <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrcoordinatesystemevent"><code>XRCoordinateSystemEvent</code></dfn> : <a class="n" data-link-type="idl-name" href="https://dom.spec.whatwg.org/#event" id="ref-for-event①">Event</a> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem④">XRCoordinateSystem</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="XRCoordinateSystem" href="#dom-xrcoordinatesystemevent-coordinatesystem" id="ref-for-dom-xrcoordinatesystemevent-coordinatesystem">coordinateSystem</a>;
@@ -2170,20 +2208,20 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
 };
 </pre>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRCoordinateSystemEvent" data-dfn-type="attribute" data-export="" id="dom-xrcoordinatesystemevent-coordinatesystem"><code>coordinateSystem</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem⑥">XRCoordinateSystem</a></code> associated with this event.</p>
-    <h3 class="heading settled" data-level="13.3" id="event-types"><span class="secno">13.3. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
+    <h3 class="heading settled" data-level="12.3" id="event-types"><span class="secno">12.3. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
     <p>The user agent MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.</p>
-    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②④">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
+    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⑤">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
     <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-blur"><code>blur</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②④">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑤">XRSession</a></code> by the page has been suspended by the user agent, OS, or XR hardware. While an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑥">XRSession</a></code> is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent">XRSessionEvent</a></code>.</p>
     <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-focus"><code>focus</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑦">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑧">XRSession</a></code> by the page has resumed after being suspended. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent①">XRSessionEvent</a></code>.</p>
-    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑨">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⑤">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
+    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑨">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⑥">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-end"><code>end</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession③⓪">XRSession</a></code> when the session ends, either by the application or the user agent. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent③">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRFrameOfReference" data-dfn-type="event" data-export="" id="eventdef-xrframeofreference-boundschange"><code>boundschange</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrframeofreference" id="ref-for-xrframeofreference③">XRFrameOfReference</a></code> when the <a data-link-type="dfn" href="#stage-bounds" id="ref-for-stage-bounds④">stage bounds</a> change. This includes changes to the <code class="idl"><a data-link-type="idl" href="#dom-xrstagebounds-geometry" id="ref-for-dom-xrstagebounds-geometry①">geometry</a></code> point array or the <code class="idl"><a data-link-type="idl" href="#dom-xrframeofreference-bounds" id="ref-for-dom-xrframeofreference-bounds③">bounds</a></code> attribute changing to or from <code>null</code>. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystemevent" id="ref-for-xrcoordinatesystemevent">XRCoordinateSystemEvent</a></code>.</p>
-    <h2 class="heading settled" data-level="14" id="integrations"><span class="secno">14. </span><span class="content">Integrations</span><a class="self-link" href="#integrations"></a></h2>
-    <h3 class="heading settled" data-level="14.1" id="feature-policy"><span class="secno">14.1. </span><span class="content">Feature Policy</span><a class="self-link" href="#feature-policy"></a></h3>
+    <h2 class="heading settled" data-level="13" id="integrations"><span class="secno">13. </span><span class="content">Integrations</span><a class="self-link" href="#integrations"></a></h2>
+    <h3 class="heading settled" data-level="13.1" id="feature-policy"><span class="secno">13.1. </span><span class="content">Feature Policy</span><a class="self-link" href="#feature-policy"></a></h3>
      This specification defines a <a data-link-type="dfn" href="https://wicg.github.io/feature-policy/#feature" id="ref-for-feature">feature</a> that controls whether the <code class="idl"><a data-link-type="idl" href="#dom-navigator-xr" id="ref-for-dom-navigator-xr②">xr</a></code> attribute is exposed on the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/system-state.html#navigator" id="ref-for-navigator①">Navigator</a></code> object. 
     <p>The <a data-link-type="dfn" href="https://wicg.github.io/feature-policy/#feature-name" id="ref-for-feature-name">feature name</a> for this feature is <code>"xr"</code>.</p>
     <p>The <a data-link-type="dfn" href="https://wicg.github.io/feature-policy/#default-allowlist" id="ref-for-default-allowlist">default allowlist</a> for this feature is <code>["self"]</code>.</p>
-    <h2 class="heading settled" data-level="15" id="ack"><span class="secno">15. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
+    <h2 class="heading settled" data-level="14" id="ack"><span class="secno">14. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
     <p>The following individuals have contributed to the design of the WebXR Device API specification:</p>
     <ul>
      <li data-md="">
@@ -2363,22 +2401,22 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
      <li><a href="#dom-xrwebgllayer-antialias">attribute for XRWebGLLayer</a><span>, in §10.2</span>
     </ul>
    <li><a href="#dom-xrsession-baselayer">baseLayer</a><span>, in §5.2</span>
-   <li><a href="#eventdef-xrsession-blur">blur</a><span>, in §13.3</span>
+   <li><a href="#eventdef-xrsession-blur">blur</a><span>, in §12.3</span>
    <li><a href="#blur-all-sessions">blur all sessions</a><span>, in §5.2</span>
    <li><a href="#dom-xrframeofreference-bounds">bounds</a><span>, in §7.2</span>
-   <li><a href="#eventdef-xrframeofreference-boundschange">boundschange</a><span>, in §13.3</span>
+   <li><a href="#eventdef-xrframeofreference-boundschange">boundschange</a><span>, in §12.3</span>
    <li><a href="#dom-xrsession-cancelanimationframe">cancelAnimationFrame(handle)</a><span>, in §5.3</span>
    <li><a href="#xrframerequestcallback-cancelled">cancelled</a><span>, in §5.3</span>
-   <li><a href="#dom-xrpresentationcontext-canvas">canvas</a><span>, in §12</span>
-   <li><a href="#compatible-graphics-adapter">compatible graphics adapter</a><span>, in §11</span>
-   <li><a href="#dom-webglcontextattributes-compatiblexrdevice">compatibleXRDevice</a><span>, in §11</span>
-   <li><a href="#compatible-xr-device">compatible XR device</a><span>, in §11</span>
+   <li><a href="#dom-xrpresentationcontext-canvas">canvas</a><span>, in §11</span>
+   <li><a href="#compatible-graphics-adapter">compatible graphics adapter</a><span>, in §10.3</span>
+   <li><a href="#dom-webglcontextattributes-compatiblexrdevice">compatibleXRDevice</a><span>, in §10.3</span>
+   <li><a href="#compatible-xr-device">compatible XR device</a><span>, in §10.3</span>
    <li><a href="#dom-xrwebgllayer-context">context</a><span>, in §10.2</span>
    <li>
     coordinateSystem
     <ul>
-     <li><a href="#dom-xrcoordinatesystemeventinit-coordinatesystem">dict-member for XRCoordinateSystemEventInit</a><span>, in §13.2</span>
-     <li><a href="#dom-xrcoordinatesystemevent-coordinatesystem">attribute for XRCoordinateSystemEvent</a><span>, in §13.2</span>
+     <li><a href="#dom-xrcoordinatesystemeventinit-coordinatesystem">dict-member for XRCoordinateSystemEventInit</a><span>, in §12.2</span>
+     <li><a href="#dom-xrcoordinatesystemevent-coordinatesystem">attribute for XRCoordinateSystemEvent</a><span>, in §12.2</span>
     </ul>
    <li><a href="#default-device">default device</a><span>, in §4.1</span>
    <li>
@@ -2390,11 +2428,11 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li><a href="#dom-xrsession-depthfar">depthFar</a><span>, in §5.2</span>
    <li><a href="#dom-xrsession-depthnear">depthNear</a><span>, in §5.2</span>
    <li><a href="#dom-xrsession-device">device</a><span>, in §5.2</span>
-   <li><a href="#eventdef-xr-devicechange">devicechange</a><span>, in §13.3</span>
+   <li><a href="#eventdef-xr-devicechange">devicechange</a><span>, in §12.3</span>
    <li><a href="#dom-xrframeofreferenceoptions-disablestageemulation">disableStageEmulation</a><span>, in §7.2</span>
    <li><a href="#dom-xrframeofreference-emulatedheight">emulatedHeight</a><span>, in §7.2</span>
    <li><a href="#dom-xrsession-end">end()</a><span>, in §5.2</span>
-   <li><a href="#eventdef-xrsession-end">end</a><span>, in §13.3</span>
+   <li><a href="#eventdef-xrsession-end">end</a><span>, in §12.3</span>
    <li><a href="#ended">ended</a><span>, in §5.2</span>
    <li><a href="#end-the-session">end the session</a><span>, in §5.2</span>
    <li><a href="#enumerate-xr-devices">enumerate XR devices</a><span>, in §4.1</span>
@@ -2409,7 +2447,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li><a href="#dom-xrview-eye">eye</a><span>, in §8.1</span>
    <li><a href="#dom-xrframeofreferencetype-eyelevel">"eyeLevel"</a><span>, in §7.2</span>
    <li><a href="#dom-xrframeofreferencetype-eyelevel">eyeLevel</a><span>, in §7.2</span>
-   <li><a href="#eventdef-xrsession-focus">focus</a><span>, in §13.3</span>
+   <li><a href="#eventdef-xrsession-focus">focus</a><span>, in §12.3</span>
    <li><a href="#dom-xrwebgllayer-framebuffer">framebuffer</a><span>, in §10.2</span>
    <li><a href="#dom-xrwebgllayer-framebufferheight">framebufferHeight</a><span>, in §10.2</span>
    <li><a href="#dom-xrwebgllayerinit-framebufferscalefactor">framebufferScaleFactor</a><span>, in §10.2</span>
@@ -2462,7 +2500,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li><a href="#dom-xrdevice-requestsession">requestSession()</a><span>, in §4.2</span>
    <li><a href="#dom-xrdevice-requestsession">requestSession(options)</a><span>, in §4.2</span>
    <li><a href="#dom-xrwebgllayer-requestviewportscaling">requestViewportScaling(viewportScaleFactor)</a><span>, in §10.2</span>
-   <li><a href="#eventdef-xrsession-resetpose">resetpose</a><span>, in §13.3</span>
+   <li><a href="#eventdef-xrsession-resetpose">resetpose</a><span>, in §12.3</span>
    <li><a href="#dom-xreye-right">right</a><span>, in §8.1</span>
    <li><a href="#dom-xreye-right">"right"</a><span>, in §8.1</span>
    <li><a href="#run-the-animation-frame-callbacks">run the animation frame callbacks</a><span>, in §5.3</span>
@@ -2470,11 +2508,11 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li>
     session
     <ul>
-     <li><a href="#dom-xrsessioneventinit-session">dict-member for XRSessionEventInit</a><span>, in §13.1</span>
-     <li><a href="#dom-xrsessionevent-session">attribute for XRSessionEvent</a><span>, in §13.1</span>
+     <li><a href="#dom-xrsessioneventinit-session">dict-member for XRSessionEventInit</a><span>, in §12.1</span>
+     <li><a href="#dom-xrsessionevent-session">attribute for XRSessionEvent</a><span>, in §12.1</span>
     </ul>
    <li><a href="#session-description">session description</a><span>, in §5.1</span>
-   <li><a href="#dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice(device)</a><span>, in §11</span>
+   <li><a href="#dom-webglrenderingcontextbase-setcompatiblexrdevice">setCompatibleXRDevice(device)</a><span>, in §10.3</span>
    <li><a href="#should-not-initialize-device-tracking">SHOULD NOT initialize device tracking</a><span>, in §5.2</span>
    <li><a href="#shut-down-the-session">shut down the session</a><span>, in §5.2</span>
    <li><a href="#xrstagebounds-stage">Stage</a><span>, in §7.2</span>
@@ -2509,9 +2547,9 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li><a href="#xr">XR</a><span>, in §4.1</span>
    <li><a href="#xr-compositor">XR Compositor</a><span>, in §5.4</span>
    <li><a href="#xrcoordinatesystem">XRCoordinateSystem</a><span>, in §7.1</span>
-   <li><a href="#xrcoordinatesystemevent">XRCoordinateSystemEvent</a><span>, in §13.2</span>
-   <li><a href="#dictdef-xrcoordinatesystemeventinit">XRCoordinateSystemEventInit</a><span>, in §13.2</span>
-   <li><a href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent">XRCoordinateSystemEvent(type, eventInitDict)</a><span>, in §13.2</span>
+   <li><a href="#xrcoordinatesystemevent">XRCoordinateSystemEvent</a><span>, in §12.2</span>
+   <li><a href="#dictdef-xrcoordinatesystemeventinit">XRCoordinateSystemEventInit</a><span>, in §12.2</span>
+   <li><a href="#dom-xrcoordinatesystemevent-xrcoordinatesystemevent">XRCoordinateSystemEvent(type, eventInitDict)</a><span>, in §12.2</span>
    <li><a href="#xrdevice">XRDevice</a><span>, in §4.2</span>
    <li><a href="#xrdevicepose">XRDevicePose</a><span>, in §9.2</span>
    <li><a href="#enumdef-xreye">XREye</a><span>, in §8.1</span>
@@ -2520,13 +2558,13 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li><a href="#enumdef-xrframeofreferencetype">XRFrameOfReferenceType</a><span>, in §7.2</span>
    <li><a href="#callbackdef-xrframerequestcallback">XRFrameRequestCallback</a><span>, in §5.3</span>
    <li><a href="#xrlayer">XRLayer</a><span>, in §10.1</span>
-   <li><a href="#xrpresentationcontext">XRPresentationContext</a><span>, in §12</span>
+   <li><a href="#xrpresentationcontext">XRPresentationContext</a><span>, in §11</span>
    <li><a href="#xrpresentationframe">XRPresentationFrame</a><span>, in §6.1</span>
    <li><a href="#xrsession">XRSession</a><span>, in §5.2</span>
    <li><a href="#dictdef-xrsessioncreationoptions">XRSessionCreationOptions</a><span>, in §5.1</span>
-   <li><a href="#xrsessionevent">XRSessionEvent</a><span>, in §13.1</span>
-   <li><a href="#dictdef-xrsessioneventinit">XRSessionEventInit</a><span>, in §13.1</span>
-   <li><a href="#dom-xrsessionevent-xrsessionevent">XRSessionEvent(type, eventInitDict)</a><span>, in §13.1</span>
+   <li><a href="#xrsessionevent">XRSessionEvent</a><span>, in §12.1</span>
+   <li><a href="#dictdef-xrsessioneventinit">XRSessionEventInit</a><span>, in §12.1</span>
+   <li><a href="#dom-xrsessionevent-xrsessionevent">XRSessionEvent(type, eventInitDict)</a><span>, in §12.1</span>
    <li><a href="#xrstagebounds">XRStageBounds</a><span>, in §7.3</span>
    <li><a href="#xrstageboundspoint">XRStageBoundsPoint</a><span>, in §7.3</span>
    <li><a href="#xrview">XRView</a><span>, in §8.1</span>
@@ -2823,14 +2861,14 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <b><a href="#xr">#xr</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-xr">4.1. XR</a> <a href="#ref-for-xr①">(2)</a>
-    <li><a href="#ref-for-xr②">13.3. Event Types</a>
+    <li><a href="#ref-for-xr②">12.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-navigator-xr">
    <b><a href="#dom-navigator-xr">#dom-navigator-xr</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-navigator-xr">4.1. XR</a> <a href="#ref-for-dom-navigator-xr①">(2)</a>
-    <li><a href="#ref-for-dom-navigator-xr②">14.1. Feature Policy</a>
+    <li><a href="#ref-for-dom-navigator-xr②">13.1. Feature Policy</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="list-of-xr-devices">
@@ -2880,8 +2918,8 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-xrdevice①⑤">6.1. XRPresentationFrame</a>
     <li><a href="#ref-for-xrdevice①⑥">9.2. XRDevicePose</a>
     <li><a href="#ref-for-xrdevice①⑦">10.1. XRLayer</a>
-    <li><a href="#ref-for-xrdevice①⑧">11. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑨">(2)</a> <a href="#ref-for-xrdevice②⓪">(3)</a> <a href="#ref-for-xrdevice②①">(4)</a> <a href="#ref-for-xrdevice②②">(5)</a> <a href="#ref-for-xrdevice②③">(6)</a>
-    <li><a href="#ref-for-xrdevice②④">13.3. Event Types</a> <a href="#ref-for-xrdevice②⑤">(2)</a>
+    <li><a href="#ref-for-xrdevice①⑧">10.3. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑨">(2)</a> <a href="#ref-for-xrdevice②⓪">(3)</a> <a href="#ref-for-xrdevice②①">(4)</a> <a href="#ref-for-xrdevice②②">(5)</a> <a href="#ref-for-xrdevice②③">(6)</a> <a href="#ref-for-xrdevice②④">(7)</a>
+    <li><a href="#ref-for-xrdevice②⑤">12.3. Event Types</a> <a href="#ref-for-xrdevice②⑥">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="supports-exclusive">
@@ -2970,8 +3008,8 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-xrsession①⑦">6.1. XRPresentationFrame</a>
     <li><a href="#ref-for-xrsession①⑧">8.1. XRView</a> <a href="#ref-for-xrsession①⑨">(2)</a>
     <li><a href="#ref-for-xrsession②⓪">10.2. XRWebGLLayer</a>
-    <li><a href="#ref-for-xrsession②①">13.1. XRSessionEvent</a> <a href="#ref-for-xrsession②②">(2)</a> <a href="#ref-for-xrsession②③">(3)</a>
-    <li><a href="#ref-for-xrsession②④">13.3. Event Types</a> <a href="#ref-for-xrsession②⑤">(2)</a> <a href="#ref-for-xrsession②⑥">(3)</a> <a href="#ref-for-xrsession②⑦">(4)</a> <a href="#ref-for-xrsession②⑧">(5)</a> <a href="#ref-for-xrsession②⑨">(6)</a> <a href="#ref-for-xrsession③⓪">(7)</a>
+    <li><a href="#ref-for-xrsession②①">12.1. XRSessionEvent</a> <a href="#ref-for-xrsession②②">(2)</a> <a href="#ref-for-xrsession②③">(3)</a>
+    <li><a href="#ref-for-xrsession②④">12.3. Event Types</a> <a href="#ref-for-xrsession②⑤">(2)</a> <a href="#ref-for-xrsession②⑥">(3)</a> <a href="#ref-for-xrsession②⑦">(4)</a> <a href="#ref-for-xrsession②⑧">(5)</a> <a href="#ref-for-xrsession②⑨">(6)</a> <a href="#ref-for-xrsession③⓪">(7)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsession-device">
@@ -3160,7 +3198,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-xrcoordinatesystem①">7.1. XRCoordinateSystem</a>
     <li><a href="#ref-for-xrcoordinatesystem②">7.2. XRFrameOfReference</a>
     <li><a href="#ref-for-xrcoordinatesystem③">9.2. XRDevicePose</a>
-    <li><a href="#ref-for-xrcoordinatesystem④">13.2. XRCoordinateSystemEvent</a> <a href="#ref-for-xrcoordinatesystem⑤">(2)</a> <a href="#ref-for-xrcoordinatesystem⑥">(3)</a>
+    <li><a href="#ref-for-xrcoordinatesystem④">12.2. XRCoordinateSystemEvent</a> <a href="#ref-for-xrcoordinatesystem⑤">(2)</a> <a href="#ref-for-xrcoordinatesystem⑥">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrcoordinatesystem-gettransformto">
@@ -3187,7 +3225,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <ul>
     <li><a href="#ref-for-xrframeofreference">5.2. XRSession</a>
     <li><a href="#ref-for-xrframeofreference①">7.2. XRFrameOfReference</a> <a href="#ref-for-xrframeofreference②">(2)</a>
-    <li><a href="#ref-for-xrframeofreference③">13.3. Event Types</a>
+    <li><a href="#ref-for-xrframeofreference③">12.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrstagebounds-stage">
@@ -3207,7 +3245,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <b><a href="#dom-xrframeofreference-bounds">#dom-xrframeofreference-bounds</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrframeofreference-bounds">7.2. XRFrameOfReference</a> <a href="#ref-for-dom-xrframeofreference-bounds①">(2)</a> <a href="#ref-for-dom-xrframeofreference-bounds②">(3)</a>
-    <li><a href="#ref-for-dom-xrframeofreference-bounds③">13.3. Event Types</a>
+    <li><a href="#ref-for-dom-xrframeofreference-bounds③">12.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrframeofreference-emulatedheight">
@@ -3240,14 +3278,14 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <ul>
     <li><a href="#ref-for-stage-bounds">7.2. XRFrameOfReference</a> <a href="#ref-for-stage-bounds①">(2)</a>
     <li><a href="#ref-for-stage-bounds②">7.3. XRStageBounds</a> <a href="#ref-for-stage-bounds③">(2)</a>
-    <li><a href="#ref-for-stage-bounds④">13.3. Event Types</a>
+    <li><a href="#ref-for-stage-bounds④">12.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrstagebounds-geometry">
    <b><a href="#dom-xrstagebounds-geometry">#dom-xrstagebounds-geometry</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrstagebounds-geometry">7.3. XRStageBounds</a>
-    <li><a href="#ref-for-dom-xrstagebounds-geometry①">13.3. Event Types</a>
+    <li><a href="#ref-for-dom-xrstagebounds-geometry①">12.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrstageboundspoint-x">
@@ -3416,7 +3454,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-xrwebgllayer①">8.2. XRViewport</a> <a href="#ref-for-xrwebgllayer②">(2)</a>
     <li><a href="#ref-for-xrwebgllayer③">10.1. XRLayer</a>
     <li><a href="#ref-for-xrwebgllayer④">10.2. XRWebGLLayer</a> <a href="#ref-for-xrwebgllayer⑤">(2)</a>
-    <li><a href="#ref-for-xrwebgllayer⑥">11. WebGL Context Compatiblity</a>
+    <li><a href="#ref-for-xrwebgllayer⑥">10.3. WebGL Context Compatiblity</a> <a href="#ref-for-xrwebgllayer⑦">(2)</a> <a href="#ref-for-xrwebgllayer⑧">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrwebgllayer-context">
@@ -3508,19 +3546,19 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <b><a href="#compatible-xr-device">#compatible-xr-device</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-compatible-xr-device">10.2. XRWebGLLayer</a>
-    <li><a href="#ref-for-compatible-xr-device①">11. WebGL Context Compatiblity</a> <a href="#ref-for-compatible-xr-device②">(2)</a> <a href="#ref-for-compatible-xr-device③">(3)</a> <a href="#ref-for-compatible-xr-device④">(4)</a> <a href="#ref-for-compatible-xr-device⑤">(5)</a>
+    <li><a href="#ref-for-compatible-xr-device①">10.3. WebGL Context Compatiblity</a> <a href="#ref-for-compatible-xr-device②">(2)</a> <a href="#ref-for-compatible-xr-device③">(3)</a> <a href="#ref-for-compatible-xr-device④">(4)</a> <a href="#ref-for-compatible-xr-device⑤">(5)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="compatible-graphics-adapter">
    <b><a href="#compatible-graphics-adapter">#compatible-graphics-adapter</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-compatible-graphics-adapter">11. WebGL Context Compatiblity</a> <a href="#ref-for-compatible-graphics-adapter①">(2)</a> <a href="#ref-for-compatible-graphics-adapter②">(3)</a> <a href="#ref-for-compatible-graphics-adapter③">(4)</a> <a href="#ref-for-compatible-graphics-adapter④">(5)</a> <a href="#ref-for-compatible-graphics-adapter⑤">(6)</a>
+    <li><a href="#ref-for-compatible-graphics-adapter">10.3. WebGL Context Compatiblity</a> <a href="#ref-for-compatible-graphics-adapter①">(2)</a> <a href="#ref-for-compatible-graphics-adapter②">(3)</a> <a href="#ref-for-compatible-graphics-adapter③">(4)</a> <a href="#ref-for-compatible-graphics-adapter④">(5)</a> <a href="#ref-for-compatible-graphics-adapter⑤">(6)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-webglrenderingcontextbase-setcompatiblexrdevice">
    <b><a href="#dom-webglrenderingcontextbase-setcompatiblexrdevice">#dom-webglrenderingcontextbase-setcompatiblexrdevice</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice">11. WebGL Context Compatiblity</a>
+    <li><a href="#ref-for-dom-webglrenderingcontextbase-setcompatiblexrdevice">10.3. WebGL Context Compatiblity</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrpresentationcontext">
@@ -3533,43 +3571,43 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
   <aside class="dfn-panel" data-for="dom-xrpresentationcontext-canvas">
    <b><a href="#dom-xrpresentationcontext-canvas">#dom-xrpresentationcontext-canvas</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xrpresentationcontext-canvas">12. Canvas Rendering Context</a>
+    <li><a href="#ref-for-dom-xrpresentationcontext-canvas">11. Canvas Rendering Context</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrsessionevent">
    <b><a href="#xrsessionevent">#xrsessionevent</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xrsessionevent">13.3. Event Types</a> <a href="#ref-for-xrsessionevent①">(2)</a> <a href="#ref-for-xrsessionevent②">(3)</a> <a href="#ref-for-xrsessionevent③">(4)</a>
+    <li><a href="#ref-for-xrsessionevent">12.3. Event Types</a> <a href="#ref-for-xrsessionevent①">(2)</a> <a href="#ref-for-xrsessionevent②">(3)</a> <a href="#ref-for-xrsessionevent③">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dictdef-xrsessioneventinit">
    <b><a href="#dictdef-xrsessioneventinit">#dictdef-xrsessioneventinit</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dictdef-xrsessioneventinit">13.1. XRSessionEvent</a>
+    <li><a href="#ref-for-dictdef-xrsessioneventinit">12.1. XRSessionEvent</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsessionevent-session">
    <b><a href="#dom-xrsessionevent-session">#dom-xrsessionevent-session</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xrsessionevent-session">13.1. XRSessionEvent</a>
+    <li><a href="#ref-for-dom-xrsessionevent-session">12.1. XRSessionEvent</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrcoordinatesystemevent">
    <b><a href="#xrcoordinatesystemevent">#xrcoordinatesystemevent</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-xrcoordinatesystemevent">13.3. Event Types</a>
+    <li><a href="#ref-for-xrcoordinatesystemevent">12.3. Event Types</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dictdef-xrcoordinatesystemeventinit">
    <b><a href="#dictdef-xrcoordinatesystemeventinit">#dictdef-xrcoordinatesystemeventinit</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dictdef-xrcoordinatesystemeventinit">13.2. XRCoordinateSystemEvent</a>
+    <li><a href="#ref-for-dictdef-xrcoordinatesystemeventinit">12.2. XRCoordinateSystemEvent</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrcoordinatesystemevent-coordinatesystem">
    <b><a href="#dom-xrcoordinatesystemevent-coordinatesystem">#dom-xrcoordinatesystemevent-coordinatesystem</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xrcoordinatesystemevent-coordinatesystem">13.2. XRCoordinateSystemEvent</a>
+    <li><a href="#ref-for-dom-xrcoordinatesystemevent-coordinatesystem">12.2. XRCoordinateSystemEvent</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eventdef-xr-devicechange">
