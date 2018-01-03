@@ -36,6 +36,9 @@ urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
     type: interface; text: WebGLRenderingContextBase
     type: dictionary; text: WebGLContextAttributes
     type: dfn; text: WebGL viewport; url:#5.14.4
+    type: dfn; text: WebGL context lost flag; url:#webgl-context-lost-flag
+    type: dfn; text: handle the context loss; url:#CONTEXT_LOST
+    type: dfn; text: Restore the context; url: #restore-the-drawing-buffer
 urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/2.0/
     type: interface; text: WebGL2RenderingContext
 urlPrefix: https://drafts.fxtf.org/geometry/
@@ -732,7 +735,7 @@ interface XRWebGLLayer : XRLayer {
 The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |layerInit|)</dfn> constructor MUST perform the following steps when invoked:
 
   1. Let |layer| be a new {{XRWebGLLayer}}
-  1. If |context|'s [=compatible XR device=] does not equal |session|'s {{XRSession/device}}, throw an {{InvalidStateError}}.
+  1. If |context|'s [=compatible XR device=] does not equal |session|'s {{XRSession/device}}, throw an {{InvalidStateError}} and abort these steps.
   1. Initialize |layer|'s {{XRWebGLLayer/context}} to |context|.
   1. Initialize |layer|'s {{XRWebGLLayer/antialias}} to |layerInit|'s {{XRWebGLLayerInit/antialias}} value.
   1. Initialize |layer|'s {{XRWebGLLayer/depth}} to |layerInit|'s {{XRWebGLLayerInit/depth}} value.
@@ -772,18 +775,38 @@ partial interface WebGLRenderingContextBase {
 
 When a user agent implements this specification it MUST set a <dfn>compatible XR device</dfn>, initially set to <code>null</code>, on every {{WebGLRenderingContextBase}}.
 
+In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn>compatible graphics adapter</dfn> for the {{XRDevice}}. What is considered a [=compatible graphics adapter=] is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the {{XRDevice}} without undue latency. If a WebGL context was not already created on the [=compatible graphics adapter=], it typically must be re-created on the adapter in question before it can be used with an {{XRWebGLLayer}}.
+
+Note: On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the {{XRDevice}}s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the [=compatible graphics adapter=] since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with {{XRDevice}} physically connected to it is likely to be considered the [=compatible graphics adapter=].
+
+Issue: Describe how to set the [=compatible XR device=] at context creation time.
+
 <div class="algorithm" data-algorithm="set-compatible-xr-device">
 
 When the <dfn method for="WebGLRenderingContextBase">setCompatibleXRDevice(|device|)</dfn> method is invoked, the user agent MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
   1. Let |context| be the target {{WebGLRenderingContextBase}} object.
+  1. If |context|'s [=WebGL context lost flag=] is set, [=reject=] |promise| with an {{InvalidStateError}} and abort these abort these steps.
   1. If |context|'s [=compatible XR device=] is |device|, [=resolve=] |promise| and abort these steps.
-  1. ???
-  1. [=Resolve=] |promise|.
+  1. If |context| was created on a [=compatible graphics adapter=] for |device|:
+      1. Set |context|'s [=compatible XR device=] to |device|.
+      1. [=resolve=] |promise| and abort these steps.
+  1. Queue a task to perform the following steps:
+      1. Force |context| to be lost and [=handle the context loss=] as described by the WebGL specification.
+      1. If the [=canceled flag=] of the "webglcontextlost" event fired in the previous step was not set, [=reject=] |promise| with an {{AbortError}} and abort these steps.
+      1. [=Restore the context=] on a [=compatible graphics adapter=] for |device|.
+      1. Set |context|'s [=compatible XR device=] to |device|.
+      1. [=Resolve=] |promise|.
 
 </div>
 
-Issue: Describe context compatibility requirements
+<div class="algorithm" data-algorithm="webgl-context-lost">
+
+Additionally, when any WebGL [=handle the context loss|context is lost=] run the following steps prior to firing the "webglcontextlost" event:
+
+  1. Set the context's [=compatible XR device=] to <code>null</code>.
+
+</div>
 
 <!--Upon being set as the source of an XRCanvasLayer the source's context MAY be lost. Additionally the current backbuffer of the source's context MAY be lost, even if the context was created with the <code>preserveDrawingBuffer</code> context creation attribute set to <code>true</code>.
 

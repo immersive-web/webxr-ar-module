@@ -2061,7 +2061,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
       <li data-md="">
        <p>Let <var>layer</var> be a new <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer④">XRWebGLLayer</a></code></p>
       <li data-md="">
-       <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device">compatible XR device</a> does not equal <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device②">device</a></code>, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror①">InvalidStateError</a></code>.</p>
+       <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device">compatible XR device</a> does not equal <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device②">device</a></code>, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror①">InvalidStateError</a></code> and abort these steps.</p>
       <li data-md="">
        <p>Initialize <var>layer</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrwebgllayer-context" id="ref-for-dom-xrwebgllayer-context①">context</a></code> to <var>context</var>.</p>
       <li data-md="">
@@ -2098,20 +2098,49 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
 };
 </pre>
     <p>When a user agent implements this specification it MUST set a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="compatible-xr-device">compatible XR device</dfn>, initially set to <code>null</code>, on every <code class="idl"><a data-link-type="idl" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase①">WebGLRenderingContextBase</a></code>.</p>
+    <p>In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="compatible-graphics-adapter">compatible graphics adapter</dfn> for the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>. What is considered a <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter">compatible graphics adapter</a> is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②①">XRDevice</a></code> without undue latency. If a WebGL context was not already created on the <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter①">compatible graphics adapter</a>, it typically must be re-created on the adapter in question before it can be used with an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer⑥">XRWebGLLayer</a></code>.</p>
+    <p class="note" role="note"><span>Note:</span> On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②②">XRDevice</a></code>s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter②">compatible graphics adapter</a> since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②③">XRDevice</a></code> physically connected to it is likely to be considered the <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter③">compatible graphics adapter</a>.</p>
+    <p class="issue" id="issue-0c404f7c"><a class="self-link" href="#issue-0c404f7c"></a> Describe how to set the <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device①">compatible XR device</a> at context creation time.</p>
     <div class="algorithm" data-algorithm="set-compatible-xr-device">
      <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="WebGLRenderingContextBase" data-dfn-type="method" data-export="" id="dom-webglrenderingcontextbase-setcompatiblexrdevice"><code>setCompatibleXRDevice(<var>device</var>)</code></dfn> method is invoked, the user agent MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise④">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel④">in parallel</a>:</p>
      <ol>
       <li data-md="">
        <p>Let <var>context</var> be the target <code class="idl"><a data-link-type="idl" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase②">WebGLRenderingContextBase</a></code> object.</p>
       <li data-md="">
-       <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device①">compatible XR device</a> is <var>device</var>, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise④">resolve</a> <var>promise</var> and abort these steps.</p>
+       <p>If <var>context</var>’s <a data-link-type="dfn" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webgl-context-lost-flag" id="ref-for-webgl-context-lost-flag">WebGL context lost flag</a> is set, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise④">reject</a> <var>promise</var> with an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror②">InvalidStateError</a></code> and abort these abort these steps.</p>
       <li data-md="">
-       <p>???</p>
+       <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device②">compatible XR device</a> is <var>device</var>, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise④">resolve</a> <var>promise</var> and abort these steps.</p>
       <li data-md="">
-       <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise⑤">Resolve</a> <var>promise</var>.</p>
+       <p>If <var>context</var> was created on a <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter④">compatible graphics adapter</a> for <var>device</var>:</p>
+       <ol>
+        <li data-md="">
+         <p>Set <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device③">compatible XR device</a> to <var>device</var>.</p>
+        <li data-md="">
+         <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise⑤">resolve</a> <var>promise</var> and abort these steps.</p>
+       </ol>
+      <li data-md="">
+       <p>Queue a task to perform the following steps:</p>
+       <ol>
+        <li data-md="">
+         <p>Force <var>context</var> to be lost and <a data-link-type="dfn" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#CONTEXT_LOST" id="ref-for-CONTEXT_LOST">handle the context loss</a> as described by the WebGL specification.</p>
+        <li data-md="">
+         <p>If the <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#canceled-flag" id="ref-for-canceled-flag">canceled flag</a> of the "webglcontextlost" event fired in the previous step was not set, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise⑤">reject</a> <var>promise</var> with an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#aborterror" id="ref-for-aborterror">AbortError</a></code> and abort these steps.</p>
+        <li data-md="">
+         <p><a data-link-type="dfn" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#restore-the-drawing-buffer" id="ref-for-restore-the-drawing-buffer">Restore the context</a> on a <a data-link-type="dfn" href="#compatible-graphics-adapter" id="ref-for-compatible-graphics-adapter⑤">compatible graphics adapter</a> for <var>device</var>.</p>
+        <li data-md="">
+         <p>Set <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device④">compatible XR device</a> to <var>device</var>.</p>
+        <li data-md="">
+         <p><a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise⑥">Resolve</a> <var>promise</var>.</p>
+       </ol>
      </ol>
     </div>
-    <p class="issue" id="issue-b6e56ea3"><a class="self-link" href="#issue-b6e56ea3"></a> Describe context compatibility requirements</p>
+    <div class="algorithm" data-algorithm="webgl-context-lost">
+     <p>Additionally, when any WebGL <a data-link-type="dfn" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#CONTEXT_LOST" id="ref-for-CONTEXT_LOST①">context is lost</a> run the following steps prior to firing the "webglcontextlost" event:</p>
+     <ol>
+      <li data-md="">
+       <p>Set the context’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device⑤">compatible XR device</a> to <code>null</code>.</p>
+     </ol>
+    </div>
     <h2 class="heading settled" data-level="12" id="canvas-rendering-context"><span class="secno">12. </span><span class="content">Canvas Rendering Context</span><a class="self-link" href="#canvas-rendering-context"></a></h2>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①④">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①③">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrpresentationcontext"><code>XRPresentationContext</code></dfn> {
   <span class="kt">readonly</span> <span class="kt">attribute</span> <a class="n" data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/canvas.html#htmlcanvaselement" id="ref-for-htmlcanvaselement">HTMLCanvasElement</a> <a class="nv idl-code" data-link-type="attribute" data-readonly="" data-type="HTMLCanvasElement" href="#dom-xrpresentationcontext-canvas" id="ref-for-dom-xrpresentationcontext-canvas">canvas</a>;
@@ -2143,10 +2172,10 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRCoordinateSystemEvent" data-dfn-type="attribute" data-export="" id="dom-xrcoordinatesystemevent-coordinatesystem"><code>coordinateSystem</code></dfn> The <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystem" id="ref-for-xrcoordinatesystem⑥">XRCoordinateSystem</a></code> associated with this event.</p>
     <h3 class="heading settled" data-level="13.3" id="event-types"><span class="secno">13.3. </span><span class="content">Event Types</span><a class="self-link" href="#event-types"></a></h3>
     <p>The user agent MUST provide the following new events. Registration for and firing of the events must follow the usual behavior of DOM4 Events.</p>
-    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⓪">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
+    <p>The user agent MAY fire a <dfn class="dfn-paneled idl-code" data-dfn-for="XR" data-dfn-type="event" data-export="" id="eventdef-xr-devicechange"><code>devicechange</code></dfn> event on the <code class="idl"><a data-link-type="idl" href="#xr" id="ref-for-xr②">XR</a></code> object to indicate that the availability of <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②④">XRDevice</a></code>s has been changed. The event MUST be of type <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#event" id="ref-for-event②">Event</a></code>.</p>
     <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-blur"><code>blur</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②④">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑤">XRSession</a></code> by the page has been suspended by the user agent, OS, or XR hardware. While an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑥">XRSession</a></code> is blurred it remains active but it may have its frame production throttled. This is to prevent tracking while the user interacts with potentially sensitive UI. For example: The user agent SHOULD blur the presenting application when the user is typing a URL into the browser with a virtual keyboard, otherwise the presenting page may be able to guess the URL the user is entering by tracking their head motions. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent">XRSessionEvent</a></code>.</p>
     <p>A user agent MAY dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-focus"><code>focus</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑦">XRSession</a></code> to indicate that presentation to the <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑧">XRSession</a></code> by the page has resumed after being suspended. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent①">XRSessionEvent</a></code>.</p>
-    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑨">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②①">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
+    <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-resetpose"><code>resetpose</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession②⑨">XRSession</a></code> when the system resets the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice②⑤">XRDevice</a></code>'s position or orientation. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent②">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="event" data-export="" id="eventdef-xrsession-end"><code>end</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrsession" id="ref-for-xrsession③⓪">XRSession</a></code> when the session ends, either by the application or the user agent. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrsessionevent" id="ref-for-xrsessionevent③">XRSessionEvent</a></code>.</p>
     <p>A user agent MUST dispatch a <dfn class="dfn-paneled idl-code" data-dfn-for="XRFrameOfReference" data-dfn-type="event" data-export="" id="eventdef-xrframeofreference-boundschange"><code>boundschange</code></dfn> event on an <code class="idl"><a data-link-type="idl" href="#xrframeofreference" id="ref-for-xrframeofreference③">XRFrameOfReference</a></code> when the <a data-link-type="dfn" href="#stage-bounds" id="ref-for-stage-bounds④">stage bounds</a> change. This includes changes to the <code class="idl"><a data-link-type="idl" href="#dom-xrstagebounds-geometry" id="ref-for-dom-xrstagebounds-geometry①">geometry</a></code> point array or the <code class="idl"><a data-link-type="idl" href="#dom-xrframeofreference-bounds" id="ref-for-dom-xrframeofreference-bounds③">bounds</a></code> attribute changing to or from <code>null</code>. The event MUST be of type <code class="idl"><a data-link-type="idl" href="#xrcoordinatesystemevent" id="ref-for-xrcoordinatesystemevent">XRCoordinateSystemEvent</a></code>.</p>
     <h2 class="heading settled" data-level="14" id="integrations"><span class="secno">14. </span><span class="content">Integrations</span><a class="self-link" href="#integrations"></a></h2>
@@ -2341,6 +2370,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li><a href="#dom-xrsession-cancelanimationframe">cancelAnimationFrame(handle)</a><span>, in §5.3</span>
    <li><a href="#xrframerequestcallback-cancelled">cancelled</a><span>, in §5.3</span>
    <li><a href="#dom-xrpresentationcontext-canvas">canvas</a><span>, in §12</span>
+   <li><a href="#compatible-graphics-adapter">compatible graphics adapter</a><span>, in §11</span>
    <li><a href="#dom-webglcontextattributes-compatiblexrdevice">compatibleXRDevice</a><span>, in §11</span>
    <li><a href="#compatible-xr-device">compatible XR device</a><span>, in §11</span>
    <li><a href="#dom-xrwebgllayer-context">context</a><span>, in §10.2</span>
@@ -2516,6 +2546,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
      <li><a href="https://dom.spec.whatwg.org/#event">Event</a>
      <li><a href="https://dom.spec.whatwg.org/#dictdef-eventinit">EventInit</a>
      <li><a href="https://dom.spec.whatwg.org/#eventtarget">EventTarget</a>
+     <li><a href="https://dom.spec.whatwg.org/#canceled-flag">canceled flag</a>
     </ul>
    <li>
     <a data-link-type="biblio">[feature policy]</a> defines the following terms:
@@ -2545,6 +2576,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <li>
     <a data-link-type="biblio">[WebIDL]</a> defines the following terms:
     <ul>
+     <li><a href="https://heycam.github.io/webidl/#aborterror">AbortError</a>
      <li><a href="https://heycam.github.io/webidl/#idl-DOMString">DOMString</a>
      <li><a href="https://heycam.github.io/webidl/#Exposed">Exposed</a>
      <li><a href="https://heycam.github.io/webidl/#idl-Float32Array">Float32Array</a>
@@ -2772,7 +2804,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <div class="issue"> Document what an <span>opaque</span> framebuffer is.<a href="#issue-bb06cca0"> ↵ </a></div>
    <div class="issue"> Document the creation of a <span>swap chain</span>.<a href="#issue-fbb18bd5"> ↵ </a></div>
    <div class="issue"> Need an example snippet of setting up and using an <code class="idl"><a data-link-type="idl" href="#xrwebgllayer">XRWebGLLayer</a></code>.<a href="#issue-b1eb838a"> ↵ </a></div>
-   <div class="issue"> Describe context compatibility requirements<a href="#issue-b6e56ea3"> ↵ </a></div>
+   <div class="issue"> Describe how to set the <a data-link-type="dfn" href="#compatible-xr-device">compatible XR device</a> at context creation time.<a href="#issue-0c404f7c"> ↵ </a></div>
   </div>
   <aside class="dfn-panel" data-for="3dof">
    <b><a href="#3dof">#3dof</a></b><b>Referenced in:</b>
@@ -2848,8 +2880,8 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-xrdevice①⑤">6.1. XRPresentationFrame</a>
     <li><a href="#ref-for-xrdevice①⑥">9.2. XRDevicePose</a>
     <li><a href="#ref-for-xrdevice①⑦">10.1. XRLayer</a>
-    <li><a href="#ref-for-xrdevice①⑧">11. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑨">(2)</a>
-    <li><a href="#ref-for-xrdevice②⓪">13.3. Event Types</a> <a href="#ref-for-xrdevice②①">(2)</a>
+    <li><a href="#ref-for-xrdevice①⑧">11. WebGL Context Compatiblity</a> <a href="#ref-for-xrdevice①⑨">(2)</a> <a href="#ref-for-xrdevice②⓪">(3)</a> <a href="#ref-for-xrdevice②①">(4)</a> <a href="#ref-for-xrdevice②②">(5)</a> <a href="#ref-for-xrdevice②③">(6)</a>
+    <li><a href="#ref-for-xrdevice②④">13.3. Event Types</a> <a href="#ref-for-xrdevice②⑤">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="supports-exclusive">
@@ -3384,6 +3416,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <li><a href="#ref-for-xrwebgllayer①">8.2. XRViewport</a> <a href="#ref-for-xrwebgllayer②">(2)</a>
     <li><a href="#ref-for-xrwebgllayer③">10.1. XRLayer</a>
     <li><a href="#ref-for-xrwebgllayer④">10.2. XRWebGLLayer</a> <a href="#ref-for-xrwebgllayer⑤">(2)</a>
+    <li><a href="#ref-for-xrwebgllayer⑥">11. WebGL Context Compatiblity</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrwebgllayer-context">
@@ -3475,7 +3508,13 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
    <b><a href="#compatible-xr-device">#compatible-xr-device</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-compatible-xr-device">10.2. XRWebGLLayer</a>
-    <li><a href="#ref-for-compatible-xr-device①">11. WebGL Context Compatiblity</a>
+    <li><a href="#ref-for-compatible-xr-device①">11. WebGL Context Compatiblity</a> <a href="#ref-for-compatible-xr-device②">(2)</a> <a href="#ref-for-compatible-xr-device③">(3)</a> <a href="#ref-for-compatible-xr-device④">(4)</a> <a href="#ref-for-compatible-xr-device⑤">(5)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="compatible-graphics-adapter">
+   <b><a href="#compatible-graphics-adapter">#compatible-graphics-adapter</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-compatible-graphics-adapter">11. WebGL Context Compatiblity</a> <a href="#ref-for-compatible-graphics-adapter①">(2)</a> <a href="#ref-for-compatible-graphics-adapter②">(3)</a> <a href="#ref-for-compatible-graphics-adapter③">(4)</a> <a href="#ref-for-compatible-graphics-adapter④">(5)</a> <a href="#ref-for-compatible-graphics-adapter⑤">(6)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-webglrenderingcontextbase-setcompatiblexrdevice">
