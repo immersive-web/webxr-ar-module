@@ -175,7 +175,7 @@ The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the s
 Each time the [=list of XR devices=] changes the user agent should <dfn>select a default XR device</dfn> by running the following steps:
 
   1. Let |oldDefaultDevice| be the [=default device=].
-  1. If the [=list of XR devices=] is empty set the [=default device=] to <code>null</code>.
+  1. If the [=list of XR devices=] is empty, set the [=default device=] to <code>null</code>.
   1. If the [=list of XR devices=] contains one device set the [=default device=] to that device.
   1. If the [=list of XR devices=] contains multiple devices set the [=default device=] to a device of the user agent's choosing.
   1. If this is not the first time devices have been enumerated and |oldDefaultDevice| does not equal the [=default device=] queue a task that fires a simple event named {{devicechange}} on the {{XR}} object.
@@ -240,7 +240,7 @@ Each {{XRDevice}} has an <dfn>exclusive session</dfn>, which MUST be initially <
 
 The <dfn attribute for="XRDevice">external</dfn> attribute SHOULD be <code>true</code> if the {{XRDevice}} hardware has a separate physical display from the system's main display and <code>false</code> otherwise.
 
-NOTE: A VR headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set {{external}} to <code>false</code>.
+NOTE: A headset connected to a desktop PC would typically set {{external}} to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a harness or a standalone device would set {{external}} to <code>false</code>.
 
 <div class="algorithm" data-algorithm="supports-session">
 
@@ -456,6 +456,8 @@ The XR Compositor {#compositor}
 Issue: This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.
 
 The user agent MUST maintain an <dfn>XR Compositor</dfn> which handles presentation to the {{XRDevice}} and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as {{XRWebGLLayer}} sources to prevent the page from corrupting the compositor state or reading back content from other pages. the compositor MUST also run in separate thread or processes to decouple performance of the page from the ability to present new imagery to the user at the appropriate framerate.
+
+The [=XR Compositor=] has a <dfn>list of layer images</dfn>, which is initially empty.
 
 <!--There are no direct interfaces to the compositor, but applications may submit bitmaps to be composited via the layer system and observe the frame timing via calls to {{XRSession/requestAnimationFrame()}}. The compositor consists of two different loops, assumed to be running in separate threads or processes. The <dfn>Frame Loop</dfn>, which drives the page script, and the <dfn>Render Loop</dfn>, which continuously presents imagery provided by the Frame Loop to the XR device. The render loop maintains its own copy of the session's layer list. Communication between the two loops is synchronized with a lock that limits access to the render loop's layer list.
 
@@ -739,6 +741,8 @@ interface XRWebGLLayer : XRLayer {
 The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |layerInit|)</dfn> constructor MUST perform the following steps when invoked:
 
   1. Let |layer| be a new {{XRWebGLLayer}}
+  1. If |session|'s [=ended=] value is <code>true</code>, throw an {{InvalidStateError}} and abort these steps.
+  1. If |context| is lost, throw an {{InvalidStateError}} and abort these steps.
   1. If |context|'s [=compatible XR device=] does not equal |session|'s {{XRSession/device}}, throw an {{InvalidStateError}} and abort these steps.
   1. Initialize |layer|'s {{XRWebGLLayer/context}} to |context|.
   1. Initialize |layer|'s {{XRWebGLLayer/antialias}} to |layerInit|'s {{XRWebGLLayerInit/antialias}} value.
@@ -749,6 +753,8 @@ The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |laye
   1. Else initialize |layer|'s {{XRWebGLLayer/multiview}} to <code>false</code>.
   1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque=] {{WebGLFramebuffer}} created with |context|.
   1. Initialize the |layer|'s [=swap chain=].
+  1. If |layer|'s [=swap chain=] was unable to be created for any reason, throw an {{OperationError}} and abort these steps.
+  1. Return |layer|.
 
 </div>
 

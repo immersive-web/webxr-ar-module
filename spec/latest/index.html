@@ -1176,7 +1176,7 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version bbd6a9c4064dd454886bb3e0c74f0a19865c3c74" name="generator">
+  <meta content="Bikeshed version 2b79dbafbd71fe3f8f4e2b9171e40a0bd49a639c" name="generator">
   <link href="https://immersive-web.github.io/webxr/" rel="canonical">
 <style>
   .unstable::before {
@@ -1440,7 +1440,7 @@ pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">WebXR Device API</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2018-01-04">4 January 2018</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2018-01-11">11 January 2018</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1462,7 +1462,7 @@ pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 4 January 2018,
+In addition, as of 11 January 2018,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1624,7 +1624,7 @@ Parts of this work may be from another specification document.  If so, those par
       <li data-md="">
        <p>Let <var>oldDefaultDevice</var> be the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device">default device</a>.</p>
       <li data-md="">
-       <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices④">list of XR devices</a> is empty set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device①">default device</a> to <code>null</code>.</p>
+       <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices④">list of XR devices</a> is empty, set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device①">default device</a> to <code>null</code>.</p>
       <li data-md="">
        <p>If the <a data-link-type="dfn" href="#list-of-xr-devices" id="ref-for-list-of-xr-devices⑤">list of XR devices</a> contains one device set the <a data-link-type="dfn" href="#default-device" id="ref-for-default-device②">default device</a> to that device.</p>
       <li data-md="">
@@ -1677,7 +1677,7 @@ Parts of this work may be from another specification document.  If so, those par
     <p>Each <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑤">XRDevice</a></code> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="supports-exclusive">supports exclusive</dfn> value, which is a boolean which MUST be set to <code>true</code> if the device can support exclusive sessions and <code>false</code> if it cannot.</p>
     <p>Each <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑥">XRDevice</a></code> has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="exclusive-session">exclusive session</dfn>, which MUST be initially <code>null</code>, and a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="list-of-non-exclusive-sessions">list of non-exclusive sessions</dfn>, which MUST be initially empty.</p>
     <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="attribute" data-export="" id="dom-xrdevice-external"><code>external</code></dfn> attribute SHOULD be <code>true</code> if the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice⑦">XRDevice</a></code> hardware has a separate physical display from the system’s main display and <code>false</code> otherwise.</p>
-    <p class="note" role="note"><span>NOTE:</span> A VR headset connected to a desktop PC would typically set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external①">external</a></code> to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a VR harness or a standalone device would set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external②">external</a></code> to <code>false</code>.</p>
+    <p class="note" role="note"><span>NOTE:</span> A headset connected to a desktop PC would typically set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external①">external</a></code> to <code>true</code> since the PC monitor would be considered the primary display. A mobile phone used in a harness or a standalone device would set <code class="idl"><a data-link-type="idl" href="#dom-xrdevice-external" id="ref-for-dom-xrdevice-external②">external</a></code> to <code>false</code>.</p>
     <div class="algorithm" data-algorithm="supports-session">
      <p>When the <dfn class="dfn-paneled idl-code" data-dfn-for="XRDevice" data-dfn-type="method" data-export="" data-lt="supportsSession(options)|supportsSession()" id="dom-xrdevice-supportssession"><code>supportsSession(<var>options</var>)</code></dfn> method is invoked, it MUST return <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#a-new-promise" id="ref-for-a-new-promise①">a new Promise</a> <var>promise</var> and run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel①">in parallel</a>:</p>
      <ol>
@@ -1887,6 +1887,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
     <h3 class="heading settled" data-level="5.4" id="compositor"><span class="secno">5.4. </span><span class="content">The XR Compositor</span><a class="self-link" href="#compositor"></a></h3>
     <p class="issue" id="issue-88218c4e"><a class="self-link" href="#issue-88218c4e"></a> This needs to be broken up a bit more and more clearly decribe things such as the frame lifecycle.</p>
     <p>The user agent MUST maintain an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="xr-compositor">XR Compositor</dfn> which handles presentation to the <code class="idl"><a data-link-type="idl" href="#xrdevice" id="ref-for-xrdevice①④">XRDevice</a></code> and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer">XRWebGLLayer</a></code> sources to prevent the page from corrupting the compositor state or reading back content from other pages. the compositor MUST also run in separate thread or processes to decouple performance of the page from the ability to present new imagery to the user at the appropriate framerate.</p>
+    <p>The <a data-link-type="dfn" href="#xr-compositor" id="ref-for-xr-compositor①">XR Compositor</a> has a <dfn data-dfn-type="dfn" data-noexport="" id="list-of-layer-images">list of layer images<a class="self-link" href="#list-of-layer-images"></a></dfn>, which is initially empty.</p>
     <h2 class="heading settled" data-level="6" id="frame"><span class="secno">6. </span><span class="content">Frame Loop</span><a class="self-link" href="#frame"></a></h2>
     <h3 class="heading settled" data-level="6.1" id="xrpresentationframe-interface"><span class="secno">6.1. </span><span class="content">XRPresentationFrame</span><a class="self-link" href="#xrpresentationframe-interface"></a></h3>
 <pre class="idl highlight def">[<a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext④">SecureContext</a>, <a class="nv idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed③">Exposed</a>=<span class="n">Window</span>] <span class="kt">interface</span> <dfn class="nv dfn-paneled idl-code" data-dfn-type="interface" data-export="" id="xrpresentationframe"><code>XRPresentationFrame</code></dfn> {
@@ -2063,7 +2064,11 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
       <li data-md="">
        <p>Let <var>layer</var> be a new <code class="idl"><a data-link-type="idl" href="#xrwebgllayer" id="ref-for-xrwebgllayer④">XRWebGLLayer</a></code></p>
       <li data-md="">
-       <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device">compatible XR device</a> does not equal <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device②">device</a></code>, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror①">InvalidStateError</a></code> and abort these steps.</p>
+       <p>If <var>session</var>’s <a data-link-type="dfn" href="#ended" id="ref-for-ended①">ended</a> value is <code>true</code>, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror①">InvalidStateError</a></code> and abort these steps.</p>
+      <li data-md="">
+       <p>If <var>context</var> is lost, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror②">InvalidStateError</a></code> and abort these steps.</p>
+      <li data-md="">
+       <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device">compatible XR device</a> does not equal <var>session</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsession-device" id="ref-for-dom-xrsession-device②">device</a></code>, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror③">InvalidStateError</a></code> and abort these steps.</p>
       <li data-md="">
        <p>Initialize <var>layer</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrwebgllayer-context" id="ref-for-dom-xrwebgllayer-context①">context</a></code> to <var>context</var>.</p>
       <li data-md="">
@@ -2082,9 +2087,13 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
        <p>Initialize <var>layer</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrwebgllayer-framebuffer" id="ref-for-dom-xrwebgllayer-framebuffer">framebuffer</a></code> to a new <a data-link-type="dfn" href="#opaque" id="ref-for-opaque">opaque</a> <code class="idl"><a data-link-type="idl" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglframebuffer" id="ref-for-webglframebuffer①">WebGLFramebuffer</a></code> created with <var>context</var>.</p>
       <li data-md="">
        <p>Initialize the <var>layer</var>’s <a data-link-type="dfn" href="#swap-chain" id="ref-for-swap-chain">swap chain</a>.</p>
+      <li data-md="">
+       <p>If <var>layer</var>’s <a data-link-type="dfn" href="#swap-chain" id="ref-for-swap-chain①">swap chain</a> was unable to be created for any reason, throw an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#operationerror" id="ref-for-operationerror">OperationError</a></code> and abort these steps.</p>
+      <li data-md="">
+       <p>Return <var>layer</var>.</p>
      </ol>
     </div>
-    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="attribute" data-export="" id="dom-xrwebgllayer-framebufferwidth"><code>framebufferWidth</code></dfn> and <dfn class="dfn-paneled idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="attribute" data-export="" id="dom-xrwebgllayer-framebufferheight"><code>framebufferHeight</code></dfn> attributes return the width and height of the <a data-link-type="dfn" href="#swap-chain" id="ref-for-swap-chain①">swap chain</a>'s backbuffer, respectively.</p>
+    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="attribute" data-export="" id="dom-xrwebgllayer-framebufferwidth"><code>framebufferWidth</code></dfn> and <dfn class="dfn-paneled idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="attribute" data-export="" id="dom-xrwebgllayer-framebufferheight"><code>framebufferHeight</code></dfn> attributes return the width and height of the <a data-link-type="dfn" href="#swap-chain" id="ref-for-swap-chain②">swap chain</a>'s backbuffer, respectively.</p>
     <p><dfn class="dfn-paneled idl-code" data-dfn-for="XRWebGLLayer" data-dfn-type="method" data-export="" id="dom-xrwebgllayer-requestviewportscaling"><code>requestViewportScaling(viewportScaleFactor)</code></dfn></p>
     <p class="issue" id="issue-9d80d63c"><a class="self-link" href="#issue-9d80d63c"></a> Document what it means when a context <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="supports-multiview">supports multiview</dfn>.</p>
     <p class="issue" id="issue-bb06cca0"><a class="self-link" href="#issue-bb06cca0"></a> Document what an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport="" id="opaque">opaque</dfn> framebuffer is.</p>
@@ -2139,7 +2148,7 @@ xrDevice<span class="p">.</span>requestSession<span class="p">({</span> exclusiv
       <li data-md="">
        <p>Let <var>context</var> be the target <code class="idl"><a data-link-type="idl" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webglrenderingcontextbase" id="ref-for-webglrenderingcontextbase②">WebGLRenderingContextBase</a></code> object.</p>
       <li data-md="">
-       <p>If <var>context</var>’s <a data-link-type="dfn" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webgl-context-lost-flag" id="ref-for-webgl-context-lost-flag">WebGL context lost flag</a> is set, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise⑤">reject</a> <var>promise</var> with an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror②">InvalidStateError</a></code> and abort these abort these steps.</p>
+       <p>If <var>context</var>’s <a data-link-type="dfn" href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#webgl-context-lost-flag" id="ref-for-webgl-context-lost-flag">WebGL context lost flag</a> is set, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#reject-promise" id="ref-for-reject-promise⑤">reject</a> <var>promise</var> with an <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#invalidstateerror" id="ref-for-invalidstateerror④">InvalidStateError</a></code> and abort these abort these steps.</p>
       <li data-md="">
        <p>If <var>context</var>’s <a data-link-type="dfn" href="#compatible-xr-device" id="ref-for-compatible-xr-device⑥">compatible XR device</a> is <var>device</var>, <a data-link-type="dfn" href="https://www.w3.org/2001/tag/doc/promises-guide/#resolve-promise" id="ref-for-resolve-promise④">resolve</a> <var>promise</var> and abort these steps.</p>
       <li data-md="">
@@ -2485,6 +2494,7 @@ glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span cl
    <li><a href="#dom-xreye-left">"left"</a><span>, in §8.1</span>
    <li><a href="#dom-xreye-left">left</a><span>, in §8.1</span>
    <li><a href="#list-of-animation-frame-callbacks">list of animation frame callbacks</a><span>, in §5.3</span>
+   <li><a href="#list-of-layer-images">list of layer images</a><span>, in §5.4</span>
    <li><a href="#list-of-non-exclusive-sessions">list of non-exclusive sessions</a><span>, in §4.2</span>
    <li><a href="#list-of-xr-devices">list of XR devices</a><span>, in §4.1</span>
    <li><a href="#matrix">matrix</a><span>, in §9.1</span>
@@ -2641,6 +2651,7 @@ glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span cl
      <li><a href="https://heycam.github.io/webidl/#invalidstateerror">InvalidStateError</a>
      <li><a href="https://heycam.github.io/webidl/#notfounderror">NotFoundError</a>
      <li><a href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a>
+     <li><a href="https://heycam.github.io/webidl/#operationerror">OperationError</a>
      <li><a href="https://heycam.github.io/webidl/#SameObject">SameObject</a>
      <li><a href="https://heycam.github.io/webidl/#SecureContext">SecureContext</a>
      <li><a href="https://heycam.github.io/webidl/#securityerror">SecurityError</a>
@@ -3092,6 +3103,7 @@ glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span cl
    <b><a href="#ended">#ended</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-ended">5.2. XRSession</a>
+    <li><a href="#ref-for-ended①">10.2. XRWebGLLayer</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsession-end">
@@ -3191,6 +3203,7 @@ glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span cl
    <b><a href="#xr-compositor">#xr-compositor</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-xr-compositor">3.2. Trusted Environment</a>
+    <li><a href="#ref-for-xr-compositor①">5.4. The XR Compositor</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrpresentationframe">
@@ -3560,7 +3573,7 @@ glCanvas<span class="p">.</span>addEventListener<span class="p">(</span><span cl
   <aside class="dfn-panel" data-for="swap-chain">
    <b><a href="#swap-chain">#swap-chain</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-swap-chain">10.2. XRWebGLLayer</a> <a href="#ref-for-swap-chain①">(2)</a>
+    <li><a href="#ref-for-swap-chain">10.2. XRWebGLLayer</a> <a href="#ref-for-swap-chain①">(2)</a> <a href="#ref-for-swap-chain②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-webglcontextattributes-compatiblexrdevice">
