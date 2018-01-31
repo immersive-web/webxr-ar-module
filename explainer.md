@@ -232,7 +232,7 @@ function onDrawFrame(xrFrame) {
     let pose = xrFrame.getDevicePose(xrFrameOfRef);
     gl.bindFramebuffer(xrSession.baseLayer.framebuffer);
 
-    for (let view in xrFrame.views) {
+    for (let view of xrFrame.views) {
       let viewport = view.getViewport(xrSession.baseLayer);
       gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
       drawScene(view, pose);
@@ -530,7 +530,7 @@ function onDrawFrame(xrFrame) {
       gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
       drawMultiviewScene(xrFrame.views, pose);
     } else {
-      for (let view in xrFrame.views) {
+      for (let view of xrFrame.views) {
         let viewport = view.getViewport(xrSession.baseLayer);
         gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
         drawScene(view, pose);
@@ -551,7 +551,7 @@ function onDrawFrame(xrFrame) {
 }
 
 function drawMultiviewScene(views, pose) {
-  for (let view in views) {
+  for (let view of views) {
     let viewMatrix = pose.getViewMatrix(view);
     let projectionMatrix = view.projectionMatrix;
 
