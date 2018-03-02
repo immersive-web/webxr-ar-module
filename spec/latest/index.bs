@@ -63,11 +63,12 @@ spec: Feature Policy; urlPrefix: https://wicg.github.io/feature-policy/#
 </pre>
 
 <style>
-  .unstable::before {
+  /* Re-add this once there are actually stable sections of the spec */
+  /*.unstable::before {
     content: "This section is not stable.";
     float: right;
     color: red;
-  }
+  }*/
   .unstable {
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290'><text transform='rotate(-45)' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='70' y='210' opacity='.1'>Unstable</text></svg>");
     background-repeat: repeat
