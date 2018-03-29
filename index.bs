@@ -90,6 +90,8 @@ spec: Feature Policy; urlPrefix: https://wicg.github.io/feature-policy/#
 
 <b>The version of the WebXR Device API represented in this document is incomplete and changing rapidly. Do not implement it at this time.</b>
 
+While this specification is under development some concepts may be represented better by the <a href="https://github.com/w3c/webvr/blob/master/explainer.md">WebXR Device API Explainer</a>.
+
 <section class="unstable">
 
 Introduction {#intro}
