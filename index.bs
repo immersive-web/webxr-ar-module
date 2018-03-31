@@ -329,6 +329,8 @@ XRSession {#xrsession-interface}
   // Methods
   Promise&lt;XRFrameOfReference&gt; requestFrameOfReference(XRFrameOfReferenceType type, optional XRFrameOfReferenceOptions options);
 
+  FrozenArray&lt;XRInputSource&gt; getInputSources();
+
   long requestAnimationFrame(XRFrameRequestCallback callback);
   void cancelAnimationFrame(long handle);
 
@@ -339,6 +341,9 @@ XRSession {#xrsession-interface}
   attribute EventHandler onfocus;
   attribute EventHandler onresetpose;
   attribute EventHandler onend;
+  attribute EventHandler onselect;
+  attribute EventHandler onselectstart;
+  attribute EventHandler onselectend;
 };
 </pre>
 
@@ -396,6 +401,12 @@ The <dfn attribute for="XRSession">onfocus</dfn> attribute is an [=Event handler
 The <dfn attribute for="XRSession">onresetpose</dfn> attribute is an [=Event handler IDL attribute=] for the {{resetpose}} event type.
 
 The <dfn attribute for="XRSession">onend</dfn> attribute is an [=Event handler IDL attribute=] for the {{end}} event type.
+
+The <dfn attribute for="XRSession">onselectstart</dfn> attribute is an [=Event handler IDL attribute=] for the {{selectstart}} event type.
+
+The <dfn attribute for="XRSession">onselectend</dfn> attribute is an [=Event handler IDL attribute=] for the {{selectend}} event type.
+
+The <dfn attribute for="XRSession">onselect</dfn> attribute is an [=Event handler IDL attribute=] for the {{select}} event type.
 
 Issue: Example of acquiring a session here.
 
@@ -673,6 +684,44 @@ An {{XRDevicePose}} describes the position and orientation of an {{XRDevice}} re
 
 The <dfn method for="XRDevicePose">getViewMatrix(view)</dfn> method returns a [=matrix=] describing the view transform to be used when rendering the passed {{XRView}}. The matrices represent the inverse of the model matrix of the associated viewpoint.
 
+Input {#input}
+=====
+
+XRInputSource {#xrinputsource-interface}
+-------------
+
+<pre class="idl">
+enum XRHandedness {
+  "",
+  "left",
+  "right"
+};
+
+enum XRPointerOrigin {
+  "head",
+  "hand",
+  "screen"
+};
+
+interface XRInputSource {
+  readonly attribute XRHandedness handedness;
+  readonly attribute XRPointerOrigin pointerOrigin;
+};
+</pre>
+
+Each {{XRInputSource}} SHOULD define a <dfn>primary action</dfn>. The [=primary action=] is a platform-specific action that, when engaged, produces {{selectstart}}, {{selectend}}, and {{select}} events. Examples of possible [=primary action=]s are pressing a trigger, touchpad, or button, speaking a command, or making a hand gesture. If the platform guidelines define a recommended primary input then it should be used as the [=primary action=], otherwise the user agent is free to select one.
+
+XRInputPose {#xrinputpose-interface}
+-------------
+
+<pre class="idl">
+interface XRInputPose {
+  readonly attribute boolean emulatedPosition;
+  readonly attribute Float32Array pointerMatrix;
+  readonly attribute Float32Array? gripMatrix;
+};
+</pre>
+
 Layers {#layers}
 ======
 
@@ -908,6 +957,28 @@ dictionary XRSessionEventInit : EventInit {
 <dfn attribute for="XRSessionEvent">session</dfn>
 The {{XRSession}} associated with this event.
 
+XRInputSourceEvent {#xrinputsourceevent-interface}
+--------------
+
+<pre class="idl">
+[SecureContext, Exposed=Window, Constructor(DOMString type, XRInputSourceEventInit eventInitDict)]
+interface XRInputSourceEvent : Event {
+  readonly attribute XRPresentationFrame frame;
+  readonly attribute XRInputSource inputSource;
+};
+
+dictionary XRInputSourceEventInit : EventInit {
+  required XRPresentationFrame frame;
+  required XRInputSource inputSource;
+};
+</pre>
+
+<dfn attribute for="XRInputSourceEvent">frame</dfn>
+An {{XRPresentationFrame}} that corresponds with the time that the event took place. This frame's {{XRPresentationFrame/views}} array MUST be empty.
+
+<dfn attribute for="XRInputSourceEvent">inputSource</dfn>
+The {{XRInputSource}} that generated this event.
+
 XRCoordinateSystemEvent {#xrcoordinatesystemevent-interface}
 -----------------------
 
@@ -941,6 +1012,12 @@ A user agent MAY dispatch a <dfn event for="XRSession">focus</dfn> event on an {
 A user agent MUST dispatch a <dfn event for="XRSession">resetpose</dfn> event on an {{XRSession}} when the system resets the {{XRDevice}}'s position or orientation. The event MUST be of type {{XRSessionEvent}}.
 
 A user agent MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{XRSession}} when the session ends, either by the application or the user agent. The event MUST be of type {{XRSessionEvent}}.
+
+A user agent MUST dispatch a <dfn event for="XRSession">selectstart</dfn> event on an {{XRSession}} when one of its {{XRInputSource}}s begins its [=primary action=]. The event MUST be of type {{XRInputSourceEvent}}.
+
+A user agent MUST dispatch a <dfn event for="XRSession">selectend</dfn> event on an {{XRSession}} when one of its {{XRInputSource}}s ends its [=primary action=] or when an {{XRInputSource}} that has begun a [=primary action=] is disconnected. The event MUST be of type {{XRInputSourceEvent}}.
+
+A user agent MUST dispatch a <dfn event for="XRSession">select</dfn> event on an {{XRSession}} when one of its {{XRInputSource}}s has fully completed a [=primary action=]. The event MUST be of type {{XRInputSourceEvent}}.
 
 A user agent MUST dispatch a <dfn event for="XRFrameOfReference">boundschange</dfn> event on an {{XRFrameOfReference}} when the [=stage bounds=] change. This includes changes to the {{geometry}} point array or the {{bounds}} attribute changing to or from <code>null</code>. The event MUST be of type {{XRCoordinateSystemEvent}}.
 
