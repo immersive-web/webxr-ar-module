@@ -86,9 +86,9 @@ spec: Feature Policy; urlPrefix: https://wicg.github.io/feature-policy/#
 </style>
 
 
-<b style="color: red; font-size: 1.3em">DO NOT IMPLEMENT</b>
+<b style="color: red; font-size: 1.3em">UNSTABLE API</b>
 
-<b>The version of the WebXR Device API represented in this document is incomplete and changing rapidly. Do not implement it at this time.</b>
+<b>The version of the WebXR Device API represented in this document is incomplete and may change at any time.</b>
 
 While this specification is under development some concepts may be represented better by the <a href="https://github.com/w3c/webvr/blob/master/explainer.md">WebXR Device API Explainer</a>.
 
@@ -513,6 +513,7 @@ XRPresentationFrame {#xrpresentationframe-interface}
   readonly attribute FrozenArray&lt;XRView&gt; views;
 
   XRDevicePose? getDevicePose(XRCoordinateSystem coordinateSystem);
+  XRInputPose? getInputPose(XRInputSource inputSource, XRCoordinateSystem coordinateSystem);
 };
 </pre>
 
@@ -521,6 +522,8 @@ An {{XRPresentationFrame}} provides all the values needed to render a single fra
 <dfn attribute for="XRPresentationFrame">views</dfn>
 
 <dfn method for="XRPresentationFrame">getDevicePose(coordinateSystem)</dfn>
+
+<dfn method for="XRPresentationFrame">getInputPose(inputSource, coordinateSystem)</dfn>
 
 Coordinate Systems {#coordinatesystems}
 ==================
