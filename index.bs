@@ -510,6 +510,7 @@ XRPresentationFrame {#xrpresentationframe-interface}
 
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRPresentationFrame {
+  readonly attribute XRSession session;
   readonly attribute FrozenArray&lt;XRView&gt; views;
 
   XRDevicePose? getDevicePose(XRCoordinateSystem coordinateSystem);
@@ -518,6 +519,8 @@ XRPresentationFrame {#xrpresentationframe-interface}
 </pre>
 
 An {{XRPresentationFrame}} provides all the values needed to render a single frame of an XR scene to the {{XRDevice}}'s display. Applications can only aquire an {{XRPresentationFrame}} by calling {{XRSession/requestAnimationFrame()}} on an {{XRSession}} with an {{XRFrameRequestCallback}}. When the callback is called it will be passed an {{XRPresentationFrame}}.
+
+<dfn attribute for="XRPresentationFrame">session</dfn>
 
 <dfn attribute for="XRPresentationFrame">views</dfn>
 
