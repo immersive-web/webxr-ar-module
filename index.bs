@@ -935,6 +935,9 @@ function onXRSessionStarted(xrSession) {
 Canvas Rendering Context {#canvas-rendering-context}
 ========================
 
+XRPresentationContext {#xrpresentationcontext-interface}
+---------------------
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRPresentationContext {
   readonly attribute HTMLCanvasElement canvas;
