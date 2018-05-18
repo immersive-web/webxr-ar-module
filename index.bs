@@ -743,6 +743,22 @@ An {{XRLayer}} defines a source of bitmap images and a description of how the im
 XRWebGLLayer {#xrwebgllayer-interface}
 -------
 
+Each {{XRSession}} MUST identify a <dfn>native WebGL framebuffer resolution</dfn>, which is the pixel resolution of a WebGL framebuffer required to match the physical pixel resolution of the {{XRDevice}}.
+
+<div class="algorithm" data-algorithm="native-webgl-framebuffer-resolution">
+
+The [=native WebGL framebuffer resolution=] is detemined by running the following steps:
+
+  1. Let |session| be the target {{XRSession}}.
+  1. If |session|'s {{XRSession/exclusive}} value is <code>true</code>, set the [=native WebGL framebuffer resolution=] to the resolution required to have a 1:1 ratio between the pixels of a framebuffer large enough to contain all of the session's {{XRView}}s and the physical screen pixels in the area of the display under the highest magnification and abort these steps. If no method exists to determine the native resolution as described, the [=recommended WebGL framebuffer resolution=] MAY be used.
+  1. If |session|'s {{XRSession/exclusive}} value is <code>false</code>, set the [=native WebGL framebuffer resolution=] to the size of the |session|'s {{XRSession/outputContext}}'s {{XRPresentationContext/canvas}} in physical display pixels and reevaluate these steps every time the size of the canvas changes.
+
+</div>
+
+Additionally, the {{XRSession}} MUST identify a <dfn>recommended WebGL framebuffer resolution</dfn>, which represents a best estimate of the WebGL framebuffer resolution large enough to contain all of the session's {{XRView}}s that provides an average application a good balance between performance and quality. It MAY be smaller than, larger than, or equal to the [=native WebGL framebuffer resolution=].
+
+NOTE: The user agent is free to use and method of it's choosing to estimate the [=recommended WebGL framebuffer resolution=]. If there are platform-specific methods for querying a recommended size it is recommended that they be used, but not required.
+
 <pre class="idl">
 typedef (WebGLRenderingContext or
          WebGL2RenderingContext) XRWebGLRenderingContext;
@@ -776,6 +792,9 @@ interface XRWebGLLayer : XRLayer {
   // Methods
   XRViewport? getViewport(XRView view);
   void requestViewportScaling(double viewportScaleFactor);
+
+  // Static Methods
+  static double getNativeFramebufferScaleFactor(XRSession session);
 };
 </pre>
 
@@ -816,6 +835,16 @@ The <dfn method for="XRWebGLLayer">getViewport(|view|)</dfn> method, when invoke
 </div>
 
 <dfn method for="XRWebGLLayer">requestViewportScaling(viewportScaleFactor)</dfn>
+
+<div class="algorithm" data-algorithm="get-native-framebuffer-scale-factor">
+
+The <dfn method for="XRWebGLLayer">getNativeFramebufferScaleFactor(|session|)</dfn> method, when invoked, MUST run the following steps:
+
+  1. Let |session| be the target {{XRSession}}.
+  1. If |session|'s [=ended=] value is <code>true</code>, return <code>0.0</code> and abort these steps.
+  1. Return the value that the |session|'s [=recommended WebGL framebuffer resolution=] must be multiplied by to yield the |session|'s [=native WebGL framebuffer resolution=].
+
+</div>
 
 Issue: Document what it means when a context <dfn>supports multiview</dfn>.
 
