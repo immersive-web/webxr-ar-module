@@ -216,13 +216,11 @@ The following code finds an available {{XRDevice}}.
 
 <pre highlight="js">
 navigator.xr.requestDevice().then(device => {
-  // Resolves to an XRDevice if one is available, or to null otherwise.
-  if (device) {
-    onXRAvailable(device);
-  }
+  // Resolves if an XRDevice is available.
+  onXRAvailable(device);
 }).catch(error => {
-  // An error occurred while requesting an XRDevice.
-  console.error('Unable to request an XR device: ', error);
+  // An error occurred while requesting an XRDevice or none is available.
+  console.error('Unable to retrieve an XR device: ', error);
 });
 </pre>
 </div>
