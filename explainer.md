@@ -162,7 +162,7 @@ function onSessionStarted(session) {
   // The `XRFrameOfReference` provides the coordinate system in which
   // `getViewMatrix()` and the `poseModelMatrix` are defined. For more
   // information on this see the `Advanced functionality` section
-  xrSession.requestFrameOfReference("headModel")
+  xrSession.requestFrameOfReference("head-model")
     .then((frameOfRef) => {
       xrFrameOfRef = frameOfRef;
     })
@@ -216,7 +216,7 @@ The WebXR Device API provides information about the current frame to be rendered
 
 Once drawn to, the XR device will continue displaying the contents of the `XRWebGLLayer` framebuffer, potentially reprojected to match head motion, regardless of whether or not the page continues processing new frames. Potentially future spec iterations could enable additional types of layers, such as video layers, that could automatically be synchronized to the device's refresh rate.
 
-To get view matrices or the `poseModelMatrix` for each presentation frame, developers must call `getDevicePose()` and provide an `XRCoordinateSystem` to specify the coordinate system in which these matrices should be defined. Unless the "headModel" `XRFrameOfReference` is being used, this function is not guaranteed to return a value. For example, the most common frame of reference, "eyeLevel", will fail to return a `viewMatrix` or a `poseModelMatrix` under tracking loss conditions. In that case, the page will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a "headModel" `XRFrameOfReference`, or simply not update. For more information on this see the [`Advanced functionality`](#orientation-only-tracking) section.
+To get view matrices or the `poseModelMatrix` for each presentation frame, developers must call `getDevicePose()` and provide an `XRCoordinateSystem` to specify the coordinate system in which these matrices should be defined. Unless the "head-model" `XRFrameOfReference` is being used, this function is not guaranteed to return a value. For example, the most common frame of reference, "eye-level", will fail to return a `viewMatrix` or a `poseModelMatrix` under tracking loss conditions. In that case, the page will need to decide how to respond. It may wish to re-render the scene using an older pose, fade the scene out to prevent disorientation, fall back to a "head-model" `XRFrameOfReference`, or simply not update. For more information on this see the [`Advanced functionality`](#orientation-only-tracking) section.
 
 ```js
 function onDrawFrame(timestamp, xrFrame) {
@@ -676,17 +676,17 @@ Beyond the core APIs described above, the WebXR Device API also exposes several 
 
 Some headsets (Daydream, Gear VR, Cardboard), are naturally limited to only tracking a user's head rotation. This is known as "3 Degree of Freedom" tracking, or "3DoF". For this type of device, a small amount of simulated translation is usually applied to the returned matrices by estimating the motion of the user's neck based on the device rotation. If the translation portions of the matrices provided by an `XRDevicePose` do not reflect a real position in space, that must be indicated by setting the `emulatedPosition` attribute to `true`.
 
-For devices that are not naturally limited to orientation-only tracking, it can still be useful for app developers to explicitly specify that they don't want any positional tracking in the matrices they receive. This is primarily necessary when viewing 360 photos or videos, since the source material is intended to be viewed from a single point. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "headModel" `XRFrameOfReference`.
+For devices that are not naturally limited to orientation-only tracking, it can still be useful for app developers to explicitly specify that they don't want any positional tracking in the matrices they receive. This is primarily necessary when viewing 360 photos or videos, since the source material is intended to be viewed from a single point. (This may also provide power savings on some devices, since it may allow some sensors to be turned off.) That can be accomplished by requesting a "head-model" `XRFrameOfReference`.
 
 ```js
-xrSession.requestFrameOfReference("headModel").then((frameOfRef) => {
+xrSession.requestFrameOfReference("head-model").then((frameOfRef) => {
   xrFrameOfRef = frameOfRef;
 });
 
 // Use xrFrameOfRef as detailed above.
 ```
 
-Any `XRDevicePose`s queried with a "headModel" `XRFrameOfReference` must have their `emulatedPosition` attributes set to `true`. Any `XRInputPose`s queried with a "headModel" `XRFrameOfReference` must provide positions relative to the head's emulated position, so that the input devices appear in the correct location from the user's point of view.
+Any `XRDevicePose`s queried with a "head-model" `XRFrameOfReference` must have their `emulatedPosition` attributes set to `true`. Any `XRInputPose`s queried with a "head-model" `XRFrameOfReference` must provide positions relative to the head's emulated position, so that the input devices appear in the correct location from the user's point of view.
 
 ### Room-scale tracking and boundaries
 
@@ -744,7 +744,7 @@ xrFrameOfRef.addEventListener('boundschange', onBoundsUpdate);
 
 Often times content designed to be used with a `stage` `XRFrameOfReference` (that is, the physical floor is at Y=0) can still be used with headsets that don't have appropriate knowledge of the user's physical space. For example the headset may only support 3DoF tracking, or 6DoF tracking without floor detection. In these case as a matter of developer convenience an emulated `stage` frame of reference is provided by default as a fallback.
 
-An emulated `stage` frame or reference is functionally identical to an `eyeLevel` frame of reference with an offset applied along the Y axis to place the user's head at an estimated height. The default estimated height is determined by the UA, and can be an aritrary or user configurable value. If the platform APIs provide a user configured height that should be taken into consideration when determining the emulated height. Note that the floor's location will almost certainly not match up with the user's physical floor when using `stage` emulation, the intent is just to get it "close enough" that the user doesn't overtly feel like they are stuck in the ground or floating. No bounds are reported for an emulated `stage`.
+An emulated `stage` frame or reference is functionally identical to an `eye-level` frame of reference with an offset applied along the Y axis to place the user's head at an estimated height. The default estimated height is determined by the UA, and can be an aritrary or user configurable value. If the platform APIs provide a user configured height that should be taken into consideration when determining the emulated height. Note that the floor's location will almost certainly not match up with the user's physical floor when using `stage` emulation, the intent is just to get it "close enough" that the user doesn't overtly feel like they are stuck in the ground or floating. No bounds are reported for an emulated `stage`.
 
 Using an emulated `stage` as a fallback prevents the need for additional state tracking and matrix transforms on the developer's part in order to render the same content on a wide range of devices. To detect if the stage is using an emulated height or not after creation developers can check the `XRFrameOfReference`'s `emulatedHeight` attribute. A non-zero value indicates that the `stage` is being emulated.
 
@@ -1096,8 +1096,8 @@ interface XRWebGLLayer : XRLayer {
 };
 
 enum XRFrameOfReferenceType {
-  "headModel",
-  "eyeLevel",
+  "head-model",
+  "eye-level",
   "stage",
 };
 

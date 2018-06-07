@@ -545,8 +545,8 @@ XRFrameOfReference {#xrframeofreference-interface}
 
 <pre class="idl">
 enum XRFrameOfReferenceType {
-  "headModel",
-  "eyeLevel",
+  "head-model",
+  "eye-level",
   "stage",
 };
 
