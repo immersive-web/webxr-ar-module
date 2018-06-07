@@ -52,7 +52,7 @@ The basic steps most WebXR applications will go through are:
 
  1. Request an XR device.
  1. If a device is available, application advertises XR functionality to the user.
- 1. Request an exclusive XR session from the device in response to a [user-activation event](https://html.spec.whatwg.org/multipage/interaction.html#activation).
+ 1. Request an immersive XR session from the device in response to a [user-activation event](https://html.spec.whatwg.org/multipage/interaction.html#activation).
  1. Use the session to run a render loop that produces graphical frames to be displayed on the XR device.
  1. Continue producing frames until the user indicates that they wish to exit XR mode.
  1. End the XR session.
@@ -95,17 +95,17 @@ navigator.xr.addEventListener('devicechange', checkForXR);
 
 A `XRDevice` indicates only the availability of an XR device. In order to do anything that involves the device's presentation or tracking capabilities, the application will need to request an `XRSession` from the `XRDevice`.
 
-Sessions can be created with one of two levels of access:
+There are two primary classes of session that can be created:
 
-**Exclusive Access**: Requested with the `exclusive: true` dictionary argument. Exclusive sessions present content directly to the `XRDevice`, enabling immersive presentation. Only one exclusive session per XR hardware device is allowed at a time across the entire UA. Exclusive sessions must be created within a user gesture event or within another callback that has been explicitly indicated to allow exclusive session creation.
+**Immersive**: Requested with the `immersive: true` dictionary argument. Immersive sessions present content directly to the `XRDevice`, enabling immersive presentation. Only one immersive session per XR hardware device is allowed at a time across the entire UA. Immersive sessions must be created within a user activation event or within another callback that has been explicitly indicated to allow immersive session creation.
 
-**Non-Exclusive Access**: The default mode, but can be explicitly requested with the `exclusive: false` dictionary argument. Non-exclusive sessions do not have the ability to display immersive content on the `XRDevice` but are able to access device tracking information and use it to render content on the page. This technique, where a scene rendered to the page is responsive to device movement, is sometimes referred to as "Magic Window" mode. It's especially useful for mobile devices, where moving the device can be used to look around a scene. Devices like Tango phones and tablets with 6DoF tracking capabilities may expose them via non-exclusive sessions even if the hardware is not capable of immersive, stereo presentation. Any non-exclusive sessions are suspended when an exclusive session is active. Non-exclusive sessions are not required to be created within a user gesture event.
+**Non-Immersive (in-page)**: The default mode, but can be explicitly requested with the `immersive: false` dictionary argument. Non-immersive sessions do not have the ability to display immersive content on the `XRDevice` but are able to access device tracking information and use it to render content on the page. This technique, where a scene rendered to the page is responsive to device movement, is sometimes referred to as "Magic Window" mode. It's especially useful for mobile devices, where moving the device can be used to look around a scene. Devices like Tango phones and tablets with 6DoF tracking capabilities may expose them via non-immersive sessions even if the hardware is not capable of immersive, stereo presentation. Any non-immersive sessions are suspended when an immersive session is active. Non-immersive sessions are not required to be created within a user activation event unless paired with another option that explicitly does require it.
 
 ### Detecting and advertising XR mode
 
-If an `XRDevice` is available and able to create an exclusive session, the application will usually want to add some UI to trigger activation of "XR Presentation Mode", where the application can begin sending imagery to the device. Testing to see if the device supports the capabilities the application needs is done via the `supportsSession` call, which takes a dictionary of the desired functionality and returns a promise which resolves if the device can create a session which supporting those properties and rejects otherwise. Querying for support this way is necessary because it allows the application to detect what XR features are available without actually engaging the sensors or beginning presentation, which can incur significant power or performance overhead on some systems and may have side effects such as launching a status tray or storefront.
+If an `XRDevice` is available and able to create an immersive session, the application will usually want to add some UI to trigger activation of "XR Presentation Mode", where the application can begin sending imagery to the device. Testing to see if the device supports the capabilities the application needs is done via the `supportsSession` call, which takes a dictionary of the desired functionality and returns a promise which resolves if the device can create a session which supporting those properties and rejects otherwise. Querying for support this way is necessary because it allows the application to detect what XR features are available without actually engaging the sensors or beginning presentation, which can incur significant power or performance overhead on some systems and may have side effects such as launching a status tray or storefront.
 
-In the following examples we will focus on using exclusive sessions, and cover non-exclusive session use in the [`Advanced Functionality`](#non-exclusive-sessions-magic-windows) section. With that in mind, we ask here if the `XRDevice` supports sessions with `exclusive` access (the default), since we want the ability to display imagery on the headset.
+In the following examples we will focus on using immersive sessions, and cover non-immersive session use in the [`Advanced Functionality`](#non-immersive-sessions-magic-windows) section. With that in mind, we ask here if the `XRDevice` supports immersive sessions, since we want the ability to display imagery on the headset.
 
 ```js
 let xrDevice = null;
@@ -113,12 +113,12 @@ let xrDevice = null;
 async function onXRAvailable(device) {
   xrDevice = device;
 
-  // Most (but not all) XRDevices are capable of granting exclusive access to
+  // Many XRDevices are capable of immersive presentation to
   // the device, which is necessary to show imagery in a headset. If the device
   // has that capability the page will want to add an "Enter VR" button (similar
   // to "Enter Fullscreen") that triggers the page to begin showing imagery on
   // the headset.
-  xrDevice.supportsSession({ exclusive: true }).then(() => {
+  xrDevice.supportsSession({ immersive: true }).then(() => {
     var enterXrBtn = document.createElement("button");
     enterXrBtn.innerHTML = "Enter VR";
     enterXrBtn.addEventListener("click", beginXRSession);
@@ -131,13 +131,13 @@ async function onXRAvailable(device) {
 
 ### Beginning an XR session
 
-Clicking the button in the previous sample will attempt to acquire an `XRSession` by callling `XRDevice`'s `requestSession()` method. This returns a promise that resolves to an `XRSession` upon success. When requesting a session, the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` resolved for a given dictionary, then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user gesture for an exclusive session.) The UA is ultimately responsible for determining if it can honor the request.
+Clicking the button in the previous sample will attempt to acquire an `XRSession` by callling `XRDevice`'s `requestSession()` method. This returns a promise that resolves to an `XRSession` upon success. When requesting a session, the capabilities that the returned session must have are passed in via a dictionary, exactly like the `supportsSession` call. If `supportsSession` resolved for a given dictionary, then calling `requestSession` with the same dictionary values should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user activation event for an immersive session.) The UA is ultimately responsible for determining if it can honor the request.
 
 ```js
 function beginXRSession() {
   // requestSession must be called within a user gesture event
-  // like click or touch when requesting exclusive access.
-  xrDevice.requestSession({ exclusive: true })
+  // like click or touch when requesting an immersive session.
+  xrDevice.requestSession({ immersive: true })
       .then(onSessionStarted)
       .catch(err => {
         // May fail for a variety of reasons. Probably just want to
@@ -264,7 +264,7 @@ function drawScene(view, pose) {
 
 The UA may temporarily "suspend" a session at any time. While suspended a session has restricted or throttled access to the `XRDevice` state and may process frames slowly or not at all. Suspended sessions can be reasonably be expected to be resumed at some point, usually when the user has finished performing whatever action triggered the suspension in the first place.
 
-The UA may suspend a session if allowing the page to continue reading the headset position represents a security or privacy risk (like when the user is entering a password or URL with a virtual keyboard, in which case the head motion may infer the user's input), or if other content is obscuring the page's output. Additionally, non-exclusive sessions are suspended while an exclusive session is active.
+The UA may suspend a session if allowing the page to continue reading the headset position represents a security or privacy risk (like when the user is entering a password or URL with a virtual keyboard, in which case the head motion may infer the user's input), or if other content is obscuring the page's output. Additionally, non-immersive sessions are suspended while an immersive session is active.
 
 While suspended the page may either refresh the XR device at a slower rate or not at all, and poses queried from the device may be less accurate. If the user is wearing a headset the UA is expected to present a tracked environment (a scene which remains responsive to user's head motion) when the page is being throttled to prevent user discomfort.
 
@@ -299,7 +299,7 @@ function endXRSession() {
   }
 }
 
-// Restore the page to normal after exclusive access has been released.
+// Restore the page to normal after an immersive session has ended.
 function onSessionEnd() {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
@@ -330,7 +330,7 @@ A `XRPresentationContext` can only be supplied imagery by an `XRSession`, though
 
 On desktop devices, or any device which has an external display connected to it, it's frequently desirable to show what the user in the headset is seeing on the external display. This is usually referred to as mirroring.
 
-In order to mirror WebXR content to the page, developers provide an `XRPresentationContext` as the `outputContext` in the `XRSessionCreationOptions` of an exclusive session. Once the session has started any content displayed on the headset will then be mirrored into the canvas associated with the `outputContext`. The `outputContext` remains bound to the session until the session has ended, and cannot be used with multiple `XRSession`s simultaneously.
+In order to mirror WebXR content to the page, developers provide an `XRPresentationContext` as the `outputContext` in the `XRSessionCreationOptions` of an immersive session. Once the session has started any content displayed on the headset will then be mirrored into the canvas associated with the `outputContext`. The `outputContext` remains bound to the session until the session has ended, and cannot be used with multiple `XRSession`s simultaneously.
 
 When mirroring only one eye's content will be shown, and it should be shown without any distortion to correct for headset optics. The UA may choose to crop the image shown, display it at a lower resolution than originally rendered, and the mirror may be multiple frames behind the image shown in the headset. The mirror may include or exclude elements added by the underlying XR system (such as visualizations of room boundaries) at the UA's discretion. Pages should not rely on a particular timing or presentation of mirrored content, it's really just for the benefit of bystanders or demo operators.
 
@@ -342,13 +342,13 @@ function beginXRSession() {
   let mirrorCtx = mirrorCanvas.getContext('xrpresent');
   document.body.appendChild(mirrorCanvas);
 
-  xrDevice.requestSession({ exclusive: true, outputContext: mirrorCtx })
+  xrDevice.requestSession({ immersive: true, outputContext: mirrorCtx })
       .then(onSessionStarted)
       .catch((reason) => { console.log("requestSession failed: " + reason); });
 }
 ```
 
-### Non-exclusive sessions ("Magic Windows")
+### Non-immersive sessions ("Magic Windows")
 
 There are several scenarios where it's beneficial to render a scene whose view is controlled by device tracking within a 2D page. For example:
 
@@ -356,17 +356,17 @@ There are several scenarios where it's beneficial to render a scene whose view i
  - Taking advantage of 6DoF tracking on devices (like [Tango](https://get.google.com/tango/) phones) with no associated headset.
  - Making use of head-tracking features for devices like [zSpace](http://zspace.com/) systems.
 
-These scenarios can make use of non-exclusive sessions to render tracked content to the page. Using a non-exclusive session also enables content to use a single rendering path for both magic window and immersive presentation modes and makes switching between magic window content and immersive presentation of that content easier.
+These scenarios can make use of non-immersive sessions to render tracked content to the page. Using a non-immersive session also enables content to use a single rendering path for both magic window and immersive presentation modes and makes switching between magic window content and immersive presentation of that content easier.
 
 The [`RelativeOrientationSensor`](https://w3c.github.io/orientation-sensor/#relativeorientationsensor) and [`AbsoluteOrientationSensor`](https://w3c.github.io/orientation-sensor/#absoluteorientationsensor) interfaces (see [Motion Sensors Explainer](https://w3c.github.io/motion-sensors/)) can be used to polyfill the first case.
 
-Similar to mirroring, to make use of this mode an `XRPresentationContext` is provided as the `outputContext` at session creation time with a non-exclusive session. At that point content rendered to the `XRSession`'s `baseLayer` will be rendered to the canvas associated with the `outputContext`. The UA is also allowed to composite in additional content if desired. In the future, if multiple `XRLayers` are used their composited result will be what is displayed in the `outputContext`. Requests to create a non-exclusive session without an output context will be rejected.
+Similar to mirroring, to make use of this mode an `XRPresentationContext` is provided as the `outputContext` at session creation time with a non-immersive session. At that point content rendered to the `XRSession`'s `baseLayer` will be rendered to the canvas associated with the `outputContext`. The UA is also allowed to composite in additional content if desired. In the future, if multiple `XRLayers` are used their composited result will be what is displayed in the `outputContext`. Requests to create a non-immersive session without an output context will be rejected.
 
-Exclusive and non-exclusive sessions can use the same render loop, but there are some differences in behavior to be aware of. The sessions may run their render loops at at different rates. During exclusive sessions the UA runs the rendering loop at the `XRDevice`'s native refresh rate. During non-exclusive sessions the UA runs the rendering loop at the refresh rate of page (aligned with `window.requestAnimationFrame`.) The method of computation of `XRView` projection and view matrices also differs between exclusive and non-exclusive sessions, with non-exclusive sessions taking into account the output canvas dimensions and possibly the position of the users head in relation to the canvas if that can be determined.
+Immersive and non-immersive sessions can use the same render loop, but there are some differences in behavior to be aware of. The sessions may run their render loops at at different rates. During immersive sessions the UA runs the rendering loop at the `XRDevice`'s native refresh rate. During non-immersive sessions the UA runs the rendering loop at the refresh rate of page (aligned with `window.requestAnimationFrame`.) The method of computation of `XRView` projection and view matrices also differs between immersive and non-immersive sessions, with non-immersive sessions taking into account the output canvas dimensions and possibly the position of the users head in relation to the canvas if that can be determined.
 
-Most instances of non-exclusive sessions will only provide a single `XRView` to be rendered, but UA may request multiple views be rendered if, for example, it's detected that that output medium of the page supports stereo rendering. As a result pages should always draw every `XRView` provided by the `XRFrame` regardless of what type of session has been requested.
+Most instances of non-immersive sessions will only provide a single `XRView` to be rendered, but UA may request multiple views be rendered if, for example, it's detected that that output medium of the page supports stereo rendering. As a result pages should always draw every `XRView` provided by the `XRFrame` regardless of what type of session has been requested.
 
-UAs may have different restrictions on non-exclusive contexts that don't apply to exclusive contexts. For instance, a different set of `XRFrameOfReference` types may be available with a non-exclusive session versus an exclusive session.
+UAs may have different restrictions on non-immersive contexts that don't apply to immersive contexts. For instance, a different set of `XRFrameOfReference` types may be available with a non-immersive session versus an immersive session.
 
 ```js
 let magicWindowCanvas = document.createElement('canvas');
@@ -374,18 +374,18 @@ let magicWindowCtx = magicWindowCanvas.getContext('xrpresent');
 document.body.appendChild(magicWindowCanvas);
 
 function beginMagicWindowXRSession() {
-  // Request a non-exclusive session for magic window rendering.
+  // Request a non-immersive session for magic window rendering.
   xrDevice.requestSession({ outputContext: magicWindowCtx })
       .then(OnSessionStarted)
       .catch((reason) => { console.log("requestSession failed: " + reason); });
 }
 ```
 
-The UA may reject requests for a non-exclusive sessions for a variety of reasons, such as the inability of the underlying hardware to provide tracking data without actively rendering to the device. Pages should be designed to robustly handle the inability to acquire non-exclusive sessions. `XRDevice.supportsSession()` can be used if a page wants to test for non-exclusive session support before attempting to create the `XRSession`.
+The UA may reject requests for a non-immersive sessions for a variety of reasons, such as the inability of the underlying hardware to provide tracking data without actively rendering to the device. Pages should be designed to robustly handle the inability to acquire non-immersive sessions. `XRDevice.supportsSession()` can be used if a page wants to test for non-immersive session support before attempting to create the `XRSession`.
 
 ```js
 function checkMagicWindowSupport() {
-  // Check to see if the UA can support a non-exclusive sessions with the given output context.
+  // Check to see if the UA can support a non-immersive sessions with the given output context.
   return xrDevice.supportsSession({ outputContext: magicWindowCtx })
       .then(() => { console.log("Magic Window content is supported!"); })
       .catch((reason) => { console.log("Magic Window content is not supported: " + reason); });
@@ -426,7 +426,7 @@ An input source will also provide its preferred target ray on its pose, which is
 
   * `'gazing'` indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device). While it may be possible for these devices to be tracked (and have a grip matrix), the head gaze is used for targeting. Example devices: 0DOF clicker, regular gamepad, voice command, tracked hands.
   * `'pointing'` indicates that the target ray originates from a handheld device and represents that the user is using that device for pointing. The exact orientation of the ray relative to the device should follow platform-specific guidelines if there are any. In the absence of platform-specific guidance, the target ray should most likely point in the same direction as the user's index finger if it was outstretched while holding the controller.
-  * `'tapping'` indicates that the input source was an interaction with the 2D canvas of a non-exclusive session, such as a mouse click or touch event. See [Magic Window Input](#magic_window_input) for more details.
+  * `'tapping'` indicates that the input source was an interaction with the 2D canvas of a non-immersive session, such as a mouse click or touch event. See [Magic Window Input](#magic_window_input) for more details.
 
 ```js
 // Loop over every input source and get their pose for the current frame.
@@ -662,7 +662,7 @@ The above sample is optimized for dragging items in the scene around using input
 
 ### Magic Window Input
 
-When using a non-exclusive session, pointer events on the canvas that created the `outputContext` passed during the session request are monitored. `XRInputSource`s are generated is response to allow unified input handling with exclusive mode controller or gaze input.
+When using a non-immersive session, pointer events on the canvas that created the `outputContext` passed during the session request are monitored. `XRInputSource`s are generated in response to allow unified input handling with immersive mode controller or gaze input.
 
 When the canvas receives a `pointerdown` event an `XRInputSource` is created with a `targetRayMode` of `'tapping'` and added to the array returned by `getInputSources()`. A `selectstart` event is then fired on the session with the new `XRInputSource`. The `XRInputSource`'s pointing ray should be updated with every `pointermove` event the canvas receives until a `pointerup` event is received. A `selectend` event is then fired on the session and the `XRInputSource` is removed from the array returned by `getInputSources()`. When the canvas receives a `click` event a `select` event is fired on the session with the appropriate `XRInputSource`.
 
@@ -841,7 +841,7 @@ function drawMultiviewScene(views, pose) {
 
 ### Controlling rendering quality
 
-While in exclusive sessions, the UA is responsible for providing a framebuffer that is correctly optimized for presentation to the `XRSession` in each `XRFrame`. Developers can optionally request either the buffer size or viewport size be scaled, though the UA may not respect the request. Even when the UA honors the scaling requests, the result is not guaranteed to be the exact percentage requested.
+While in immersive sessions, the UA is responsible for providing a framebuffer that is correctly optimized for presentation to the `XRSession` in each `XRFrame`. Developers can optionally request either the buffer size or viewport size be scaled, though the UA may not respect the request. Even when the UA honors the scaling requests, the result is not guaranteed to be the exact percentage requested.
 
 The first scaling mechanism is done by specifying a `framebufferScaleFactor` at `XRWebGLLayer` creation time. Each `XRDevice` has a default framebuffer size, which corresponds to a `framebufferScaleFactor` of `1.0`. This default size is determined by the UA and should represent a reasonable balance between rendering quality and performance. It may not be the 'native' size for the device (that is, a buffer which would match the native screen resolution 1:1 at point of highest magnification). For example, mobile platforms such as GearVR or Daydream frequently suggest using lower resolutions than their screens are capable of to ensure consistent performance.
 
@@ -973,13 +973,13 @@ partial interface Navigator {
 //
 
 dictionary XRSessionCreationOptions {
-  boolean exclusive = false;
+  boolean immersive = false;
   XRPresentationContext outputContext;
 };
 
 [SecureContext, Exposed=Window] interface XRSession : EventTarget {
   readonly attribute XRDevice device;
-  readonly attribute boolean exclusive;
+  readonly attribute boolean immersive;
   readonly attribute XRPresentationContext outputContext;
 
   attribute double depthNear;
