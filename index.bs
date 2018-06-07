@@ -230,7 +230,7 @@ XRDevice {#xrdevice-interface}
 ---------
 
 <pre class="idl">
-[SecureContext, Exposed=Window] interface XRDevice : EventTarget {
+[SecureContext, Exposed=Window] interface XRDevice {
   // Methods
   Promise&lt;void&gt; supportsSession(optional XRSessionCreationOptions options);
   Promise&lt;XRSession&gt; requestSession(optional XRSessionCreationOptions options);
@@ -721,8 +721,7 @@ XRInputPose {#xrinputpose-interface}
 <pre class="idl">
 interface XRInputPose {
   readonly attribute boolean emulatedPosition;
-  readonly attribute Float32Array targetRayOrigin;
-  readonly attribute Float32Array targetRayDirection;
+  readonly attribute Float32Array targetRayMatrix;
   readonly attribute Float32Array? gripMatrix;
 };
 </pre>
@@ -768,7 +767,7 @@ dictionary XRWebGLLayerInit {
   boolean stencil = false;
   boolean alpha = true;
   boolean multiview = false;
-  double framebufferScaleFactor;
+  double framebufferScaleFactor = 1.0;
 };
 
 [SecureContext, Exposed=Window, Constructor(XRSession session,

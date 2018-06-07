@@ -963,7 +963,7 @@ partial interface Navigator {
 // Device
 //
 
-[SecureContext, Exposed=Window] interface XRDevice : EventTarget {
+[SecureContext, Exposed=Window] interface XRDevice {
   Promise<void> supportsSession(optional XRSessionCreationOptions parameters);
   Promise<XRSession> requestSession(optional XRSessionCreationOptions parameters);
 };
@@ -1059,7 +1059,7 @@ dictionary XRWebGLLayerInit {
   boolean stencil = false;
   boolean alpha = true;
   boolean multiview = false;
-  double framebufferScaleFactor;
+  double framebufferScaleFactor = 1.0;
 };
 
 typedef (WebGLRenderingContext or
