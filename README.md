@@ -1,5 +1,7 @@
 # WebXR Device API Specification
 
+[![Build Status](https://travis-ci.org/immersive-web/webxr.svg?branch=master)](https://travis-ci.org/immersive-web/webxr)
+
 WebXR is driving support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays on the Web.
 
 This is currently the repository for the [WebVR Community Group][3] and the [WebXR Device API Specification][1]. We have a [charter][4] (in progress).
