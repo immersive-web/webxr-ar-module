@@ -314,11 +314,18 @@ XRSession {#xrsession-interface}
 ---------
 
 <pre class="idl">
+enum XREnvironmentBlendMode {
+  "opaque",
+  "additive",
+  "alpha-blend",
+};
+
 [SecureContext, Exposed=Window] interface XRSession : EventTarget {
   // Attributes
   readonly attribute XRDevice device;
   readonly attribute boolean immersive;
   readonly attribute XRPresentationContext outputContext;
+  readonly attribute XREnvironmentBlendMode environmentBlendMode;
 
   attribute double depthNear;
   attribute double depthFar;
@@ -389,6 +396,18 @@ The <dfn method for="XRSession">end()</dfn> method provides a way to manually sh
   1. [=/Resolve=] |promise|.
 
 </div>
+
+Each {{XRSession}} has a <dfn>environment blending mode</dfn> value, which is a enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user's surrounding environment.
+
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> indicates that the user's surrounding environment is not visible at all. Alpha values in the {{XRSession/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0.
+
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">additive</dfn> indicates that the user's surrounding environment is visible and the {{XRSession/baseLayer}} will be shown additively against it. Alpha values in the {{XRSession/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. When this blend mode is in use black pixels will appear fully transparent, and there is no way to make a pixel appear fully opaque.
+
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn> indicates that the user's surrounding environment is visible and the {{XRSession/baseLayer}} will be blended with it according to the alpha values of each pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent.
+
+The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=]
+
+NOTE: Most Virtual Reality devices exhibit {{XREnvironmentBlendMode/opaque}} blending behavior. Augmented Reality devices that use transparent optical elements frequently exhibit {{XREnvironmentBlendMode/additive}} blending behavior, and Augmented Reality devices that use passthrough cameras frequently exhibit {{XREnvironmentBlendMode/alpha-blend}} blending behavior.
 
 <dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
 
