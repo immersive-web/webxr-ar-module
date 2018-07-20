@@ -239,9 +239,9 @@ XRDevice {#xrdevice-interface}
 
 An {{XRDevice}} represents a physical unit of XR hardware that can present imagery to the user somehow. On desktop devices this may take the form of a headset peripheral; on mobile devices it may represent the device itself in conjunction with a viewer harness. It may also represent devices without the ability to present content in stereo but with advanced (6DoF) tracking capabilities.
 
-Each {{XRDevice}} has a <dfn>supports immersive</dfn> value, which is a boolean which MUST be set to <code>true</code> if the device can support immersive sessions and <code>false</code> if it cannot.
+Each {{XRDevice}} has a <dfn>supports immersive</dfn> value, which is a boolean which MUST be set to <code>true</code> if the device can support [=immersive sessions=] and <code>false</code> if it cannot.
 
-Each {{XRDevice}} has an <dfn>immersive session</dfn>, which MUST be initially <code>null</code>, and a <dfn>list of non-immersive sessions</dfn>, which MUST be initially empty.
+Each {{XRDevice}} has an <dfn>active immersive session</dfn>, which MUST be initially <code>null</code>, and a <dfn>list of non-immersive sessions</dfn>, which MUST be initially empty.
 
 <div class="algorithm" data-algorithm="supports-session">
 
@@ -260,11 +260,11 @@ When the <dfn method for="XRDevice">requestSession(|options|)</dfn> method is in
   1. Let |device| be the target {{XRDevice}} object.
   1. If the |options| are not [=supported by the device=] |device|, [=reject=] |promise| with a {{NotSupportedError}} and abort these steps.
   1. Let |immersive| be the {{XRSessionCreationOptions/immersive}} attribute of the |options| argument.
-  1. If |immersive| is <code>true</code> and |device|'s [=immersive session=] is not <code>null</code>, [=reject=] |promise| with an {{InvalidStateError}} and abort these steps.
+  1. If |immersive| is <code>true</code> and |device|'s [=active immersive session=] is not <code>null</code>, [=reject=] |promise| with an {{InvalidStateError}} and abort these steps.
   1. If |immersive| is <code>true</code> and the algorithm is not [=triggered by user activation=], [=reject=] |promise| with a {{SecurityError}} and abort these steps.
   1. Let |session| be a new {{XRSession}}.
   1. [=Initialize the session=] |session| with the [=session description=] given by |options|.
-  1. If |immersive| is <code>true</code> set the |device|'s [=immersive session=] to |session|.
+  1. If |immersive| is <code>true</code> set the |device|'s [=active immersive session=] to |session|.
   1. Else append |session| to |device|'s [=list of non-immersive sessions=].
   1. [=/Resolve=] |promise| with |session|.
 
@@ -307,6 +307,10 @@ To determine if an {{XRSessionCreationOptions}} |options| is <dfn>supported by t
   1. If |immersive| is <code>false</code> and |options|.{{XRSessionCreationOptions/outputContext}} is <code>null</code>, return <code>false</code>
 
 </div>
+
+A session is considered to be an <dfn>immersive session</dfn> if it's output is displayed to the user in a way that makes the user feel the content is present in the same space with them, shown at the proper scale. Sessions are considered <dfn>non-immersive</dfn> (sometimes referred to as <dfn>inline</dfn>) if their output is displayed as an element in an HTML document.
+
+NOTE: Content shown as part of an HTML document is always considered [=non-immersive=] even if headtracking is taken into account, the content is displayed in stereo, or the document is displayed in a headset.
 
 Issue: Document restrictions and capabilities of an [=immersive session=]
 
@@ -382,7 +386,7 @@ When an {{XRSession}} is shut down the following steps are run:
   1. Let |session| be the target {{XRSession}} object.
   1. Let |device| be |session|'s {{XRSession/device}}.
   1. Set |session|'s [=ended=] value to <code>true</code>.
-  1. If |device|'s [=immersive session=] is equal to |session|, set |device|'s [=immersive session=] to <code>null</code>.
+  1. If |device|'s [=active immersive session=] is equal to |session|, set |device|'s [=active immersive session=] to <code>null</code>.
   1. If |device|'s [=list of non-immersive sessions=] contains |session|, remove it from the list.
   1. If no other features of the user agent are actively using them, perform the necessary platform-specific steps to shut down the device's tracking and rendering capabilities.
 
