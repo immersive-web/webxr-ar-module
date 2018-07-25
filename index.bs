@@ -13,7 +13,7 @@ Mailing List Archives: https://lists.w3.org/Archives/Public/public-webvr/
 !Participate: <a href="irc://irc.w3.org:6665/">W3C's #webvr IRC</a>
 
 Editor: Brandon Jones, Google http://google.com/, bajones@google.com
-Editor: Nell Waliczek, Microsoft https://microsoft.com/, nell.waliczek@microsoft.com
+Editor: Nell Waliczek, Amazon [Microsoft until 2018] https://amazon.com/, nhw@amazon.com
 
 Abstract: This specification describes support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web.
 
@@ -1099,7 +1099,7 @@ The following individuals have contributed to the design of the WebXR Device API
   * <a href="mailto:cvan@mozilla.com">Chris Van Wiemeersch</a> (<a href="https://mozilla.org/">Mozilla</a>)
   * <a href="mailto:kgilbert@mozilla.com">Kearwood Gilbert</a> (<a href="https://mozilla.org/">Mozilla</a>)
   * <a href="mailto:rafael.cintron@microsoft.com">Rafael Cintron</a> (<a href="https://microsoft.com/">Microsoft</a>)
-  * <a href="mailto:ssylvan@microsoft.com">Sebastian Sylvan</a> (<a href="https://microsoft.com/">Microsoft</a>)
+  * <a href="mailto:sebastian.sylvan@gmail.com">Sebastian Sylvan</a> (Formerly <a href="https://microsoft.com/">Microsoft</a>)
 
 And a special thanks to <a href="mailto:vladv@unity3d.com">Vladimir Vukicevic</a> (<a href="https://unity3d.com/">Unity</a>) for kick-starting this whole adventure!
 
