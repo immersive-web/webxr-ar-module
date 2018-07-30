@@ -24,11 +24,14 @@ Ignored Vars: layer
 urlPrefix: http://www.w3.org/TR/hr-time/
     type: typedef; text: DOMHighResTimeStamp
     type: dfn; text: timestamp origin
+urlPrefix: https://html.spec.whatwg.org/multipage/system-state.html
+    type: interface; text: Navigator
 urlPrefix: https://wiki.whatwg.org/wiki/OffscreenCanvas
     type: typedef; text: OffscreenCanvas
     type: dfn; text: offscreen canvas
 urlPrefix: https://www.w3.org/TR/html51/webappapis.html
     type: dfn; text: window.requestAnimationFrame
+    type: typedef; text: EventHandler; url:#typedefdef-eventhandler
 urlPrefix: https://www.w3.org/TR/html5/semantics-scripting.html
     type: interface; text: HTMLCanvasElement
 urlPrefix: https://www.w3.org/TR/html5/
@@ -48,6 +51,7 @@ urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/2.0/
     type: interface; text: WebGL2RenderingContext
 urlPrefix: https://drafts.fxtf.org/geometry/
     type: interface; text: DOMMatrix
+    type: interface; text: DOMPointReadOnly
 urlPrefix: https://w3c.github.io/orientation-sensor/; spec: ORIENTATION-SENSOR
     type: interface; text: AbsoluteOrientationSensor
     type: interface; text: RelativeOrientationSensor
@@ -117,7 +121,7 @@ Terms like "XR Device", "XR Application", etc. are generally understood to apply
 The terms [=3DoF=] and [=6DoF=] are used throughout this document to describe the tracking capabilities of XR devices.
 
  - A <dfn>3DoF</dfn> device, short for "Three Degrees of Freedom", is one that can only track rotational movement. This is common in devices which rely exclusively on accelerometer and gyroscope readings to provide tracking. [=3DoF=] devices do not respond translational movements from the user, though they may employ algorithms to estimate translational changes based on modeling of the neck or arms.
- - A <dfn>6DoF</dfn> device, short for "Six Degrees of Freedom", is one that can track both rotation and translation, enabling for precise 1:1 tracking in space. This typically requires some level of understanding of the user's environment. That environmental understanding may be achived via <dfn>inside-out tracking</dfn>, where sensors on the tracked device itself (such as cameras or depth sensors) are used to determine the device's position, or <dfn>outside-in tracking</dfn>, where external devices placed in the user's environment (like a camera or light emmiting device) provides a stable point of reference against which the XR device can determine it's position.
+ - A <dfn>6DoF</dfn> device, short for "Six Degrees of Freedom", is one that can track both rotation and translation, enabling for precise 1:1 tracking in space. This typically requires some level of understanding of the user's environment. That environmental understanding may be achived via inside-out tracking, where sensors on the tracked device itself (such as cameras or depth sensors) are used to determine the device's position, or outside-in tracking, where external devices placed in the user's environment (like a camera or light emmiting device) provides a stable point of reference against which the XR device can determine it's position.
 
 
 Security, Privacy, and Comfort Considerations {#security}
@@ -196,7 +200,7 @@ NOTE: The user agent is allowed to use any criteria it wishes to [=select a defa
 
 <div class="algorithm" data-algorithm="request-device">
 
-The page can <dfn>request a device</dfn> by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
+The page can request a device by calling the <dfn method for="XR">requestDevice()</dfn> method on the {{Navigator/xr}} object. When invoked it MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
   1. [=Enumerate XR devices=].
   1. If the [=list of XR devices=] is empty, [=reject=] |promise| with a {{NotFoundError}} and abort these steps.
@@ -308,7 +312,7 @@ To determine if an {{XRSessionCreationOptions}} |options| is <dfn>supported by t
 
 </div>
 
-A session is considered to be an <dfn>immersive session</dfn> if it's output is displayed to the user in a way that makes the user feel the content is present in the same space with them, shown at the proper scale. Sessions are considered <dfn>non-immersive</dfn> (sometimes referred to as <dfn>inline</dfn>) if their output is displayed as an element in an HTML document.
+A session is considered to be an <dfn>immersive session</dfn> if it's output is displayed to the user in a way that makes the user feel the content is present in the same space with them, shown at the proper scale. Sessions are considered <dfn>non-immersive</dfn> (sometimes referred to as inline) if their output is displayed as an element in an HTML document.
 
 NOTE: Content shown as part of an HTML document is always considered [=non-immersive=] even if headtracking is taken into account, the content is displayed in stereo, or the document is displayed in a headset.
 
@@ -427,11 +431,11 @@ The <dfn attribute for="XRSession">onselectstart</dfn> attribute is an [=Event h
 
 The <dfn attribute for="XRSession">onselectend</dfn> attribute is an [=Event handler IDL attribute=] for the {{selectend}} event type.
 
-The <dfn attribute for="XRSession">onselect</dfn> attribute is an [=Event handler IDL attribute=] for the {{select}} event type.
+The <dfn attribute for="XRSession">onselect</dfn> attribute is an [=Event handler IDL attribute=] for the {{XRSession/select}} event type.
 
 Issue: Example of acquiring a session here.
 
-Issue: Document what happens when we <dfn>end the session</dfn>
+Issue: Document what happens when we end the session.
 
 Issue: Document effects when we <dfn lt="blur all sessions">blur the session</dfn>
 
@@ -471,7 +475,7 @@ When the <dfn method for="XRSession">cancelAnimationFrame(|handle|)</dfn> method
 
 <div class="algorithm" data-algorithm="run-animation-frames">
 
-When the user agent is to <dfn>run the animation frame callbacks</dfn> for an {{XRSession}} |session| with a timestamp |now| and an {{XRFrame}} |frame|, it MUST run the following steps:
+When the user agent is to run the animation frame callbacks for an {{XRSession}} |session| with a timestamp |now| and an {{XRFrame}} |frame|, it MUST run the following steps:
 
   1. Let |callbacks| be a list of the entries in |session|'s [=list of animation frame callback=], in the order in which they were added to the list.
   1. Set |session|'s [=list of animation frame callbacks=] to the empty list.
@@ -492,7 +496,7 @@ Issue: This needs to be broken up a bit more and more clearly decribe things suc
 
 The user agent MUST maintain an <dfn>XR Compositor</dfn> which handles presentation to the {{XRDevice}} and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as {{XRWebGLLayer}} sources to prevent the page from corrupting the compositor state or reading back content from other pages. the compositor MUST also run in separate thread or processes to decouple performance of the page from the ability to present new imagery to the user at the appropriate framerate.
 
-The [=XR Compositor=] has a <dfn>list of layer images</dfn>, which is initially empty.
+The [=XR Compositor=] has a list of layer images, which is initially empty.
 
 <!--There are no direct interfaces to the compositor, but applications may submit bitmaps to be composited via the layer system and observe the frame timing via calls to {{XRSession/requestAnimationFrame()}}. The compositor consists of two different loops, assumed to be running in separate threads or processes. The <dfn>Frame Loop</dfn>, which drives the page script, and the <dfn>Render Loop</dfn>, which continuously presents imagery provided by the Frame Loop to the XR device. The render loop maintains its own copy of the session's layer list. Communication between the two loops is synchronized with a lock that limits access to the render loop's layer list.
 
@@ -662,7 +666,7 @@ XRViewport {#xrviewport-interface}
 };
 </pre>
 
-An {{XRViewport}} object describes a <dfn>viewport</dfn>, or rectangular region, of a graphics surface. The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
+An {{XRViewport}} object describes a viewport, or rectangular region, of a graphics surface. The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
 
 The exact interpretation of the viewport values depends on the conventions of the graphics API the viewport is associated with:
 
@@ -730,21 +734,41 @@ enum XRTargetRayMode {
   "screen"
 };
 
+[SecureContext, Exposed=Window]
 interface XRInputSource {
   readonly attribute XRHandedness handedness;
   readonly attribute XRTargetRayMode targetRayMode;
 };
 </pre>
 
-Each {{XRInputSource}} SHOULD define a <dfn>primary action</dfn>. The [=primary action=] is a platform-specific action that, when engaged, produces {{selectstart}}, {{selectend}}, and {{select}} events. Examples of possible [=primary action=]s are pressing a trigger, touchpad, or button, speaking a command, or making a hand gesture. If the platform guidelines define a recommended primary input then it should be used as the [=primary action=], otherwise the user agent is free to select one.
+Each {{XRInputSource}} SHOULD define a <dfn>primary action</dfn>. The [=primary action=] is a platform-specific action that, when engaged, produces {{selectstart}}, {{selectend}}, and {{XRSession/select}} events. Examples of possible [=primary action=]s are pressing a trigger, touchpad, or button, speaking a command, or making a hand gesture. If the platform guidelines define a recommended primary input then it should be used as the [=primary action=], otherwise the user agent is free to select one.
+
+XRRay {#xrray-interface}
+-----
+
+<pre class="idl">
+[SecureContext, Exposed=Window]
+interface XRRay {
+  readonly attribute DOMPointReadOnly origin;
+  readonly attribute DOMPointReadOnly direction;
+  readonly attribute Float32Array transformMatrix;
+};
+</pre>
+
+An {{XRRay}} describes a geometric ray. The <dfn attribute for="XRRay">origin</dfn> attribute defines the 3-dimensional point in space that the ray originates from. The {{XRRay/origin}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>1.0</code>. The <dfn attribute for="XRRay">direction</dfn> attribute defines the ray's 3-dimensional directional vector. The {{direction}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>0.0</code> and the vector MUST be normalized to have a length of <code>1.0</code>.
+
+The <dfn attribute for="XRRay">transformMatrix</dfn> is a [=matrix=] which represents the transform from a ray originating at <code>[0, 0, 0]</code> and extending down the negative Z axis to the ray described by the {{XRRay}}'s {{XRRay/origin}} and {{direction}}.
+
+NOTE: The {{XRRay}}'s {{transformMatrix}} can be used to easily position graphical representations of the ray when rendering.
 
 XRInputPose {#xrinputpose-interface}
 -------------
 
 <pre class="idl">
+[SecureContext, Exposed=Window]
 interface XRInputPose {
   readonly attribute boolean emulatedPosition;
-  readonly attribute Float32Array targetRayMatrix;
+  readonly attribute XRRay targetRay;
   readonly attribute Float32Array? gripMatrix;
 };
 </pre>
@@ -898,7 +922,7 @@ The [=compatible XR device=] can be set either at context creation time or after
 
 <div class="algorithm" data-algorithm="create-with-compatible-xr-device">
 
-When the {{HTMLCanvasElement/getContext()}} method is invoked with a {{WebGLContextAttributes}} dictionary that contains a non-null {{compatibleXRDevice}}, run the following steps:
+When the {{HTMLCanvasElement}}'s getContext() method is invoked with a {{WebGLContextAttributes}} dictionary that contains a non-null {{compatibleXRDevice}}, run the following steps:
 
   1. Let |attributes| be the {{WebGLContextAttributes}} passed to the function.
   1. Let |device| be the |attributes|' {{compatibleXRDevice}}.
