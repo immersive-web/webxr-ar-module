@@ -800,6 +800,12 @@ interface XRInputPose {
 };
 </pre>
 
+<dfn attribute for="XRInputPose">targetRay</dfn>
+
+<dfn attribute for="XRInputPose">gripMatrix</dfn>
+
+The <dfn attribute for="XRInputPose">emulatedPosition</dfn> attribute indicates the accuracy of the {{XRRay/origin}} of the {{XRInputPose/targetRay}} and translation component of the {{XRInputPose/gripMatrix}}. {{XRInputPose/emulatedPosition}} MUST be set to <code>true</code> if positional values are software estimations, such as those provided by a neck or arm model. {{XRInputPose/emulatedPosition}} MUST be set to <code>false</code> if the positional values are based on sensor readings.
+
 Layers {#layers}
 ======
 
