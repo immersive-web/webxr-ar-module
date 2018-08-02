@@ -590,7 +590,26 @@ dictionary XRFrameOfReferenceOptions {
 };
 </pre>
 
-When an {{XRFrameOfReference}} is created with a <code>"stage"</code> {{XRFrameOfReferenceType}} it describes a space known as a "<dfn for="XRStageBounds">Stage</dfn>". A [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
+An {{XRFrameOfReference}} describes an {{XRCoordinateSystem}} that is generally expected to remain static for the duration of the {{XRSession}}, with the most common exception being mid-session reconfiguration by the user. An {{XRFrameOfReference}} is created by calling {{XRSession/requestFrameOfReference()}}. Every {{XRFrameOfReference}} describes a coordinate system where the Y axis MUST be aligned with gravity, with positive Y being "Up". Negative Z is considered "Forward", and positive X is considered "Right". 
+
+Each {{XRFrameOfReference}} has a <dfn>frame of reference type</dfn>, which is one of the {{XRFrameOfReferenceType}} values, set to the type passed {{XRSession/requestFrameOfReference()}}. The behavior of the {{XRFrameOfReference}} differs depending on its [=frame of reference type=] as follows:
+
+<b>eye-level</b>
+
+An {{XRFrameOfReference}} with a [=frame of reference type=] of <dfn enum-value for="XRFrameOfReferenceType">"eye-level"</dfn> describes a coordinate system
+with an origin that corresponds to the first device pose acquired by the {{XRSession}} after the <code>"head-model"</code> frame of reference is created, with the device yaw (rotation around the Y axis) at that point defining the coordinate system's forward direction.
+
+<b>head-model</b>
+
+An {{XRFrameOfReference}} with a [=frame of reference type=] of <dfn enum-value for="XRFrameOfReferenceType">"head-model"</dfn> describes a coordinate system identical to an {{XRFrameOfReferenceType/eye-level}} frame of reference, but where the device is always located at the origin. Any translation is provided by a software estimate of the devices position based solely on the device orientation and the assumption that the device is being worn as a headset. The translation estimate SHOULD be based off of modeling how the human head moves on average when an individual is only moving their neck.
+
+If the device is capable of reporting accurate translation, it MUST be discarded when using this [=frame of reference type=] in favor of an orientation-based estimate. If the translation reported by the device is already based on head modeling the device-provided translation MAY be preserved.
+
+NOTE: A <code>"head-model"</code> [=frame of reference type=] is useful when displaying content that cannot be viewed from arbitrary positions, such as panoramic images or videos. 
+
+<b>stage</b>
+
+An {{XRFrameOfReference}} with a [=frame of reference type=] of <dfn enum-value for="XRFrameOfReferenceType">"stage"</dfn> describes a space known as a <dfn for="XRStageBounds">stage</dfn>. A [=stage=] is a bounded, floor-relative play space that the user can be expected to safely be able to move within. Other XR platforms sometimes refer to this concept as "room scale" or "standing space".
 
 Note: A [=stage=] is not intended to describe multi-room spaces, areas with uneven floor levels, or very large open areas. Future iterations of this specification may add more detailed support for tracking in those scenarios.
 
