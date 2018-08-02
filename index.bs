@@ -730,7 +730,9 @@ XRDevicePose {#xrdevicepose-interface}
 
 An {{XRDevicePose}} describes the position and orientation of an {{XRDevice}} relative to the {{XRCoordinateSystem}} it was queried with. It also describes the view and projection matrices that should be used by the application to render a frame of an XR scene.
 
-<dfn attribute for="XRDevicePose">poseModelMatrix</dfn>
+The <dfn attribute for="XRDevicePose">poseModelMatrix</dfn> is a [=matrix=] describing the transform from the origin of the {{XRCoordinateSystem}} to the {{XRDevice}}.
+
+NOTE: The {{XRDevicePose/poseModelMatrix}} can be used to position graphical representations of the {{XRDevice}} for spectator views of the scene or multi-user interaction.
 
 The <dfn method for="XRDevicePose">getViewMatrix(view)</dfn> method returns a [=matrix=] describing the view transform to be used when rendering the passed {{XRView}}. The matrices represent the inverse of the model matrix of the associated viewpoint.
 
