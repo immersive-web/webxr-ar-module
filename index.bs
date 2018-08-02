@@ -665,11 +665,11 @@ enum XREye {
 };
 </pre>
 
-An {{XRView}} describes a single <dfn>view</dfn> into an XR scene. Each [=view=] corresponds to a display or portion of a display used by an XR device to present imagery to the user. They are used to retrieve all the information necessary to render content that is well aligned to the [=view=]'s physical output properties, including the field of view, eye offset, and other optical properties.
+An {{XRView}} describes a single <dfn>view</dfn> into an XR scene. Each [=view=] corresponds to a display or portion of a display used by an XR device to present imagery to the user. They are used to retrieve all the information necessary to render content that is well aligned to the [=view=]'s physical output properties, including the field of view, eye offset, and other optical properties. [=Views=] may cover overlapping regions of the user's vision. No guarantee is made about the number of [=views=] any XR device uses or their order, nor is the number of [=views=] required to be constant for the duration of an {{XRSession}}.
 
-Many HMDs will request that content render two [=views=], one for the left eye and one for the right, while most magic window devices will only request one [=view=]. However, no guarantee is made about the number of [=views=] any XR device uses, nor is the number of [=views=] required to be constant for the duration of an {{XRSession}}. For example: A magic window device may request two views if it is capable of stereo output, but may revert to requesting a single view for performance reasons if the stereo output mode is turned off. Similarly, HMDs may request more than two views to facilitate a wide field of view or displays of different pixel density. [=Views=] may cover overlapping regions of the user's vision and the order is not guaranteed.
+NOTE: Many HMDs will request that content render two [=views=], one for the left eye and one for the right, while most magic window devices will only request one [=view=], but applications should never assume a specific view comfiguration. For example: A magic window device may request two views if it is capable of stereo output, but may revert to requesting a single view for performance reasons if the stereo output mode is turned off. Similarly, HMDs may request more than two views to facilitate a wide field of view or displays of different pixel density.
 
-The <dfn attribute for="XRView">eye</dfn> attribute describes which eye this view is expected to be shown to. This attribute's primary purpose is to ensure that prerendered stereo content can present the correct portion of the content to the correct eye. If the view does not have an intrinsicly associated eye (the display is monoscopic, for example) this attribute MUST be set to <code>"left"</code>.
+The <dfn attribute for="XRView">eye</dfn> attribute describes which eye this view is expected to be shown to. This attribute's primary purpose is to ensure that prerendered stereo content can present the correct portion of the content to the correct eye. If the view does not have an intrinsicly associated eye (the display is monoscopic, for example) this attribute MUST be set to {{XREye/"left"}}.
 
 The <dfn attribute for="XRView">projectionMatrix</dfn> attribute provides a [=matrix=] describing the projection to be used for the view's rendering. It is <b>strongly recommended</b> that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
 
@@ -761,6 +761,14 @@ interface XRInputSource {
 </pre>
 
 Each {{XRInputSource}} SHOULD define a <dfn>primary action</dfn>. The [=primary action=] is a platform-specific action that, when engaged, produces {{selectstart}}, {{selectend}}, and {{XRSession/select}} events. Examples of possible [=primary action=]s are pressing a trigger, touchpad, or button, speaking a command, or making a hand gesture. If the platform guidelines define a recommended primary input then it should be used as the [=primary action=], otherwise the user agent is free to select one.
+
+The <dfn attribute for="XRInputSource">handedness</dfn> attribute describes which hand the input source is associated with, if any. Input sources with no natural handedness (such as headset-mounted controls or standard gamepads) or for which the handedness is not currently known MUST set this attribute to the empty string.
+
+The <dfn attribute for="XRInputSource">targetRayMode</dfn> attribute describes the method used to produce the target ray, and indicates how the application should present the target ray to the user if desired.
+
+  - <dfn enum-value for="XRTargetRayMode">gaze</dfn> indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device).
+  - <dfn enum-value for="XRTargetRayMode">tracked-pointer</dfn> indicates that the target ray originates from either a handheld device or other hand-tracking mechanism and represents that the user is using their hands or the held device for pointing.
+  - <dfn enum-value for="XRTargetRayMode">screen</dfn> indicates that the input source was an interaction with the canvas element associated with a non-immersive session's output context, such as a mouse click or touch event.
 
 XRRay {#xrray-interface}
 -----
