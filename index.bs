@@ -405,6 +405,25 @@ The <dfn method for="XRSession">end()</dfn> method provides a way to manually sh
 
 </div>
 
+<div class="algorithm" data-algorithm="request-frame-of-reference">
+
+When the <dfn method for="XRSession">requestFrameOfReference(|type|, |options|)</dfn> method is invoked, the user agent MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
+
+  1. Let |session| be the target {{XRSession}} object.
+  1. Let |frameOfRef| be a new {{XRFrameOfReference}}.
+  1. [=Initialize the frame of reference=] |frameOfRef| with |session|, |type|, and |options|.
+  1. [=/Resolve=] |promise| with |frameOfRef|.
+
+</div>
+
+<div class="algorithm" data-algorithm="get-input-sources">
+
+When the <dfn method for="XRSession">getInputSources()</dfn> method is invoked, the user agent MUST run the following steps:
+
+  1. Return the current [=list of active input sources=].
+
+</div>
+
 Each {{XRSession}} has a <dfn>environment blending mode</dfn> value, which is a enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user's surrounding environment.
 
   - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> indicates that the user's surrounding environment is not visible at all. Alpha values in the {{XRSession/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0.
@@ -416,8 +435,6 @@ Each {{XRSession}} has a <dfn>environment blending mode</dfn> value, which is a 
 The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=]
 
 NOTE: Most Virtual Reality devices exhibit {{XREnvironmentBlendMode/opaque}} blending behavior. Augmented Reality devices that use transparent optical elements frequently exhibit {{XREnvironmentBlendMode/additive}} blending behavior, and Augmented Reality devices that use passthrough cameras frequently exhibit {{XREnvironmentBlendMode/alpha-blend}} blending behavior.
-
-<dfn method for="XRSession">requestFrameOfReference(type, options)</dfn>
 
 The <dfn attribute for="XRSession">onblur</dfn> attribute is an [=Event handler IDL attribute=] for the {{blur}} event type.
 
@@ -437,9 +454,11 @@ Issue: Example of acquiring a session here.
 
 Issue: Document what happens when we end the session.
 
-Issue: Document effects when we <dfn lt="blur all sessions">blur the session</dfn>
+Issue: Document effects when we <dfn lt="blur all sessions">blur the session</dfn>.
 
-Issue: Document how to <dfn>poll the device pose</dfn>
+Issue: Document how to <dfn>poll the device pose</dfn>.
+
+Issue: Document how the <dfn>list of active input sources</dfn> is maintained.
 
 Animation Frames {#animation-frames}
 ----------------
@@ -545,7 +564,7 @@ XRFrame {#xrpresentationframe-interface}
 
 An {{XRFrame}} provides all the values needed to render a single frame of an XR scene to the {{XRDevice}}'s display. Applications can only aquire an {{XRFrame}} by calling {{XRSession/requestAnimationFrame()}} on an {{XRSession}} with an {{XRFrameRequestCallback}}. When the callback is called it will be passed an {{XRFrame}}.
 
-<dfn attribute for="XRFrame">session</dfn>
+The <dfn attribute for="XRFrame">session</dfn> attribute returns the {{XRSession}} that produced the {{XRFrame}}.
 
 <dfn attribute for="XRFrame">views</dfn>
 
@@ -565,7 +584,17 @@ XRCoordinateSystem {#xrcoordinatesystem-interface}
 };
 </pre>
 
-<dfn method for="XRCoordinateSystem">getTransformTo(other)</dfn>
+<div class="algorithm" data-algorithm="get-transform-to">
+
+When the <dfn method for="XRCoordinateSystem">getTransformTo(|other|)</dfn> method is invoked, the user agent MUST run the following steps:
+
+  1. Let |current| be the target {{XRCoordinateSystem}} object.
+  1. If a known transform exists from the coordinate system described by |current| to the coordinate system described by |other|, return it as a [=matrix=].
+  1. Else return <code>null</code>
+
+</div>
+
+
 
 XRFrameOfReference {#xrframeofreference-interface}
 ------------------
@@ -590,9 +619,9 @@ dictionary XRFrameOfReferenceOptions {
 };
 </pre>
 
-An {{XRFrameOfReference}} describes an {{XRCoordinateSystem}} that is generally expected to remain static for the duration of the {{XRSession}}, with the most common exception being mid-session reconfiguration by the user. An {{XRFrameOfReference}} is created by calling {{XRSession/requestFrameOfReference()}}. Every {{XRFrameOfReference}} describes a coordinate system where the Y axis MUST be aligned with gravity, with positive Y being "Up". Negative Z is considered "Forward", and positive X is considered "Right". 
+An {{XRFrameOfReference}} describes an {{XRCoordinateSystem}} that is generally expected to remain static for the duration of the {{XRSession}}, with the most common exception being mid-session reconfiguration by the user. An {{XRFrameOfReference}} is created by calling {{XRSession/requestFrameOfReference()}}. Every {{XRFrameOfReference}} describes a coordinate system where the Y axis MUST be aligned with gravity, with positive Y being "Up". Negative Z is considered "Forward", and positive X is considered "Right".
 
-Each {{XRFrameOfReference}} has a <dfn>frame of reference type</dfn>, which is one of the {{XRFrameOfReferenceType}} values, set to the type passed {{XRSession/requestFrameOfReference()}}. The behavior of the {{XRFrameOfReference}} differs depending on its [=frame of reference type=] as follows:
+Each {{XRFrameOfReference}} has as <dfn for="XRFrameOfReference">session</dfn>, which is the {{XRSession}} that created it, and a <dfn>frame of reference type</dfn>, which is one of the {{XRFrameOfReferenceType}} values, set to the type passed {{XRSession/requestFrameOfReference()}}. The behavior of the {{XRFrameOfReference}} differs depending on its [=frame of reference type=] as follows:
 
 <b>eye-level</b>
 
@@ -619,9 +648,24 @@ The [=stage bounds=] are described by a {{XRFrameOfReference}}'s <dfn attribute 
 
 Note: When the {{bounds}} for a [=stage=] are <code>null</code> the user should not be required to physically move around their environment in order to interact with content. The device may still support [=6DoF=] tracking, but it can't be assumed that the user will know where they are relative to their environment and as such content that encourages movement beyond leaning is discouraged.
 
-<dfn attribute for="XRFrameOfReference">emulatedHeight</dfn>
-
 The <dfn attribute for="XRFrameOfReference">onboundschange</dfn> attribute is an [=Event handler IDL attribute=] for the {{boundschange}} event type.
+
+The <dfn attribute for="XRFrameOfReference">emulatedHeight</dfn> attribute is initially set to <code>0.0</code>. This value indicates the offset in meters along the Y axis that will be applied to poses acquired with this frame of reference. 
+
+<div class="algorithm" data-algorithm="initialize-frame-of-reference">
+
+When an {{XRFrameOfReference}} is created, the user agent MUST <dfn>initialize the frame of reference</dfn> by running the following steps:
+
+  1. Let |frameOfRef| be the newly created {{XRFrameOfReference}} object.
+  1. Let |session| be the {{XRSession}} object that requested |frameOfRef|'s creation.
+  1. Let |type| be the {{XRFrameOfReferenceType}} passed to {{XRSession/requestFrameOfReference()}}.
+  1. Let |options| be the {{XRFrameOfReferenceOptions}} passed to {{XRSession/requestFrameOfReference()}}.
+  1. Initialize |frameOfRef|'s [=XRFrameOfReference/session=] to |session|.
+  1. Initialize |frameOfRef|'s [=frame of reference type=] to |type|.
+  1. If |type| is not {{XRFrameOfReferenceType/"stage"}}, abort these steps.
+  1. // Initialize stage-specific properties
+
+</div>
 
 XRStageBounds {#xrstagebounds-interface}
 -------------
