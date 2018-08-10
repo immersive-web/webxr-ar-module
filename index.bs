@@ -672,20 +672,13 @@ XRStageBounds {#xrstagebounds-interface}
 
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRStageBounds {
-  readonly attribute FrozenArray&lt;XRStageBoundsPoint&gt; geometry;
-};
-
-[SecureContext, Exposed=Window] interface XRStageBoundsPoint {
-  readonly attribute double x;
-  readonly attribute double z;
+  readonly attribute FrozenArray&lt;DOMPointReadOnly&gt; geometry;
 };
 </pre>
 
 The {{XRStageBounds}} interface describes a border around a [=stage=], known as the <dfn>stage bounds</dfn> which the user can be expected to safely be able to move within. 
 
-The polygonal boundary is given by the <dfn attribute for="XRStageBounds">geometry</dfn> array of {{XRStageBoundsPoint}}s, which represents a loop of points at the edges of the safe space. The points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The bounds originate at the floor (Y == 0) and extend infinitely high. The shape it describes MAY not be convex. The values reported are relative to the [=stage origin=], but MAY not contain it.
-
-The <dfn attribute for="XRStageBoundsPoint">x</dfn> and <dfn attribute for="XRStageBoundsPoint">z</dfn> attributes of an {{XRStageBoundsPoint}} describe the offset from the [=stage origin=] along the X and Z axes respectively of the point, given in meters.
+The polygonal boundary is given by the <dfn attribute for="XRStageBounds">geometry</dfn> array of {{DOMPointReadOnly}}s, which represents a loop of points at the edges of the safe space. The points describe offsets from the [=stage origin=] in meters, and MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The {{DOMPointReadOnly/y}} value of each point MUST be <code>0</code> and the {{DOMPointReadOnly/w}} value of each point MUST be <code>1</code>. The bounds can be considered to originate at the floor and extend infinitely high. The shape it describes MAY not be convex. The values reported are relative to the [=stage origin=], but MAY not contain it.
 
 Note: Content should not require the user to move beyond the [=stage bounds=]; however, if their physical surroundings allow for it, it is possible for the user to ignore the bounds resulting in position values outside of the polygon they describe. This is not an error condition and should be handled gracefully by page content.
 
