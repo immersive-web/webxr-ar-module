@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/immersive-web/webxr.svg?branch=master)](https://travis-ci.org/immersive-web/webxr)
 
-The WebXR device API os for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays on the Web. 
+The WebXR device API is for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays on the Web. 
 
 |    |             Headset Devices             | Handheld Device e.g. Phone |
 |----|:---------------------------------------:|:--------------------------:|
@@ -14,7 +14,7 @@ The [WebXR Device API Specification][1] is the repository of the [Immersive Web 
 ## Taking Part
 
 1. Read the [code of conduct][19]
-2. See if your issue is bring discussed in the [issues][8], or if your idea is being discussed in the [proposals repo][20].
+2. See if your issue is being discussed in the [issues][8], or if your idea is being discussed in the [proposals repo][20].
 3. We will be publishing the minutes from the bi-weekly calls.
 4. You can also join the working group to participate in these discussions.
 
@@ -39,8 +39,9 @@ The [WebXR Device API Specification][1] is the repository of the [Immersive Web 
 
 * [Immersive Web Working Group][17]
 * [Immersive Web Community Group][3]
-* [`public-webvr` mailing list][7]
 * [GitHub issues list: `webxr`][8]
+* [`public-immersive-web` mailing list][21]
+* [Legacy `public-webvr` mailing list archive][7]
 
 ## Maintainers
 
@@ -80,7 +81,6 @@ Per the [`LICENSE.md`](LICENSE.md) file:
 [6]: https://w3c.github.io/gamepad/extensions.html
 [7]: https://lists.w3.org/Archives/Public/public-webvr/
 [8]: https://github.com/immersive-web/webxr/issues
-[9]: https://webvr-slack.herokuapp.com/
 [10]: https://github.com/tabatkins/bikeshed
 [11]: https://github.com/web-platform-tests/wpt
 [12]: https://github.com/web-platform-tests/wpt/issues/new
@@ -92,3 +92,4 @@ Per the [`LICENSE.md`](LICENSE.md) file:
 [18]: https://www.w3.org/2018/09/immersive-web-wg-charter
 [19]: https://immersive-web.github.io/homepage/code-of-conduct.html
 [20]: https://github.com/immersive-web/proposals
+[21]: https://lists.w3.org/Archives/Public/public-immersive-web/
