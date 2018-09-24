@@ -9,12 +9,12 @@ The WebXR device API is for accessing virtual reality (VR) and augmented reality
 | VR | VR Devices, previously handled by WebVR | Magic Window Behaviour     |
 | AR | Mixed Reality Headsets                  | Phone AR                   |
 
-The [WebXR Device API Specification][1] is the repository of the [Immersive Web Working Group][17]. You can read the [Charter Here][18].
+The [WebXR Device API Specification][1] is the repository of the [Immersive Web Working Group][17].
 
 ## Taking Part
 
-1. Read the [code of conduct][19]
-2. See if your issue is being discussed in the [issues][8], or if your idea is being discussed in the [proposals repo][20].
+1. Read the [code of conduct][18]
+2. See if your issue is being discussed in the [issues][8], or if your idea is being discussed in the [proposals repo][19].
 3. We will be publishing the minutes from the bi-weekly calls.
 4. You can also join the working group to participate in these discussions.
 
@@ -40,7 +40,7 @@ The [WebXR Device API Specification][1] is the repository of the [Immersive Web 
 * [Immersive Web Working Group][17]
 * [Immersive Web Community Group][3]
 * [GitHub issues list: `webxr`][8]
-* [`public-immersive-web` mailing list][21]
+* [`public-immersive-web` mailing list][20]
 * [Legacy `public-webvr` mailing list archive][7]
 
 ## Maintainers
@@ -89,7 +89,6 @@ Per the [`LICENSE.md`](LICENSE.md) file:
 [15]: https://www.w3.org/Consortium/Legal/2008/03-bsd-license.html
 [16]: https://immersive-web.github.io/webxr-reference/
 [17]: https://w3.org/immersive-web
-[18]: https://www.w3.org/2018/09/immersive-web-wg-charter
-[19]: https://immersive-web.github.io/homepage/code-of-conduct.html
-[20]: https://github.com/immersive-web/proposals
-[21]: https://lists.w3.org/Archives/Public/public-immersive-web/
+[18]: https://immersive-web.github.io/homepage/code-of-conduct.html
+[19]: https://github.com/immersive-web/proposals
+[20]: https://lists.w3.org/Archives/Public/public-immersive-web/
