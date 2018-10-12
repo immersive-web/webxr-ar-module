@@ -328,6 +328,8 @@ partial interface XRSession {
 partial interface XRFrame {
   // Also listed in the main explainer.md
   XRDevicePose? getDevicePose(optional XRFrameOfReference frameOfReference);
+
+  // Also listed in input-explainer.md
   XRInputPose? getInputPose(XRInputSource inputSource, optional XRFrameOfReference frameOfReference);
 };
 
