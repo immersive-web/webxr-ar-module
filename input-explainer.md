@@ -3,7 +3,7 @@ This document is a subsection of the main WebXR Device API explainer document wh
 
 ## Usage
 
-XR hardware provides a wide variety of input mechanisms, ranging from single state buttons to fully tracked controllers with multiple buttons, joysticks, triggers, or touchpads. While the intent is to eventually support the full range of available hardware, for the initial version of the WebXR Device API the focus is on enabling a more universal "point and click" style system that can be supported in some capacity by any known XR device and in magic window mode.
+XR hardware provides a wide variety of input mechanisms, ranging from single state buttons to fully tracked controllers with multiple buttons, joysticks, triggers, or touchpads. While the intent is to eventually support the full range of available hardware, for the initial version of the WebXR Device API the focus is on enabling a more universal "point and click" style system that can be supported in some capacity by any known XR device and in inline mode.
 
 In this model every input source has a ray that indicates what is being pointed at, called the "Target Ray", and reports when the primary action for that device has been triggered, surfaced as a "select" event. When the select event is fired the XR application can use the target ray of the input source that generated the event to determine what the user was attempting to interact with and respond accordingly. Additionally, if the input source represents a tracked device a "Grip" matrix will also be provided to indicate where a mesh should be rendered to align with the physical device.
 
@@ -37,7 +37,7 @@ The `targetRay` will never be `null`. It's value will differ based on the type o
 
   * `'gaze'` indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device). While it may be possible for these devices to be tracked (and have a grip matrix), the head gaze is used for targeting. Example devices: 0DOF clicker, regular gamepad, voice command, tracked hands.
   * `'tracked-pointer'` indicates that the target ray originates from either a handheld device or other hand-tracking mechanism and represents that the user is using their hands or the held device for pointing. The exact orientation of the ray relative to a given device should follow platform-specific guidelines if there are any. In the absence of platform-specific guidance or a physical device, the target ray should most likely point in the same direction as the user's index finger if it was outstretched.
-  * `'screen'` indicates that the input source was an interaction with the canvas element associated with a non-immersive session's output context, such as a mouse click or touch event. See [Magic Window Input](#magic_window_input) for more details.
+  * `'screen'` indicates that the input source was an interaction with a session's output context canvas element, such as a mouse click or touch event. Only applicable for inline sessions or an immersive AR session being displayed on a 2D screen. See [Screen Input](#screen_input) for more details.
 
 ```js
 // Loop over every input source and get their pose for the current frame.
@@ -276,9 +276,9 @@ function onUpdateScene() {
 
 The above sample is optimized for dragging items in the scene around using input sources that have a gripMatrix. It would also be possible to add further script logic to use the target ray properties to position items in the world - this is left as an exercise for the reader.
 
-### Magic Window Input
+### Screen Input
 
-When using a non-immersive session, pointer events on the canvas that created the `outputContext` passed during the session request are monitored. `XRInputSource`s are generated in response to allow unified input handling with immersive mode controller or gaze input.
+When using an inline session or an immersive AR session on a 2D screen, pointer events on the canvas that created the session's `outputContext` are monitored. `XRInputSource`s are generated in response to allow unified input handling with immersive mode controller or gaze input.
 
 When the canvas receives a `pointerdown` event an `XRInputSource` is created with a `targetRayMode` of `'screen'` and added to the array returned by `getInputSources()`. A `selectstart` event is then fired on the session with the new `XRInputSource`. The `XRInputSource`'s target ray should be updated with every `pointermove` event the canvas receives until a `pointerup` event is received. A `selectend` event is then fired on the session and the `XRInputSource` is removed from the array returned by `getInputSources()`. When the canvas receives a `click` event a `select` event is fired on the session with the appropriate `XRInputSource`.
 
