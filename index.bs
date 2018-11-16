@@ -890,7 +890,6 @@ dictionary XRWebGLLayerInit {
   boolean depth = true;
   boolean stencil = false;
   boolean alpha = true;
-  boolean multiview = false;
   double framebufferScaleFactor = 1.0;
 };
 
@@ -905,7 +904,6 @@ interface XRWebGLLayer : XRLayer {
   readonly attribute boolean depth;
   readonly attribute boolean stencil;
   readonly attribute boolean alpha;
-  readonly attribute boolean multiview;
 
   readonly attribute WebGLFramebuffer framebuffer;
   readonly attribute unsigned long framebufferWidth;
@@ -933,8 +931,6 @@ The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |laye
   1. Initialize |layer|'s {{XRWebGLLayer/depth}} to |layerInit|'s {{XRWebGLLayerInit/depth}} value.
   1. Initialize |layer|'s {{XRWebGLLayer/stencil}} to |layerInit|'s {{XRWebGLLayerInit/stencil}} value.
   1. Initialize |layer|'s {{XRWebGLLayer/alpha}} to |layerInit|'s {{XRWebGLLayerInit/alpha}} value.
-  1. If |context| [=supports multiview=] and |layerInit|'s {{XRWebGLLayerInit/multiview}} value is <code>true</code>, initialize |layer|'s {{XRWebGLLayer/multiview}} to <code>true</code>.
-  1. Else initialize |layer|'s {{XRWebGLLayer/multiview}} to <code>false</code>.
   1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque=] {{WebGLFramebuffer}} created with |context|.
   1. Initialize the |layer|'s [=swap chain=].
   1. If |layer|'s [=swap chain=] was unable to be created for any reason, throw an {{OperationError}} and abort these steps.
@@ -967,8 +963,6 @@ The <dfn method for="XRWebGLLayer">getNativeFramebufferScaleFactor(|session|)</d
   1. Return the value that the |session|'s [=recommended WebGL framebuffer resolution=] must be multiplied by to yield the |session|'s [=native WebGL framebuffer resolution=].
 
 </div>
-
-Issue: Document what it means when a context <dfn>supports multiview</dfn>.
 
 Issue: Document what an <dfn>opaque</dfn> framebuffer is.
 
