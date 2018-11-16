@@ -89,6 +89,8 @@ function onSessionStarted(session) {
 }
 ```
 
+There is no mechanism for getting a floor-relative _unbounded_ frame of reference. This is because the user may move through a variety of elevations (via stairs, hills, etc), making identification of a single floor plane impossible.
+
 > **An aside regarding XRCoordinateSystem**
 >
 > When building an _unbounded_ experience, developers will likely need to "lock" content to a specific physical location to prevent it from drifting as users travel beyond a few meters; this functionality is known as _anchors_.  In addition to _anchors_, today's XR platforms offer other environment-related features such as _spatial meshes_, _point clouds_, _markers_, and more. While none of these features are yet part of the WebXR Device API, there are proposed designs under active development.
