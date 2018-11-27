@@ -45,10 +45,18 @@ urlPrefix: https://www.w3.org/TR/html5/
     type: interface; text: Document
     type: dfn; text: dispatch
 urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
-    type: typedef; text: uniformMatrix4fv
     type: interface; text: WebGLFramebuffer
     type: interface; text: WebGLRenderingContext
     type: interface; text: WebGLRenderingContextBase
+    type: typedef; text: INVALID_OPERATION
+    type: typedef; text: INVALID_FRAMEBUFFER_OPERATION
+    type: typedef; text: FRAMEBUFFER_UNSUPPORTED
+    type: method; text: uniformMatrix4fv
+    type: method; text: framebufferTexture2D
+    type: method; text: framebufferRenderbuffer
+    type: method; text: getFramebufferAttachmentParameter
+    type: method; text: getRenderbufferParameter
+    type: method; text: checkFramebufferStatus
     type: dictionary; text: WebGLContextAttributes
     type: dfn; text: Create the WebGL context; url:#2.1
     type: dfn; text: WebGL viewport; url:#5.14.4
@@ -528,7 +536,7 @@ Then, the frame loop performs the following steps while the session is active:
 Frame Loop {#frame}
 ==========
 
-XRFrame {#xrpresentationframe-interface}
+XRFrame {#xrframe-interface}
 -------------------
 
 <pre class="idl">
@@ -921,6 +929,8 @@ interface XRWebGLLayer : XRLayer {
 };
 </pre>
 
+An {{XRWebGLLayer}} is a layer which provides a WebGL framebuffer to render into, enabling hardware accelerated rendering of 3D graphics to be presented on the [=XR device=].
+
 <div class="algorithm" data-algorithm="construct-webgl-layer">
 
 The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |layerInit|)</dfn> constructor MUST perform the following steps when invoked:
@@ -934,14 +944,30 @@ The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |laye
   1. Initialize |layer|'s {{XRWebGLLayer/depth}} to |layerInit|'s {{XRWebGLLayerInit/depth}} value.
   1. Initialize |layer|'s {{XRWebGLLayer/stencil}} to |layerInit|'s {{XRWebGLLayerInit/stencil}} value.
   1. Initialize |layer|'s {{XRWebGLLayer/alpha}} to |layerInit|'s {{XRWebGLLayerInit/alpha}} value.
-  1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque=] {{WebGLFramebuffer}} created with |context|.
+  1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque framebuffer=] created with |context|.
   1. Initialize the |layer|'s [=swap chain=].
   1. If |layer|'s [=swap chain=] was unable to be created for any reason, throw an {{OperationError}} and abort these steps.
   1. Return |layer|.
 
 </div>
 
-The <dfn attribute for="XRWebGLLayer">framebufferWidth</dfn> and <dfn attribute for="XRWebGLLayer">framebufferHeight</dfn> attributes return the width and height of the [=swap chain=]'s backbuffer, respectively.
+The <dfn attribute for="XRWebGLLayer">context</dfn> attribute is the {{WebGLRenderingContext}} the {{XRWebGLLayer}} was created with.
+
+The <dfn attribute for="XRWebGLLayer">framebuffer</dfn> attribute of an {{XRWebGLLayer}} is an instance of a {{WebGLFramebuffer}} which has been marked as [=opaque framebuffer|opaque=]. An <dfn>opaque framebuffer</dfn> functions identically to a standard {{WebGLFramebuffer}} with the following changes that make it behave more like the default framebuffer:
+ 
+ - An [=opaque framebuffer=] MAY support antialiasing, even in WebGL 1.0. 
+ - An [=opaque framebuffer=]'s attachments cannot be inspected or changed. Calling {{framebufferTexture2D}}, {{framebufferRenderbuffer}}, {{getFramebufferAttachmentParameter}}, or {{getRenderbufferParameter}} with an [=opaque framebuffer=] MUST generate an {{INVALID_OPERATION}} error.
+ - An [=opaque framebuffer=] is considered incomplete outside of an {{XRSession/requestAnimationFrame()}} callback. When not in a {{XRSession/requestAnimationFrame()}} callback calls to {{checkFramebufferStatus}} outside of an {{XRSession/requestAnimationFrame()}} callback MUST generate a {{FRAMEBUFFER_UNSUPPORTED}} error and attempts to clear, draw to, or read from the [=opaque framebuffer=] MUST generate an {{INVALID_FRAMEBUFFER_OPERATION}} error.
+
+The <dfn attribute for="XRWebGLLayer">framebufferWidth</dfn> and <dfn attribute for="XRWebGLLayer">framebufferHeight</dfn> attributes return the width and height of the {{framebuffer}}'s attachments, respectively.
+
+The <dfn attribute for="XRWebGLLayer">antialias</dfn> attribute is <code>true</code> if the {{framebuffer}} supports antialiasing using a technique of the UAs choosing, and <code>false</code> if no antialiasing will be performed.
+
+The <dfn attribute for="XRWebGLLayer">depth</dfn> attribute is <code>true</code> if the {{framebuffer}} has a depth buffer attachment and <code>false</code> if no depth buffer is attached.
+
+The <dfn attribute for="XRWebGLLayer">stencil</dfn> attribute is <code>true</code> if the {{framebuffer}} has a stencil buffer attachment and <code>false</code> if no stencil buffer is attached.
+
+The <dfn attribute for="XRWebGLLayer">alpha</dfn> attribute is <code>true</code> if the {{framebuffer}} has an alpha buffer attachment and <code>false</code> if no alpha buffer is attached.
 
 {{getViewport()}} queries the {{XRViewport}} the given {{XRView}} should use when rendering to the layer.
 
@@ -966,8 +992,6 @@ The <dfn method for="XRWebGLLayer">getNativeFramebufferScaleFactor(|session|)</d
   1. Return the value that the |session|'s [=recommended WebGL framebuffer resolution=] must be multiplied by to yield the |session|'s [=native WebGL framebuffer resolution=].
 
 </div>
-
-Issue: Document what an <dfn>opaque</dfn> framebuffer is.
 
 Issue: Document the creation of a <dfn>swap chain</dfn>.
 
