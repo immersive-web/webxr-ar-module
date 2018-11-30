@@ -315,8 +315,6 @@ NOTE: Examples of ways [=exclusive access=] may be presented include stereo cont
 
 Issue: Document restrictions and capabilities of [=immersive session=]s.
 
-Issue: Describe the different ways that immersive content can be displayed better.
-
 XRSessionCreationOptions {#xrsessioncreationoptions-interface}
 -------------------------
 
@@ -459,8 +457,6 @@ The <dfn attribute for="XRSession">onselectstart</dfn> attribute is an [=Event h
 The <dfn attribute for="XRSession">onselectend</dfn> attribute is an [=Event handler IDL attribute=] for the {{selectend}} event type.
 
 The <dfn attribute for="XRSession">onselect</dfn> attribute is an [=Event handler IDL attribute=] for the {{XRSession/select}} event type.
-
-Issue: Example of acquiring a session here.
 
 Issue: Document what happens when we end the session.
 
@@ -765,17 +761,19 @@ The exact interpretation of the viewport values depends on the conventions of th
  - When used with a {{XRWebGLLayer}} the {{XRViewport/x}} and {{XRViewport/y}} attributes specify the lower left corner of the viewport rectangle, in pixels, with the viewport rectangle extending {{XRViewport/width}} pixels to the right of {{XRViewport/x}} and {{XRViewport/height}} pixels above {{XRViewport/y}}. The values can be passed to the [=WebGL viewport=] function directly.
 
 <div class="example">
-The following code sets the [=WebGL viewport=] for an {{XRWebGLLayer}}'s framebuffer using an {{XRViewport}} retrieved from an {{XRView}}.
+The following code loops through all of the {{XRView}}s of an {{XRViewerPose}}, queries an {{XRViewport}} from an {{XRWebGLLayer}} for each, and uses them to set the appropriate [=WebGL viewport=]s for rendering.
 
 <pre highlight="js">
 xrSession.requestAnimationFrame((time, xrFrame) => {
-  let xrView = xrFrame.views[0];
-  let xrViewport = xrWebGLLayer.getViewport(xrView);
+  let viewer = xrFrame.getViewerPose(xrReferenceSpace);
 
   gl.bindFramebuffer(xrWebGLLayer.framebuffer);
-  gl.viewport(xrViewport.x, xrViewport.y, xrViewport.width, xrViewport.height);
+  for (xrView of viewer.views) {
+    let xrViewport = xrWebGLLayer.getViewport(xrView);
+    gl.viewport(xrViewport.x, xrViewport.y, xrViewport.width, xrViewport.height);
 
-  // WebGL draw calls will now be rendered into the appropriate viewport.
+    // WebGL draw calls will now be rendered into the appropriate viewport.
+  }
 });
 </pre>
 </div>
@@ -858,7 +856,7 @@ interface XRRay {
 };
 </pre>
 
-An {{XRRay}} describes a geometric ray. The <dfn attribute for="XRRay">origin</dfn> attribute defines the 3-dimensional point in space that the ray originates from. The {{XRRay/origin}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>1.0</code>. The <dfn attribute for="XRRay">direction</dfn> attribute defines the ray's 3-dimensional directional vector. The {{direction}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>0.0</code> and the vector MUST be normalized to have a length of <code>1.0</code>.
+An {{XRRay}} describes a geometric ray. The <dfn attribute for="XRRay">origin</dfn> attribute defines the 3-dimensional point in space that the ray originates from, given in meters. The {{XRRay/origin}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>1.0</code>. The <dfn attribute for="XRRay">direction</dfn> attribute defines the ray's 3-dimensional directional vector. The {{direction}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>0.0</code> and the vector MUST be normalized to have a length of <code>1.0</code>.
 
 The <dfn attribute for="XRRay">transformMatrix</dfn> is a [=matrix=] which represents the transform from a ray originating at <code>[0, 0, 0]</code> and extending down the negative Z axis to the ray described by the {{XRRay}}'s {{XRRay/origin}} and {{direction}}.
 
@@ -1176,8 +1174,7 @@ dictionary XRSessionEventInit : EventInit {
 };
 </pre>
 
-<dfn attribute for="XRSessionEvent">session</dfn>
-The {{XRSession}} associated with this event.
+{{XRSessionEvent}}s are fired to indicate changes to the state of an {{XRSession}}. The <dfn attribute for="XRSessionEvent">session</dfn> attribute indicates the {{XRSession}} that generated the event.
 
 XRInputSourceEvent {#xrinputsourceevent-interface}
 --------------
@@ -1195,11 +1192,9 @@ dictionary XRInputSourceEventInit : EventInit {
 };
 </pre>
 
-<dfn attribute for="XRInputSourceEvent">frame</dfn>
-An {{XRFrame}} that corresponds with the time that the event took place. Any {{XRViewerPose}} queried from this frame MUST have an empty {{XRViewerPose/views}} array.
+{{XRInputSourceEvent}}s are fired to indicate changes to the state of an {{XRInputSource}}. The <dfn attribute for="XRInputSourceEvent">inputSource</dfn> attribute indicates the {{XRInputSource}} that generated this event.
 
-<dfn attribute for="XRInputSourceEvent">inputSource</dfn>
-The {{XRInputSource}} that generated this event.
+The <dfn attribute for="XRInputSourceEvent">frame</dfn> attribute is an {{XRFrame}} that corresponds with the time that the event took place. It may represent historical data. Any {{XRViewerPose}} queried from the {{XRInputSourceEvent/frame}} MUST have an empty {{XRViewerPose/views}} array.
 
 <div class="algorithm" data-algorithm="fire-input-source-event">
 
