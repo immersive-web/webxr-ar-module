@@ -103,6 +103,11 @@ spec: Feature Policy; urlPrefix: https://wicg.github.io/feature-policy/#
      content: "Example " counter(example) " (Unstable)";
      float: none;
  }
+
+ .non-normative::before {
+    content: "This section is non-normative.";
+    font-style: italic;
+  }
 </style>
 
 
@@ -111,12 +116,18 @@ spec: Feature Policy; urlPrefix: https://wicg.github.io/feature-policy/#
 Introduction {#intro}
 =============
 
-<p class=non-normative>
-Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications requires high-precision, low-latency interfaces to deliver an acceptable experience. Other interfaces, such as the {{RelativeOrientationSensor}} and {{AbsoluteOrientationSensor}}, can be repurposed to surface input from these devices to polyfill the WebXR Device API. The WebXR Device API provides purpose-built interfaces to VR/AR hardware to allow developers to build compelling, comfortable immersive experiences.
-</p>
+<section class="non-normative">
+
+Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications are now broadly available to consumers, offering an immersive computing platform with both new opportunities and challenges. The ability to interact directly with immersive hardware is critical to ensuring that the web is well equipped to operate as a first-class citizen in this environment.
+
+Immersive computing introduces strict requirements for high-precision, low-latency communication in order to deliver an acceptable experience. It also brings unique [[#security|security]] concerns for a platform like the web. The WebXR Device API provides the interfaces necessary to enable developers to build compelling, comfortable, and safe immersive applications on the web across a wide variety of hardware formfactors.
+
+Other web interfaces, such as the {{RelativeOrientationSensor}} and {{AbsoluteOrientationSensor}}, can be repurposed to surface input from some devices to polyfill the WebXR Device API in limited situations. These interfaces cannot support multiple features of high-end immersive experiences, however, such as [=6DoF=] tracking, presentation to headset peripherals, or tracked input devices.
+
+</section>
 
 Terminology {#terminology}
-===========
+-----------
 
 This document uses the acronym <b>XR</b> throughout to refer to the spectrum of hardware, applications, and techniques used for Virtual Reality, Augmented Reality, and other related technologies. Examples include, but are not limited to:
 
@@ -133,47 +144,29 @@ The terms [=3DoF=] and [=6DoF=] are used throughout this document to describe th
  - A <dfn>3DoF</dfn> device, short for "Three Degrees of Freedom", is one that can only track rotational movement. This is common in devices which rely exclusively on accelerometer and gyroscope readings to provide tracking. [=3DoF=] devices do not respond translational movements from the user, though they may employ algorithms to estimate translational changes based on modeling of the neck or arms.
  - A <dfn>6DoF</dfn> device, short for "Six Degrees of Freedom", is one that can track both rotation and translation, enabling for precise 1:1 tracking in space. This typically requires some level of understanding of the user's environment. That environmental understanding may be achieved via inside-out tracking, where sensors on the tracked device itself (such as cameras or depth sensors) are used to determine the device's position, or outside-in tracking, where external devices placed in the user's environment (like a camera or light emitting device) provides a stable point of reference against which the XR device can determine it's position.
 
+Application flow {#applicationflow}
+----------------
 
-Security, Privacy, and Comfort Considerations {#security}
-=============================================
+<section class="non-normative">
 
-The WebXR Device API provides powerful new features which bring with them several unique privacy, security, and comfort risks that user agents must take steps to mitigate.
+Most applications using the WebXR Device API will follow a similar usage pattern:
 
-Gaze Tracking {#gazetracking-security}
--------------
+  * Query {{XR/supportsSessionMode()|navigator.xr.supportsSessionMode()}} to determine if the desired type of XR content is supported by the hardware and UA.
+  * If so, advertise the XR content to the user.
+  * Wait for the user to [=triggered by user activation|trigger a user activation event=] indicating they want to begin viewing XR content.
+  * Request an {{XRSession}} within the user activation event with {{XR/requestSession()|navigator.xr.requestSession()}}.
+  * If the {{XRSession}} request succeeds, use it to run a [[#frame|frame loop]] to respond to XR input and produce images to display on the [=XR device=] in response.
+  * Continue running the [[#frame|frame loop]] until the UA [=end the session|ends the session=] or the user indicates they want to exit the XR content.
 
-While the API does not yet expose eye tracking capabilities a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of XR devices that have limited input capabilities, such as Google Cardboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
-
-To prevent this risk the user agent MUST [=blur all sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST [=blur all sessions=] on non-focused pages.
-
-Trusted Environment {#trustedenvironment-security}
--------------------
-
-If the virtual environment does not consistently track the user's head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the user agent MUST provide a tracked, trusted environment and an [=XR Compositor=] which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the user agent should be able to continue presenting a responsive, trusted UI.
-
-Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the XR experience. Removing the XR device in these cases may not always be a fast or practical option. To accommodate this the user agent SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebXR content and displays the user agent's trusted UI.
-
-When navigating between pages in XR the user agent should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
-
-Context Isolation {#contextisolation-security}
------------------
-
-The trusted UI must be drawn by an independent rendering context whose state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
-
-Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{XRSession}}. Attributes such as the {{XRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The user agent MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
-
-Fingerprinting {#fingerprinting-security}
---------------
-
-Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue. This spec limits reporting of available hardware to only a single device at a time, which prevents using the rare cases of multiple headsets being connected as a fingerprinting signal. Also, the devices that are reported have no string identifiers and expose very little information about the devices capabilities until an XRSession is created, which may only be triggered via user activation in the most sensitive case.
-
-Issue: Discuss use of sensor activity as a possible fingerprinting vector.
+</section>
 
 Initialization {#initialization}
-===================
+==============
 
 XR {#xr-interface}
 ----
+
+The <dfn attribute for="Navigator">xr</dfn> object is the entry point to the API, used to query for XR features available to the user agent and initiate communication with XR hardware via the creation of {{XRSession}}s.
 
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XR : EventTarget {
@@ -191,7 +184,7 @@ partial interface Navigator {
 };
 </pre>
 
-The <dfn attribute for="Navigator">xr</dfn> object is the entry point to the API, used to query for XR features available to the user agent. It has a <dfn>list of XR devices</dfn>, which MUST be initially empty, and an <dfn>XR device</dfn> which MUST be initially <code>null</code> and represents the active device from the [=list of XR devices=] that API calls will interact with.
+The {{XR}} object has an <dfn>list of XR devices</dfn>, which MUST be initially empty, and an <dfn>XR device</dfn> which MUST be initially <code>null</code> and represents the active device from the [=list of XR devices=] that API calls will interact with.
 
 The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MAY reuse the cached [=list of XR devices=]. Enumerating the devices [=should not initialize device tracking=]. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices.
 
@@ -292,43 +285,12 @@ navigator.xr.requestSession({ mode: "immersive-vr" }).then((session) => {
 Session {#session}
 =======
 
-XRSessionMode {#xrsessionmode-enum}
--------------------------
-
-<pre class="idl">
-enum XRSessionMode {
-  "inline",
-  "immersive-vr",
-  "immersive-ar"
-};
-</pre>
-
-The {{XRSessionMode}} enum defines the modes that an {{XRSession}} can operate in.
-
-  - A session mode of <dfn enum-value for="XRSessionMode">inline</dfn> indicates that the session's output will be shown as an element in the HTML document. {{inline}} session content MAY be displayed in mono or stereo and MAY allow for [=viewer=] tracking. User agents MUST allow {{inline}} sessions to be created for any [=XR device=].
-  - A session mode of <dfn enum-value for="XRSessionMode">immersive-vr</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR device=] display and that content <b>is not</b> intended to be integrated with the user's environment. The {{environmentBlendMode}} for {{immersive-vr}} sessions is expected to be {{opaque}} when possible, but MAY be {{additive}} if the hardware requires it.
-  - A session mode of <dfn enum-value for="XRSessionMode">immersive-ar</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR device=] display and that content <b>is</b> intended to be integrated with the user's environment. The {{environmentBlendMode}} MUST NOT be {{opaque}} for {{immersive-ar}} sessions.
-
-An <dfn>immersive session</dfn> refers to either an {{immersive-vr}} or an {{immersive-ar}} session. [=Immersive sessions=] MUST provide some level of [=viewer=] tracking, and content MUST be shown at the proper scale relative to the user and/or the surrounding environment. Additionally, [=Immersive sessions=] MUST be given <dfn>exclusive access</dfn> to the [=XR device=], meaning that while the [=immersive session=] is not [=blurred=] the HTML document is not shown on the [=XR device=]'s display, nor is content from other applications shown on the [=XR device=]'s display.
-
-NOTE: Examples of ways [=exclusive access=] may be presented include stereo content displayed on a virtual reality or augmented reality headset, or augmented reality content displayed fullscreen on a mobile device.
-
-Issue: Document restrictions and capabilities of [=immersive session=]s.
-
-XRSessionCreationOptions {#xrsessioncreationoptions-interface}
--------------------------
-
-<pre class="idl">
-dictionary XRSessionCreationOptions {
-  XRSessionMode mode = "inline";
-  XRPresentationContext outputContext;
-};
-</pre>
-
-The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
-
 XRSession {#xrsession-interface}
 ---------
+
+Any interaction with XR hardware is done via an {{XRSession}} object, which can only be retrieved by calling {{requestSession()}} on the {{XR}} object. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, present imagery to the user.
+
+The user agent, when possible, <dfn>SHOULD NOT initialize device tracking</dfn> or rendering capabilities until an {{XRSession}} has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
 
 <pre class="idl">
 enum XREnvironmentBlendMode {
@@ -367,10 +329,6 @@ enum XREnvironmentBlendMode {
   attribute EventHandler onselectend;
 };
 </pre>
-
-Any interaction with XR hardware is done via an {{XRSession}} object, which can only be retrieved by calling {{requestSession()}} on the {{XR}} object. Once a session has been successfully acquired it can be used to [=poll the device pose=], query information about the user's environment and, present imagery to the user.
-
-The user agent, when possible, <dfn>SHOULD NOT initialize device tracking</dfn> or rendering capabilities until an {{XRSession}} has been acquired. This is to prevent unwanted side effects of engaging the XR systems when they're not actively being used, such as increased battery usage or related utility applications from appearing when first navigating to a page that only wants to test for the presence of XR hardware in order to advertise XR features. Not all XR platforms offer ways to detect the hardware's presence without initializing tracking, however, so this is only a strong recommendation.
 
 <div class="algorithm" data-algorithm="initialize-session">
 
@@ -454,7 +412,7 @@ The <dfn attribute for="XRSession">onselectend</dfn> attribute is an [=Event han
 
 The <dfn attribute for="XRSession">onselect</dfn> attribute is an [=Event handler IDL attribute=] for the {{XRSession/select}} event type.
 
-Issue: Document what happens when we end the session.
+Issue: Document what happens when we <dfn>end the session</dfn>.
 
 Issue: Document effects when we <dfn lt="blur all sessions">blur the session</dfn>.
 
@@ -462,8 +420,45 @@ Issue: Document how to <dfn>poll the device pose</dfn>.
 
 Issue: Document how the <dfn>list of active input sources</dfn> is maintained.
 
+XRSessionMode {#xrsessionmode-enum}
+-------------------------
+
+The {{XRSessionMode}} enum defines the modes that an {{XRSession}} can operate in.
+
+<pre class="idl">
+enum XRSessionMode {
+  "inline",
+  "immersive-vr",
+  "immersive-ar"
+};
+</pre>
+
+  - A session mode of <dfn enum-value for="XRSessionMode">inline</dfn> indicates that the session's output will be shown as an element in the HTML document. {{inline}} session content MAY be displayed in mono or stereo and MAY allow for [=viewer=] tracking. User agents MUST allow {{inline}} sessions to be created for any [=XR device=].
+  - A session mode of <dfn enum-value for="XRSessionMode">immersive-vr</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR device=] display and that content <b>is not</b> intended to be integrated with the user's environment. The {{environmentBlendMode}} for {{immersive-vr}} sessions is expected to be {{opaque}} when possible, but MAY be {{additive}} if the hardware requires it.
+  - A session mode of <dfn enum-value for="XRSessionMode">immersive-ar</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR device=] display and that content <b>is</b> intended to be integrated with the user's environment. The {{environmentBlendMode}} MUST NOT be {{opaque}} for {{immersive-ar}} sessions.
+
+An <dfn>immersive session</dfn> refers to either an {{immersive-vr}} or an {{immersive-ar}} session. [=Immersive sessions=] MUST provide some level of [=viewer=] tracking, and content MUST be shown at the proper scale relative to the user and/or the surrounding environment. Additionally, [=Immersive sessions=] MUST be given <dfn>exclusive access</dfn> to the [=XR device=], meaning that while the [=immersive session=] is not [=blurred=] the HTML document is not shown on the [=XR device=]'s display, nor is content from other applications shown on the [=XR device=]'s display.
+
+NOTE: Examples of ways [=exclusive access=] may be presented include stereo content displayed on a virtual reality or augmented reality headset, or augmented reality content displayed fullscreen on a mobile device.
+
+Issue: Document restrictions and capabilities of [=immersive session=]s.
+
+XRSessionCreationOptions {#xrsessioncreationoptions-interface}
+-------------------------
+
+The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description</dfn>, indicating the desired properties of a session to be returned from {{requestSession()}}.
+
+<pre class="idl">
+dictionary XRSessionCreationOptions {
+  XRSessionMode mode = "inline";
+  XRPresentationContext outputContext;
+};
+</pre>
+
 Animation Frames {#animation-frames}
 ----------------
+
+The primary way an {{XRSession}} provides information about the tracking state of the [=XR device=] is via callbacks scheduled by calling {{requestAnimationFrame()}} on the {{XRSession}} instance.
 
 <pre class="idl">
 callback XRFrameRequestCallback = void (DOMHighResTimeStamp time, XRFrame frame);
@@ -556,6 +551,8 @@ Frame Loop {#frame}
 XRFrame {#xrframe-interface}
 -------------------
 
+An {{XRFrame}} represents a snapshot of the state of all of the tracked objects for an {{XRSession}}. Applications can acquire an {{XRFrame}} by calling {{XRSession/requestAnimationFrame()}} on an {{XRSession}} with an {{XRFrameRequestCallback}}. When the callback is called it will be passed an {{XRFrame}}. Events which need to communicate tracking state, such as the {{select}} event, will also provide a {{XRFrame}}.
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRFrame {
   readonly attribute XRSession session;
@@ -564,8 +561,6 @@ XRFrame {#xrframe-interface}
   XRInputPose? getInputPose(XRInputSource inputSource, optional XRReferenceSpace referenceSpace);
 };
 </pre>
-
-An {{XRFrame}} represents a snapshot of the state of all of the tracked objects for an {{XRSession}}. Applications can acquire an {{XRFrame}} by calling {{XRSession/requestAnimationFrame()}} on an {{XRSession}} with an {{XRFrameRequestCallback}}. When the callback is called it will be passed an {{XRFrame}}. Events which need to communicate tracking state, such as the {{select}} event, will also provide a {{XRFrame}}.
 
 Each {{XRFrame}} has a <dfn for="XRFrame">active</dfn> boolean which is initially set to <code>false</code>.
 
@@ -605,13 +600,13 @@ Spaces {#spaces}
 XRSpace {#xrspace-interface}
 ------------------
 
+An {{XRSpace}} describes an entity that is tracked by the [=XR device=]'s tracking systems. {{XRSpace}}s MAY NOT have a fixed spatial relationship to one another or to any given {{XRReferenceSpace}}. The transform between two {{XRSpace}} can be evaluated by calling the {{getTransformTo()}} method every [=XR animation frame=].
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRSpace : EventTarget {
   Float32Array? getTransformTo(XRSpace other);
 };
 </pre>
-
-An {{XRSpace}} describes an entity that is tracked by the [=XR device=]'s tracking systems. {{XRSpace}}s MAY NOT have a fixed spatial relationship to one another or to any given {{XRReferenceSpace}}. The transform between two {{XRSpace}} can be evaluated by calling the {{getTransformTo()}} method every [=XR animation frame=].
 
 <div class="algorithm" data-algorithm="get-transform-to">
 
@@ -625,6 +620,8 @@ When the <dfn method for="XRSpace">getTransformTo(|other|)</dfn> method is invok
 
 XRReferenceSpace {#xrreferencespace-interface}
 ------------------
+
+An {{XRReferenceSpace}} describes an {{XRSpace}} that is generally expected to remain static for the duration of the {{XRSession}}, with the most common exception being mid-session reconfiguration by the user. Every {{XRReferenceSpace}} describes a coordinate system where the Y axis MUST be aligned with gravity, with <code>+Y</code> being "Up". <code>-Z</code> is considered "Forward", and <code>+X</code> is considered "Right".
 
 <pre class="idl">
 enum XRReferenceSpaceType {
@@ -642,10 +639,6 @@ dictionary XRReferenceSpaceOptions {
 };
 </pre>
 
-An {{XRReferenceSpace}} describes an {{XRSpace}} that is generally expected to remain static for the duration of the {{XRSession}}, with the most common exception being mid-session reconfiguration by the user.
-
-Every {{XRReferenceSpace}} describes a coordinate system where the Y axis MUST be aligned with gravity, with <code>+Y</code> being "Up". <code>-Z</code> is considered "Forward", and <code>+X</code> is considered "Right". Each {{XRReferenceSpace}} has as <dfn for="XRReferenceSpace">session</dfn>, which is the {{XRSession}} that created it.
-
 An {{XRReferenceSpace}} is obtained by calling {{XRSession/requestReferenceSpace()}}, which creates an instance of an interface extending {{XRReferenceSpace}}, determined by the {{XRReferenceSpaceOptions/type}} value of the {{XRReferenceSpaceOptions}} dictionary passed into the call:
 
   - Passing a {{XRReferenceSpaceOptions/type}} of <dfn enum-value for="XRReferenceSpaceType">stationary</dfn> creates an {{XRStationaryReferenceSpace}} instance.
@@ -653,6 +646,8 @@ An {{XRReferenceSpace}} is obtained by calling {{XRSession/requestReferenceSpace
   - Passing a {{XRReferenceSpaceOptions/type}} of <dfn enum-value for="XRReferenceSpaceType">bounded</dfn> creates an {{XRBoundedReferenceSpace}} instance if supported by the [=XR device=] and the {{XRSession}}.
 
   - Passing a {{XRReferenceSpaceOptions/type}} of <dfn enum-value for="XRReferenceSpaceType">unbounded</dfn> creates an {{XRUnboundedReferenceSpace}} instance if supported by the [=XR device=] and the {{XRSession}}.
+
+The <dfn for="XRReferenceSpace">session</dfn> attribute is the {{XRSession}} that created the {{XRReferenceSpace}}.
 
 The <dfn attribute for="XRReferenceSpace">onreset</dfn> attribute is an [=Event handler IDL attribute=] for the {{reset}} event type.
 
@@ -676,6 +671,8 @@ Issue: Describe circumstances when a reference space type might be rejected.
 XRStationaryReferenceSpace {#xrstationaryreferencespace-interface}
 ----------------------------
 
+An {{XRStationaryReferenceSpace}} represents a tracking space that the user is not expected to move around within. Tracking in a {{stationary}} reference space is optimized for the assumption that the user will not move much beyond their starting point, if at all. For devices with [=6DoF=] tracking, {{stationary}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
+
 <pre class="idl">
 enum XRStationaryReferenceSpaceSubtype {
   "eye-level",
@@ -693,8 +690,6 @@ interface XRStationaryReferenceSpace : XRReferenceSpace {
 };
 </pre>
 
-An {{XRStationaryReferenceSpace}} represents a tracking space that the user is not expected to move around within. Tracking in a {{stationary}} reference space is optimized for the assumption that the user will not move much beyond their starting point, if at all. For devices with [=6DoF=] tracking, {{stationary}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
-
 There are several subtypes of {{XRStationaryReferenceSpace}}, determined by the {{XRStationaryReferenceSpaceOptions/subtype}} value of the {{XRStationaryReferenceSpaceOptions}} dictionary passed into the {{requestReferenceSpace()}} call:
 
 - Passing a {{XRStationaryReferenceSpaceOptions/subtype}} of <dfn enum-value for="XRStationaryReferenceSpaceSubtype">eye-level</dfn> creates an {{XRStationaryReferenceSpace}} with it's origin near the user's head at the time of creation. The exact position and orientation will be initialized based on the conventions of the underlying platform.
@@ -710,14 +705,14 @@ The {{XRStationaryReferenceSpace}}'s <dfn attribute for="XRStationaryReferenceSp
 XRBoundedReferenceSpace {#xrboundedreferencespace-interface}
 ----------------------------
 
+An {{XRBoundedReferenceSpace}} represents a floor-relative tracking space where the user is expected to move within a pre-established boundary. Tracking in an {{bounded}} reference space is optimized for keeping the reference space origin and bounds geometry stable relative to the user's environment.
+
 <pre class="idl">
 [SecureContext, Exposed=Window]
 interface XRBoundedReferenceSpace : XRReferenceSpace {
   readonly attribute FrozenArray&lt;DOMPointReadOnly&gt; boundsGeometry;
 };    
 </pre>
-
-An {{XRBoundedReferenceSpace}} represents a floor-relative tracking space where the user is expected to move within a pre-established boundary. Tracking in an {{bounded}} reference space is optimized for keeping the reference space origin and bounds geometry stable relative to the user's environment.
 
 The origin of a {{XRBoundedReferenceSpace}} MUST be positioned at the floor, such that the `y` axis equals `0` at floor level. The `x` and `z` position and orientation are initialized based on the conventions of the underlying platform, typically expected to be near the center of the room facing in a logical forward direction.
 
@@ -734,19 +729,23 @@ Note: Content generally should not provide a visualization of the {{boundsGeomet
 XRUnboundedReferenceSpace {#xrunboundedreferencespace-interface}
 ----------------------------
 
+An {{XRUnboundedReferenceSpace}} represents a tracking space where the user is expected to move freely around their environment, potentially even long distances from their starting point. Tracking in an {{unbounded}} reference space is optimized for stability around the user's current position, and as such the tracking origin may drift over time.
+
 <pre class="idl">
 [SecureContext, Exposed=Window] 
 interface XRUnboundedReferenceSpace : XRReferenceSpace {
 };  
 </pre>
 
-An {{XRUnboundedReferenceSpace}} represents a tracking space where the user is expected to move freely around their environment, potentially even long distances from their starting point. Tracking in an {{unbounded}} reference space is optimized for stability around the user's current position, and as such the tracking origin may drift over time.
-
 Views {#views}
 =====
 
 XRView {#xrview-interface}
 ------
+
+An {{XRView}} describes a single <dfn>view</dfn> into an XR scene. Each [=view=] corresponds to a display or portion of a display used by an XR device to present imagery to the user. They are used to retrieve all the information necessary to render content that is well aligned to the [=view=]'s physical output properties, including the field of view, eye offset, and other optical properties. [=Views=] may cover overlapping regions of the user's vision. No guarantee is made about the number of [=views=] any XR device uses or their order, nor is the number of [=views=] required to be constant for the duration of an {{XRSession}}.
+
+NOTE: Many HMDs will request that content render two [=views=], one for the left eye and one for the right, while most magic window devices will only request one [=view=], but applications should never assume a specific view configuration. For example: A magic window device may request two views if it is capable of stereo output, but may revert to requesting a single view for performance reasons if the stereo output mode is turned off. Similarly, HMDs may request more than two views to facilitate a wide field of view or displays of different pixel density.
 
 <pre class="idl">
 enum XREye {
@@ -761,10 +760,6 @@ enum XREye {
 };
 </pre>
 
-An {{XRView}} describes a single <dfn>view</dfn> into an XR scene. Each [=view=] corresponds to a display or portion of a display used by an XR device to present imagery to the user. They are used to retrieve all the information necessary to render content that is well aligned to the [=view=]'s physical output properties, including the field of view, eye offset, and other optical properties. [=Views=] may cover overlapping regions of the user's vision. No guarantee is made about the number of [=views=] any XR device uses or their order, nor is the number of [=views=] required to be constant for the duration of an {{XRSession}}.
-
-NOTE: Many HMDs will request that content render two [=views=], one for the left eye and one for the right, while most magic window devices will only request one [=view=], but applications should never assume a specific view configuration. For example: A magic window device may request two views if it is capable of stereo output, but may revert to requesting a single view for performance reasons if the stereo output mode is turned off. Similarly, HMDs may request more than two views to facilitate a wide field of view or displays of different pixel density.
-
 The <dfn attribute for="XRView">eye</dfn> attribute describes which eye this view is expected to be shown to. This attribute's primary purpose is to ensure that pre-rendered stereo content can present the correct portion of the content to the correct eye. If the view does not have an intrinsically associated eye (the display is monoscopic, for example) this attribute MUST be set to {{XREye/"left"}}.
 
 The <dfn attribute for="XRView">projectionMatrix</dfn> attribute provides a [=matrix=] describing the projection to be used when rendering the [=view=]. It is <b>strongly recommended</b> that applications use this matrix without modification. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
@@ -775,6 +770,8 @@ describing the view transform to be used  when rendering the [=view=]. The [=mat
 XRViewport {#xrviewport-interface}
 ------
 
+An {{XRViewport}} object describes a viewport, or rectangular region, of a graphics surface.
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRViewport {
   readonly attribute long x;
@@ -784,7 +781,7 @@ XRViewport {#xrviewport-interface}
 };
 </pre>
 
-An {{XRViewport}} object describes a viewport, or rectangular region, of a graphics surface. The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
+The <dfn attribute for="XRViewport">x</dfn> and <dfn attribute for="XRViewport">y</dfn> attributes define an offset from the surface origin and the <dfn attribute for="XRViewport">width</dfn> and <dfn attribute for="XRViewport">height</dfn> attributes define the rectangular dimensions of the viewport.
 
 The exact interpretation of the viewport values depends on the conventions of the graphics API the viewport is associated with:
 
@@ -821,14 +818,14 @@ Translations specified by WebXR matrices are always given in meters.
 XRViewerPose {#xrviewerpose-interface}
 -------------
 
+An {{XRViewerPose}} describes the state of a <dfn>viewer</dfn> of the XR scene as tracked by the [=XR device=]. A [=viewer=] may represent a tracked piece of hardware, the observed position of a users head relative to the hardware, or some other means of computing a series of viewpoints into the XR scene. The {{XRViewerPose}} describes the position and orientation of the [=viewer=] relative to the {{XRReferenceSpace}} it was queried with, as well as an array of [=view=]s, which include view and projection matrices. These matrices should be used by the application when render a frame of an XR scene.
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRViewerPose {
   readonly attribute Float32Array poseMatrix;
   readonly attribute FrozenArray&lt;XRView&gt; views;
 };
 </pre>
-
-An {{XRViewerPose}} describes the state of a <dfn>viewer</dfn> of the XR scene as tracked by the [=XR device=]. A [=viewer=] may represent a tracked piece of hardware, the observed position of a users head relative to the hardware, or some other means of computing a series of viewpoints into the XR scene. The {{XRViewerPose}} describes the position and orientation of the [=viewer=] relative to the {{XRReferenceSpace}} it was queried with, as well as an array of [=view=]s, which include view and projection matrices. These matrices should be used by the application when render a frame of an XR scene.
 
 The <dfn attribute for="XRViewerPose">poseMatrix</dfn> is a [=matrix=] describing the transform from the origin of the {{XRReferenceSpace}} the {{XRViewerPose}} was queried with to the [=viewer=].
 
@@ -841,6 +838,8 @@ Input {#input}
 
 XRInputSource {#xrinputsource-interface}
 -------------
+
+ISSUE: Need some intro text for XRInputSource
 
 <pre class="idl">
 enum XRHandedness {
@@ -877,6 +876,8 @@ Note: Some input sources, like an {{XRInputSource}} with {{targetRayMode}} set t
 XRRay {#xrray-interface}
 -----
 
+An {{XRRay}} describes a geometric ray.
+
 <pre class="idl">
 [SecureContext, Exposed=Window]
 interface XRRay {
@@ -886,7 +887,7 @@ interface XRRay {
 };
 </pre>
 
-An {{XRRay}} describes a geometric ray. The <dfn attribute for="XRRay">origin</dfn> attribute defines the 3-dimensional point in space that the ray originates from, given in meters. The {{XRRay/origin}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>1.0</code>. The <dfn attribute for="XRRay">direction</dfn> attribute defines the ray's 3-dimensional directional vector. The {{direction}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>0.0</code> and the vector MUST be normalized to have a length of <code>1.0</code>.
+The <dfn attribute for="XRRay">origin</dfn> attribute defines the 3-dimensional point in space that the ray originates from, given in meters. The {{XRRay/origin}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>1.0</code>. The <dfn attribute for="XRRay">direction</dfn> attribute defines the ray's 3-dimensional directional vector. The {{direction}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>0.0</code> and the vector MUST be normalized to have a length of <code>1.0</code>.
 
 The <dfn attribute for="XRRay">transformMatrix</dfn> is a [=matrix=] which represents the transform from a ray originating at <code>[0, 0, 0]</code> and extending down the negative Z axis to the ray described by the {{XRRay}}'s {{XRRay/origin}} and {{direction}}.
 
@@ -894,6 +895,8 @@ NOTE: The {{XRRay}}'s {{XRRay/transformMatrix}} can be used to easily position g
 
 XRInputPose {#xrinputpose-interface}
 -------------
+
+ISSUE: Need some intro text for XRInputPose
 
 <pre class="idl">
 [SecureContext, Exposed=Window]
@@ -920,30 +923,16 @@ Layers {#layers}
 XRLayer {#xrlayer-interface}
 -------
 
+An {{XRLayer}} defines a source of bitmap images and a description of how the image is to be rendered to the [=XR device=]. Initially only one type of layer, the {{XRWebGLLayer}}, is defined but future revisions of the spec may extend the available layer types.
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRLayer {};
 </pre>
 
-An {{XRLayer}} defines a source of bitmap images and a description of how the image is to be rendered to the [=XR device=]. Initially only one type of layer, the {{XRWebGLLayer}}, is defined but future revisions of the spec may extend the available layer types.
-
 XRWebGLLayer {#xrwebgllayer-interface}
 -------
 
-Each {{XRSession}} MUST identify a <dfn>native WebGL framebuffer resolution</dfn>, which is the pixel resolution of a WebGL framebuffer required to match the physical pixel resolution of the [=XR device=].
-
-<div class="algorithm" data-algorithm="native-webgl-framebuffer-resolution">
-
-The [=native WebGL framebuffer resolution=] is determined by running the following steps:
-
-  1. Let |session| be the target {{XRSession}}.
-  1. If |session|'s {{XRSession/mode}} value is not <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the resolution required to have a 1:1 ratio between the pixels of a framebuffer large enough to contain all of the session's {{XRView}}s and the physical screen pixels in the area of the display under the highest magnification and abort these steps. If no method exists to determine the native resolution as described, the [=recommended WebGL framebuffer resolution=] MAY be used.
-  1. If |session|'s {{XRSession/mode}} value is <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the size of the |session|'s {{XRSession/outputContext}}'s {{XRPresentationContext/canvas}} in physical display pixels and reevaluate these steps every time the size of the canvas changes.
-
-</div>
-
-Additionally, the {{XRSession}} MUST identify a <dfn>recommended WebGL framebuffer resolution</dfn>, which represents a best estimate of the WebGL framebuffer resolution large enough to contain all of the session's {{XRView}}s that provides an average application a good balance between performance and quality. It MAY be smaller than, larger than, or equal to the [=native WebGL framebuffer resolution=].
-
-NOTE: The user agent is free to use and method of it's choosing to estimate the [=recommended WebGL framebuffer resolution=]. If there are platform-specific methods for querying a recommended size it is recommended that they be used, but not required.
+An {{XRWebGLLayer}} is a layer which provides a WebGL framebuffer to render into, enabling hardware accelerated rendering of 3D graphics to be presented on the [=XR device=].
 
 <pre class="idl">
 typedef (WebGLRenderingContext or
@@ -981,8 +970,6 @@ interface XRWebGLLayer : XRLayer {
   static double getNativeFramebufferScaleFactor(XRSession session);
 };
 </pre>
-
-An {{XRWebGLLayer}} is a layer which provides a WebGL framebuffer to render into, enabling hardware accelerated rendering of 3D graphics to be presented on the [=XR device=].
 
 <div class="algorithm" data-algorithm="construct-webgl-layer">
 
@@ -1056,6 +1043,22 @@ The <dfn method for="XRWebGLLayer">requestViewportScaling(|scaleFactor|)</dfn> m
 
 Issue: Viewport changes (and a lot of other changes) should not take place mid-frame.
 
+Each {{XRSession}} MUST identify a <dfn>native WebGL framebuffer resolution</dfn>, which is the pixel resolution of a WebGL framebuffer required to match the physical pixel resolution of the [=XR device=].
+
+<div class="algorithm" data-algorithm="native-webgl-framebuffer-resolution">
+
+The [=native WebGL framebuffer resolution=] is determined by running the following steps:
+
+  1. Let |session| be the target {{XRSession}}.
+  1. If |session|'s {{XRSession/mode}} value is not <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the resolution required to have a 1:1 ratio between the pixels of a framebuffer large enough to contain all of the session's {{XRView}}s and the physical screen pixels in the area of the display under the highest magnification and abort these steps. If no method exists to determine the native resolution as described, the [=recommended WebGL framebuffer resolution=] MAY be used.
+  1. If |session|'s {{XRSession/mode}} value is <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the size of the |session|'s {{XRSession/outputContext}}'s {{XRPresentationContext/canvas}} in physical display pixels and reevaluate these steps every time the size of the canvas changes.
+
+</div>
+
+Additionally, the {{XRSession}} MUST identify a <dfn>recommended WebGL framebuffer resolution</dfn>, which represents a best estimate of the WebGL framebuffer resolution large enough to contain all of the session's {{XRView}}s that provides an average application a good balance between performance and quality. It MAY be smaller than, larger than, or equal to the [=native WebGL framebuffer resolution=].
+
+NOTE: The user agent is free to use and method of it's choosing to estimate the [=recommended WebGL framebuffer resolution=]. If there are platform-specific methods for querying a recommended size it is recommended that they be used, but not required.
+
 <div class="algorithm" data-algorithm="get-native-framebuffer-scale-factor">
 
 The <dfn method for="XRWebGLLayer">getNativeFramebufferScaleFactor(|session|)</dfn> method, when invoked, MUST run the following steps:
@@ -1071,6 +1074,10 @@ Issue: Document the creation of a <dfn>swap chain</dfn>.
 WebGL Context Compatibility {#contextcompatibility}
 ---------------------------
 
+In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn>compatible graphics adapter</dfn> for the [=XR device=]. What is considered a [=compatible graphics adapter=] is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the [=XR device=] without undue latency. If a WebGL context was not already created on the [=compatible graphics adapter=], it typically must be re-created on the adapter in question before it can be used with an {{XRWebGLLayer}}.
+
+Note: On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the [=XR device=]s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the [=compatible graphics adapter=] since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with the [=XR device=] physically connected to it is likely to be considered the [=compatible graphics adapter=].
+
 <pre class="idl">
 partial dictionary WebGLContextAttributes {
     boolean xrCompatible = null;
@@ -1081,11 +1088,7 @@ partial interface mixin WebGLRenderingContextBase {
 };
 </pre>
 
-When a user agent implements this specification it MUST set a <dfn>XR compatible</dfn> boolean, initially set to <code>false</code>, on every {{WebGLRenderingContextBase}}.
-
-In order for a WebGL context to be used as a source for XR imagery it must be created on a <dfn>compatible graphics adapter</dfn> for the [=XR device=]. What is considered a [=compatible graphics adapter=] is platform dependent, but is understood to mean that the graphics adapter can supply imagery to the [=XR device=] without undue latency. If a WebGL context was not already created on the [=compatible graphics adapter=], it typically must be re-created on the adapter in question before it can be used with an {{XRWebGLLayer}}. Once the [=XR compatible=] boolean is set, the context can be used with layers for any {{XRSession}} requested from that [=XR device=].
-
-Note: On an XR platform with a single GPU, it can safely be assumed that the GPU is compatible with the [=XR device=]s advertised by the platform, and thus any hardware accelerated WebGL contexts are compatible as well. On PCs with both an integrated and discreet GPU the discreet GPU is often considered the [=compatible graphics adapter=] since it generally a higher performance chip. On desktop PCs with multiple graphics adapters installed, the one with the [=XR device=] physically connected to it is likely to be considered the [=compatible graphics adapter=].
+When a user agent implements this specification it MUST set a <dfn>XR compatible</dfn> boolean, initially set to <code>false</code>, on every {{WebGLRenderingContextBase}}. Once the [=XR compatible=] boolean is set to <code>true</code>, the context can be used with layers for any {{XRSession}} requested from the current [=XR device=].
 
 The [=XR compatible=] boolean can be set either at context creation time or after context creation, potentially incurring a context loss. To set the [=XR compatible=] boolean at context creation time, the {{xrCompatible}} context creation attribute must be set to <code>true</code> when requesting a WebGL context.
 
@@ -1193,6 +1196,8 @@ Events {#events}
 XRSessionEvent {#xrsessionevent-interface}
 --------------
 
+{{XRSessionEvent}}s are fired to indicate changes to the state of an {{XRSession}}.
+
 <pre class="idl">
 [SecureContext, Exposed=Window, Constructor(DOMString type, XRSessionEventInit eventInitDict)]
 interface XRSessionEvent : Event {
@@ -1204,10 +1209,12 @@ dictionary XRSessionEventInit : EventInit {
 };
 </pre>
 
-{{XRSessionEvent}}s are fired to indicate changes to the state of an {{XRSession}}. The <dfn attribute for="XRSessionEvent">session</dfn> attribute indicates the {{XRSession}} that generated the event.
+The <dfn attribute for="XRSessionEvent">session</dfn> attribute indicates the {{XRSession}} that generated the event.
 
 XRInputSourceEvent {#xrinputsourceevent-interface}
 --------------
+
+{{XRInputSourceEvent}}s are fired to indicate changes to the state of an {{XRInputSource}}.
 
 <pre class="idl">
 [SecureContext, Exposed=Window, Constructor(DOMString type, XRInputSourceEventInit eventInitDict)]
@@ -1222,7 +1229,7 @@ dictionary XRInputSourceEventInit : EventInit {
 };
 </pre>
 
-{{XRInputSourceEvent}}s are fired to indicate changes to the state of an {{XRInputSource}}. The <dfn attribute for="XRInputSourceEvent">inputSource</dfn> attribute indicates the {{XRInputSource}} that generated this event.
+The <dfn attribute for="XRInputSourceEvent">inputSource</dfn> attribute indicates the {{XRInputSource}} that generated this event.
 
 The <dfn attribute for="XRInputSourceEvent">frame</dfn> attribute is an {{XRFrame}} that corresponds with the time that the event took place. It may represent historical data. Any {{XRViewerPose}} queried from the {{XRInputSourceEvent/frame}} MUST have an empty {{XRViewerPose/views}} array.
 
@@ -1240,6 +1247,8 @@ When the user agent fires an {{XRInputSourceEvent}} |event| it MUST run the foll
 XRReferenceSpaceEvent {#xrreferencespaceevent-interface}
 -----------------------
 
+{{XRReferenceSpaceEvent}}s are fired to indicate changes to the state of an {{XRReferenceSpace}}.
+
 <pre class="idl">
 [SecureContext, Exposed=Window, Constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict)]
 interface XRReferenceSpaceEvent : Event {
@@ -1253,11 +1262,9 @@ dictionary XRReferenceSpaceEventInit : EventInit {
 };
 </pre>
 
-<dfn attribute for="XRReferenceSpaceEvent">referenceSpace</dfn>
-The {{XRReferenceSpace}} associated with this event.
+The <dfn attribute for="XRReferenceSpaceEvent">referenceSpace</dfn> attribute indicates the {{XRReferenceSpace}} that generated this event.
 
-<dfn attribute for="XRReferenceSpaceEvent">transformMatrix</dfn>
-A [=matrix=] describing the transform the {{XRReferenceSpaceEvent/referenceSpace}} underwent during this event, if applicable.
+The <dfn attribute for="XRReferenceSpaceEvent">transformMatrix</dfn> attribute is a [=matrix=] describing the transform the {{XRReferenceSpaceEvent/referenceSpace}} underwent during this event, if applicable.
 
 Event Types {#event-types}
 -----------
@@ -1281,6 +1288,41 @@ A user agent MUST dispatch a <dfn event for="XRSession">selectend</dfn> event on
 A user agent MUST dispatch a <dfn event for="XRSession">select</dfn> event on an {{XRSession}} when one of its {{XRInputSource}}s has fully completed a [=primary action=]. The event MUST be of type {{XRInputSourceEvent}}.
 
 A user agent MUST dispatch a <dfn event for="XRReferenceSpace">reset</dfn> event on an {{XRReferenceSpace}} when discontinuities of the origin occur. (That is, significant changes in the origin's position or orientation relative to the user's environment.) It also fires when the {{boundsGeometry}} changes for a {{XRBoundedReferenceSpace}}. The event MUST be of type {{XRReferenceSpaceEvent}}, and MUST be dispatched prior to the execution of any [=XR animation frame=]s that make use of the new origin.
+
+Security, Privacy, and Comfort Considerations {#security}
+=============================================
+
+The WebXR Device API provides powerful new features which bring with them several unique privacy, security, and comfort risks that user agents must take steps to mitigate.
+
+Gaze Tracking {#gazetracking-security}
+-------------
+
+While the API does not yet expose eye tracking capabilities a lot can be inferred about where the user is looking by tracking the orientation of their head. This is especially true of XR devices that have limited input capabilities, such as Google Cardboard, which frequently require users to control a "gaze cursor" with their head orientation. This means that it may be possible for a malicious page to infer what a user is typing on a virtual keyboard or how they are interacting with a virtual UI based solely on monitoring their head movements. For example: if not prevented from doing so a page could estimate what URL a user is entering into the user agent's URL bar.
+
+To prevent this risk the user agent MUST [=blur all sessions=] when the users is interacting with sensitive, trusted UI such as URL bars or system dialogs. Additionally, to prevent a malicious page from being able to monitor input on a other pages the user agent MUST [=blur all sessions=] on non-focused pages.
+
+Trusted Environment {#trustedenvironment-security}
+-------------------
+
+If the virtual environment does not consistently track the user's head motion with low latency and at a high frame rate the user may become disoriented or physically ill. Since it is impossible to force pages to produce consistently performant and correct content the user agent MUST provide a tracked, trusted environment and an [=XR Compositor=] which runs asynchronously from page content. The compositor is responsible for compositing the trusted and untrusted content. If content is not performant, does not submit frames, or terminates unexpectedly the user agent should be able to continue presenting a responsive, trusted UI.
+
+Additionally, page content has the ability to make users uncomfortable in ways not related to performance. Badly applied tracking, strobing colors, and content intended to offend, frighten, or intimidate are examples of content which may cause the user to want to quickly exit the XR experience. Removing the XR device in these cases may not always be a fast or practical option. To accommodate this the user agent SHOULD provide users with an action, such as pressing a reserved hardware button or performing a gesture, that escapes out of WebXR content and displays the user agent's trusted UI.
+
+When navigating between pages in XR the user agent should display trusted UI elements informing the user of the security information of the site they are navigating to which is normally presented by the 2D UI, such as the URL and encryption status.
+
+Context Isolation {#contextisolation-security}
+-----------------
+
+The trusted UI must be drawn by an independent rendering context whose state is isolated from any rendering contexts used by the page. (For example, any WebGL rendering contexts.) This is to prevent the page from corrupting the state of the trusted UI's context, which may prevent it from properly rendering a tracked environment. It also prevents the possibility of the page being able to capture imagery from the trusted UI, which could lead to private information being leaked.
+
+Also, to prevent CORS-related vulnerabilities each page will see a new instance of objects returned by the API, such as {{XRSession}}. Attributes such as the {{XRWebGLLayer/context}} set by one page must not be able to be read by another. Similarly, methods invoked on the API MUST NOT cause an observable state change on other pages. For example: No method will be exposed that enables a system-level orientation reset, as this could be called repeatedly by a malicious page to prevent other pages from tracking properly. The user agent MUST, however, respect system-level orientation resets triggered by a user gesture or system menu.
+
+Fingerprinting {#fingerprinting-security}
+--------------
+
+Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue. This spec limits reporting of available hardware to only a single device at a time, which prevents using the rare cases of multiple headsets being connected as a fingerprinting signal. Also, the devices that are reported have no string identifiers and expose very little information about the devices capabilities until an XRSession is created, which may only be triggered via user activation in the most sensitive case.
+
+Issue: Discuss use of sensor activity as a possible fingerprinting vector.
 
 Integrations {#integrations}
 ============
