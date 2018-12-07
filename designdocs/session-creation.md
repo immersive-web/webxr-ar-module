@@ -1,4 +1,4 @@
-# Session Creation and Configuration Explainer
+# Session Creation and Configuration Design Doc
 **STATUS: Proposal**
 
 One of the needs (so-called "breaking changes") we identified when renaming the spec to include XR was enabling detection of future features - extensions to WebXR. The most obvious and perhaps immediate example is AR capabilities.
