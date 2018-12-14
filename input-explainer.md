@@ -5,7 +5,7 @@ This document is a subsection of the main WebXR Device API explainer document wh
 
 XR hardware provides a wide variety of input mechanisms, ranging from single state buttons to fully tracked controllers with multiple buttons, joysticks, triggers, or touchpads. While the intent is to eventually support the full range of available hardware, for the initial version of the WebXR Device API the focus is on enabling a more universal "point and click" style system that can be supported in some capacity by any known XR device and in inline mode.
 
-In this model every input source has a ray that indicates what is being pointed at, called the "Target Ray", and reports when the primary action for that device has been triggered, surfaced as a "select" event. When the select event is fired the XR application can use the target ray of the input source that generated the event to determine what the user was attempting to interact with and respond accordingly. Additionally, if the input source represents a tracked device a "Grip" matrix will also be provided to indicate where a mesh should be rendered to align with the physical device.
+In this model every input source has a ray that indicates what is being pointed at, called the "Target Ray", and reports when the primary action for that device has been triggered, surfaced as a "select" event. When the select event is fired the XR application can use the target ray of the input source that generated the event to determine what the user was attempting to interact with and respond accordingly. Additionally, if the input source represents a tracked device a "Grip" transform will also be provided to indicate where a mesh should be rendered to align with the physical device.
 
 ### Enumerating input sources
 
@@ -27,15 +27,15 @@ The properties of an XRInputSource object are immutable. If a device can be mani
 
 Each input source can query a `XRInputPose` using the `getInputPose()` function of any `XRFrame`. Getting the pose requires passing in the `XRInputSource` you want the pose for, as well as the `XRReferenceSpace` the pose values should be given in, just like `getViewerPose()`. `getInputPose()` may return `null` in cases where tracking has been lost (similar to `getViewerPose()`), or the given `XRInputSource` instance is no longer connected or available.
 
-The `gripMatrix` is a transform into a space where if the user was holding a straight rod in their hand it would be aligned with the negative Z axis (forward) and the origin rests at their palm. This enables developers to properly render a virtual object held in the user's hand. For example, a sword would be positioned so that the blade points directly down the negative Z axis and the center of the handle is at the origin.
+The `gripTransform` is an `XRRigidTransform` into a space where if the user was holding a straight rod in their hand it would be aligned with the negative Z axis (forward) and the origin rests at their palm. This enables developers to properly render a virtual object held in the user's hand. For example, a sword would be positioned so that the blade points directly down the negative Z axis and the center of the handle is at the origin.
 
-If the input source has only 3DOF, the grip matrix may represent only a translation or rotation based on tracking capability. An example of this case is for physical hands on some AR devices which only have a tracked position. The `gripMatrix` will be `null` if the input source isn't trackable. 
+If the input source has only 3DOF, the `gripTransform` may represent only a translation or rotation based on tracking capability. An example of this case is for physical hands on some AR devices which only have a tracked position. The `gripTransform` will be `null` if the input source isn't trackable. 
 
-An input source will also provide its preferred pointing ray, given by the `XRInputPose`'s `targetRay`. The ray, which is an `XRRay` object, includes both an `origin` and `direction`, both given as `DOMPointReadOnly`s. The `origin` represents a 3D coordinate in space with a `w` component that must be 1, and the `direction` represents a normalized 3D directional vector with a `w` component that must be 0. The `XRRay` also defines a `transformMatrix` which represents the transform from a ray originating at `[0, 0, 0]` and extending down the negative Z axis to the ray described by the `XRRay`'s `origin` and `direction`. This is useful for positioning graphical representations of the ray.
+An input source will also provide its preferred pointing ray, given by the `XRInputPose`'s `targetRay`. The ray, which is an `XRRay` object, includes both an `origin` and `direction`, both given as `DOMPointReadOnly`s. The `origin` represents a 3D coordinate in space with a `w` component that must be 1, and the `direction` represents a normalized 3D directional vector with a `w` component that must be 0. A matrix can also be queried from the `XRRay` with the `matrix` attribute which represents the transform from a ray originating at `[0, 0, 0]` and extending down the negative Z axis to the ray described by the `XRRay`'s `origin` and `direction`. This is useful for positioning graphical representations of the ray.
 
 The `targetRay` will never be `null`. It's value will differ based on the type of input source that produces it, which is represented by the `targetRayMode` attribute:
 
-  * `'gaze'` indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device). While it may be possible for these devices to be tracked (and have a grip matrix), the head gaze is used for targeting. Example devices: 0DOF clicker, regular gamepad, voice command, tracked hands.
+  * `'gaze'` indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device). While it may be possible for these devices to be tracked (and have a `gripTransform`), the head gaze is used for targeting. Example devices: 0DOF clicker, regular gamepad, voice command, tracked hands.
   * `'tracked-pointer'` indicates that the target ray originates from either a handheld device or other hand-tracking mechanism and represents that the user is using their hands or the held device for pointing. The exact orientation of the ray relative to a given device should follow platform-specific guidelines if there are any. In the absence of platform-specific guidance or a physical device, the target ray should most likely point in the same direction as the user's index finger if it was outstretched.
   * `'screen'` indicates that the input source was an interaction with a session's output context canvas element, such as a mouse click or touch event. Only applicable for inline sessions or an immersive AR session being displayed on a 2D screen. See [Screen Input](#screen_input) for more details.
 
@@ -161,9 +161,7 @@ function onSelect(event) {
 
   // Ray cast into scene with the viewer pose to determine if anything was hit.
   // Assumes the use of a fictionalized math and scene library.
-  let rayOrigin = getTranslation(viewerPose.poseMatrix);
-  let rayDirection = applyRotation(scene.forwardVector, viewerPose.poseMatrix);
-  let selectedObject = scene.getObjectIntersectingRay(rayOrigin, rayDirection);
+  let selectedObject = scene.getObjectIntersectingRay(new XRRay(viewerPose.transform));
   if (selectedObject) {
     selectedObject.onSelect();
   }
@@ -175,7 +173,7 @@ function onSelect(event) {
 Most applications will want to visually represent the input sources somehow. The appropriate type of visualization to be used depends on the value of the `targetRayMode` attribute:
 
   * `'gaze'`: A cursor should be drawn at some distance down the target ray, ideally at the depth of the first surface it intersects with, so the user can identify what will be interacted with when a select event is fired. It's not appropriate to draw a controller or ray in this case, since they may obscure the user's vision or be difficult to visually converge on.
-  * `'tracked-pointer'`: If the `gripMatrix` in not `null` an application-appropriate controller model should be drawn using that matrix as the transform. If appropriate for the experience, the a visualization of the target ray and a cursor as described in the `'gaze'` should also be drawn.
+  * `'tracked-pointer'`: If the `gripTransform` is not `null` an application-appropriate controller model should be drawn using that transform. If appropriate for the experience, the a visualization of the target ray and a cursor as described in the `'gaze'` should also be drawn.
   * `'screen'`: In all cases the point of origin of the target ray is obvious and no visualization is needed.
 
 ```js
@@ -185,10 +183,10 @@ Most applications will want to visually represent the input sources somehow. The
 function renderInputSource(session, inputSource, inputPose) {
   // FIXME: Using a fictional isDisplayOpaque() method to state that controller meshes should not be rendered
   // on transparent displays (AR).
-  if (isDisplayOpaque(session) && inputPose.gripMatrix) {
-    // Render a controller mesh if the using the gripMatrix as a transform.
+  if (isDisplayOpaque(session) && inputPose.gripTransform) {
+    // Render a controller mesh the using the gripTransform.
     let controllerMesh = getControllerMesh(inputSource);
-    renderer.drawMeshWithTransform(controllerMesh, inputPose.gripMatrix);
+    renderer.drawMeshAtTransform(controllerMesh, inputPose.gripTransform);
   }
 }
 
@@ -235,19 +233,19 @@ function onSelectStart(event) {
   
   let inputPose = event.frame.getInputPose(event.inputSource, xrReferenceSpace);
   // Ignore the event if this input source is not capable of tracking.
-  if (!inputPose || !inputPose.gripMatrix)
+  if (!inputPose || !inputPose.gripTransform)
     return;
 
   // Use the input source target ray to find a draggable object in the scene
   let ray = inputPose.targetRay;
   let hitResult = scene.hitTest(ray.origin, ray.direction);
   if (hitResult && hitResult.draggable) {
-    // Use the gripMatrix translation to drag the intersected object, rather than the target ray.
+    // Use the grip position to drag the intersected object, rather than the target ray.
     activeDragInteraction = {
       target: hitResult,
       targetStartPosition: hitResult.position,
       inputSource: event.inputSource,
-      inputSourceStartPosition: getTranslation(inputPose.gripMatrix);
+      inputSourceStartPosition: inputPose.gripTransform.position;
     };
   }
 }
@@ -262,11 +260,10 @@ function onSelectEnd(event) {
 function onUpdateScene() {
   if (activeDragInteraction) {
     let inputPose = frame.getInputPose(activeDragInteraction.inputSource, xrReferenceSpace);
-    if (inputPose && inputPose.gripMatrix) {
+    if (inputPose && inputPose.gripTransform) {
       // Determine the vector from the start of the drag to the input source's current position
       // and position the draggable object accordingly
-      let inputSourcePosition = getTranslation(inputPose.gripMatrix);
-      let deltaPosition = Vector3.subtract(inputSourcePosition, activeDragInteraction.inputSourceStartPosition);
+      let deltaPosition = Vector3.subtract(inputPose.gripTransform.position, activeDragInteraction.inputSourceStartPosition);
       let newPosition = Vector3.add(activeDragInteraction.targetStartPosition, deltaPosition);
       activeDragInteraction.target.setPosition(newPosition);
     }
@@ -274,7 +271,7 @@ function onUpdateScene() {
 }
 ```
 
-The above sample is optimized for dragging items in the scene around using input sources that have a gripMatrix. It would also be possible to add further script logic to use the target ray properties to position items in the world - this is left as an exercise for the reader.
+The above sample is optimized for dragging items in the scene around using input sources that have a `gripTransform`. It would also be possible to add further script logic to use the target ray properties to position items in the world - this is left as an exercise for the reader.
 
 ### Screen Input
 
@@ -313,11 +310,13 @@ partial interface XRFrame {
 // Input
 //
 
-[SecureContext, Exposed=Window]
+[SecureContext, Exposed=Window,
+ Constructor(optional DOMPointInit origin, optional DOMPointInit direction),
+ Constructor(XRRigidTransform transform)]
 interface XRRay {
   readonly attribute DOMPointReadOnly origin;
   readonly attribute DOMPointReadOnly direction;
-  readonly attribute Float32Array transformMatrix;
+  readonly attribute Float32Array matrix;
 };
 
 enum XRHandedness {
@@ -342,7 +341,7 @@ interface XRInputSource {
 interface XRInputPose {
   readonly attribute boolean emulatedPosition;
   readonly attribute XRRay targetRay;
-  readonly attribute Float32Array? gripMatrix;
+  readonly attribute XRRigidTransform? gripTransform;
 };
 
 //

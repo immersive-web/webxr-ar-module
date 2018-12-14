@@ -209,7 +209,11 @@ The `XRWebGLLayer`s framebuffer is created by the UA and behaves similarly to a 
 
 Once drawn to, the XR device will continue displaying the contents of the `XRWebGLLayer` framebuffer, potentially reprojected to match head motion, regardless of whether or not the page continues processing new frames. Potentially future spec iterations could enable additional types of layers, such as video layers, that could automatically be synchronized to the device's refresh rate.
 
-To get view matrices or the `poseMatrix` for each `XRFrame`, developers must call `getViewerPose()` and provide an `XRReferenceSpace` in which these matrices should be returned. Due to the nature of XR tracking systems, this function is not guaranteed to return a value and developers will need to respond appropriately.  For more information about what situations will cause `getViewerPose()` to fail and recommended practices for handling the situation, refer to the [Spatial Tracking Explainer](spatial-tracking-explainer.md).
+### Viewer tracking
+
+Each `XRFrame` the scene will be drawn from the perspective of a "viewer", which is the user or device viewing the scene, described by an `XRViewerPose`. Developers retrieve the current `XRViewerPose` by calling `getViewerPose()` on the `XRFrame` and providing an `XRReferenceSpace` for the pose to be returned in. Due to the nature of XR tracking systems, this function is not guaranteed to return a value and developers will need to respond appropriately.  For more information about what situations will cause `getViewerPose()` to fail and recommended practices for handling the situation, refer to the [Spatial Tracking Explainer](spatial-tracking-explainer.md).
+
+The `XRViewerPose` contains a `views` attribute, which is an array of `XRView`s. Each `XRView` has a `viewMatrix` and a `projectionMatrix` that should be used when rendering with WebGL. The `XRView` is also passed to an `XRWebGLLayer`'s `getViewport()` method to determine what the WebGL viewport should be set to when rendering. This ensures that the appropriate perspectives of scene are rendered to the correct portion on the `XRWebGLLayer`'s `framebuffer` in order to display correctly on the XR hardware.
 
 ```js
 function onDrawFrame(timestamp, xrFrame) {
@@ -240,7 +244,7 @@ function drawScene(view) {
   let viewMatrix = null;
   let projectionMatrix = null;
   if (view) {
-    viewMatrix = pose.viewMatrix;
+    viewMatrix = view.viewMatrix;
     projectionMatrix = view.projectionMatrix;
   } else {
     viewMatrix = defaultViewMatrix;
@@ -252,6 +256,10 @@ function drawScene(view) {
   // Draw Scene
 }
 ```
+
+The `XRViewerPose` also contains a `transform`, which is an `XRRigidTransform` describing the position and orientation of the viewer as a whole relative to the `XRReferenceSpace` origin. This is primarily useful for rendering a visual representation of the viewer for spectator views or multi-user environments. Each `XRView` has a `transform` as well that can be used in lieu of the `viewMatrix` to position virtual cameras in the scene if the rendering library being used prefers.
+
+An `XRRigidTransform` contains a `position` vector and `orientation` quaternion. When interpreting an `XRRigidTransform` the `orientation` is applied prior to the `position`. This means that, for example, a transform that indicates a quarter rotation to the right and a 1 meter translation along -Z would place a transformed object at `[0, 0, -1]` facing to the right. `XRRigidTransform`s also have a `matrix` attribute that reports the same transform as a 4x4 matrix when needed.
 
 ### Handling suspended sessions
 
@@ -609,14 +617,23 @@ enum XREye {
   "right"
 };
 
+[SecureContext, Exposed=Window,
+ Constructor(optional DOMPointInit position, optional DOMPointInit orientation)]
+interface XRRigidTransform {
+  readonly attribute DOMPointReadOnly position;
+  readonly attribute DOMPointReadOnly orientation;
+  readonly attribute Float32Array matrix;
+};
+
 [SecureContext, Exposed=Window] interface XRView {
   readonly attribute XREye eye;
   readonly attribute Float32Array projectionMatrix;
   readonly attribute Float32Array viewMatrix;
+  readonly attribute XRRigidTransform transform;
 };
 
 [SecureContext, Exposed=Window] interface XRViewerPose {
-  readonly attribute Float32Array poseMatrix;
+  readonly attribute XRRigidTransform transform;
   readonly attribute FrozenArray<XRView> views;
 };
 

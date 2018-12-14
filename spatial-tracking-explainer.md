@@ -233,7 +233,7 @@ Additionally, XR hardware with orientation-only tracking may also provide an emu
 There are several circumstances in which developers may choose to relate content in different reference spaces.
 
 #### Inline to Immersive
-It is expected that developers will often choose to preview `immersive` experiences with a similar experience `inline`.  In this situation, users often expect to see the scene from the same perspective when they make the transition from `inline` to `immersive`. To accomplish this, developers should grab the `poseMatrix` of the last `XRViewerPose` retrieved using the `inline` session's `XRReferenceSpace` and apply this same transform content to be displayed in the `immersive` session's `XRReferenceSpace`.  The same logic applies in the reverse when exiting `immersive`.
+It is expected that developers will often choose to preview `immersive` experiences with a similar experience `inline`.  In this situation, users often expect to see the scene from the same perspective when they make the transition from `inline` to `immersive`. To accomplish this, developers should grab the `transform` of the last `XRViewerPose` retrieved using the `inline` session's `XRReferenceSpace` and apply this same transform to content to be displayed in the `immersive` session's `XRReferenceSpace`.  The same logic applies in the reverse when exiting `immersive`.
 
 #### Unbounded to Bounded 
 When building an experience that is predominantly based on an `XRUnboundedReferenceSpace`, developers may occasionally choose to switch to an `XRBoundedReferenceSpace`.  For example, a whole-home renovation experience might choose to switch to a bounded reference space for reviewing a furniture selection library.  If necessary to continue displaying content belonging to the previous reference space, developers may use the `getTransformTo()` method to re-parent nearby virtual content to the new reference space.
@@ -245,15 +245,15 @@ The `XRReferenceSpace` type has an event, `onreset`, that is fired when a discon
 xrReferenceSpace.addEventListener('reset', xrReferenceSpaceEvent => {
   // Check for the transformation between the previous origin and the current origin
   // This will not always be available, but if it is, developers may choose to use it
-  let transformMatrix = xrReferenceSpaceEvent.transformMatrix;
+  let transform = xrReferenceSpaceEvent.transform;
 
   // For an app that allows artificial Yaw rotation, this would be a perfect
   // time to reset that.
-  resetYawTransform(transformMatrix);
+  resetYawTransform(transform);
 
   // For an app using the XRBoundedReferenceSpace, this would be a perfect time to
   // re-layout content intended to be reachable within the bounds
-  createBoundsMesh(transformMatrix);
+  createBoundsMesh(transform);
 });
 ```
 
@@ -339,7 +339,7 @@ partial interface XRFrame {
 interface XRInputPose {
   readonly attribute boolean emulatedPosition;
   readonly attribute XRRay targetRay;
-  readonly attribute Float32Array? gripMatrix;
+  readonly attribute XRRigidTransform? gripTransform;
 };
 
 //
@@ -347,7 +347,7 @@ interface XRInputPose {
 //
 
 [SecureContext, Exposed=Window] interface XRSpace : EventTarget {
-  Float32Array? getTransformTo(XRSpace other);
+  XRRigidTransform? getTransformTo(XRSpace other);
 };
 
 //
@@ -364,7 +364,7 @@ dictionary XRReferenceSpaceOptions {
   required XRReferenceSpaceType type;
 };
 
-[SecureContext, Exposed=Window] interface XRReferenceSpace : XRSpace {  
+[SecureContext, Exposed=Window] interface XRReferenceSpace : XRSpace {
   attribute EventHandler onreset;
 };
 
@@ -412,11 +412,11 @@ interface XRUnboundedReferenceSpace : XRReferenceSpace {
  Constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict)]
 interface XRReferenceSpaceEvent : Event {
   readonly attribute XRReferenceSpace referenceSpace;
-  readonly attribute Float32Array? transformMatrix;
+  readonly attribute XRRigidTransform? transform;
 };
 
 dictionary XRReferenceSpaceEventInit : EventInit {
   required XRReferenceSpace referenceSpace;
-  Float32Array transformMatrix;
+  XRRigidTransform transform;
 };
 ```
