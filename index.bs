@@ -310,7 +310,7 @@ enum XREnvironmentBlendMode {
   attribute XRLayer? baseLayer;
 
   // Methods
-  Promise&lt;XRReferenceSpace&gt; requestReferenceSpace(XRReferenceSpaceType type, optional XRReferenceSpaceOptions options);
+  Promise&lt;XRReferenceSpace&gt; requestReferenceSpace(XRReferenceSpaceOptions options);
 
   FrozenArray&lt;XRInputSource&gt; getInputSources();
 
@@ -368,7 +368,7 @@ The <dfn method for="XRSession">end()</dfn> method provides a way to manually sh
 
 </div>
 
-<div class="algorithm" data-algorithm="request-frame-of-reference">
+<div class="algorithm" data-algorithm="request-reference-space">
 
 When the <dfn method for="XRSession">requestReferenceSpace(|options|)</dfn> method is invoked, the user agent MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
 
