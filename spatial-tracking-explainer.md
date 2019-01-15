@@ -306,7 +306,7 @@ There are several circumstances in which developers may choose to relate content
 It is expected that developers will often choose to preview `immersive` experiences with a similar experience `inline`. In this situation, users often expect to see the scene from the same perspective when they make the transition from `inline` to `immersive`. To accomplish this, developers should grab the `transform` of the last `XRViewerPose` retrieved using the `inline` session's `XRReferenceSpace` and set it as the `originOffset` of the `immersive` session's `XRReferenceSpace`. The same logic applies in the reverse when exiting `immersive`.
 
 #### Unbounded to Bounded 
-When building an experience that is predominantly based on an `XRUnboundedReferenceSpace`, developers may occasionally choose to switch to an `XRBoundedReferenceSpace`.  For example, a whole-home renovation experience might choose to switch to a bounded reference space for reviewing a furniture selection library.  If necessary to continue displaying content belonging to the previous reference space, developers may use the `getTransformTo()` method to re-parent nearby virtual content to the new reference space.
+When building an experience that is predominantly based on an `XRUnboundedReferenceSpace`, developers may occasionally choose to switch to an `XRBoundedReferenceSpace`.  For example, a whole-home renovation experience might choose to switch to a bounded reference space for reviewing a furniture selection library.  If necessary to continue displaying content belonging to the previous reference space, developers may call the `XRFrame`'s `getPose()` method to re-parent nearby virtual content to the new reference space.
 
 ### Reset Event
 The `XRReferenceSpace` type has an event, `onreset`, that is fired when a discontinuity of the reference space's origin occurs.  This discontinuity may be caused for different reasons for each type, but the result is essentially the same, the perception of the user's location will have changed.  In response, pages may wish to reposition virtual elements in the scene or clear any additional transforms, such as teleportation transforms, that may no longer be needed.  The `onreset` event will fire prior to any poses being delivered with the new origin/direction, and all poses queried following the event must be relative to the reset origin/direction. 
@@ -402,16 +402,13 @@ partial interface XRSession {
 partial interface XRFrame {
   // Also listed in the main explainer.md
   XRViewerPose? getViewerPose(XRReferenceSpace referenceSpace);
-
-  // Also listed in input-explainer.md
-  XRInputPose? getInputPose(XRInputSource inputSource, XRReferenceSpace referenceSpace);
+  XRPose? getPose(XRSpace space, XRSpace relativeTo);
 };
 
 [SecureContext, Exposed=Window]
-interface XRInputPose {
+interface XRPose {
+  readonly attribute XRRigidTransform transform;
   readonly attribute boolean emulatedPosition;
-  readonly attribute XRRay targetRay;
-  readonly attribute XRRigidTransform? gripTransform;
 };
 
 //
@@ -419,7 +416,7 @@ interface XRInputPose {
 //
 
 [SecureContext, Exposed=Window] interface XRSpace : EventTarget {
-  XRRigidTransform? getTransformTo(XRSpace other);
+  // Interface is intentionally opaque
 };
 
 //

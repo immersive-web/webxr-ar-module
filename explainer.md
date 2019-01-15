@@ -626,7 +626,13 @@ dictionary XRRenderStateOptions {
 
   // Also listed in the spatial-tracking-explainer.md
   XRViewerPose? getViewerPose(XRReferenceSpace referenceSpace);
-  XRInputPose? getInputPose(XRInputSource inputSource, XRReferenceSpace referenceSpace);
+  XRPose? getPose(XRSpace space, XRSpace relativeTo);
+};
+
+[SecureContext, Exposed=Window]
+interface XRPose {
+  readonly attribute XRRigidTransform transform;
+  readonly attribute boolean emulatedPosition;
 };
 
 enum XREye {
@@ -649,8 +655,7 @@ interface XRRigidTransform {
   readonly attribute XRRigidTransform transform;
 };
 
-[SecureContext, Exposed=Window] interface XRViewerPose {
-  readonly attribute XRRigidTransform transform;
+[SecureContext, Exposed=Window] interface XRViewerPose : XRPose {
   readonly attribute FrozenArray<XRView> views;
 };
 
