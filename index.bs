@@ -304,12 +304,10 @@ enum XREnvironmentBlendMode {
   readonly attribute XRSessionMode mode;
   readonly attribute XRPresentationContext? outputContext;
   readonly attribute XREnvironmentBlendMode environmentBlendMode;
-
-  attribute double depthNear;
-  attribute double depthFar;
-  attribute XRLayer? baseLayer;
+  readonly attribute XRRenderState renderState;
 
   // Methods
+  void updateRenderState(optional XRRenderStateInit state);
   Promise&lt;XRReferenceSpace&gt; requestReferenceSpace(XRReferenceSpaceOptions options);
 
   FrozenArray&lt;XRInputSource&gt; getInputSources();
@@ -338,9 +336,7 @@ When an {{XRSession}} is created, the user agent MUST <dfn>initialize the sessio
   1. Let |options| be the {{XRSessionCreationOptions}} passed to {{requestSession()}}.
   1. Initialize |session|'s {{XRSession/mode}} to |options| {{XRSessionCreationOptions/mode}} value.
   1. Initialize |session|'s {{XRSession/outputContext}} to |options| {{XRSessionCreationOptions/outputContext}} value.
-  1. Initialize |session|'s {{XRSession/depthNear}} to <code>0.1</code>.
-  1. Initialize |session|'s {{XRSession/depthFar}} to <code>1000.0</code>.
-  1. Initialize |session|'s {{XRSession/baseLayer}} to <code>null</code>.
+  1. [=Initialize the render state=].
   1. If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device's tracking and rendering capabilities.
 
 </div>
@@ -368,6 +364,33 @@ The <dfn method for="XRSession">end()</dfn> method provides a way to manually sh
 
 </div>
 
+Each {{XRSession}} has an <dfn>active render state</dfn> which is a new {{XRRenderState}}, a <dfn>list of pending render states</dfn>, which is initially empty.
+
+The <dfn attribute for="XRSession">renderState</dfn> attribute returns the {{XRSession}}'s [=active render state=].
+
+<div class="algorithm" data-algorithm="update-render-state">
+
+When the <dfn method for="XRSession">updateRenderState(|newState|)</dfn> method is invoked, the user agent MUST run the following steps:
+
+  1. Append |newState| to the target {{XRSession}}'s [=list of pending render states=].
+
+</div>
+
+<div class="algorithm" data-algorithm="apply-pending-render-states">
+
+When requested, the {{XRSession}} MUST <dfn>apply pending render states</dfn> by running the following steps:
+
+  1. Let |session| be the target {{XRSession}}.
+  1. Let |activeState| be |session|'s [=active render state=].
+  1. Let |pendingStates| be |session|'s [=list of pending render states=].
+  1. Set |session|'s [=list of pending render states=] to the empty list.
+  1. For each |newState| in |pendingStates|:
+    1. If |newState|'s {{XRRenderStateInit/depthNear}} value is set, set |activeState|'s {{XRRenderState/depthNear}} to |newState|'s {{XRRenderStateInit/depthNear}}.
+    1. If |newState|'s {{XRRenderStateInit/depthFar}} value is set, set |activeState|'s {{XRRenderState/depthFar}} to |newState|'s {{XRRenderStateInit/depthFar}}.
+    1. If |newState|'s {{XRRenderStateInit/baseLayer}} is set, set |activeState|'s {{XRRenderState/baseLayer}} to |newState|'s {{XRRenderStateInit/baseLayer}}.
+
+</div>
+
 <div class="algorithm" data-algorithm="request-reference-space">
 
 When the <dfn method for="XRSession">requestReferenceSpace(|options|)</dfn> method is invoked, the user agent MUST return [=a new Promise=] |promise| and run the following steps [=in parallel=]:
@@ -388,11 +411,11 @@ When the <dfn method for="XRSession">getInputSources()</dfn> method is invoked, 
 
 Each {{XRSession}} has a <dfn>environment blending mode</dfn> value, which is a enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user's surrounding environment.
 
-  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> indicates that the user's surrounding environment is not visible at all. Alpha values in the {{XRSession/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0.
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> indicates that the user's surrounding environment is not visible at all. Alpha values in the {{XRRenderState/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0.
 
-  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">additive</dfn> indicates that the user's surrounding environment is visible and the {{XRSession/baseLayer}} will be shown additively against it. Alpha values in the {{XRSession/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. When this blend mode is in use black pixels will appear fully transparent, and there is no way to make a pixel appear fully opaque.
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">additive</dfn> indicates that the user's surrounding environment is visible and the {{XRRenderState/baseLayer}} will be shown additively against it. Alpha values in the {{XRRenderState/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. When this blend mode is in use black pixels will appear fully transparent, and there is no way to make a pixel appear fully opaque.
 
-  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn> indicates that the user's surrounding environment is visible and the {{XRSession/baseLayer}} will be blended with it according to the alpha values of each pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent.
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn> indicates that the user's surrounding environment is visible and the {{XRRenderState/baseLayer}} will be blended with it according to the alpha values of each pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent.
 
 The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=]
 
@@ -455,6 +478,36 @@ dictionary XRSessionCreationOptions {
 };
 </pre>
 
+XRRenderState {#xrrenderstate-interface}
+-------------
+
+There are multiple values that developers can configure which affect how the session's output is composited. These values are tracked by an {{XRRenderState}} object.
+
+<pre class="idl">
+dictionary XRRenderStateInit {
+  double depthNear;
+  double depthFar;
+  XRLayer? baseLayer;
+};
+
+[SecureContext, Exposed=Window] interface XRRenderState {
+  readonly attribute double depthNear;
+  readonly attribute double depthFar;
+  readonly attribute XRLayer? baseLayer;
+};
+</pre>
+
+<div class="algorithm" data-algorithm="initialize-renderstate">
+
+When an {{XRRenderState}} object is created, the user agent MUST <dfn>initialize the render state</dfn> by running the following steps:
+
+  1. Let |state| be the newly created {{XRRenderState}} object.
+  1. Initialize |state|'s {{XRRenderState/depthNear}} to <code>0.1</code>.
+  1. Initialize |state|'s {{XRRenderState/depthFar}} to <code>1000.0</code>.
+  1. Initialize |state|'s {{XRRenderState/baseLayer}} to <code>null</code>.
+
+</div>
+
 Animation Frames {#animation-frames}
 ----------------
 
@@ -466,7 +519,7 @@ callback XRFrameRequestCallback = void (DOMHighResTimeStamp time, XRFrame frame)
 
 Each {{XRFrameRequestCallback}} object has a <dfn for="XRFrameRequestCallback">cancelled</dfn> boolean initially set to <code>false</code>.
 
-Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which is initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number initially be zero. Each {{XRSession}} also has a <dfn>processing frame</dfn> boolean, which is initially be set to <code>false</code>.
+Each {{XRSession}} has a <dfn>list of animation frame callbacks</dfn>, which is initially empty, and an <dfn>animation frame callback identifier</dfn>, which is a number initially be zero.
 
 <div class="algorithm" data-algorithm="request-animation-frame">
 
@@ -491,21 +544,19 @@ When the <dfn method for="XRSession">cancelAnimationFrame(|handle|)</dfn> method
 
 <div class="algorithm" data-algorithm="run-animation-frames">
 
-  When an {{XRSession}} |session| receives updated [=viewer=] state from the [=XR device=], it runs an <dfn>XR animation frame</dfn> with a timestamp |now| and an {{XRFrame}} |frame|, which MUST run the following steps:
+When an {{XRSession}} |session| receives updated [=viewer=] state from the [=XR device=], it runs an <dfn>XR animation frame</dfn> with a timestamp |now| and an {{XRFrame}} |frame|, which MUST run the following steps regardless of if the [=list of animation frame callbacks=] is empty or not:
 
   1. Let |callbacks| be a list of the entries in |session|'s [=list of animation frame callback=], in the order in which they were added to the list.
+  1. If |session|'s [=list of pending render states=] is not empty, [=apply pending render states=].
   1. Set |session|'s [=list of animation frame callbacks=] to the empty list.
-  1. Set |session|'s [=processing frame=] to <code>true</code>.
   1. Set |frame|'s [=active=] boolean to <code>true</code>.
   1. For each entry in |callbacks|, in order:
     1. If the entry's [=cancelled=] boolean is <code>true</code>, continue to the next entry.
     1. [=Invoke the Web IDL callback function=], passing |now| and |frame| as the  arguments
     1. If an exception is thrown, [=report the exception=].
-  1. Set |session|'s [=processing frame=] to <code>false</code>.
   1. Set |frame|'s [=active=] boolean to <code>false</code>.
 
 </div>
-
 
 The XR Compositor {#compositor}
 -----------------
@@ -1197,7 +1248,7 @@ function onXRSessionStarted(xrSession) {
 
   loadWebGLResources();
 
-  xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
+  xrSession.updateRenderState({ baseLayer: new XRWebGLLayer(xrSession, gl) });
 }
 </pre>
 </div>
@@ -1254,7 +1305,9 @@ function onXRSessionStarted(xrSession) {
   // Make sure the canvas context we want to use is compatible with the device.
   // May trigger a context loss.
   return gl.makeXRCompatible().then(() => {
-    xrSession.baseLayer = new XRWebGLLayer(xrSession, gl);
+    return xrSession.updateRenderState({
+      baseLayer: new XRWebGLLayer(xrSession, gl)
+    });
   });
 }
 </pre>
