@@ -1,5 +1,5 @@
 # WebXR Device API - Input
-This document explains the portion of the WebXR APIs for managing input across the range of XR hardware. For context, it may be helpful to have first read about [WebXR Session Establishment](explainer.md) and [Spatial Tracking](spatial-tracking-explainer.md).
+This document explains the portion of the WebXR APIs for managing input across the range of XR hardware. For context, it may be helpful to have first read about [WebXR Session Establishment](explainer.md) and [Spatial Tracking](spatial-tracking-explainer.md). Further information can also be found in the [Hit Testing explainer](hit-testing-explainer.md).
 
 ## Concepts
 In addition to the diversity of tracking and display technology, XR hardware may support a wide variety of input mechanisms including screen taps, motion controllers (with multiple buttons, joysticks, triggers, touchpads, etc), voice commands, spatially-tracked articulated hands, single button clickers, and more. Despite this variation, all XR input mechanisms have a common purpose: enabling users to aim in 3D space and perform an action on the target of that aim. This concept is known as "target and select" and is the foundation for how input is exposed in WebXR.
@@ -35,7 +35,7 @@ Calling the `getInputSources()` function on an `XRSession` will return a list of
 let inputSources = xrSession.getInputSources();
 ```
 
-When input sources are added to or removed from the list of available input sources the `inputsourceschange` event must be fired on the `XRSession` object to indicate that any cached copies of the list should be refreshed. This event is of the type `XRSessionEvent` and contains the `session` for which input sources are changing.
+When input sources are added to or removed from the list of available input sources the `inputsourceschange` event must be fired on the `XRSession` object to indicate that any cached copies of the list should be refreshed. In addition, the `inputsourceschange` event will also fire once after the session creation callback completes. This event is of the type `XRInputSourceChangeEvent` and will contain three attributes: `session` is associated session being changed, `added` is the new input sources, and `removed` is the input sources that will no longer be reported.
 
 ```js
 function onSessionStarted(session) {
@@ -145,8 +145,9 @@ The appropriateness of using these visualizations depends on various factors, in
 There are several points worth calling out about the table above. First, 'screen' style inputs should only use highlights as the user's fingers will obscure other visualizations. Second, a pointing ray should not be drawn for 'gaze' style input sources because the ray's origin would be located between the user's eyes and may obscure the user's vision or be difficult to visually converge on. Third, developers should only attempt to draw renderable models and pointing rays for 'tracked-pointer' input sources, a topic explained in more detail in the [Renderable models](#renderable-models) section.
 
 ### Visualizing targeting hints
+In order to draw targeting hints such as cursors, highlights, and pointing rays, a hit test must be performed against the 3D geometry to find what the user is aiming at. There are two types of hit testing: virtual and real-world. The sample code in this explainer will focus on virtual hit testing. For more information on real-world hit testing and how to combine it with virtual hit testing, see the [Hit Testing explainer](hit-testing-explainer.md).
 
-In order to draw targeting hints such as cursors, highlights, and pointing rays, a hit test must be performed against the virtual 3D geometry to find what the user is targeting. WebXR does not have any knowledge of the developer's 3D scene graph, but does have information about the real-world location of `XRInputSource` objects. Using the `XRFrame.getPose()` function, as described in the [Targeting ray pose](#targeting-ray-pose) section, developers can determine position and orientation of the `XRInputSource`'s targeting ray and pass it into their 3D engine's virtual hit test function.
+WebXR does not have any knowledge of the developer's 3D scene graph, but does have information about the real-world location of `XRInputSource` objects. Using the `XRFrame.getPose()` function, as described in the [Targeting ray pose](#targeting-ray-pose) section, developers can determine position and orientation of the `XRInputSource`'s targeting ray and pass it into their 3D engine's virtual hit test function.
 
 ```js
 function updateScene(timestamp, xrFrame) {
@@ -296,6 +297,19 @@ interface XRSessionEvent : Event {
 
 dictionary XRSessionEventInit : EventInit {
   required XRSession session;
+};
+
+[SecureContext, Exposed=Window, Constructor(DOMString type, XRInputSourceChangeEventInit eventInitDict)]
+interface XRInputSourceChangeEvent : Event {
+  readonly attribute XRSession session;
+  readonly attribute FrozenArray<XRInputSource> removed;
+  readonly attribute FrozenArray<XRInputSource> added;
+};
+
+dictionary XRInputSourceChangeEventInit : EventInit {
+  required XRSession session;
+  required FrozenArray<XRInputSource> removed;
+  required FrozenArray<XRInputSource> added;
 };
 
 [SecureContext, Exposed=Window,
