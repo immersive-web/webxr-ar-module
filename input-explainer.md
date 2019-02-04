@@ -1,5 +1,5 @@
 # WebXR Device API - Input
-This document is a subsection of the main WebXR Device API explainer document which can be found [here](explainer.md).  The main explainer contains all the information you could possibly want to know about setting up a WebXR session, the render loop, and more.  In contrast, this document covers how to manage input across the range of XR hardware.
+This document is a subsection of the main WebXR Device API explainer document which can be found [here](explainer.md). The main explainer contains all the information you could possibly want to know about setting up a WebXR session, the render loop, and more. In contrast, this document covers how to manage input across the range of XR hardware.
 
 ## Usage
 
@@ -35,9 +35,9 @@ An input source will also provide its preferred pointing ray, given by the `XRIn
 
 An `XRRay` can be constructed from the `XRPose`'s `transform`. A ray includes both an `origin` and `direction`, both given as `DOMPointReadOnly`s. The `origin` represents a 3D coordinate in space with a `w` component that must be 1, and the `direction` represents a normalized 3D directional vector with a `w` component that must be 0. The `XRRay`'s `matrix` represents the transform from a ray originating at `[0, 0, 0]` and extending down the negative Z axis to the ray described by the `XRRay`'s `origin` and `direction`. This is useful for positioning graphical representations of the ray.
 
-The `targetRaySpace` will never be `null`. It's value will differ based on the type of input source that produces it, which is represented by the `targetRayMode` attribute:
+The `targetRaySpace` will never be `null`. Its value will differ based on the type of input source that produces it, which is represented by the `targetRayMode` attribute:
 
-  * `'gaze'` indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device). While it may be possible for these devices to be tracked (and have a `gripSpace`), the head gaze is used for targeting. Example devices: 0DOF clicker, regular gamepad, voice command, tracked hands.
+  * `'gaze'` indicates the target ray will originate at the user's head and follow the direction they are looking (this is commonly referred to as a "gaze input" device). While it may be possible for these devices to be tracked (and have a `gripSpace`), the head gaze is used for targeting. Example devices: 0DOF clicker, regular gamepad, voice command, tracked hands. For all `XRInputSource`s with a `targetRayMode` of 'gaze', the `targetRaySpace` will be the same. This common `targetRaySpace` will represent the same location as the `XRSession.viewerSpace`, but will be a different object in order to keep the API flexible enough to add eye tracking in the future.
   * `'tracked-pointer'` indicates that the target ray originates from either a handheld device or other hand-tracking mechanism and represents that the user is using their hands or the held device for pointing. The exact orientation of the ray relative to a given device should follow platform-specific guidelines if there are any. In the absence of platform-specific guidance or a physical device, the target ray should most likely point in the same direction as the user's index finger if it was outstretched.
   * `'screen'` indicates that the input source was an interaction with a session's output context canvas element, such as a mouse click or touch event. Only applicable for inline sessions or an immersive AR session being displayed on a 2D screen. See [Screen Input](#screen_input) for more details.
 
@@ -124,7 +124,7 @@ A `select` event indicates that a primary action has been completed. `select` ev
 
 For primary actions that are instantaneous without a clear start and end point (such as a verbal command), all three events should still fire in the sequence `selectstart`, `selectend`, `select`.
 
-All three events are `XRInputSourceEvent` events. When fired the event's `inputSource` attribute must contain the `XRInputSource` that produced the event. The event's `frame` attribute must contain a valid `XRFrame` that can be used to query the input and device poses at the time the selection event occurred. The `XRViewerPose`'s `views` array must be empty.
+All three events are `XRInputSourceEvent` events. When fired the event's `inputSource` attribute must contain the `XRInputSource` that produced the event. The event's `frame` attribute must contain a valid `XRFrame` that can be used to call `getPose()` at the time the selection event occurred. The frame's `getViewerPose()` function will return null.
 
 In most cases applications will only need to listen for the `select` event for basic interactions like clicking on buttons.
 
@@ -309,15 +309,6 @@ partial interface XRFrame {
 //
 // Input
 //
-
-[SecureContext, Exposed=Window,
- Constructor(optional DOMPointInit origin, optional DOMPointInit direction),
- Constructor(XRRigidTransform transform)]
-interface XRRay {
-  readonly attribute DOMPointReadOnly origin;
-  readonly attribute DOMPointReadOnly direction;
-  readonly attribute Float32Array matrix;
-};
 
 enum XRHandedness {
   "",
