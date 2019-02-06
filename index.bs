@@ -346,7 +346,10 @@ The <dfn attribute for="XRSession">renderState</dfn> attribute returns the {{XRS
 
 When the <dfn method for="XRSession">updateRenderState(|newState|)</dfn> method is invoked, the user agent MUST run the following steps:
 
-  1. Append |newState| to the target {{XRSession}}'s [=list of pending render states=].
+  1. Let |session| be the target {{XRSession}}.
+  1. If |session|'s [=ended=] value is <code>true</code>, throw an {{InvalidStateError}} and abort these steps.
+  1. If |newState|'s {{XRRenderStateInit/baseLayer}}'s was created with an {{XRSession}} other than |session|, throw an {{InvalidStateError}} and abort these steps.
+  1. Append |newState| to |session|'s [=list of pending render states=].
 
 </div>
 
