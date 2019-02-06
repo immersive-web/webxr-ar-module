@@ -422,13 +422,13 @@ The <dfn attribute for="XRSession">onselectend</dfn> attribute is an [=Event han
 
 The <dfn attribute for="XRSession">onselect</dfn> attribute is an [=Event handler IDL attribute=] for the {{XRSession/select}} event type.
 
-Issue: Document what happens when we <dfn>end the session</dfn>.
+We still need to document what happens when we <dfn>end the session</dfn>. (This is <a href="https://github.com/immersive-web/webxr/issues/467">filed</a>.)
 
-Issue: Document effects when we <dfn lt="blur all sessions">blur the session</dfn>.
+We still need to document what happens when we <dfn lt="blur all sessions">blur all sessions</dfn>. (This is <a href="https://github.com/immersive-web/webxr/issues/468">filed</a>.)
 
-Issue: Document how to <dfn>poll the device pose</dfn>.
+We still need to document what happens when we <dfn>poll the device pose</dfn> (This is <a href="https://github.com/immersive-web/webxr/issues/480">filed</a>.)
 
-Issue: Document how the <dfn>list of active input sources</dfn> is maintained.
+We still need to document how the<dfn>list of active input sources</dfn> is maintained. (This is <a href="https://github.com/immersive-web/webxr/issues/465">filed</a>.)
 
 <section class="unstable">
 XRSessionMode {#xrsessionmode-enum}
@@ -451,8 +451,6 @@ enum XRSessionMode {
 An <dfn>immersive session</dfn> refers to either an {{immersive-vr}} or an {{immersive-ar}} session. [=Immersive sessions=] MUST provide some level of [=viewer=] tracking, and content MUST be shown at the proper scale relative to the user and/or the surrounding environment. Additionally, [=Immersive sessions=] MUST be given <dfn>exclusive access</dfn> to the [=XR device=], meaning that while the [=immersive session=] is not [=blurred=] the HTML document is not shown on the [=XR device=]'s display, nor is content from other applications shown on the [=XR device=]'s display.
 
 NOTE: Examples of ways [=exclusive access=] may be presented include stereo content displayed on a virtual reality or augmented reality headset, or augmented reality content displayed fullscreen on a mobile device.
-
-Issue: Document restrictions and capabilities of [=immersive session=]s.
 </section>
 
 <section class="unstable">
@@ -553,8 +551,6 @@ When an {{XRSession}} |session| receives updated [=viewer=] state from the [=XR 
 The XR Compositor {#compositor}
 -----------------
 
-Issue: This needs to be broken up a bit more and more clearly describe things such as the frame lifecycle.
-
 The user agent MUST maintain an <dfn>XR Compositor</dfn> which handles presentation to the [=XR device=] and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as {{XRWebGLLayer}} sources to prevent the page from corrupting the compositor state or reading back content from other pages. the compositor MUST also run in separate thread or processes to decouple performance of the page from the ability to present new imagery to the user at the appropriate framerate.
 
 The [=XR Compositor=] has a list of layer images, which is initially empty.
@@ -633,10 +629,6 @@ When the <dfn method for="XRFrame">getInputPose(|inputSource|, |referenceSpace|)
   1. Return a new {{XRInputPose}} describing |inputSource|'s pose relative to the origin of |referenceSpace|.
 
 </div>
-
-Issue: Describe behavior for passing <code>null</code> {{XRReferenceSpace}}s to {{getViewerPose()}} and {{getInputPose()}}
-
-ISSUE: The last two steps of the {{getViewerPose()}} and {{getInputPose()}} algorithms need to be expanded.
 
 Spaces {#spaces}
 ======
@@ -725,8 +717,6 @@ When an {{XRReferenceSpace}} is requested, the user agent MUST <dfn>create a ref
   1. Return |referenceSpace|.
 
 </div>
-
-Issue: Describe circumstances when a reference space type might be rejected.
 
 XRStationaryReferenceSpace {#xrstationaryreferencespace-interface}
 ----------------------------
@@ -909,7 +899,7 @@ The <dfn attribute for="XRRigidTransform">matrix</dfn> attribute returns the tra
 
 An {{XRRigidTransform}} with a {{XRRigidTransform/position}} of <code>{ x: 0, y: 0, z: 0 w: 1 }</code> and an {{XRRigidTransform/orientation}} of <code>{ x: 0, y: 0, z: 0, w: 1 }</code> is known as an <dfn>identity transform</dfn>.
 
-ISSUE: Define <dfn>Normalize</dfn>
+We still need to define the <dfn>Normalize</dfn> step. (This is <a href="https://github.com/immersive-web/webxr/issues/472">filed</a>.)
 
 XRRay {#xrray-interface}
 -----
@@ -993,8 +983,6 @@ Input {#input}
 XRInputSource {#xrinputsource-interface}
 -------------
 
-ISSUE: Need some intro text for XRInputSource
-
 <pre class="idl">
 enum XRHandedness {
   "",
@@ -1031,8 +1019,6 @@ Note: Some input sources, like an {{XRInputSource}} with {{targetRayMode}} set t
 <section class="unstable">
 XRInputPose {#xrinputpose-interface}
 -------------
-
-ISSUE: Need some intro text for XRInputPose
 
 <pre class="idl">
 [SecureContext, Exposed=Window]
@@ -1178,8 +1164,6 @@ The <dfn method for="XRWebGLLayer">requestViewportScaling(|scaleFactor|)</dfn> m
   1. Set the [=viewport scale factor=] to |scaleFactor|.
 
 </div>
-
-Issue: Viewport changes (and a lot of other changes) should not take place mid-frame.
 </section>
 
 Each {{XRSession}} MUST identify a <dfn>native WebGL framebuffer resolution</dfn>, which is the pixel resolution of a WebGL framebuffer required to match the physical pixel resolution of the [=XR device=].
@@ -1208,7 +1192,7 @@ The <dfn method for="XRWebGLLayer">getNativeFramebufferScaleFactor(|session|)</d
 
 </div>
 
-Issue: Document the creation of a <dfn>swap chain</dfn>.
+We either need to define the <dfn>swap chain</dfn> or remove references to it.  (This is <a href="https://github.com/immersive-web/webxr/issues/484">filed</a>.)
 
 <section class="unstable">
 WebGL Context Compatibility {#contextcompatibility}
@@ -1475,8 +1459,6 @@ Fingerprinting {#fingerprinting-security}
 --------------
 
 Given that the API describes hardware available to the user and its capabilities it will inevitably provide additional surface area for fingerprinting. While it's impossible to completely avoid this, steps can be taken to mitigate the issue. This spec limits reporting of available hardware to only a single device at a time, which prevents using the rare cases of multiple headsets being connected as a fingerprinting signal. Also, the devices that are reported have no string identifiers and expose very little information about the devices capabilities until an XRSession is created, which may only be triggered via user activation in the most sensitive case.
-
-Issue: Discuss use of sensor activity as a possible fingerprinting vector.
 </section>
 
 Integrations {#integrations}
