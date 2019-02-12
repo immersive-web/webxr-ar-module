@@ -1185,10 +1185,7 @@ The <dfn method for="XRWebGLLayer">requestViewportScaling(|scaleFactor|)</dfn> m
 
   1. If |scaleFactor| is greater than 1.0 set |scaleFactor| to 1.0.
   1. If |scaleFactor| is less than the [=minimum viewport scale factor=] set |scaleFactor| to the [=minimum viewport scale factor=].
-  1. If the [=/XR device=] places additional device-specific restrictions on viewport size, adjust |scaleFactor| accordingly.
-
-    Issue: Clarify which XR device the XR device in this step references to.
-
+  1. If the [=XR/XR device=] places additional device-specific restrictions on viewport size, adjust |scaleFactor| accordingly.
   1. Set the [=viewport scale factor=] to |scaleFactor|.
 
 </div>
@@ -1248,10 +1245,7 @@ The [=XR compatible=] boolean can be set either at context creation time or afte
 
 When the {{HTMLCanvasElement}}'s getContext() method is invoked with a {{WebGLContextAttributes}} dictionary with {{xrCompatible}} set to <code>true</code>, run the following steps:
 
-  1. [=Create the WebGL context=] as usual, ensuring it is created on a [=compatible graphics adapter=] for the [=/XR device=].
-
-    Issue: Clarify which XR device the XR device in this step references to.
-
+  1. [=Create the WebGL context=] as usual, ensuring it is created on a [=compatible graphics adapter=] for the [=XR/XR device=].
   1. Let |context| be the newly created WebGL context.
   1. Set |context|'s [=XR compatible=] boolean to true.
   1. Return |context|.
@@ -1282,19 +1276,13 @@ When the <dfn method for="WebGLRenderingContextBase">makeXRCompatible()</dfn> me
   1. Let |context| be the target {{WebGLRenderingContextBase}} object.
   1. If |context|'s [=WebGL context lost flag=] is set, [=reject=] |promise| with an {{InvalidStateError}} and abort these abort these steps.
   1. If |context|'s [=XR compatible=] boolean is <code>true</code>, [=/resolve=] |promise| and abort these steps.
-  1. If |context| was created on a [=compatible graphics adapter=] for the [=/XR device=]:
-
-    Issue: Clarify which XR device the XR device in this step references to.
-
+  1. If |context| was created on a [=compatible graphics adapter=] for the [=XR/XR device=]:
       1. Set |context|'s [=XR compatible=] boolean to <code>true</code>.
       1. [=/Resolve=] |promise| and abort these steps.
   1. [=Queue a task=] to perform the following steps:
       1. Force |context| to be lost and [=handle the context loss=] as described by the WebGL specification.
       1. If the [=canceled flag=] of the "webglcontextlost" event fired in the previous step was not set, [=reject=] |promise| with an {{AbortError}} and abort these steps.
-      1. [=Restore the context=] on a [=compatible graphics adapter=] for the [=/XR device=].
-
-        Issue: Clarify which XR device the XR device in this step references to.
-
+      1. [=Restore the context=] on a [=compatible graphics adapter=] for the [=XR/XR device=].
       1. Set |context|'s [=XR compatible=] boolean to <code>true</code>.
       1. [=/Resolve=] |promise|.
 
