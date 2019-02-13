@@ -1018,6 +1018,8 @@ Input {#input}
 XRInputSource {#xrinputsource-interface}
 -------------
 
+An {{XRInputSource}} represents any input mechanism which allows the user to perform targeted actions in the same virtual space as the [=viewer=].
+
 <pre class="idl">
 enum XRHandedness {
   "",
