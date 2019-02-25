@@ -1,7 +1,18 @@
 # WebXR Device API Explained
 
 ## What is WebXR?
-The [WebXR Device API](https://immersive-web.github.io/webxr/) provides access to input and output capabilities commonly associated with Virtual Reality (VR) and Augmented Reality (AR) hardware like [Google’s Daydream](https://vr.google.com/daydream/), the [Oculus Rift](https://www3.oculus.com/rift/), the [Samsung Gear VR](http://www.samsung.com/global/galaxy/gear-vr/), the [HTC Vive](https://www.htcvive.com/), [Windows Mixed Reality headsets](https://developer.microsoft.com/en-us/windows/mixed-reality), [Microsoft Hololens](https://www.microsoft.com/en-us/hololens/), and [Magic Leap One](https://www.magicleap.com/magic-leap-one).  Simply put, it lets you create Virtual Reality and Augmented Reality web sites that you can view with the appropriate hardware like a VR headset or AR-enabled phone.
+The [WebXR Device API](https://immersive-web.github.io/webxr/) provides access to input and output capabilities commonly associated with Virtual Reality (VR) and Augmented Reality (AR) devices. It allows you develop and host VR and AR experiences on the web.
+
+Examples of supported devices include (but are not limited to):
+
+ - [ARCore-compatible devices](https://developers.google.com/ar/discover/supported-devices)
+ - [Google Daydream](https://vr.google.com/daydream/)
+ - [HTC Vive](https://www.htcvive.com/)
+ - [Magic Leap One](https://www.magicleap.com/magic-leap-one)
+ - [Microsoft Hololens](https://www.microsoft.com/en-us/hololens/)
+ - [Oculus Rift](https://www3.oculus.com/rift/)
+ - [Samsung Gear VR](http://www.samsung.com/global/galaxy/gear-vr/)
+ - [Windows Mixed Reality headsets](https://developer.microsoft.com/en-us/windows/mixed-reality)
 
 ### Ooh, so like _Johnny Mnemonic_ where the Internet is all ’90s CGI?
 Nope, not even slightly. And why do you even want that? That’s a terrible UX.
