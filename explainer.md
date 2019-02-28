@@ -196,7 +196,7 @@ function setupWebGLLayer() {
 }
 ```
 
-**XR Centric:** The app's primary use case is displaying XR content, and as such it doesn't mind initializing resources in an XR-centric fashion, which may include asking users to select a headset as soon as the app starts. An example would be a game which is dependent on XR presentation and input. These types of applications can avoid the need to call `makeXRCompatible` and the possible context loss that it may trigger by passing the XR device that the context will be used with as a context creation argument.
+**XR Centric:** The app's primary use case is displaying XR content, and as such it doesn't mind initializing resources in an XR-centric fashion, which may include asking users to select a headset as soon as the app starts. An example would be a game which is dependent on XR presentation and input. These types of applications can avoid the need to call `makeXRCompatible` and the possible context loss that it may trigger by setting the `xrCompatible` flag in the WebGL context creation arguments.
 
 ```js
 let gl = glCanvas.getContext("webgl", { xrCompatible: true });
