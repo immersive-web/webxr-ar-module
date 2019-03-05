@@ -645,10 +645,10 @@ The <dfn attribute for="XRFrame">session</dfn> attribute returns the {{XRSession
 
 When the <dfn method for="XRFrame">getViewerPose(|referenceSpace|)</dfn> method is invoked, the user agent MUST run the following steps:
 
-  1. If the {{XRFrame}}'s [=active=] boolean is <code>false</code>, throw a {{InvalidStateError}} and abort these steps.
-  1. If the {{XRFrame}}'s [=animationFrame=] boolean is <code>false</code>, throw a {{InvalidStateError}} and abort these steps.
+  1. If the {{XRFrame}}'s [=active=] boolean is <code>false</code>, throw an {{InvalidStateError}} and abort these steps.
+  1. If the {{XRFrame}}'s [=animationFrame=] boolean is <code>false</code>, throw an {{InvalidStateError}} and abort these steps.
   1. Let |session| be the {{XRFrame}}'s {{XRFrame/session}} object.
-  1. If |referenceSpace|'s [=XRSpace/session=] does not equal |session|, throw a {{InvalidStateError}} and abort these steps.
+  1. If |referenceSpace|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
   1. If the [=viewer=]'s pose cannot be determined relative to |referenceSpace|, return <code>null</code>
   1. Return a new {{XRViewerPose}} describing the [=viewer=]'s pose relative to the origin of |referenceSpace| at the timestamp of the {{XRFrame}}.
 
@@ -660,8 +660,8 @@ When the <dfn method for="XRFrame">getPose(|space|, |relativeTo|)</dfn> method i
 
   1. If the {{XRFrame}}'s [=active=] boolean is <code>false</code>, throw a {{InvalidStateError}} and abort these steps.
   1. Let |session| be the {{XRFrame}}'s {{XRFrame/session}} object.
-  1. If |space|'s [=XRSpace/session=] does not equal |session|, throw a {{InvalidStateError}} and abort these steps.
-  1. If |relativeTo|'s [=XRSpace/session=] does not equal |session|, throw a {{InvalidStateError}} and abort these steps.
+  1. If |space|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
+  1. If |relativeTo|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
   1. If |space|'s pose cannot be determined relative to |relativeTo|, return <code>null</code>
   1. Return a new {{XRPose}} describing |space|'s pose relative to the origin of |relativeTo|.
 
@@ -688,8 +688,11 @@ XRReferenceSpace {#xrreferencespace-interface}
 
 An {{XRReferenceSpace}} describes an {{XRSpace}} that is generally expected to remain static for the duration of the {{XRSession}}, with the most common exception being mid-session reconfiguration by the user. Every {{XRReferenceSpace}} describes a coordinate system where the Y axis MUST be aligned with gravity, with <code>+Y</code> being "Up". <code>-Z</code> is considered "Forward", and <code>+X</code> is considered "Right".
 
+The base {{XRReferenceSpace}} represents a reference space without any tracking behavior.
+
 <pre class="idl">
 enum XRReferenceSpaceType {
+  "identity",
   "stationary",
   "bounded",
   "unbounded"
@@ -713,6 +716,8 @@ dictionary XRReferenceSpaceOptions {
 </pre>
 
 An {{XRReferenceSpace}} is obtained by calling {{XRSession/requestReferenceSpace()}}, which creates an instance of an interface extending {{XRReferenceSpace}}, determined by the {{XRReferenceSpaceOptions/type}} value of the {{XRReferenceSpaceOptions}} dictionary passed into the call:
+
+  - Passing a {{XRReferenceSpaceOptions/type}} of <dfn enum-value for="XRReferenceSpaceType">identity</dfn> creates an {{XRReferenceSpace}} instance.
 
   - Passing a {{XRReferenceSpaceOptions/type}} of <dfn enum-value for="XRReferenceSpaceType">stationary</dfn> creates an {{XRStationaryReferenceSpace}} instance.
 
@@ -744,10 +749,12 @@ The <dfn attribute for="XRReferenceSpace">onreset</dfn> attribute is an [=Event 
 
 When an {{XRReferenceSpace}} is requested, the user agent MUST <dfn>create a reference space</dfn> by running the following steps:
 
-  1. Initialize [=XRSpace/session=] be the {{XRSession}} object that requested creation of a reference space.
+  1. Let |session| be the {{XRSession}} object that requested creation of a reference space.
+  1. Initialize [=XRSpace/session=] to be |session|.
   1. Let |options| be the {{XRReferenceSpaceOptions}} passed to {{requestReferenceSpace()}}.
   1. Let |type| be set to |options| {{XRReferenceSpaceOptions/type}}.
   1. Let |referenceSpace| be set to <code>null</code>.
+  1. If |type| is {{identity}} let |referenceSpace| be a new {{XRReferenceSpace}}.
   1. If |type| is {{stationary}} and |options| does not have a {{XRReferenceSpaceOptions/subtype}} field, throw {{TypeError}}.
   1. Else if |type| is {{bounded}} or {{unbounded}} and |options| has a {{XRReferenceSpaceOptions/subtype}} field, throw a {{TypeError}}.
   1. If |type| is {{stationary}}, let |referenceSpace| be a new {{XRStationaryReferenceSpace}} with a {{XRStationaryReferenceSpace/subtype}} of |options| {{XRReferenceSpaceOptions/subtype}}.
