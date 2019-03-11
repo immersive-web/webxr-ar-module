@@ -234,8 +234,8 @@ function loadRenderableInputModels(xrInputSource) {
   if (!inputSource.gamepad)
     return;
 
-  // Retrieve a mesh to render based on the gamepad object's id.
-  let renderableModel = getInputSourceRenderableModel(inputSource.gamepad.id);
+  // Retrieve a mesh to render based on the gamepad object's id and handedness
+  let renderableModel = getInputSourceRenderableModel(inputSource.gamepad.id, inputSource.handedness);
   if (!renderableModel)
     return;
 
