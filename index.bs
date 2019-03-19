@@ -305,7 +305,6 @@ enum XREnvironmentBlendMode {
 [SecureContext, Exposed=Window] interface XRSession : EventTarget {
   // Attributes
   readonly attribute XRSessionMode mode;
-  readonly attribute XRPresentationContext? outputContext;
   readonly attribute XREnvironmentBlendMode environmentBlendMode;
   readonly attribute XRRenderState renderState;
   readonly attribute XRSpace viewerSpace;
@@ -339,7 +338,6 @@ When an {{XRSession}} is created, the user agent MUST <dfn>initialize the sessio
   1. Let |session| be the newly created {{XRSession}} object.
   1. Let |options| be the {{XRSessionCreationOptions}} passed to {{requestSession()}}.
   1. Initialize |session|'s {{XRSession/mode}} to |options| {{XRSessionCreationOptions/mode}} value.
-  1. Initialize |session|'s {{XRSession/outputContext}} to |options| {{XRSessionCreationOptions/outputContext}} value.
   1. [=Initialize the render state=].
   1. If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device's tracking and rendering capabilities.
 
@@ -399,6 +397,7 @@ When requested, the {{XRSession}} MUST <dfn>apply pending render states</dfn> by
     1. If |newState|'s {{XRRenderStateInit/depthNear}} value is set, set |activeState|'s {{XRRenderState/depthNear}} to |newState|'s {{XRRenderStateInit/depthNear}}.
     1. If |newState|'s {{XRRenderStateInit/depthFar}} value is set, set |activeState|'s {{XRRenderState/depthFar}} to |newState|'s {{XRRenderStateInit/depthFar}}.
     1. If |newState|'s {{XRRenderStateInit/baseLayer}} is set, set |activeState|'s {{XRRenderState/baseLayer}} to |newState|'s {{XRRenderStateInit/baseLayer}}.
+    1. If |newState|'s {{XRRenderStateInit/outputContext}} is set, set |activeState|'s {{XRRenderState/outputContext}} to |newState|'s {{XRRenderStateInit/outputContext}} and [=update the XRPresentationContext session=] to |session|.
 
 </div>
 
@@ -494,7 +493,6 @@ The {{XRSessionCreationOptions}} dictionary provides a <dfn>session description<
 <pre class="idl">
 dictionary XRSessionCreationOptions {
   XRSessionMode mode = "inline";
-  XRPresentationContext? outputContext = null;
 };
 </pre>
 </section>
@@ -509,12 +507,14 @@ dictionary XRRenderStateInit {
   double depthNear;
   double depthFar;
   XRLayer? baseLayer;
+  XRPresentationContext? outputContext;
 };
 
 [SecureContext, Exposed=Window] interface XRRenderState {
   readonly attribute double depthNear;
   readonly attribute double depthFar;
   readonly attribute XRLayer? baseLayer;
+  readonly attribute XRPresentationContext? outputContext;
 };
 </pre>
 
@@ -526,6 +526,7 @@ When an {{XRRenderState}} object is created, the user agent MUST <dfn>initialize
   1. Initialize |state|'s {{XRRenderState/depthNear}} to <code>0.1</code>.
   1. Initialize |state|'s {{XRRenderState/depthFar}} to <code>1000.0</code>.
   1. Initialize |state|'s {{XRRenderState/baseLayer}} to <code>null</code>.
+  1. Initialize |state|'s {{XRRenderState/outputContext}} to <code>null</code>.
 
 </div>
 
@@ -573,7 +574,7 @@ When an {{XRSession}} |session| receives updated [=viewer=] state from the [=/XR
 
   1. If |session|'s [=list of pending render states=] is not empty, [=apply pending render states=].
   1. If |session|'s {{XRSession/renderState}}'s {{XRRenderState/baseLayer}} is <code>null</code>, abort these steps.
-  1. If |session|'s  {{XRSession/mode}} is {{XRSessionMode/inline}} and |session|'s {{XRSession/outputContext}} is <code>null</code>, abort these steps.
+  1. If |session|'s  {{XRSession/mode}} is {{XRSessionMode/inline}} and |session|'s {{XRSession/renderState}}'s {{XRRenderState/outputContext}} is <code>null</code>, abort these steps.
   1. Let |callbacks| be a list of the entries in |session|'s [=list of animation frame callback=], in the order in which they were added to the list.
   1. Set |session|'s [=list of animation frame callbacks=] to the empty list.
   1. Set |frame|'s [=active=] boolean to <code>true</code>.
@@ -1237,7 +1238,7 @@ The [=native WebGL framebuffer resolution=] is determined by running the followi
 
   1. Let |session| be the target {{XRSession}}.
   1. If |session|'s {{XRSession/mode}} value is not <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the resolution required to have a 1:1 ratio between the pixels of a framebuffer large enough to contain all of the session's {{XRView}}s and the physical screen pixels in the area of the display under the highest magnification and abort these steps. If no method exists to determine the native resolution as described, the [=recommended WebGL framebuffer resolution=] MAY be used.
-  1. If |session|'s {{XRSession/mode}} value is <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the size of the |session|'s {{XRSession/outputContext}}'s {{XRPresentationContext/canvas}} in physical display pixels and reevaluate these steps every time the size of the canvas changes.
+  1. If |session|'s {{XRSession/mode}} value is <code>"inline"</code>, set the [=native WebGL framebuffer resolution=] to the size of the |session|'s {{XRSession/renderState}}'s {{XRRenderState/outputContext}}'s {{XRPresentationContext/canvas}} in physical display pixels and reevaluate these steps every time the size of the canvas changes or the {{XRRenderState/outputContext}} is changed.
 
 </div>
 
@@ -1373,15 +1374,31 @@ Canvas Rendering Context {#canvas-rendering-context}
 XRPresentationContext {#xrpresentationcontext-interface}
 ---------------------
 
+When the {{HTMLCanvasElement/getContext()}} method of an {{HTMLCanvasElement}} |canvas| is to return a new object for the <var ignore>contextId</var> <code>present-xr</code>, the user agent must return an {{XRPresentationContext}} with {{XRPresentationContext/canvas}} set to |canvas|.
+
 <pre class="idl">
 [SecureContext, Exposed=Window] interface XRPresentationContext {
   readonly attribute HTMLCanvasElement canvas;
 };
 </pre>
 
-Each {{XRPresentationContext}} has an associated <dfn attribute for="XRPresentationContext">canvas</dfn> which is an {{HTMLCanvasElement}} set during creation.
+The <dfn attribute for="XRPresentationContext">canvas</dfn> attribute indicates the {{HTMLCanvasElement}} that created this context.
 
-When the {{HTMLCanvasElement/getContext()}} method of an {{HTMLCanvasElement}} |canvas| is to return a new object for the <var ignore>contextId</var> <code>present-xr</code>, the user agent must return an {{XRPresentationContext}} with {{XRPresentationContext/canvas}} set to |canvas|.
+Each {{XRPresentationContext}} has an <dfn for="XRPresentationContext">session</dfn> which is an {{XRSession}} initially set to <code>null</code>.
+
+<div class="algorithm" data-algorithm="presentation-context-session-update">
+
+When another algorithm indicates it will <dfn>update the XRPresentationContext session</dfn> to {{XRSession}} |session|, run the following steps:
+
+  1. Let |context| be the target {{XRPresentationContext}}.
+  1. Let |prevSession| be |context|'s [=XRPresentationContext/session=].
+  1. If |prevSession| is equal to |session| abort these steps.
+  1. If |prevSession| is not <code>null</code>:
+    1. If |prevSession|'s {{XRSession/renderState}}'s {{XRRenderState/outputContext}} is equal to |context| set |prevSession|'s {{XRSession/renderState}}'s {{XRRenderState/outputContext}} to <code>null</code>.
+  1. Set |context|'s [=XRPresentationContext/session=] to |session|.
+
+</div>
+
 </section>
 
 Events {#events}
