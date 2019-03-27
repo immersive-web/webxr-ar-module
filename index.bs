@@ -66,6 +66,9 @@ spec: WebIDL; urlPrefix: https://www.w3.org/TR/WebIDL-1/#
         text: invoke the Web IDL callback function; url:es-invoking-callback-functions
 </pre>
 
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+
 <style>
   .unstable::before {
     content: "This section is not stable";
