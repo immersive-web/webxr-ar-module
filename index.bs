@@ -300,7 +300,7 @@ When the <dfn method for="XR">requestSession(|mode|)</dfn> method is invoked, th
   1. If |promise| was [=rejected=] and |immersive| is <code>true</code>, set [=pending immersive session=] to be <code>false</code>.
   1. If |promise| was [=rejected=], abort these steps.
   1. Let |session| be a new {{XRSession}}.
-  1. [=Initialize the session=] |session| with the [=session description=] given by |options|.
+  1. [=Initialize the session=] |session| with |mode|.
   1. If |immersive| is <code>true</code> set the [=active immersive session=] to |session| and set [=pending immersive session=] to <code>false</code>.
   1. Else append |session| to the [=list of inline sessions=].
   1. [=/Resolve=] |promise| with |session|.
@@ -393,8 +393,8 @@ enum XREnvironmentBlendMode {
 When an {{XRSession}} is created, the user agent MUST <dfn>initialize the session</dfn> by running the following steps:
 
   1. Let |session| be the newly created {{XRSession}} object.
-  1. Let |options| be the {{XRSessionCreationOptions}} passed to {{requestSession()}}.
-  1. Initialize |session|'s {{XRSession/mode}} to |options| {{XRSessionCreationOptions/mode}} value.
+  1. Let |mode| be the {{XRSessionMode}} passed to {{requestSession()}}.
+  1. Initialize |session|'s {{XRSession/mode}} to |mode|.
   1. [=Initialize the render state=].
   1. If no other features of the user agent have done so already, perform the necessary platform-specific steps to initialize the device's tracking and rendering capabilities.
 
