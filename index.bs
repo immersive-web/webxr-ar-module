@@ -141,7 +141,7 @@ Introduction {#intro}
 
 Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications are now broadly available to consumers, offering an immersive computing platform with both new opportunities and challenges. The ability to interact directly with immersive hardware is critical to ensuring that the web is well equipped to operate as a first-class citizen in this environment.
 
-Immersive computing introduces strict requirements for high-precision, low-latency communication in order to deliver an acceptable experience. It also brings unique [[#security|security]] concerns for a platform like the web. The WebXR Device API provides the interfaces necessary to enable developers to build compelling, comfortable, and safe immersive applications on the web across a wide variety of hardware formfactors.
+Immersive computing introduces strict requirements for high-precision, low-latency communication in order to deliver an acceptable experience. It also brings unique [[#security|security]] concerns for a platform like the web. The WebXR Device API provides the interfaces necessary to enable developers to build compelling, comfortable, and safe immersive applications on the web across a wide variety of hardware form factors.
 
 Other web interfaces, such as the {{RelativeOrientationSensor}} and {{AbsoluteOrientationSensor}}, can be repurposed to surface input from some devices to polyfill the WebXR Device API in limited situations. These interfaces cannot support multiple features of high-end immersive experiences, however, such as [=6DoF=] tracking, presentation to headset peripherals, or tracked input devices.
 
@@ -721,7 +721,7 @@ An {{XRSpace}} describes an entity that is tracked by the [=/XR device=]'s track
 };
 </pre>
 
-Each {{XRSpace}} has a <dfn for="XRSpace">session</dfn> which is set to the {{XRSession}} that created the {{XRSpace}.
+Each {{XRSpace}} has a <dfn for="XRSpace">session</dfn> which is set to the {{XRSession}} that created the {{XRSpace}}.
 
 XRReferenceSpace {#xrreferencespace-interface}
 ------------------
