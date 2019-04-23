@@ -2,7 +2,7 @@
 Shortname: webxr
 Title: WebXR Device API
 Group: immersivewebwg
-Status: w3c/ED
+Status: ED
 TR: https://www.w3.org/TR/webxr/
 ED: https://immersive-web.github.io/webxr/
 Repository: immersive-web/webxr
@@ -782,7 +782,7 @@ Note: Changing the {{originOffset}} between pose queries in a single [=XR animat
 
 The <dfn attribute for="XRReferenceSpace">onreset</dfn> attribute is an [=Event handler IDL attribute=] for the {{reset}} event type.
 
-<div class="algorithm" data-algorithm="create-frame-of-reference">
+<div class="algorithm" data-algorithm="create-reference-space">
 
 When an {{XRReferenceSpace}} is requested, the user agent MUST <dfn>create a reference space</dfn> by running the following steps:
 
