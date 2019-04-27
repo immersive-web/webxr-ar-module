@@ -1193,7 +1193,7 @@ Gamepad API Integration {#gamepad-api-integration}
 {{Gamepad}} instances returned by an {{XRInputSource}}'s {{XRInputSource/gamepad}} attribute behave as described by the <a href="https://w3c.github.io/gamepad/">Gamepad API</a>, with several additional behavioral restrictions:
 
   - {{XRInputSource/gamepad}} MUST NOT be included in the array returned by {{navigator.getGamepads()}}.
-  - {{XRInputSource/gamepad}}'s {{Gamepad/index}} attribute MUST be <code>-1</code>.
+  - {{XRInputSource/gamepad}}'s {{Gamepad/index}} attribute MUST be <code>0</code>.
   - {{XRInputSource/gamepad}}'s {{Gamepad/connected}} attribute MUST be <code>true</code> until the {{XRInputSource}} is removed from the array returned by {{XRSession/getInputSources()}} or the {{XRSession}} is ended.
 
 ISSUE: <a href="https://github.com/immersive-web/webxr/issues/550">GitHub #550</a> - Additional restrictions, still under discussion, will be applied to the formatting of the {{XRInputSource/gamepad}}'s {{Gamepad/id}} attribute.
