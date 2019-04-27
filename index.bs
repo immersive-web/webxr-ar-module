@@ -227,7 +227,7 @@ An {{XR}} object has a <dfn>list of XR devices</dfn> (a [=/list=] of [=/XR devic
 
 An {{XR}} object has an <dfn for=XR>XR device</dfn> (null or [=/XR device=]) which is initially null and represents the active [=/XR device=] from the [=list of XR devices=].
 
-The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MAY reuse the cached [=list of XR devices=]. Enumerating the devices [=should not initialize device tracking=]. After the first enumeration the user agent SHOULD begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices.
+The user agent MUST be able to <dfn>enumerate XR devices</dfn> attached to the system, at which time each available device is placed in the [=list of XR devices=]. Subsequent algorithms requesting enumeration MUST reuse the cached [=list of XR devices=]. Enumerating the devices [=should not initialize device tracking=]. After the first enumeration the user agent MUST begin monitoring device connection and disconnection, adding connected devices to the [=list of XR devices=] and removing disconnected devices.
 
 <div class="algorithm" data-algorithm="xr-device-selection">
 
