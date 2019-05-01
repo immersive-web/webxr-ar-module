@@ -756,15 +756,17 @@ enum XRReferenceSpaceType {
   "unbounded"
 };
 
-[SecureContext, Exposed=Window] interface XRReferenceSpace : XRSpace {
-  attribute XRRigidTransform originOffset;
+[SecureContext, Exposed=Window]
+interface XRReferenceSpace : XRSpace {
+  XRReferenceSpace getOffsetReferenceSpace(XRRigidTransform originOffset);
+
   attribute EventHandler onreset;
 };
 </pre>
 
 Each {{XRReferenceSpace}} has a <dfn for="XRReferenceSpace">type</dfn>, which is an {{XRReferenceSpaceType}}.
 
-An {{XRReferenceSpace}} is obtained by calling {{XRSession/requestReferenceSpace()}}, which creates an instance of an {{XRReferenceSpace}} or an interface extending it, determined by the {{XRReferenceSpaceType}} enum value passed into the call. The type indicates the tracking behavior that the reference space will exhibit:
+An {{XRReferenceSpace}} is most frequently obtained by calling {{XRSession/requestReferenceSpace()}}, which creates an instance of an {{XRReferenceSpace}} or an interface extending it, determined by the {{XRReferenceSpaceType}} enum value passed into the call. The type indicates the tracking behavior that the reference space will exhibit:
 
   - Passing a type of <dfn enum-value for="XRReferenceSpaceType">identity</dfn> creates an {{XRReferenceSpace}} instance. It represents a reference space where the [=viewer=] is always at the [=native origin=]. Only the {{XRSession/viewerSpace}} and {{XRInputSource/targetRaySpace}}'s of {{XRInputSource}}'s with an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/screen}} can be spatially related to an {{identity}} reference space.
 
@@ -782,12 +784,6 @@ Devices that support any of the following {{XRReferenceSpaceType}}s MUST support
 
 Note: The {{position-disabled}} type is primarily intended for use with pre-rendered media such as panoramic photos or videos. It should not be used for most other media types due to user discomfort associated with the lack of a neck model or full positional tracking.
 
-<section class="unstable">
-The <dfn attribute for="XRReferenceSpace">originOffset</dfn> attribute gets and sets the {{XRReferenceSpace}}'s [=XRSpace/origin offset=]. Changes to the {{originOffset}} take effect immediately, and subsequent poses queried with the {{XRReferenceSpace}} will take into account the [=effective origin=].
-
-Note: Changing the {{originOffset}} between pose queries in a single [=XR animation frame=] is not advised, since it will cause inconsistencies in the tracking data and rendered output.
-</section>
-
 The <dfn attribute for="XRReferenceSpace">onreset</dfn> attribute is an [=Event handler IDL attribute=] for the {{reset}} event type.
 
 <div class="algorithm" data-algorithm="create-reference-space">
@@ -801,6 +797,18 @@ When an {{XRReferenceSpace}} is requested, the user agent MUST <dfn>create a ref
   1. Initialize |referenceSpace|'s [=XRReferenceSpace/type=] to be |type|.
   1. Initialize [=XRSpace/session=] to be |session|.
   1. Return |referenceSpace|.
+
+</div>
+
+<div class="algorithm" data-algorithm="get-offset-space">
+The <dfn method for="XRReferenceSpace">getOffsetReferenceSpace(|originOffset|)</dfn> method MUST perform the following steps when invoked:
+
+  1. Let |base| be the {{XRReferenceSpace}} the method was called on.
+  1. If |base| is an instance of {{XRBoundedReferenceSpace}}, let |offsetSpace| be a new {{XRBoundedReferenceSpace}} and set |offsetSpace|'s {{boundsGeometry}} to |base|'s {{boundsGeometry}}, with each point transformed by the {{XRRigidTransform/inverse}} of |originOffset|.
+  1. Else let |offsetSpace| be a new {{XRReferenceSpace}}.
+  1. Set |offsetSpace|'s [=native origin=] to |base|'s [=native origin=].
+  1. Set |offsetSpace|'s [=origin offset=] to the result of [=multiply transforms|multiplying=] |originOffset| by |base|'s [=origin offset=].
+  1. Return |offsetSpace|.
 
 </div>
 
