@@ -1251,22 +1251,22 @@ In order to report a {{Gamepad/mapping}} of {{GamepadMappingType/xr-standard}} t
   </thead>
   <tbody>
     <tr>
-      <td>axis[0]</td>
+      <td>axes[0]</td>
       <td>Primary Touchpad/Joystick X</td>
       <td>Yes</td>
     </tr>
     <tr>
-      <td>axis[1]</td>
+      <td>axes[1]</td>
       <td>Primary Touchpad/Joystick Y</td>
       <td>Yes</td>
     </tr>
     <tr>
-      <td>axis[2]</td>
+      <td>axes[2]</td>
       <td>Secondary Touchpad/Joystick X</td>
       <td>No</td>
     </tr>
     <tr>
-      <td>axis[3]</td>
+      <td>axes[3]</td>
       <td>Secondary Touchpad/Joystick Y</td>
       <td>No</td>
     </tr>
