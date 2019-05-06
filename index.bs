@@ -1055,17 +1055,17 @@ The <dfn constructor for="XRRay">XRRay(|origin|, |direction|)</dfn> constructor 
 
 <div class="algorithm" data-algorithm="construct-ray-transform">
 
-  The <dfn constructor for="XRRay">XRRay(|transform|)</dfn> constructor MUST perform the following steps when invoked:
+The <dfn constructor for="XRRay">XRRay(|transform|)</dfn> constructor MUST perform the following steps when invoked:
+
+  1. Let |ray| be a new {{XRRay}}.
+  1. Initialize |ray|'s {{XRRay/origin}} to <code>{ x: 0.0, y: 0.0, z: 0.0, w: 1.0 }</code>.
+  1. Initialize |ray|'s {{XRRay/direction}} to <code>{ x: 0.0, y: 0.0, z: -1.0, w: 0.0 }</code>.
+  1. Multiply |ray|'s {{XRRay/origin}} by the |transform|'s {{XRRigidTransform/matrix}} and set |ray| to the result.
+  1. Multiply |ray|'s {{XRRay/direction}} by the |transform|'s {{XRRigidTransform/matrix}} and set |ray| to the result.
+  1. [=Normalize=] the {{DOMPointReadOnly/x}}, {{DOMPointReadOnly/y}}, and {{DOMPointReadOnly/z}} components of |ray|'s {{XRRay/direction}}
+  1. Return |ray|.
   
-    1. Let |ray| be a new {{XRRay}}.
-    1. Initialize |ray|'s {{XRRay/origin}} to <code>{ x: 0.0, y: 0.0, z: 0.0, w: 1.0 }</code>.
-    1. Initialize |ray|'s {{XRRay/direction}} to <code>{ x: 0.0, y: 0.0, z: -1.0, w: 0.0 }</code>.
-    1. Multiply |ray|'s {{XRRay/origin}} by the |transform|'s {{XRRigidTransform/matrix}} and set |ray| to the result.
-    1. Multiply |ray|'s {{XRRay/direction}} by the |transform|'s {{XRRigidTransform/matrix}} and set |ray| to the result.
-    1. [=Normalize=] the {{DOMPointReadOnly/x}}, {{DOMPointReadOnly/y}}, and {{DOMPointReadOnly/z}} components of |ray|'s {{XRRay/direction}}
-    1. Return |ray|.
-    
-  </div>
+</div>
 
 The <dfn attribute for="XRRay">origin</dfn> attribute defines the 3-dimensional point in space that the ray originates from, given in meters. The {{XRRay/origin}}'s {{DOMPointReadOnly/w}} attribute MUST be <code>1.0</code>.
 
@@ -1212,7 +1212,7 @@ In order to report a {{Gamepad/mapping}} of {{GamepadMappingType/xr-standard}} t
 <table class="tg">
   <thead>
     <tr>
-      <th>Button</th>
+      <th>Buttons</th>
       <th><code>xr-standard</code> Location</th>
       <th>Required</th>
     </tr>
@@ -1244,7 +1244,7 @@ In order to report a {{Gamepad/mapping}} of {{GamepadMappingType/xr-standard}} t
 <table class="tg"s>
   <thead>
     <tr>
-      <th>Axis</th>
+      <th>Axes</th>
       <th><code>xr-standard</code> Location</th>
       <th>Required</th>
     </tr>
