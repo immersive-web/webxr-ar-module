@@ -31,10 +31,10 @@ In addition to a targeting ray, all input sources provide a mechanism for the us
 ## Basic usage
 
 ### Enumerating input sources
-Calling the `getInputSources()` function on an `XRSession` will return a list of all `XRInputSource`s that the user agent considers active. The properties of an `XRInputSource` object are immutable. If a device can be manipulated in such a way that these properties can change, the `XRInputSource` will be removed from the array and a new entry created.
+The `inputSources` attribute on an `XRSession` returns a list of all `XRInputSource`s that the user agent considers active. The properties of an `XRInputSource` object are immutable. If a device can be manipulated in such a way that these properties can change, the `XRInputSource` will be removed from the array and a new entry created.
 
 ```js
-let inputSources = xrSession.getInputSources();
+let inputSources = xrSession.inputSources;
 ```
 
 When input sources are added to or removed from the list of available input sources the `inputsourceschange` event must be fired on the `XRSession` object to indicate that any cached copies of the list should be refreshed. In addition, the `inputsourceschange` event will also fire once after the session creation callback completes. This event is of the type `XRInputSourceChangeEvent` and will contain three attributes: `session` is associated session being changed, `added` is the new input sources, and `removed` is the input sources that will no longer be reported.
@@ -50,7 +50,7 @@ function onSessionStarted(session) {
 
 let xrInputSources = null;
 function onInputSourcesChange(event) {
-  xrInputSources = event.session.getInputSources();
+  xrInputSources = event.session.inputSources;
 }
 ```
 
@@ -92,7 +92,7 @@ function onSessionStarted(session) {
 All three events are `XRInputSourceEvent` events. When fired the event's `inputSource` attribute will contain the `XRInputSource` that produced the event. The event's `frame` attribute will contain a valid `XRFrame` that can be used to call `getPose()` at the time the selection event occurred. Calling the frame's `getViewerPose()` method will throw an `InvalidState` error. (The viewer's pose can still be queried by passing an `XRReferenceSpace` of type `viewer` to `XRFrame.getPose()`.)
 
 ### Transient input sources
-Some input sources are only be added to the list of input sources while an action is occurring. For example, those with an `targetRayMode` of 'screen' or those with `targetRayMode` of 'gaze' which are triggered by a voice command. In these cases, `XRInputSource` is only present in the array returned by `getInputSources()` during the lifetime of the action. In this circumstance, the order of events is as follows:
+Some input sources are only be added to the list of input sources while an action is occurring. For example, those with an `targetRayMode` of 'screen' or those with `targetRayMode` of 'gaze' which are triggered by a voice command. In these cases, `XRInputSource` is only present in the `inputSources` array during the lifetime of the action. In this circumstance, the order of events is as follows:
 1. Optionally `pointerdown`
 1. `inputsourceschange` for add
 1. `selectstart`
@@ -106,7 +106,7 @@ Some input sources are only be added to the list of input sources while an actio
 Input sources that are instantaneous, without a clear start and end point such as a verbal command like "Select", will still fire all events in the sequence.
 
 ### Choosing a preferred input source
-Many platforms support multiple input sources concurrently. Examples of this are left/right handed motion controllers or hand tracking combined with a 0DOF clicker. Since `xrSession.getInputSources()` returns all connected input sources, an application may choose to take into consideration the most recently used input sources when rendering UI hints, such as a cursor, ray or highlight.
+Many platforms support multiple input sources concurrently. Examples of this are left/right handed motion controllers or hand tracking combined with a 0DOF clicker. Since `xrSession.inputSources` returns all connected input sources, an application may choose to take into consideration the most recently used input sources when rendering UI hints, such as a cursor, ray or highlight.
 
 To simplify the sample code throughout this explainer, an example is provided which shows one potential way to set a `preferredInputSource`.
 
@@ -120,7 +120,7 @@ function onSelectStart(event) {
 }
 
 function onInputSourceChanged(event) {
-  xrInputSources = event.session.getInputSources();
+  xrInputSources = event.session.inputSources;
 
   // Choose an appropriate default from available inputSources, such as 
   // prioritizing based on the value of targetRayMode: 'screen' over 
@@ -382,7 +382,7 @@ This is a partial IDL and is considered additive to the core IDL found in the ma
 //
 
 partial interface XRSession {
-  FrozenArray<XRInputSource> getInputSources();
+  readonly attribute XRInputSourceArray inputSources;
   
   attribute EventHandler onselect;
   attribute EventHandler onselectstart;
@@ -413,6 +413,13 @@ interface XRInputSource {
   readonly attribute XRSpace targetRaySpace;
   readonly attribute XRSpace? gripSpace;
   readonly attribute Gamepad? gamepad;
+};
+
+[SecureContext, Exposed=Window]
+interface XRInputSourceArray {
+  iterable<XRInputSource>;
+  readonly attribute unsigned long length;
+  getter XRInputSource(unsigned long index);
 };
 
 //

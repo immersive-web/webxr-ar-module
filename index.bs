@@ -363,12 +363,11 @@ enum XREnvironmentBlendMode {
   // Attributes
   readonly attribute XREnvironmentBlendMode environmentBlendMode;
   [SameObject] readonly attribute XRRenderState renderState;
+  readonly attribute XRInputSourceArray inputSources;
 
   // Methods
   void updateRenderState(optional XRRenderStateInit state);
   Promise&lt;XRReferenceSpace&gt; requestReferenceSpace(XRReferenceSpaceType type);
-
-  FrozenArray&lt;XRInputSource&gt; getInputSources();
 
   long requestAnimationFrame(XRFrameRequestCallback callback);
   void cancelAnimationFrame(long handle);
@@ -472,13 +471,7 @@ When the <dfn method for="XRSession">requestReferenceSpace(|options|)</dfn> meth
 
 </div>
 
-<div class="algorithm" data-algorithm="get-input-sources">
-
-When the <dfn method for="XRSession">getInputSources()</dfn> method is invoked, the user agent MUST run the following steps:
-
-  1. Return the current [=list of active input sources=].
-
-</div>
+The <dfn attribute for="XRSession">inputSources</dfn> attribute returns the {{XRSession}}'s [=list of active input sources=].
 
 Each {{XRSession}} has a <dfn>environment blending mode</dfn> value, which is a enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user's surrounding environment.
 
@@ -518,7 +511,7 @@ We still need to document what happens when we <dfn lt="blur all sessions">blur 
 
 We still need to document what happens when we <dfn>poll the device pose</dfn> (This is <a href="https://github.com/immersive-web/webxr/issues/480">filed</a>.)
 
-We still need to document how the<dfn>list of active input sources</dfn> is maintained. (This is <a href="https://github.com/immersive-web/webxr/issues/465">filed</a>.)
+We still need to document how the <dfn>list of active input sources</dfn> is maintained. (This is <a href="https://github.com/immersive-web/webxr/issues/465">filed</a>.)
 
 XRRenderState {#xrrenderstate-interface}
 -------------
@@ -1163,6 +1156,27 @@ NOTE: {{XRInputSource}}s with a <code>null</code> {{gamepad}} can still fire {{s
 </section>
 
 <section class="unstable">
+XRInputSourceArray {#xrinputsourcearray-interface}
+------------------
+
+An {{XRInputSourceArray}} represents a [=/list=] of {{XRInputSource}}s. It is used in favor of a [=/frozen array type=] when the contents of the [=/list=] are expected to change over time, such as with the {{XRSession}} {{XRSession/inputSources}} attribute.
+
+<pre class="idl">
+[SecureContext, Exposed=Window]
+interface XRInputSourceArray {
+  iterable&lt;XRInputSource&gt;;
+  readonly attribute unsigned long length;
+  getter XRInputSource(unsigned long index);
+};
+</pre>
+
+The <dfn attribute for="XRInputSourceArray">length</dfn> attribute of {{XRInputSourceArray}} indicates how many {{XRInputSource}}s are contained within the {{XRInputSourceArray}}.
+
+The <dfn export for="XRInputSourceArray">[=/indexed property getter=]</dfn> of {{XRInputSourceArray}} retrieves the {{XRInputSource}} at the provided index.
+
+</section>
+
+<section class="unstable">
 Gamepad API Integration {#gamepad-api-integration}
 -----------------------
 
@@ -1170,7 +1184,7 @@ Gamepad API Integration {#gamepad-api-integration}
 
   - {{XRInputSource/gamepad}} MUST NOT be included in the array returned by {{navigator.getGamepads()}}.
   - {{XRInputSource/gamepad}}'s {{Gamepad/index}} attribute MUST be <code>0</code>.
-  - {{XRInputSource/gamepad}}'s {{Gamepad/connected}} attribute MUST be <code>true</code> until the {{XRInputSource}} is removed from the array returned by {{XRSession/getInputSources()}} or the {{XRSession}} is ended.
+  - {{XRInputSource/gamepad}}'s {{Gamepad/connected}} attribute MUST be <code>true</code> until the {{XRInputSource}} is removed from the [=list of active input sources=] or the {{XRSession}} is ended.
 
 The {{XRInputSource/gamepad}}'s {{Gamepad/id}} also enforces additional behavioral restrictions, and MUST conform to the following rules:
 
