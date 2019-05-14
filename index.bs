@@ -74,6 +74,7 @@ spec: Gamepad; urlPrefix: https://w3c.github.io/gamepad/#
     type: attribute; text: connected; for: Gamepad; url: dom-gamepad-connected
     type: attribute; text: buttons; for: Gamepad; url: dom-gamepad-buttons
     type: attribute; text: axes; for: Gamepad; url: dom-gamepad-axes
+spec:html; type:method; for:HTMLCanvasElement; text:getContext(contextId); url: https://html.spec.whatwg.org/multipage/canvas.html#dom-canvas-getcontext
 </pre>
 
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -1557,7 +1558,7 @@ The [=XR compatible=] boolean can be set either at context creation time or afte
 
 <div class="algorithm" data-algorithm="create-with-compatible-xr-device">
 
-When the {{HTMLCanvasElement}}'s getContext() method is invoked with a {{WebGLContextAttributes}} dictionary with {{xrCompatible}} set to <code>true</code>, run the following steps:
+When the {{HTMLCanvasElement}}'s {{HTMLCanvasElement/getContext()}} method is invoked with a {{WebGLContextAttributes}} dictionary with {{xrCompatible}} set to <code>true</code>, run the following steps:
 
   1. [=Create the WebGL context=] as usual, ensuring it is created on a [=compatible graphics adapter=] for the [=XR/XR device=].
   1. Let |context| be the newly created WebGL context.
