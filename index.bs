@@ -743,11 +743,11 @@ When the <dfn method for="XRFrame">getViewerPose(|referenceSpace|)</dfn> method 
 
 <div class="algorithm unstable" data-algorithm="get-pose">
 
-When the <dfn method for="XRFrame">getPose(|sourceSpace|, |destinationSpace|)</dfn> method is invoked, the user agent MUST run the following steps:
+When the <dfn method for="XRFrame">getPose(|space|, |referenceSpace|)</dfn> method is invoked, the user agent MUST run the following steps:
 
   1. Let |frame| be the target {{XRFrame}}
   1. Let |pose| be a new {{XRPose}} object.
-  1. [=Populate the pose=] of |sourceSpace| in |destinationSpace| at the time represented by |frame| into |pose|.
+  1. [=Populate the pose=] of |space| in |referenceSpace| at the time represented by |frame| into |pose|.
   1. Return |pose|.
 
 </div>
@@ -776,16 +776,16 @@ The [=effective origin=] of an {{XRSpace}} can only be observed in the coordinat
 
 <div class="algorithm" data-algorithm="populate-the-pose">
 
-To <dfn>populate the pose</dfn> of a {{XRSpace}} |sourceSpace| in an  {{XRSpace}} |destinationSpace| at the time represented by a {{XRFrame}} |frame| into an {{XRPose}} |pose|, the user agent MUST run the following steps:
+To <dfn>populate the pose</dfn> of a {{XRSpace}} |space| in an  {{XRSpace}} |referenceSpace| at the time represented by a {{XRFrame}} |frame| into an {{XRPose}} |pose|, the user agent MUST run the following steps:
 
   1. 1. If |frame|'s [=active=] boolean is <code>false</code>, throw an {{InvalidStateError}} and abort these steps.
   1. Let |session| be |frame|'s {{XRFrame/session}} object.
-  1. If |sourceSpace|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
-  1. If |destinationSpace|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
-  1. If |destinationSpace|'s pose cannot be determined relative to |sourceSpace| at the time represented by |frame|, set |pose| to <code>null</code>.
+  1. If |space|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
+  1. If |referenceSpace|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
+  1. If |referenceSpace|'s pose cannot be determined relative to |space| at the time represented by |frame|, set |pose| to <code>null</code>.
   1. Let |transform| be |pose|'s {{XRPose/transform}}.
-  1. Set |transform|'s {{XRRigidTransform/position}} to the location of |sourceSpace|'s [=effective origin=] in |destinationSpace|'s [=coordinate system=].
-  1. Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |sourceSpace|'s [=effective origin=] in |destinationSpace|'s [=coordinate system=].
+  1. Set |transform|'s {{XRRigidTransform/position}} to the location of |space|'s [=effective origin=] in |referenceSpace|'s [=coordinate system=].
+  1. Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |space|'s [=effective origin=] in |referenceSpace|'s [=coordinate system=].
 
 </div>
 
@@ -918,7 +918,7 @@ The <dfn attribute for="XRView">eye</dfn> attribute describes is the [=view/eye=
 
 The <dfn attribute for="XRView">projectionMatrix</dfn> attribute is the [=view/projection matrix=] of the underlying [=view=]. It is <b>strongly recommended</b> that applications use this matrix without modification or decomposition. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
 
-The <dfn attribute for="XRView">transform</dfn> attribute is the {{XRRigidTransform}} of the viewpoint.
+The <dfn attribute for="XRView">transform</dfn> attribute is the {{XRRigidTransform}} of the viewpoint. It represents the position and orientation of the viewpoint in the {{XRReferenceSpace}} provided in {{XRFrame/getViewerPose()}}.
 
 NOTE: The {{XRView/transform}} can be used to position camera objects in many rendering libraries. If a more traditional view matrix is needed by the application one can be retrieved by calling `view.transform.inverse.matrix`.
 </section>
@@ -1039,6 +1039,8 @@ The <dfn attribute for="XRRigidTransform">orientation</dfn> attribute is a quate
 
 The <dfn attribute for="XRRigidTransform">matrix</dfn> attribute returns the transform described by the {{XRRigidTransform/position}} and {{XRRigidTransform/orientation}} attributes as a [=matrix=]. This attribute SHOULD be lazily evaluated.
 
+NOTE: This matrix when premultiplied onto a column vector will rotate the vector by the 3D rotation described by {{XRRigidTransform/orientation}}, and then translate it by {{XRRigidTransform/position}}. Mathematically in column-vector notation, this is <code>M = T * R</code>, where <code>T</code> is a translation matrix corresponding to {{XRRigidTransform/position}} and  <code>R</code> is a rotation matrix corresponding to {{XRRigidTransform/orientation}}.
+
 The <dfn attribute for="XRRigidTransform">inverse</dfn> attribute returns a {{XRRigidTransform}} which, if applied to an object that had previously been transformed by the original {{XRRigidTransform}}, would undo the transform and return the object to its initial pose. This attribute SHOULD be lazily evaluated. The {{XRRigidTransform}} returned by {{inverse}} MUST return the originating {{XRRigidTransform}} as its {{inverse}}.
 
 An {{XRRigidTransform}} with a {{XRRigidTransform/position}} of <code>{ x: 0, y: 0, z: 0 w: 1 }</code> and an {{XRRigidTransform/orientation}} of <code>{ x: 0, y: 0, z: 0, w: 1 }</code> is known as an <dfn>identity transform</dfn>.
@@ -1055,6 +1057,7 @@ To <dfn lt="multiply transforms">multiply two {{XRRigidTransform}}s</dfn>, |B| a
 
 |result| is a transform from |A|'s source space to |B|'s destination space.
 
+NOTE: This is equivalent to constructing an {{XRRigidTransform}} whose {{XRRigidTransform/orientation}} is the composition of the orientation of |A| and |B|, and whose {{XRRigidTransform/position}} is equal to |A|'s {{XRRigidTransform/position}} rotated by |B|'s {{XRRigidTransform/orientation}}, added to |B|'s {{XRRigidTransform/position}}.
 </div>
 
 XRRay {#xrray-interface}
@@ -1126,7 +1129,7 @@ An {{XRPose}} describes a position and orientation in space relative to an {{XRS
 };
 </pre>
 
-The <dfn attribute for="XRPose">transform</dfn> attribute describes the {{XRRigidTransform}} between two {{XRSpace}}.
+The <dfn attribute for="XRPose">transform</dfn> attribute describes the position and orientation relative to the reference {{XRSpace}}.
 
 <section class="unstable">
 The <dfn attribute for="XRPose">emulatedPosition</dfn> attribute MUST be <code>false</code> if the {{XRPose/transform}}.{{XRRigidTransform/position}} values are based on sensor readings, or <code>true</code> if the position values are software estimations, such as those provided by a neck or arm model.
