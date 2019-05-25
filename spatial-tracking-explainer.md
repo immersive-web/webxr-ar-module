@@ -151,9 +151,9 @@ function onSessionStarted(session) {
 As with `local` reference spaces, `XRViewerPose` objects retrieved using `local-floor` reference spaces may include position information as well as rotation information and as such must be resilient to position changes despite not being dependent on receiving them. For example, if a teleport is intended to place the user's feet at a chosen virtual world location, the calculated offset must take into account that the user's current tracked position may be a couple of steps away from the floor-level origin.
 
 ### Viewer reference spaces
-A _viewer_ reference space's origin is always at the position and orientation of the viewer device. This type of reference space is primarily used for creating inline experiences with no tracking of the viewer relative to it's physical environment. Instead, developers may use `XRReferenceSpace.originOffset` which is described in the [Application supplied transforms section](#application-supplied-transforms). An example usage of an _viewer_ reference space is a furniture viewer that will use [click-and-drag controls](#click-and-drag-view-controls) to rotate the furniture. It also supports cases where the developer wishes to avoid displaying any type of tracking consent prompt to the user prior while displaying inline content.
+A _viewer_ reference space's origin is always at the position and orientation of the viewer device. This type of reference space is primarily used for creating inline experiences with no tracking of the viewer relative to it's physical environment. Instead, developers may use `XRReferenceSpace.getOffsetReferenceSpace()` which is described in the [Application supplied transforms section](#application-supplied-transforms). An example usage of an _viewer_ reference space is a furniture viewer that will use [click-and-drag controls](#click-and-drag-view-controls) to rotate the furniture. It also supports cases where the developer wishes to avoid displaying any type of tracking consent prompt to the user prior while displaying inline content.
 
-This type of reference space is requested with a type of `viewer` and returns a basic `XRReferenceSpace`. `XRViewerPose` objects retrieved with this reference space will have a `transform` that is equal to the reference space's `originOffset` and the `XRView` matrices will be offset accordingly.
+This type of reference space is requested with a type of `viewer` and returns a basic `XRReferenceSpace`. `XRViewerPose` objects retrieved with this reference space will have an identity `transform` (plus an offset if the reference space was created by calling `getOffsetReferenceSpace()`). `XRView`s populated from a `viewer` reference space will still be offset from the `XRViewerPose`'s `transform` in the same manner as all other reference spaces.
 
 ```js
 let xrSession = null;
@@ -183,7 +183,7 @@ The `viewer` reference space is also useful when the developer wants to compare 
 ```
 
 ## Spatial relationships
-One of the core features of any XR platform is its ability to track spatial relationships. Tracking the location of the viewer is perhaps the simplest example, but many other XR platform features, such as hit testing or anchors, are rooted in understanding the space the XR system is operating in. In WebXR any feature that tracks spatial relationships is built on top of the `XRSpace` interface. Each `XRSpace` represents something being tracked by the XR system, such as an `XRReferenceSpace`, and it is only possible to know their relative locations on a frame-by-frame basis.
+One of the core features of any XR platform is its ability to track spatial relationships. Tracking the location and orientation, referred to together as a "pose", of the viewer is perhaps the simplest example, but many other XR platform features, such as hit testing or anchors, are rooted in understanding the space the XR system is operating in. In WebXR any feature that tracks spatial relationships is built on top of the `XRSpace` interface. Each `XRSpace` represents something being tracked by the XR system, such as an `XRReferenceSpace`, and each has a "native origin" that represents it's position and orientation in the XR tracking system. It is only possible to know the location of one `XRSpace` relative to another `XRSpace` on a frame-by-frame basis.
 
 ### Coordinates in 3D Space
 
@@ -210,19 +210,20 @@ An `XRRay` object includes both an `origin` and `direction`, both given as `DOMP
 ### Application-supplied transforms
 Frequently developers will want to provide an additional, artificial transform on top of the user's tracked motion to allow the user to navigate larger virtual scenes than their tracking systems or physical space allows. This effect is traditionally accomplished by mathematically combining the API-provided transform with the desired additional application transforms. WebXR offers developers a simplification to ensure that all tracked values, such as viewer and input poses, are transformed consistently.
 
-Developers can specify application-specific transforms by setting the `originOffset` attribute of any `XRReferenceSpace`. The `originOffset` is initialized to an identity transform, and any values queried using the `XRReferenceSpace` will be offset by the `position` and `orientation` the `originOffset` describes. The `XRReferenceSpace`'s `originOffset` can be updated at any time and will immediately take effect, meaning that any subsequent poses queried with the `XRReferenceSpace` will take into account the new `originOffset`. Previously queried values will not be altered. Changing the `originOffset` between pose queries in a single frame is not advised, since it will cause inconsistencies in the tracking data and rendered output.
+Developers can specify application-specific transforms by calling the getOffsetReferenceSpace() method of any XRReferenceSpace. This returns a new XRReferenceSpace where the XRRigidTransform passed to getOffsetReferenceSpace() describes the position and orientation of the offset space's origin in relation to the base reference space's origin. Specifically, the originOffset contains the pose of the new origin relative to the base reference space's origin. If the base reference space was also created with getOffsetReferenceSpace(), the overall offset is the combination of both transforms.
 
 A common use case for this attribute would be for a "teleportation" mechanic, where the user "jumps" to a new point in the virtual scene, after which the selected point is treated as the new virtual origin which all tracked motion is relative to.
 
 ```js
-// Teleport the user a certain number of meters along the X, Y, and Z axes
-function teleport(deltaX, deltaY, deltaZ) {
-  let currentOrigin = xrReferenceSpace.originOffset;
-  xrReferenceSpace.originOffset = new XRRigidTransform(
-      { x: currentOrigin.position.x + deltaX,
-        y: currentOrigin.position.y + deltaY,
-        z: currentOrigin.position.z + deltaZ },
-      currentOrigin.orientation);
+// Teleport the user a certain number of meters along the X, Y, and Z axes,
+// for example deltaX=1 means the virtual world view changes as if the user had
+// taken a 1m step to the right, so the new reference space pose should
+// have its X value increased by 1m.
+function teleportRelative(deltaX, deltaY, deltaZ) {
+  // Move the user by moving the reference space in the opposite direction,
+  // adjusting originOffset's position by the inverse delta.
+  xrReferenceSpace = xrReferenceSpace.getOffsetReferenceSpace(
+      new XRRigidTransform({ x: -deltaX, y: -deltaY, z: -deltaZ });
 }
 ```
 
@@ -230,7 +231,7 @@ function teleport(deltaX, deltaY, deltaZ) {
 There are several circumstances in which developers may choose to relate content in different reference spaces.
 
 #### Inline to Immersive
-It is expected that developers will often choose to preview `immersive` experiences with a similar experience `inline`. In this situation, users often expect to see the scene from the same perspective when they make the transition from `inline` to `immersive`. To accomplish this, developers should grab the `transform` of the last `XRViewerPose` retrieved using the `inline` session's `XRReferenceSpace` and set it as the `originOffset` of the `immersive` session's `XRReferenceSpace`. The same logic applies in the reverse when exiting `immersive`.
+It is expected that developers will often choose to preview `immersive` experiences with a similar experience `inline`. In this situation, users often expect to see the scene from the same perspective when they make the transition from `inline` to `immersive`. To accomplish this, developers should grab the `transform` of the last `XRViewerPose` retrieved using the `inline` session's `XRReferenceSpace` and pass it to `getOffsetReferenceSpace()` on the `immersive` session's `XRReferenceSpace` to produce an appropriately offset reference space. The same logic applies in the reverse when exiting `immersive`.
 
 #### Unbounded to Bounded 
 When building an experience that is predominantly based on an `unbounded` reference space, developers may occasionally choose to switch to a `bounded-floor` reference space. For example, a whole-home renovation experience might choose to switch to a `bounded-floor` reference space for reviewing a furniture selection library.  If necessary to continue displaying content belonging to the previous reference space, developers may call the `XRFrame`'s `getPose()` method to re-parent nearby virtual content to the new reference space.
@@ -238,7 +239,7 @@ When building an experience that is predominantly based on an `unbounded` refere
 ### Click-and-drag view controls
 Frequently with inline sessions it's desirable to have the view rotate when the user interacts with the inline canvas. This is useful on devices without tracking capabilities to allow users to still view the full scene, but can also be desirable on devices with some tracking capabilities, such as a mobile phone or tablet, as a way to adjust the users view without requiring them to physically turn around.
 
-By updating the `originOffset` in response to pointer events, pages can provide basic click-and-drag style controls to allow the user to pan the view around the immersive scene.
+By calling `getOffsetReferenceSpace()` in response to pointer events, pages can provide basic click-and-drag style controls to allow the user to pan the view around the immersive scene.
 
 ```js
 // Amount to rotate, in radians, per CSS pixel of pointer movement.
@@ -246,23 +247,16 @@ const RAD_PER_PIXEL = Math.PI / 180.0; // (1 degree)
 
 // Pan the view any time pointer move events happen over the canvas.
 function onPointerMove(event) {
-  let s = Math.sin(event.movementX * RAD_PER_PIXEL);
-  let c = Math.cos(event.movementX * RAD_PER_PIXEL);
-  let o = xrReferenceSpace.originOffset.orientation;
-
-  xrReferenceSpace.originOffset = new XRRigidTransform(
-      // Keep the previous position
-      xrReferenceSpace.originOffset.position,
-      // Quaternion math to rotate the previous orientation around the Y axis.
-      {
-        x: o.x * c - o.z * s,
-        y: o.y * c + o.w * s,
-        z: o.z * c + o.x * s,
-        w: o.w * c - o.y * s
-      });
+  // Computes a quaternion to rotate around the Y axis.
+  let s = Math.sin(event.movementX * RAD_PER_PIXEL * 0.5);
+  let c = Math.cos(event.movementX * RAD_PER_PIXEL * 0.5);
+  xrReferenceSpace = xrReferenceSpace.getOffsetReferenceSpace(
+    new XRRigidTransform(null, { x: 0, y: s, z: 0, w: c }));
 }
 inlineCanvas.addEventListener('pointermove', onPointerMove);
 ```
+
+It should be noted that by repeatedly applying new offsets to previously offset reference spaces, numerical errors may accumulate over time. Whether that is problematic or not depends on the application, but when precision is necessary a better pattern would be to always call `getOffsetReferenceSpace()` on the original base space with the full offset computed by the application.
 
 ## Practical-usage guidelines
 
@@ -442,7 +436,7 @@ enum XRReferenceSpaceType {
 };
 
 [SecureContext, Exposed=Window] interface XRReferenceSpace : XRSpace {
-  attribute XRRigidTransform originOffset;
+  XRReferenceSpace getOffsetReferenceSpace(XRRigidTransform originOffset);
 
   attribute EventHandler onreset;
 };
