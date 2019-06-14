@@ -1624,14 +1624,12 @@ The <dfn constructor for="XRWebGLLayer">XRWebGLLayer(|session|, |context|, |laye
   1. <dl class="switch">
       <dt> If |layer|'s [=XRWebGLLayer/composition disabled=] boolean is <code>false</code>:
       <dd>
-        1. If |session|'s [=mode=] is {{XRSessionMode/inline}}, throw an {{InvalidStateError}} and abort these steps.
         1. Initialize |layer|'s {{XRWebGLLayer/antialias}} to |layerInit|'s {{XRWebGLLayerInit/antialias}} value.
         1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to a new [=opaque framebuffer=] created with |context|.
-        1. Initialize the |layer|'s [=swap chain=].
+        1. Initialize a [=swap chain=] for |layer| that is compatible with |session|'s [=/XR device=].
         1. If |layer|'s [=swap chain=] was unable to be created for any reason, throw an {{OperationError}} and abort these steps.
       <dt> Otherwise
       <dd>
-        1. If |session|'s [=mode=] is not {{XRSessionMode/inline}}, throw an {{InvalidStateError}} and abort these steps.
         1. Initialize |layer|'s {{XRWebGLLayer/antialias}} to |layer|'s {{XRWebGLLayer/context}}'s [=actual context parameters=] {{WebGLContextAttributes|antialias}} value.
         1. Initialize |layer|'s {{XRWebGLLayer/framebuffer}} to <code>null</code>.
     </dl>
