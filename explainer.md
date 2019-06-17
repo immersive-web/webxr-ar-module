@@ -397,7 +397,7 @@ function beginInlineXRSession() {
         // Inline sessions must have an appropriately constructed WebGL layer
         // set as the baseLayer prior to rendering. (This code assumes the WebGL
         // context has already been made XR compatible.)
-        let glLayer = new XRWebGLLayer(session, gl, { compositionDisabled: true });
+        let glLayer = new XRWebGLLayer(session, gl);
         session.updateRenderState({ baseLayer: glLayer });
         onSessionStarted(session);
       })
@@ -658,7 +658,6 @@ enum XREye {
 //
 
 dictionary XRWebGLLayerInit {
-  boolean compositionDisabled = false;
   boolean antialias = true;
   boolean depth = true;
   boolean stencil = false;
