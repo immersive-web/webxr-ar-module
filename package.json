@@ -3,8 +3,7 @@
   "description": "WebXR Device API Specification",
   "version": "0.0.1",
   "devDependencies": {
-    "browser-sync": "^2.18.8",
-    "shelljs": "^0.7.7"
+    "browser-sync": "^2.18.8"
   },
   "scripts": {
     "start": "npm run dev",
