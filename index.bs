@@ -258,7 +258,7 @@ Each time the [=list of XR devices=] changes the user agent should <dfn>select a
     </dl>
   1. If this is the first time devices have been enumerated or |oldDevice| equals the [=XR/XR device=], abort these steps.
   1. [=Shut down the session|Shut down=] any active {{XRSession}}s.
-  1. Set the [=XR compatible=] boolean of all {{WebGLRenderingContextBase}} instances to `false`.
+  1. Set the [=XR compatible=] boolean of all {{WebGLRenderingContextBase}} instances to <code>false</code>.
   1. [=Queue a task=] to [=fire an event=] named {{devicechange!!event}} on the [=context object=].
 
 </div>
@@ -890,16 +890,35 @@ The [=effective origin=] of an {{XRSpace}} can only be observed in the coordinat
 
 <div class="algorithm" data-algorithm="populate-the-pose">
 
-To <dfn>populate the pose</dfn> of an {{XRSpace}} |space| in an  {{XRSpace}} |baseSpace| at the time represented by an {{XRFrame}} |frame| into an {{XRPose}} |pose|, the user agent MUST run the following steps:
+To <dfn>populate the pose</dfn> of an {{XRSpace}} |space| in an {{XRSpace}} |baseSpace| at the time represented by an {{XRFrame}} |frame| into an {{XRPose}} |pose|, the user agent MUST run the following steps:
 
-  1. 1. If |frame|'s [=active=] boolean is <code>false</code>, throw an {{InvalidStateError}} and abort these steps.
+  1. If |frame|'s [=active=] boolean is <code>false</code>, throw an {{InvalidStateError}} and abort these steps.
   1. Let |session| be |frame|'s {{XRFrame/session}} object.
   1. If |space|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
   1. If |baseSpace|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
-  1. If |baseSpace|'s pose cannot be determined relative to |space| at the time represented by |frame|, set |pose| to <code>null</code>.
   1. Let |transform| be |pose|'s {{XRPose/transform}}.
-  1. Set |transform|'s {{XRRigidTransform/position}} to the location of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
-  1. Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
+  1. Query the [=/XR device=]'s tracking system for |space|'s pose relative to |baseSpace| at the time represented by |frame|, then perform the following steps:
+    <dl class="switch">
+      <dt> If the tracking system provides a [=6DoF=] pose whose position is actively tracked or statically known for |space|'s pose relative to |baseSpace|:
+        <dd> Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
+        <dd> Set |transform|'s {{XRRigidTransform/position}} to the position of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
+        <dd> Set |pose|'s {{XRPose/emulatedPosition}} to <code>false</code>.
+
+      <dt> Else if the tracking system provides a [=3DoF=] pose or a [=6DoF=] pose whose position is neither actively tracked nor statically known for |space|'s pose relative to |baseSpace|:
+        <dd> Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
+        <dd> Set |transform|'s {{XRRigidTransform/position}} to the tracking system's best estimate of the position of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=]. This MAY include a computed offset such as a neck or arm model. If a position estimate is not available, the last known position MUST be used.
+        <dd> Set |pose|'s {{XRPose/emulatedPosition}} to <code>true</code>.
+
+      <dt> Else if |space|'s pose relative to |baseSpace| has been determined in the past:
+        <dd> Set |transform|'s {{XRRigidTransform/position}} to the last known position of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
+        <dd> Set |transform|'s {{XRRigidTransform/orientation}} to the last known orientation of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
+        <dd> Set |pose|'s {{XRPose/emulatedPosition}} boolean to <code>true</code>.
+      
+      <dt> Else if |space|'s pose relative to |baseSpace| has never been determined:
+        <dd> Set |pose| to <code>null</code>.
+    </dl>
+
+NOTE: The {{XRPose}}'s {{XRPose/emulatedPosition}} boolean does not indicate whether |baseSpace|'s position is emulated or not, only whether evaluating |space|'s position relative to |baseSpace| relies on emulation. For example, a controller with [=3DoF=] tracking would report poses with an {{XRPose/emulatedPosition}} of <code>true</code> when its {{targetRaySpace}} or {{gripSpace}} are queried against an {{XRReferenceSpace}}, but would report an {{XRPose/emulatedPosition}} of <code>false</code> if the pose of the {{targetRaySpace}} was queried in {{gripSpace}}, because the relationship between those two spaces should be known exactly.
 
 </div>
 
@@ -935,7 +954,7 @@ An {{XRReferenceSpace}} is most frequently obtained by calling {{XRSession/reque
 
   - Passing a type of <dfn enum-value for="XRReferenceSpaceType">local</dfn> creates an {{XRReferenceSpace}} instance. It represents a tracking space with a [=native origin=] near the user's head at the time of creation. The exact position and orientation will be initialized based on the conventions of the underlying platform. When using this reference space the user is not expected to move beyond their initial position much, if at all, and tracking is optimized for that purpose. For devices with [=6DoF=] tracking, {{local}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
 
-  - Passing a type of <dfn enum-value for="XRReferenceSpaceType">local-floor</dfn> creates an {{XRReferenceSpace}} instance. It represents a tracking space with a [=native origin=] at the floor in a safe position for the user to stand. The `y` axis equals `0` at floor level, with the `x` and `z` position and orientation initialized based on the conventions of the underlying platform. If the floor level isn't known it MUST be estimated. When using this reference space the user is not expected to move beyond their initial position much, if at all, and tracking is optimized for that purpose. For devices with [=6DoF=] tracking, {{local-floor}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
+  - Passing a type of <dfn enum-value for="XRReferenceSpaceType">local-floor</dfn> creates an {{XRReferenceSpace}} instance. It represents a tracking space with a [=native origin=] at the floor in a safe position for the user to stand. The <code>y</code> axis equals <code>0</code> at floor level, with the <code>x</code> and <code>z</code> position and orientation initialized based on the conventions of the underlying platform. If the floor level isn't known it MUST be estimated. When using this reference space the user is not expected to move beyond their initial position much, if at all, and tracking is optimized for that purpose. For devices with [=6DoF=] tracking, {{local-floor}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
 
   - Passing a type of <dfn enum-value for="XRReferenceSpaceType">bounded-floor</dfn> creates an {{XRBoundedReferenceSpace}} instance if supported by the [=/XR device=] and the {{XRSession}}. It represents a tracking space with it's [=native origin=] at the floor, where the user is expected to move within a pre-established boundary, given as the {{boundsGeometry}}. Tracking in a {{bounded-floor}} reference space is optimized for keeping the [=native origin=] and {{boundsGeometry}} stable relative to the user's environment.
 
@@ -1009,7 +1028,7 @@ interface XRBoundedReferenceSpace : XRReferenceSpace {
 };
 </pre>
 
-The origin of an {{XRBoundedReferenceSpace}} MUST be positioned at the floor, such that the `y` axis equals `0` at floor level. The `x` and `z` position and orientation are initialized based on the conventions of the underlying platform, typically expected to be near the center of the room facing in a logical forward direction.
+The origin of an {{XRBoundedReferenceSpace}} MUST be positioned at the floor, such that the <code>y</code> axis equals <code>0</code> at floor level. The <code>x</code> and <code>z</code> position and orientation are initialized based on the conventions of the underlying platform, typically expected to be near the center of the room facing in a logical forward direction.
 
 Note: Other XR platforms sometimes refer to the type of tracking offered by a {{bounded-floor}} reference space as "room scale" tracking. An {{XRBoundedReferenceSpace}} is not intended to describe multi-room spaces, areas with uneven floor levels, or very large open areas. Content that needs to handle those scenarios should use an {{unbounded}} reference space.
 
@@ -1070,7 +1089,7 @@ The <dfn attribute for="XRView">projectionMatrix</dfn> attribute is the [=view/p
 
 The <dfn attribute for="XRView">transform</dfn> attribute is the {{XRRigidTransform}} of the viewpoint. It represents the position and orientation of the viewpoint in the {{XRReferenceSpace}} provided in {{XRFrame/getViewerPose()}}.
 
-NOTE: The {{XRView/transform}} can be used to position camera objects in many rendering libraries. If a more traditional view matrix is needed by the application one can be retrieved by calling `view.transform.inverse.matrix`.
+NOTE: The {{XRView/transform}} can be used to position camera objects in many rendering libraries. If a more traditional view matrix is needed by the application one can be retrieved by calling <code>view.transform.inverse.matrix</code>.
 </section>
 
 XRViewport {#xrviewport-interface}
@@ -1338,9 +1357,7 @@ An {{XRPose}} describes a position and orientation in space relative to an {{XRS
 
 The <dfn attribute for="XRPose">transform</dfn> attribute describes the position and orientation relative to the base {{XRSpace}}.
 
-<section class="unstable">
-The <dfn attribute for="XRPose">emulatedPosition</dfn> attribute MUST be <code>false</code> if the {{XRPose/transform}}.{{XRRigidTransform/position}} values are based on sensor readings, or <code>true</code> if the position values are software estimations, such as those provided by a neck or arm model.
-</section>
+The <dfn attribute for="XRPose">emulatedPosition</dfn> attribute is <code>false</code> when the {{XRPose/transform}} represents an actively tracked [=6DoF=] pose based on sensor readings, or <code>true</code> if its {{XRRigidTransform/position}} value includes a computed offset, such as that provided by a neck or arm model.
 
 XRViewerPose {#xrviewerpose-interface}
 -------------
@@ -1607,7 +1624,7 @@ Devices that lack one of the optional inputs listed in the tables above MUST pre
 
 Additional buttons or axes may be exposed after these reserved indices, and SHOULD appear in order of decreasing importance. Related axes (such both axes of a joystick) SHOULD be grouped and, if applicable, SHOULD appear in X, Y, Z order. If a device has both a touchpad and a joystick the UA MAY designate whichever it chooses to be the primary axis-based input. Buttons reserved by the UA or platform MUST NOT be exposed.
 
-NOTE: This diagram demonstrates how two potential controllers would be exposed with the `xr-standard` mapping. <img src="images/xr-standard-mapping.svg" alt="Simple 'xr-standard' controller and Advanced 'xr-standard' controller">
+NOTE: This diagram demonstrates how two potential controllers would be exposed with the {{GamepadMappingType/xr-standard}} mapping. <img src="images/xr-standard-mapping.svg" alt="Simple 'xr-standard' controller and Advanced 'xr-standard' controller">
 </section>
 
 Layers {#layers}
@@ -2007,7 +2024,9 @@ A user agent MUST dispatch a <dfn event for="XRSession">selectend</dfn> event on
 
 A user agent MUST dispatch a <dfn event for="XRSession">select</dfn> event on an {{XRSession}} when one of its {{XRInputSource}}s has fully completed a [=primary action=]. The event MUST be of type {{XRInputSourceEvent}}.
 
-A user agent MUST dispatch a <dfn event for="XRReferenceSpace">reset</dfn> event on an {{XRReferenceSpace}} when discontinuities of the [=native origin=] or [=effective origin=] occur, i.e. there are significant changes in the origin’s position or orientation relative to the user’s environment. For example, after the user recalibrates their XR device or if the XR device automatically shifts its origin after losing and regaining tracking. This MUST happen when the {{boundsGeometry}} changes for an {{XRBoundedReferenceSpace}}. The event MUST be of type {{XRReferenceSpaceEvent}}, and MUST be dispatched prior to the execution of any [=XR animation frame=]s that make use of the new origin.
+A user agent MUST dispatch a <dfn event for="XRReferenceSpace">reset</dfn> event on an {{XRReferenceSpace}} when discontinuities of the [=native origin=] or [=effective origin=] occur, i.e. there are significant changes in the origin’s position or orientation relative to the user’s environment. (For example: After user recalibration of their XR device or if the XR device automatically shifts its origin after losing and regaining tracking.) A {{reset}} event MUST also be dispatched when the {{boundsGeometry}} changes for an {{XRBoundedReferenceSpace}}. A {{reset}} event MUST NOT be dispatched if the [=viewer=]'s pose experiences discontinuities but the {{XRReferenceSpace}}'s origin physical mapping remains stable, such as when the [=viewer=] momentarily loses and regains tracking within the same tracking area. A {{reset}} event also MUST NOT be dispatched as an {{unbounded}} reference space makes small adjustments to its [=native origin=] over time to maintain space stability near the user, if a significant discontinuity has not occurred. The event MUST be of type {{XRReferenceSpaceEvent}}, and MUST be dispatched prior to the execution of any [=XR animation frame=]s that make use of the new origin.
+
+NOTE: Jumps in [=viewer=] position can be handled by the application by observing the {{XRPose/emulatedPosition}} boolean. If a jump in [=viewer=] position coincides with {{XRPose/emulatedPosition}} switching from <code>true</code> to <code>false</code>, it indicates that the [=viewer=] has regained tracking and their new position represents a correction from the previously emulated values. For experiences without a "teleportation" mechanic, where the [=viewer=] can move through the virtual world without moving physically, this is generally the application's desired behavior. However, if an experience does provide a "teleportation" mechanic, it may be needlessly jarring to jump the [=viewer=]'s position back after tracking recovery. Instead, when such an application recovers tracking, it can simply resume the experience from the [=viewer=]'s current position in the virtual world by absorbing that sudden jump in position into its teleportation offset. To do so, the developer calls {{getOffsetReferenceSpace()}} to create a replacement reference space with its |originOffset| adjusted by the amount that the [=viewer=]'s position jumped since the previous frame.
 
 Security, Privacy, and Comfort Considerations {#security}
 =============================================
