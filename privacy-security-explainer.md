@@ -36,13 +36,10 @@ It is often necessary to be sure of user intent before exposing sensitive inform
 A User Agent may use implied consent based, for example, on the install status of a web application or frequency and recency of visits. Given the sensitivity of XR data, caution is strongly advised when relying on implicit signals. 
 
 ### Explicit consent
-It is often useful to get explicit consent from the user before exposing sensitive information. When gathering explicit user consent, User Agents present an explanation of what is being requested and provide users the option to decline. Requests for user consent can be presented in many visual forms based on the features being protected and User Agent choice. While often associated with the [Permissions API](https://www.w3.org/TR/permissions/), the concept of user consent does not have exact overlap.
-
-### Timing of XR-related consent prompts
-**TODO** Fill this in with what was agreed up on in [#720](https://github.com/immersive-web/webxr/issues/720).
+It is often useful to get explicit consent from the user before exposing sensitive information. When gathering explicit user consent, User Agents present an explanation of what is being requested and provide users the option to decline. Requests for user consent can be presented in many visual forms based on the features being protected and User Agent choice. While often associated with the [Permissions API](https://www.w3.org/TR/permissions/), the concept of user consent does not have exact overlap. If sensitive data is protected by explicit consent and will be used during an `XRSession`, and consent has not already been obtained, it is strongly recommended that User Agents display the associated consent prompt prior to the session being created.
 
 ### Duration of consent
-**TODO** Fill this in with what was agreed up on in [#721](https://github.com/immersive-web/webxr/issues/721).
+It is recommended that once explicit consent is granted for a specific [origin](https://html.spec.whatwg.org/multipage/origin.html) that this consent persist until the [browsing context](https://html.spec.whatwg.org/multipage/browsers.html#browsing-context) has ended. User agents may choose to lengthen or shorten this consent duration based upon implicit or explicit signals of user intent, but implementations are advised to exercise caution when deviating from this recommendation, particularly when relying on implicit signals.
 
 ### Querying consent status
 **TODO** Fill this in with what is agreed upon in [#722](https://github.com/immersive-web/webxr/issues/722) and [#725](https://github.com/immersive-web/webxr/issues/725).
