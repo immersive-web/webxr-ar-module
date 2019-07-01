@@ -687,9 +687,7 @@ The <dfn attribute for="XRRenderState">depthNear</dfn> attribute defines the dis
 
 The <dfn attribute for="XRRenderState">inlineVerticalFieldOfView</dfn> attribute defines the default vertical field of view in radians used when computing projection matrices for {{XRSessionMode/inline}} {{XRSession}}s. The projection matrix calculation also takes into account the aspect ratio of the [=XRRenderState/output canvas=]. This value MUST be <code>null</code> for [=immersive sessions=].
 
-<section class="unstable">
 The <dfn attribute for="XRRenderState">baseLayer</dfn> attribute defines an {{XRWebGLLayer}} which the [=XR compositor=] will obtain images from.
-</section>
 
 Animation Frames {#animation-frames}
 ----------------
@@ -792,43 +790,10 @@ function onXRSessionEnded() {
 Applications which use {{XRSessionMode/"inline"}} sessions for rendering to the HTML document do not need to take any special steps to coordinate the animation loops, since the user agent will automatically suspend the animation loops of any {{XRSessionMode/"inline"}} sessions while an [=immersive session=] is active.
 </div>
 
-<section class="unstable">
 The XR Compositor {#compositor}
 -----------------
 
 The user agent MUST maintain an <dfn>XR Compositor</dfn> which handles presentation to the [=XRSession/XR device=] and frame timing. The compositor MUST use an independent rendering context whose state is isolated from that of any WebGL contexts used as {{XRWebGLLayer}} sources to prevent the page from corrupting the compositor state or reading back content from other pages. the compositor MUST also run in separate thread or processes to decouple performance of the page from the ability to present new imagery to the user at the appropriate framerate.
-
-The [=XR Compositor=] has a list of layer images, which is initially empty.
-
-<!--There are no direct interfaces to the compositor, but applications may submit bitmaps to be composited via the layer system and observe the frame timing via calls to {{XRSession/requestAnimationFrame()}}. The compositor consists of two different loops, assumed to be running in separate threads or processes. The <dfn>Frame Loop</dfn>, which drives the page script, and the <dfn>Render Loop</dfn>, which continuously presents imagery provided by the Frame Loop to the XR device. The render loop maintains its own copy of the session's layer list. Communication between the two loops is synchronized with a lock that limits access to the render loop's layer list.
-
-Both loops are started when a session is successfully created. The compositor's render loop goes through the following steps:
-
-  1. The layer lock is acquired.
-  1. The render loop's layer list images are composited and presented to the device.
-  1. The layer lock is released.
-  1. Notify the frame loop that a frame has been completed.
-  1. return to step 1.
-
-The render loop MUST throttle its throughput to the refresh rate of the XR device. The exact point in the loop that is most effective to block at may differ between platforms, so no perscription is made for when that should happen.
-
-Upon session creation, the following steps are taken to start the frame loop:
-
-  1. A new promise is created and set as the session's current frame promise. The current frame promise is returned any time XRCanvasLayer/commit() is called.
-  1. The {{sessionchange}} event is fired.
-  1. The promise returned from {{requestSession()}} is resolved.
-
-Then, the frame loop performs the following steps while the session is active:
-
-  1. The render loop's layer lock is acquired.
-  1. Any dirty layers in the session's layer list are copied to the render loop's layer list.
-  1. The render loop's layer lock is released.
-  1. Wait for the render loop to signal that a frame has been completed.
-  1. The session's current frame promise is set as the the previous frame promise.
-  1. A new promise is created and set as the session's current frame promise.
-  1. The previous frame promise is resolved.
-  1. Once the promise has been resolved, return to step 1.-->
-</section>
 
 Frame Loop {#frame}
 ==========
@@ -1102,14 +1067,11 @@ enum XREye {
 
 The <dfn attribute for="XRView">eye</dfn> attribute describes is the [=view/eye=] of the underlying [=view=]. This attribute's primary purpose is to ensure that pre-rendered stereo content can present the correct portion of the content to the correct eye.
 
-<section class="unstable">
 The <dfn attribute for="XRView">projectionMatrix</dfn> attribute is the [=view/projection matrix=] of the underlying [=view=]. It is <b>strongly recommended</b> that applications use this matrix without modification or decomposition. Failure to use the provided projection matrices when rendering may cause the presented frame to be distorted or badly aligned, resulting in varying degrees of user discomfort.
-</section>
 
 The <dfn attribute for="XRView">transform</dfn> attribute is the {{XRRigidTransform}} of the viewpoint. It represents the position and orientation of the viewpoint in the {{XRReferenceSpace}} provided in {{XRFrame/getViewerPose()}}.
 
 NOTE: The {{XRView/transform}} can be used to position camera objects in many rendering libraries. If a more traditional view matrix is needed by the application one can be retrieved by calling <code>view.transform.inverse.matrix</code>.
-</section>
 
 XRViewport {#xrviewport-interface}
 ------
@@ -1810,7 +1772,6 @@ The <dfn method for="XRWebGLLayer">getNativeFramebufferScaleFactor(|session|)</d
 
 </div>
 
-<section class="unstable">
 WebGL Context Compatibility {#contextcompatibility}
 ---------------------------
 
@@ -1922,7 +1883,6 @@ function onXRSessionStarted(xrSession) {
 }
 </pre>
 </div>
-</section>
 
 Events {#events}
 ========
@@ -2040,9 +2000,7 @@ A user agent MUST dispatch a <dfn event for="XRSession">visibilitychange</dfn> e
 
 A user agent MUST dispatch a <dfn event for="XRSession">end</dfn> event on an {{XRSession}} when the session ends, either by the application or the user agent. The event MUST be of type {{XRSessionEvent}}.
 
-<section class="unstable">
 A user agent MUST dispatch a <dfn event for="XRSession">inputsourceschange</dfn> event on an {{XRSession}} when the session's [=list of active XR input sources=] has changed. The event MUST be of type {{XRInputSourcesChangeEvent}}.
-</section>
 
 A user agent MUST dispatch a <dfn event for="XRSession">selectstart</dfn> event on an {{XRSession}} when one of its {{XRInputSource}}s begins its [=primary action=]. The event MUST be of type {{XRInputSourceEvent}}.
 
@@ -2094,7 +2052,6 @@ Given that the API describes hardware available to the user and its capabilities
 Integrations {#integrations}
 ============
 
-<section class="unstable">
 Feature Policy {#feature-policy}
 --------------
 This specification defines a [=policy-controlled feature=] that controls whether the {{Navigator/xr}} attribute is exposed on the {{Navigator}} object.
@@ -2102,7 +2059,6 @@ This specification defines a [=policy-controlled feature=] that controls whether
 The feature identifier for this feature is <code>"xr"</code>.
 
 The [=default allowlist=] for this feature is <code>["self"]</code>.
-</section>
 
 Acknowledgements {#ack}
 ===================
