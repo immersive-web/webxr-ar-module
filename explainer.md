@@ -137,7 +137,7 @@ function beginXRSession() {
 }
 ```
 
-In this sample, the `beginXRSession` function, which is assumed to be run by clicking the "Enter VR" button in the previous sample, requests an `XRSession` that operates in `immersive-vr` mode. The `requestSession` method returns a promise that resolves to an `XRSession` upon success. When requesting a session, the capabilities that the returned session must have, including it's XR mode, are passed in via an `XRSessionCreationOptions` dictionary.
+In this sample, the `beginXRSession` function, which is assumed to be run by clicking the "Enter VR" button in the previous sample, requests an `XRSession` that operates in `immersive-vr` mode. The `requestSession` method returns a promise that resolves to an `XRSession` upon success. In addition to the `XRSessionMode`, developers may supply an `XRSessionInit` dictionary containing the capabilities that the returned session must have. For more information, see [Feature dependencies](#feature-dependencies).
 
 If `supportsSession` resolved for a given mode, then requesting a session with the same mode should be reasonably expected to succeed, barring external factors (such as `requestSession` not being called in a user activation event for an immersive session.) The UA is ultimately responsible for determining if it can honor the request.
 
@@ -373,21 +373,9 @@ The UA may choose to present the immersive AR session's content via any type of 
 
 ## Inline sessions
 
-There are several scenarios where it's beneficial to render a scene whose view is controlled by device tracking within a 2D page. For example:
+When authoring content to be viewed immersively, it may be beneficial to use an `inline` session to view the same content in a 2D browser window. Using an inline session enables content to use a single rendering path for both inline and immersive presentation modes. It also makes switching between inline content and immersive presentation of that content easier.
 
- - Using phone rotation to view panoramic content.
- - Taking advantage of 6DoF tracking on devices with no associated headset, like [ARCore](https://developers.google.com/ar/) or [ARKit](https://developer.apple.com/arkit/) enabled phones. 
- - Making use of head-tracking features for devices like [zSpace](http://zspace.com/) systems.
-
-These scenarios can make use of inline sessions to render tracked content to the page. Using an inline session also enables content to use a single rendering path for both inline and immersive presentation modes. It also makes switching between inline content and immersive presentation of that content easier.
-
-The [`RelativeOrientationSensor`](https://w3c.github.io/orientation-sensor/#relativeorientationsensor) and [`AbsoluteOrientationSensor`](https://w3c.github.io/orientation-sensor/#absoluteorientationsensor) interfaces (see [Motion Sensors Explainer](https://w3c.github.io/motion-sensors/)) can be used to polyfill the first case.
-
-`XRWebGLLayer` created with an `inline` session will not allocate a new WebGL framebuffer but instead set the `framebuffer` attribute to `null`. That way when `framebuffer` is bound all WebGL commands will naturally execute against the WebGL context's default framebuffer and display on the page like any other WebGL content. When that layer is set as the `XRRenderState`'s `baseLayer` the inline session is able to render it's output to the page.
-
-Immersive and inline sessions may run their render loops at at different rates. During immersive sessions the UA runs the rendering loop at the XR device's native refresh rate. During inline sessions the UA runs the rendering loop at the refresh rate of page (aligned with `window.requestAnimationFrame`.) The method of computation of `XRView` projection and view matrices also differs between immersive and inline sessions, with inline sessions taking into account the output canvas dimensions and possibly the position of the users head in relation to the canvas if that can be determined.
-
-UAs may have different restrictions on inline sessions that don't apply to immersive sessions. For instance, the UA does not have to guarantee the availability of tracking data to inline sessions, and even when it does a different set of `XRReferenceSpace` types may be available to inline sessions versus immersive sessions.
+A `XRWebGLLayer` created with an `inline` session will not allocate a new WebGL framebuffer but instead set the `framebuffer` attribute to `null`. That way when `framebuffer` is bound all WebGL commands will naturally execute against the WebGL context's default framebuffer and display on the page like any other WebGL content. When that layer is set as the `XRRenderState`'s `baseLayer` the inline session is able to render it's output to the page.
 
 ```js
 function beginInlineXRSession() {
@@ -405,20 +393,72 @@ function beginInlineXRSession() {
 }
 ```
 
-The UA should not reject requests for an inline session unless the page's feature policy prevents it. `navigator.xr.supportsSession()` can still be used if a page wants to test if inline session are allowed.
+Immersive and inline sessions may run their render loops at at different rates. During immersive sessions the UA runs the rendering loop at the XR device's native refresh rate. During inline sessions the UA runs the rendering loop at the refresh rate of page (aligned with `window.requestAnimationFrame`.) The method of computation of `XRView` projection and view matrices also differs between immersive and inline sessions, with inline sessions taking into account the output canvas dimensions and possibly the position of the users head in relation to the canvas if that can be determined.
 
-```js
-function checkInlineSupport() {
-  // Check to see if the page is allowed to request inline sessions.
-  return navigator.xr.supportsSession('inline')
-      .then(() => { console.log("Inline content is supported!"); })
-      .catch((reason) => { console.log("Inline content is blocked: " + reason); });
-}
-```
+`navigator.xr.supportsSession()` will always return `true` when checking the support of `"inline"` sessions.  The UA should not reject requests for an inline session unless the page's feature policy prevents it or unless a required feature is unavailable as described in [Feature dependencies](#feature-dependencies)). For example, the following use cases all depend on additional reference space types which would need to be enabled via the `XRSessionInit`:
+ - Using phone rotation to view panoramic content.
+ - Taking advantage of 6DoF tracking on devices with no associated headset, like [ARCore](https://developers.google.com/ar/) or [ARKit](https://developer.apple.com/arkit/) enabled phones. (Note that this is not the same as `immersive-ar` as it does not provide automatic camera composition)
+ - Making use of head-tracking features for devices like [zSpace](http://zspace.com/) systems.
 
 ## Advanced functionality
 
 Beyond the core APIs described above, the WebXR Device API also exposes several options for taking greater advantage of the XR hardware's capabilities.
+
+### Feature dependencies
+Once developers have mastered session creation and rendering, they will often be interested in using additional WebXR features that may not be universally available. While developers are generally encouraged to design for progressive enhancement, some experiences may have requirements on features that are not guaranteed to be universally available. For example, an experience which requires users to move around a large physical space, such as a guided tour, would not function on an Oculus Go because it is unable to provide an [`unbounded` reference space](spatial-tracking-explainer.md#unbounded-reference-space). If an experience is completely unusable without a specific feature, it would be a poor user experience to initialize the underlying XR platform and create a session only to immediately notify the user it won't work.
+
+Features may be unavailable for a number of reasons, among which is the fact not all devices which support WebXR can support the full set of features. Another consideration is that some features expose [sensitive information](privacy-security-explainer.md#sensitive-information) which may require a clear signal of [user intent](privacy-security-explainer.md#user-intent) before functioning. Any feature which requires this signal to be provided via [explicit consent](privacy-security-explainer.md#explicit-consent) must request this consent prior to the session being created. This ensures a consistent experience across all hardware form-factors, regardless of whether the UA has a [trusted immersive UI](privacy-security-explainer.md#trusted-immersive-ui) available.
+
+WebXR allows the following features to be requested:
+* `local`
+* `local-floor`
+* `bounded-floor`
+* `unbounded`
+
+This list is currently limited to a subset of reference space types, but in the future will expand to include additional features. Some potential future features under discussion that would be candidates for this list are: eye tracking, plane detection, geo alignment, etc.
+
+Developers communicate their feature requirements by categorizing them into one of the following sequences in the `XRSessionInit` that can be passed into `xr.requestSession()`:
+* **`requiredFeatures`** This feature must be available in order for the experience to function at all. If [explicit consent](privacy-security-explainer.md#explicit-consent) is necessary, users will be prompted in response to `xr.requestSession()`. Session creation will be rejected if the feature is unavailable for the XR device, if the UA determines the user does not wish the feature enabled, or if the UA does not recognize the feature being requested. 
+* **`optionalFeatures`** The experience would like to use this feature for the entire session, but can function without it. Again, if [explicit consent](privacy-security-explainer.md#explicit-consent) is necessary, users will be prompted in response to `xr.requestSession()`. However, session creation will succeed regardless of the feature's hardware support or user intent. Developers must not assume optional features are available in the session and check the result from attempting to use them.
+
+(NOTE: `xr.supportsSession()` does not accept an `XRSessionInit` parameter and supplying one will have no effect)
+
+The following sample code represents the likely behavior of the guided tour example above. It depends on having an [`unbounded` reference space](spatial-tracking-explainer.md#unbounded-reference-space) and will reject creating the session if not available.
+
+```js
+function onEnterARClick() {
+  navigator.xr.requestSession('immersive-ar', {
+    requiredFeatures: [ 'unbounded' ]
+  })
+  .then(onSessionStarted)
+  .catch(() => {
+    // Display message to the user explaining that the experience could not
+    // be started.
+  });
+}
+```
+
+The following sample code shows an inline experience that would prefer to use motion tracking if available, but will fall back to using touch/mouse input if not.
+
+```js
+navigator.xr.requestSession('inline', {
+  optionalFeatures: [ 'local' ]
+})
+.then(onSessionStarted);
+
+function onSessionStarted(session) {
+  session.requestReferenceSpace('local')
+  .then(onLocalReferenceSpaceCreated)
+  .catch(() => {
+    session.requestReferenceSpace('viewer').then(onViewerReferenceSpaceCreated);
+  });
+}
+```
+
+Some features recognized by the UA but not explicitly listed in these arrays will be enabled by default for a session. This is only done if the feature does not require a signal of [user intent](privacy-security-explainer.md#user-intent) nor impact performance or the behavior of other features when enabled. At this time, only the following features will be enabled by default:
+| Feature | Circumstances |
+| ------ | ------- |
+| `local` | Successfully created session of mode `immersive-ar` or `immersive-vr` |
 
 ### Controlling rendering quality
 
@@ -564,10 +604,15 @@ partial interface Navigator {
   readonly attribute XR xr;
 };
 
+dictionary XRSessionInit {
+  sequence<DOMString> requiredFeatures;
+  sequence<DOMString> optionalFeatures;
+}
+
 [SecureContext, Exposed=Window] interface XR : EventTarget {
   attribute EventHandler ondevicechange;
   Promise<void> supportsSession(XRSessionMode mode);
-  Promise<XRSession> requestSession(XRSessionMode mode);
+  Promise<XRSession> requestSession(XRSessionMode mode, optional XRSessionInit);
 };
 
 //

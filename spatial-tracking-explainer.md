@@ -310,6 +310,14 @@ Immersive sessions will always be able to provide `viewer`, `local`, and `local-
 let xrSession = null;
 let xrReferenceSpace = null;
 
+function onButtonClick() {
+  navigator.xr.requestSession('immersive-vr', { optionalFeatures: ['bounded-floor'] })
+    .then(onSessionStarted)
+    .catch(err => {
+      window.requestAnimationFrame(onDrawFrame);
+    });
+}
+
 function onSessionStarted(session) {
   xrSession = session;
   // First request an bounded-floor frame of reference.
@@ -329,7 +337,23 @@ function onSessionStarted(session) {
 }
 ```
 
-### Floor alignment
+While many sites will be able to provide this fallback, for some sites this will not be possible.  Under these circumstances, it is instead preferable for session creation to reject rather than spin up immersive display/tracking systems only to immediately exit the session. To make session creation contingent on support for a specific reference space types, add them to `XRSessionInit.requiredFeatures`. For more information, see [Feature dependencies](explainer.md#feature-dependencies)
+
+```js
+let xrSession = null;
+let xrReferenceSpace = null;
+
+function beginXRSession() {
+  navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['unbounded'] })
+    .then(onSessionStarted)
+    .catch(err => {
+      // Display message to the user explaining that the experience could not
+      // be started.
+    });
+}
+```
+
+### Floor Alignment
 Some XR hardware with inside-out tracking has users establish "known spaces" that can be used to easily provide `bounded-floor` and `local-floor` reference spaces.  On inside-out XR hardware which does not intrinsically provide these known spaces, the User Agent must still provide `local-floor` reference spaces. It may do so by estimating a floor level, but may not present any UI at the time the reference space is requested.  
 
 Additionally, XR hardware with orientation-only tracking may also provide an emulated value for the floor offset of a `local-floor` reference space. On these devices, it is recommended that the User Agent or underlying platform provide a setting for users to customize this value.
