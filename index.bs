@@ -19,8 +19,6 @@ Editor: Nell Waliczek 93109, Amazon [Microsoft until 2018] https://amazon.com/, 
 
 Abstract: This specification describes support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web.
 
-Ignored Vars: layer
-
 Warning: custom
 Custom Warning Title: Unstable API
 Custom Warning Text:
@@ -35,9 +33,9 @@ spec:infra;
 </pre>
 
 <pre class="anchors">
-urlPrefix: https://www.w3.org/TR/hr-time/
+spec: High Resolution Time; urlPrefix: https://www.w3.org/TR/hr-time/
     type: typedef; text: DOMHighResTimeStamp; url: dom-domhighrestimestamp
-urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
+spec: WebGL; urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
     type: interface; text: WebGLFramebuffer; url: WebGLFramebuffer
     type: interface; text: WebGLRenderingContext; url: WebGLRenderingContext
     type: interface; text: WebGLRenderingContextBase; url: WebGLRenderingContextBase
@@ -57,15 +55,13 @@ urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/1.0/
     type: dfn; text: handle the context loss; url:#CONTEXT_LOST
     type: dfn; text: Restore the context; url: #restore-the-drawing-buffer
     type: dfn; text: actual context parameters; url: #actual-context-parameters
-urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/2.0/
+spec: WebGL 2.0; urlPrefix: https://www.khronos.org/registry/webgl/specs/latest/2.0/
     type: interface; text: WebGL2RenderingContext; url: WebGL2RenderingContext
-urlPrefix: https://w3c.github.io/orientation-sensor/; spec: ORIENTATION-SENSOR
+spec: Orientation Sensor; urlPrefix: https://w3c.github.io/orientation-sensor/
     type: interface; text: AbsoluteOrientationSensor
     type: interface; text: RelativeOrientationSensor
-
 spec: WebIDL; urlPrefix: https://www.w3.org/TR/WebIDL-1/#
-    type: dfn
-        text: invoke the Web IDL callback function; url:es-invoking-callback-functions
+    type: dfn; text: invoke the Web IDL callback function; url:es-invoking-callback-functions
 spec: Gamepad; urlPrefix: https://w3c.github.io/gamepad/#
     type: interface; text: Gamepad; url: dom-gamepad
     type: interface; text: GamepadButton; url: dom-gamepadbutton
@@ -150,7 +146,7 @@ spec: dom; urlPrefix: https://dom.spec.whatwg.org/#
 </style>
 
 Introduction {#intro}
-=============
+============
 
 <section class="non-normative">
 
@@ -197,10 +193,10 @@ Most applications using the WebXR Device API will follow a similar usage pattern
 </section>
 
 Model {#model}
-==============
+=====
 
 XR device {#xr-device-concept}
-----
+---------
 
 An <dfn for="">XR device</dfn> is a physical unit of hardware that can present imagery to the user. On desktop clients, this is usually a headset peripheral. On mobile clients, it may represent the mobile device itself in conjunction with a viewer harness. It may also represent devices without stereo-presentation capabilities but with more advanced tracking.
 
@@ -214,7 +210,7 @@ Initialization {#initialization}
 ==============
 
 navigator.xr {#navigator-xr-attribute}
-----
+------------
 
 <pre class="idl">
 partial interface Navigator {
@@ -366,7 +362,7 @@ navigator.xr.requestSession("immersive-vr").then((session) => {
 </div>
 
 XRSessionMode {#xrsessionmode-enum}
--------------------------
+-------------
 
 The {{XRSessionMode}} enum defines the modes that an {{XRSession}} can operate in.
 
@@ -799,7 +795,7 @@ Frame Loop {#frame}
 ==========
 
 XRFrame {#xrframe-interface}
--------------------
+-------
 
 An {{XRFrame}} represents a snapshot of the state of all of the tracked objects for an {{XRSession}}. Applications can acquire an {{XRFrame}} by calling {{XRSession/requestAnimationFrame()}} on an {{XRSession}} with an {{XRFrameRequestCallback}}. When the callback is called it will be passed an {{XRFrame}}. Events which need to communicate tracking state, such as the {{select}} event, will also provide an {{XRFrame}}.
 
@@ -856,7 +852,7 @@ Spaces {#spaces}
 A core feature of the WebXR Device API is the ability to provide spatial tracking. Spaces are the interface that enable applications to reason about how tracked entities are spatially related to the user's physical environment and each other.
 
 XRSpace {#xrspace-interface}
-------------------
+-------
 
 An {{XRSpace}} represents a virtual coordinate system with an origin that corresponds to a physical location. Spatial data that is requested from the API or given to the API is always expressed in relation to a specific {{XRSpace}} at the time of a specific {{XRFrame}}. Numeric values such as pose positions are coordinates in that space relative to its origin. The interface is intentionally opaque.
 
@@ -907,7 +903,7 @@ NOTE: The {{XRPose}}'s {{XRPose/emulatedPosition}} boolean does not indicate whe
 </div>
 
 XRReferenceSpace {#xrreferencespace-interface}
-------------------
+----------------
 
 An {{XRReferenceSpace}} is one of several common {{XRSpace}}s that applications can use to establish a spatial relationship with the user's physical environment.
 
@@ -1001,7 +997,7 @@ The <dfn method for="XRReferenceSpace">getOffsetReferenceSpace(|originOffset|)</
 Note: It's expected that some applications will use {{getOffsetReferenceSpace()}} to implement scene navigation controls based on mouse, keyboard, touch, or gamepad input. This will result in {{getOffsetReferenceSpace()}} being called frequently, at least once per-frame during periods of active input. As a result UAs are strongly encouraged to make the creation of new {{XRReferenceSpace}}s with {{getOffsetReferenceSpace()}} a lightweight operation.
 
 XRBoundedReferenceSpace {#xrboundedreferencespace-interface}
-----------------------------
+-----------------------
 
 {{XRBoundedReferenceSpace}} extends {{XRReferenceSpace}} to include {{boundsGeometry}}, indicating the pre-confingured boundaries of the users space.
 
@@ -1074,7 +1070,7 @@ The <dfn attribute for="XRView">transform</dfn> attribute is the {{XRRigidTransf
 NOTE: The {{XRView/transform}} can be used to position camera objects in many rendering libraries. If a more traditional view matrix is needed by the application one can be retrieved by calling <code>view.transform.inverse.matrix</code>.
 
 XRViewport {#xrviewport-interface}
-------
+----------
 
 An {{XRViewport}} object describes a viewport, or rectangular region, of a graphics surface.
 
@@ -1341,7 +1337,7 @@ The <dfn attribute for="XRPose">transform</dfn> attribute describes the position
 The <dfn attribute for="XRPose">emulatedPosition</dfn> attribute is <code>false</code> when the {{XRPose/transform}} represents an actively tracked [=6DoF=] pose based on sensor readings, or <code>true</code> if its {{XRRigidTransform/position}} value includes a computed offset, such as that provided by a neck or arm model.
 
 XRViewerPose {#xrviewerpose-interface}
--------------
+------------
 
 An {{XRViewerPose}} is an {{XRPose}} describing the state of a <dfn>viewer</dfn> of the XR scene as tracked by the [=XRSession/XR device=]. A [=viewer=] may represent a tracked piece of hardware, the observed position of a users head relative to the hardware, or some other means of computing a series of viewpoints into the XR scene. {{XRViewerPose}}s can only be queried relative to an {{XRReferenceSpace}}. It provides, in addition to the {{XRPose}} values, an array of [=view=]s which include include rigid transforms to indicate the viewpoint and projection matrices. These values should be used by the application when render a frame of an XR scene.
 
@@ -1623,7 +1619,7 @@ Layers {#layers}
 NOTE: While this specification only defines the {{XRWebGLLayer}} layer, future extensions to the spec are expected to add additional layer types and the image sources that they draw from.
 
 XRWebGLLayer {#xrwebgllayer-interface}
--------
+------------
 
 An {{XRWebGLLayer}} is a layer which provides a WebGL framebuffer to render into, enabling hardware accelerated rendering of 3D graphics to be presented on the [=XRSession/XR device=].
 
@@ -1735,6 +1731,7 @@ Each {{XRWebGLLayer}} MUST have a <dfn>list of viewports</dfn> which is a [=/lis
 
 The <dfn method for="XRWebGLLayer">getViewport(|view|)</dfn> method, when invoked, MUST run the following steps:
 
+  1. Let |layer| be the target {{XRWebGLLayer}}.
   1. If |layer| was created with a different {{XRSession}} than the one that produced |view| return <code>null</code>.
   1. Let |glViewport| be the [=WebGL viewport=] from the [=list of viewports=] associated with |view|.
   1. Let |viewport| be a new {{XRViewport}} instance.
@@ -1885,7 +1882,7 @@ function onXRSessionStarted(xrSession) {
 </div>
 
 Events {#events}
-========
+======
 
 XRSessionEvent {#xrsessionevent-interface}
 --------------
@@ -1906,7 +1903,7 @@ dictionary XRSessionEventInit : EventInit {
 The <dfn attribute for="XRSessionEvent">session</dfn> attribute indicates the {{XRSession}} that generated the event.
 
 XRInputSourceEvent {#xrinputsourceevent-interface}
---------------
+------------------
 
 {{XRInputSourceEvent}}s are fired to indicate changes to the state of an {{XRInputSource}}.
 
@@ -1940,7 +1937,7 @@ When the user agent fires an {{XRInputSourceEvent}} |event| it MUST run the foll
 
 
 XRInputSourcesChangeEvent {#xrinputsourceschangeevent-interface}
---------------
+-------------------------
 
 {{XRInputSourcesChangeEvent}}s are fired to indicate changes to the {{XRInputSource}}s that are available to an {{XRSession}}.
 
@@ -1968,7 +1965,7 @@ The <dfn attribute for="XRInputSourcesChangeEvent">removed</dfn> attribute is a 
 
 
 XRReferenceSpaceEvent {#xrreferencespaceevent-interface}
------------------------
+---------------------
 
 {{XRReferenceSpaceEvent}}s are fired to indicate changes to the state of an {{XRReferenceSpace}}.
 
@@ -2061,7 +2058,7 @@ The feature identifier for this feature is <code>"xr"</code>.
 The [=default allowlist=] for this feature is <code>["self"]</code>.
 
 Acknowledgements {#ack}
-===================
+================
 
 The following individuals have contributed to the design of the WebXR Device API specification:
 
