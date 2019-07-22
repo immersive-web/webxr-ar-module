@@ -415,7 +415,7 @@ dictionary XRSessionInit {
 
 The <dfn dict-member for="XRSessionInit">requiredFeatures</dfn> array contains any [=Required features=] for the experience. If any value in the list is not a recognized [=feature name=] the {{XRSession}} will not be created. If any feature listed in the {{XRSessionInit/requiredFeatures}} array is not supported by the [=XRSession/XR Device=] or, if necessary, has not received a clear signal of [=user intent=] the {{XRSession}} will not be created.
 
-The <dfn dict-member for="XRSessionInit">optionalFeatures</dfn> array contains any [=Optional features=] for the experience. If any value in the list is not a recognized [=feature name=] it will be ignored. Features listed in the {{XRSessionInit/optionalFeatures}} array will be enabled if supported by the [=XRSession/XR Device=] and, if necessary, given a clear signal of [=user intent=], but will not block creation of the {{XRSession}} if absent. 
+The <dfn dict-member for="XRSessionInit">optionalFeatures</dfn> array contains any [=Optional features=] for the experience. If any value in the list is not a recognized [=feature name=] it will be ignored. Features listed in the {{XRSessionInit/optionalFeatures}} array will be enabled if supported by the [=XRSession/XR Device=] and, if necessary, given a clear signal of [=user intent=], but will not block creation of the {{XRSession}} if absent.
 
 The feature lists accept any string. However, in order to be a considered a valid <dfn>feature name</dfn>, the string must be a value from the following enums:
 
@@ -443,6 +443,37 @@ Some {{XRSessionMode}}s enable certain [=feature names=] as [=optional features=
 </table>
 
 The combined list of [=feature names=] given by the {{XRSessionInit/requiredFeatures}}, {{XRSessionInit/optionalFeatures}}, and [=default features=] are collectively considered the <dfn>requested features</dfn> for an {{XRSession}}.
+
+Some [=feature names=], when present in the [=requested features=] list, require that [=user intent=] to use the feature is well understood, via either [=explicit consent=] or [=implicit consent=]. The following table describes which features <dfn>require consent</dfn> prior to being enabled:
+
+<table class="tg">
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{XRReferenceSpaceType/"local"}}</td>
+      <td>{{XRSessionMode/"inline"}} sessions require consent</td>
+    </tr>
+    <tr>
+      <td>{{XRReferenceSpaceType/"local-floor"}}</td>
+      <td>Always requires consent</td>
+    </tr>
+    <tr>
+      <td>{{XRReferenceSpaceType/"bounded-floor"}}</td>
+      <td>Always requires consent</td>
+    </tr>
+    <tr>
+      <td>{{XRReferenceSpaceType/"unbounded"}}</td>
+      <td>Always requires consent</td>
+    </tr>
+  </tbody>
+</table>
+
+Note: {{XRReferenceSpaceType/"local"}} is always included in the [=requested features=] of {{XRSessionMode/"immersive-vr"}} and {{XRSessionMode/"immersive-ar"}} sessions as a [=default feature=], and as such {{XRSessionMode/"immersive-vr"}} or {{XRSessionMode/"immersive-ar"}} sessions always need to obtain [=explicit consent=] or [=implicit consent=].
 
 <div class="algorithm" data-algorithm="resolve-features">
 
@@ -702,7 +733,7 @@ Each {{XRSession}} has a <dfn for="XRSession">visibility state</dfn> value, whic
 
   - A state of <dfn enum-value for="XRVisibilityState">visible</dfn> indicates that imagery rendered by the {{XRSession}} can be seen by the user and {{XRSession/requestAnimationFrame()}} callbacks are processed at the [=XRSession/XR device=]'s native refresh rate. Input is processed by the {{XRSession}} normally.
 
-  - A state of <dfn enum-value for="XRVisibilityState">visible-blurred</dfn> indicates that imagery rendered by the {{XRSession}} may be seen by the user, but is not the primary focus. {{XRSession/requestAnimationFrame()}} callbacks MAY be throttled. Input is not processed by the {{XRSession}}.
+  - A state of <dfn enum-value for="XRVisibilityState">visible-blurred</dfn> indicates that imagery rendered by the {{XRSession}} may be seen by the user, but is not the primary focus. {{XRSession/requestAnimationFrame()}} callbacks MAY be [=throttling|throttled=]. Input is not processed by the {{XRSession}}.
 
   - A state of <dfn enum-value for="XRVisibilityState">hidden</dfn> indicates that imagery rendered by the {{XRSession}} cannot be seen by the user. {{XRSession/requestAnimationFrame()}} callbacks will not be processed until the [=visibility state=] changes. Input is not processed by the {{XRSession}}.
 
@@ -969,15 +1000,16 @@ To <dfn>populate the pose</dfn> of an {{XRSpace}} |space| in an {{XRSpace}} |bas
   1. If |space|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
   1. If |baseSpace|'s [=XRSpace/session=] does not equal |session|, throw an {{InvalidStateError}} and abort these steps.
   1. Check if [=poses may be reported=] and, if not, throw a {{SecurityError}} and abort these steps.
+  1. Let |limit| be whether [=poses must be limited=] between |space| and |baseSpace|.
   1. Let |transform| be |pose|'s {{XRPose/transform}}.
   1. Query the [=/XR device=]'s tracking system for |space|'s pose relative to |baseSpace| at the time represented by |frame|, then perform the following steps:
     <dl class="switch">
-      <dt> If the tracking system provides a [=6DoF=] pose whose position is actively tracked or statically known for |space|'s pose relative to |baseSpace|:
+      <dt> If |limit| is <code>false</code> and the tracking system provides a [=6DoF=] pose whose position is actively tracked or statically known for |space|'s pose relative to |baseSpace|:
         <dd> Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
         <dd> Set |transform|'s {{XRRigidTransform/position}} to the position of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
         <dd> Set |pose|'s {{XRPose/emulatedPosition}} to <code>false</code>.
 
-      <dt> Else if the tracking system provides a [=3DoF=] pose or a [=6DoF=] pose whose position is neither actively tracked nor statically known for |space|'s pose relative to |baseSpace|:
+      <dt> Else if |limit| is <code>false</code> the tracking system provides a [=3DoF=] pose or a [=6DoF=] pose whose position is neither actively tracked nor statically known for |space|'s pose relative to |baseSpace|:
         <dd> Set |transform|'s {{XRRigidTransform/orientation}} to the orientation of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=].
         <dd> Set |transform|'s {{XRRigidTransform/position}} to the tracking system's best estimate of the position of |space|'s [=effective origin=] in |baseSpace|'s [=coordinate system=]. This MAY include a computed offset such as a neck or arm model. If a position estimate is not available, the last known position MUST be used.
         <dd> Set |pose|'s {{XRPose/emulatedPosition}} to <code>true</code>.
@@ -1027,7 +1059,9 @@ An {{XRReferenceSpace}} is most frequently obtained by calling {{XRSession/reque
 
   - Passing a type of <dfn enum-value for="XRReferenceSpaceType">local</dfn> creates an {{XRReferenceSpace}} instance. It represents a tracking space with a [=native origin=] near the user's head at the time of creation. The exact position and orientation will be initialized based on the conventions of the underlying platform. When using this reference space the user is not expected to move beyond their initial position much, if at all, and tracking is optimized for that purpose. For devices with [=6DoF=] tracking, {{local}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
 
-  - Passing a type of <dfn enum-value for="XRReferenceSpaceType">local-floor</dfn> creates an {{XRReferenceSpace}} instance. It represents a tracking space with a [=native origin=] at the floor in a safe position for the user to stand. The <code>y</code> axis equals <code>0</code> at floor level, with the <code>x</code> and <code>z</code> position and orientation initialized based on the conventions of the underlying platform. If the floor level isn't known it MUST be estimated. When using this reference space the user is not expected to move beyond their initial position much, if at all, and tracking is optimized for that purpose. For devices with [=6DoF=] tracking, {{local-floor}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
+  - Passing a type of <dfn enum-value for="XRReferenceSpaceType">local-floor</dfn> creates an {{XRReferenceSpace}} instance. It represents a tracking space with a [=native origin=] at the floor in a safe position for the user to stand. The <code>y</code> axis equals <code>0</code> at floor level, with the <code>x</code> and <code>z</code> position and orientation initialized based on the conventions of the underlying platform. If the floor level isn't known it MUST be estimated. If the estimated floor level is determined with a non-default value, it MUST be [=rounding|rounded=] sufficiently to prevent fingerprinting. When using this reference space the user is not expected to move beyond their initial position much, if at all, and tracking is optimized for that purpose. For devices with [=6DoF=] tracking, {{local-floor}} reference spaces should emphasize keeping the origin stable relative to the user's environment.
+
+    Note: If the floor level of a {{XRReferenceSpaceType/"local-floor"}} reference space is adjusted to prevent fingerprinting, [=rounding|rounded=] to the nearest 1cm is suggested.
 
   - Passing a type of <dfn enum-value for="XRReferenceSpaceType">bounded-floor</dfn> creates an {{XRBoundedReferenceSpace}} instance if supported by the [=XRSession/XR device=] and the {{XRSession}}. It represents a tracking space with it's [=native origin=] at the floor, where the user is expected to move within a pre-established boundary, given as the {{boundsGeometry}}. Tracking in a {{bounded-floor}} reference space is optimized for keeping the [=native origin=] and {{boundsGeometry}} stable relative to the user's environment.
 
@@ -1107,6 +1141,14 @@ The origin of an {{XRBoundedReferenceSpace}} MUST be positioned at the floor, su
 Note: Other XR platforms sometimes refer to the type of tracking offered by a {{bounded-floor}} reference space as "room scale" tracking. An {{XRBoundedReferenceSpace}} is not intended to describe multi-room spaces, areas with uneven floor levels, or very large open areas. Content that needs to handle those scenarios should use an {{unbounded}} reference space.
 
 Each {{XRBoundedReferenceSpace}} has a <dfn for="XRBoundedReferenceSpace">native bounds geometry</dfn> describing the border around the {{XRBoundedReferenceSpace}}, which the user can expect to safely move within. The polygonal boundary is given as an array of {{DOMPointReadOnly}}s, which represents a loop of points at the edges of the safe space. The points describe offsets from the [=XRSpace/native origin=] in meters. Points MUST be given in a clockwise order as viewed from above, looking towards the negative end of the Y axis. The {{DOMPointReadOnly/y}} value of each point MUST be <code>0</code> and the {{DOMPointReadOnly/w}} value of each point MUST be <code>1</code>. The bounds can be considered to originate at the floor and extend infinitely high. The shape it describes MAY be convex or concave.
+
+Each point in the [=native bounds geometry=] MUST be [=limiting|limited=] to a reasonable distance from the reference space's [=native origin=].
+
+Note: It is suggested that points of the [=native bounds geometry=] be [=limiting|limited=] to 15 meters from the [=XRSpace/native origin=] in all directions.
+
+Each point in the [=native bounds geometry=] MUST also be [=quantization|quantized=] sufficiently to prevent fingerprinting.  For user's safety, quantized points values MUST NOT fall outside the bounds reported by the platform.
+
+Note: It is suggested that points of the [=native bounds geometry=] be [=quantization|quantized=] to the nearest 5cm.
 
 The <dfn attribute for="XRBoundedReferenceSpace">boundsGeometry</dfn> attribute is an array of {{DOMPointReadOnly}}s such that each entry is equal to the entry in the {{XRBoundedReferenceSpace}}'s [=XRBoundedReferenceSpace/native bounds geometry=] premultiplied by the {{XRRigidTransform/inverse}} of the [=XRSpace/origin offset=]. In other words, it provides the same border in {{XRBoundedReferenceSpace}} coordinates relative to the [=XRSpace/effective origin=].
 
@@ -2173,14 +2215,14 @@ Data adjustments {#data-adjustments-header}
 
 In some cases, security and privacy threats can be mitigated through <dfn>data adjustment</dfn>s such as throttling, quantizing, rounding, limiting, or otherwise manipulating the data reported from the [=/XR device=]. This may sometimes be necessary to avoid fingerprinting, even in situations when [=user intent=] has been established.  However, [=data adjustment=] mitigations MUST only be used in situations which would not result in user discomfort.
 
-### Throttling ### {#throttling}
-Throttling is when [=sensitive information=] is reported at a lower frequency than otherwise possible. This mitigation has the potential to reduce a site's ability to infer user intent, infer location, or perform user profiling. However, when not used appropriately throttling runs a significant risk of causing user discomfort. In addition, under many circumstances it may be inadequate to provide a complete mitigation.
+### Throttling ### {#throttling-header}
+<dfn>Throttling</dfn> is when [=sensitive information=] is reported at a lower frequency than otherwise possible. This mitigation has the potential to reduce a site's ability to infer user intent, infer location, or perform user profiling. However, when not used appropriately throttling runs a significant risk of causing user discomfort. In addition, under many circumstances it may be inadequate to provide a complete mitigation.
 
 ### Rounding, quantization, and fuzzing ### {#rounding-and-friends}
-Rounding, quantization, and fuzzing are three categories of mitigations that modify the raw data that would otherwise be returned to the developer. Rounding decreases the precision of data by reducing the number of digits used to express it. Quantization constrains continuous data to instead report a discrete subset of values. Fuzzing is the introduction of slight, random errors into the the data. Collectively, these mitigations are useful to avoid fingerprinting, and are especially useful when doing so does not cause noticeable impact on user comfort.
+Rounding, quantization, and fuzzing are three categories of mitigations that modify the raw data that would otherwise be returned to the developer. <dfn>Rounding</dfn> decreases the precision of data by reducing the number of digits used to express it. <dfn>Quantization</dfn> constrains continuous data to instead report a discrete subset of values. Fuzzing is the introduction of slight, random errors into the the data. Collectively, these mitigations are useful to avoid fingerprinting, and are especially useful when doing so does not cause noticeable impact on user comfort.
 
-### Limiting ### {#limiting}
-Limiting is when data is reported only when it is within a specific range. For example, it is possible to comfortably limit reporting positional pose data when a user has moved beyond a specific distance away from an approved location. Care should be taken to ensure that the user experience is not negatively affected when employing this mitigation. It is often desireable to avoid a 'hard stop' at the at the end of a range as this may cause disruptive user experiences.
+### Limiting ### {#limiting-header}
+<dfn>Limiting</dfn> is when data is reported only when it is within a specific range. For example, it is possible to comfortably limit reporting positional pose data when a user has moved beyond a specific distance away from an approved location. Care should be taken to ensure that the user experience is not negatively affected when employing this mitigation. It is often desireable to avoid a 'hard stop' at the at the end of a range as this may cause disruptive user experiences.
 
 Protected functionality {#protected-functionality}
 -----------------------
@@ -2246,6 +2288,37 @@ The primary difference between {{XRViewerPose}} and {{XRPose}} is the inclusion 
 If the relationship between {{XRView}}s could uniquely identify the [=/XR device=], then the user agent MUST anonymize the {{XRView}} data to prevent fingerprinting. The method of anonymization is at the discretion of the user agent.
 
 Note: Furthermore, if the relationship between {{XRView}}s is affected by a user-configured interpupillary distance, then it is strongly recommended that the user agent require [=explicit consent=] during session creation, prior to reporting any {{XRView}} data.
+
+### Reference spaces ### {#protect-reference-spaces}
+Depending on the reference spaces used, several different types of [=sensitive information=] may be exposed to the application.
+
+ - On devices which support [=6DoF=] tracking, {{XRReferenceSpaceType/"local"}} reference spaces may be used to perform gait analysis, allowing user profiling and fingerprinting.
+
+ - On devices which support [=6DoF=] tracking, {{XRReferenceSpaceType/"local-floor"}} reference spaces may be used to perform gait analysis, allowing user profiling and fingerprinting. In addition, because the {{XRReferenceSpaceType/"local-floor"}} reference spaces provide an established floor level, it may be possible for a site to infer the user's height, allowing user profiling and fingerprinting.
+
+ - {{XRReferenceSpaceType/"bounded-floor"}} reference spaces, when sufficiently constrained in size, do not enable developers to determine geographic location. However, because the floor level is established and users are able to walk around, it may be possible for a site to infer the user's height or perform gait analysis, allowing user profiling and fingerprinting. In addition, it may be possible perform fingerprinting using the bounds reported by a bounded reference space.
+
+ - {{XRReferenceSpaceType/"unbounded"}} reference spaces reveal the largest amount of spatial data and may result in user profiling and fingerprinting. For example, this data may enable determining user's specific geographic location or to perform gait analysis.
+
+As a result the various reference space types have restrictions placed on their creation to ensure the [=sensitive information=] expose is handled safely:
+
+Most reference spaces require that [=user intent=] to use the reference space is well understood, either via [=explicit consent=] or [=implicit consent=]. See the [=require consent|features which require consent=] table for details.
+ 
+Any group of {{XRReferenceSpaceType/"local"}}, {{XRReferenceSpaceType/"local-floor"}}, and {{XRReferenceSpaceType/"bounded-floor"}} reference spaces that are capable of being related to one another MUST share a common [=native origin=]; This restriction only applies when the creation of {{XRReferenceSpaceType/"unbounded"}} reference spaces has been restricted.
+
+<div class="algorithm" data-algorithm="poses-limited">
+
+To determine if <dfn>poses must be limited</dfn> between two spaces, |space| and |baseSpace|, the user agent MUST run the following steps:
+
+  1. If either |space| or |baseSpace| are an {{XRBoundedReferenceSpace}} and the other space's [=native origin=]'s falls further outside the [=native bounds geometry=] than a reasonable distance determined by the user agent, return true.
+  1. If either |space| or |baseSpace| are an {{XRReferenceSpace}} with a [=XRReferenceSpace/type=] of {{XRReferenceSpaceType/"local"}} or {{XRReferenceSpaceType/"local-floor"}} and the distance between the space's [=native origin=]'s is greater than a reasonable distance determined by the user agent, return <code>true</code>.
+  1. Return false.
+
+</div>
+
+Note: Is is suggested that poses reported relative to a {{XRReferenceSpaceType/"local"}} or {{XRReferenceSpaceType/"local-floor"}} reference space be [=limiting|limited=] to a distance of 15 meters from the {{XRReferenceSpace}}'s [=native origin=].
+
+Note: Is is suggested that poses reported relative to a {{XRBoundedReferenceSpace}} be [=limiting|limited=] to a distance of 1 meter outside the {{XRBoundedReferenceSpace}}'s [=native bounds geometry=].
 
 <section class="unstable">
 Gaze Tracking {#gazetracking-security}
