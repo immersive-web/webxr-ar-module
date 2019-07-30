@@ -45,6 +45,11 @@ This provides a session that behaves much like the immersive VR sessions describ
 
 The UA may choose to present the immersive AR session's content via any type of display, including dedicated XR hardware (for devices like HoloLens or Magic Leap) or 2D screens (for APIs like [ARKit](https://developer.apple.com/arkit/) and [ARCore](https://developers.google.com/ar/)). In all cases the session takes exclusive control of the display, hiding the rest of the page if necessary. On a phone screen, for example, this would mean that the session's content should be displayed in a mode that is distinct from standard page viewing, similar to the transition that happens when invoking the `requestFullscreen` API. The UA must also provide a way of exiting that mode and returning to the normal view of the page, at which point the immersive AR session must end.
 
+
+#### Rays
+An `XRRay` object includes both an `origin` and `direction`, both given as `DOMPointReadOnly`s. The `origin` represents a 3D coordinate in space with a `w` component that must be 1, and the `direction` represents a normalized 3D directional vector with a `w` component that must be 0. The `XRRay` also defines a `matrix` which represents the transform from a ray originating at `[0, 0, 0]` and extending down the negative Z axis to the ray described by the `XRRay`'s `origin` and `direction`. This is useful for positioning graphical representations of the ray.
+
+
 ## Appendix B: Proposed IDL
 
 ```webidl
