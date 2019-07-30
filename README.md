@@ -1,37 +1,27 @@
-# WebXR Device API Specification
+# WebXR Augmented Reality Module
 
-[![Build Status](https://travis-ci.org/immersive-web/webxr.svg?branch=master)](https://travis-ci.org/immersive-web/webxr)
+[![Build Status](https://travis-ci.org/immersive-web/webxr-ar-module.svg?branch=master)](https://travis-ci.org/immersive-web/webxr-ar-module)
 
-The WebXR device API is for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays on the Web. 
-
-|    |             Headset Devices             | Handheld Device e.g. Phone |
-|----|:---------------------------------------:|:--------------------------:|
-| VR | VR Devices, previously handled by WebVR | Magic Window Behaviour     |
-| AR | Mixed Reality Headsets                  | Phone AR                   |
-
-The [WebXR Device API Specification][1] is the repository of the [Immersive Web Working Group][17].
+The [WebXR Augmented Reality Module][21] extends the WebXR Device API to expose the ability to create a basic augmented reality (AR) session. This module is a product of the [Immersive Web Working Group][17].
 
 ## Taking Part
 
 1. Read the [code of conduct][18]
-2. See if your issue is being discussed in the [issues][8], or if your idea is being discussed in the [proposals repo][19].
-3. We will be publishing the minutes from the bi-weekly calls.
+2. See if your issue is being discussed in the [issues][21], or if your idea is being discussed in the [proposals repo][19].
+3. We will be publishing the minutes from working group's bi-weekly calls.
 4. You can also join the working group to participate in these discussions.
 
 ## Specifications
+This repo is for the design of the [WebXR Augmented Reality Module][21] which extends the WebXR Device API to allow developers to create basic augmented reality sessions on compatible XR hardware.
 
-* [WebXR Device API Specification][1]: Main specification for JavaScript API for accessing VR and AR devices, including sensors and head-mounted displays.
-* [Legacy WebVR API Specification][2]: Legacy WebVR API 1.1 specification for JavaScript API for accessing VR displays. Development of the WebVR API has halted in favor of being replaced the WebXR Device API. Several browsers will continue to support this version of the API in the meantime.
-* [Gamepad API Specification][5]: Introduces a low-level JS API interface for accessing gamepad devices.
-* [Legacy Gamepad Extensions API Specification][6]: Extends the Gamepad API to enable access to more advanced device capabilities.
+### Related specifications
+* [WebXR Device API - Level 1][1]: Main specification for JavaScript API for accessing VR and AR devices, including sensors and head-mounted displays.
 
 
 ## Relevant Links
 
 * [Immersive Web Community Group][3]
-* [WebXR Device API Specification][1]
 * [Immersive Web Early Adopters Guide][16]
-* [Legacy WebVR API Specification][2]
 * [Immersive Web Working Group Charter][4]
 
 
@@ -39,9 +29,8 @@ The [WebXR Device API Specification][1] is the repository of the [Immersive Web 
 
 * [Immersive Web Working Group][17]
 * [Immersive Web Community Group][3]
-* [GitHub issues list: `webxr`][8]
+* [GitHub issues list: `webxr-ar-module`][22]
 * [`public-immersive-web` mailing list][20]
-* [Legacy `public-webvr` mailing list archive][7]
 
 ## Maintainers
 
@@ -76,7 +65,6 @@ Per the [`LICENSE.md`](LICENSE.md) file:
 [5]: https://w3c.github.io/gamepad/
 [6]: https://w3c.github.io/gamepad/extensions.html
 [7]: https://lists.w3.org/Archives/Public/public-webvr/
-[8]: https://github.com/immersive-web/webxr/issues
 [10]: https://github.com/tabatkins/bikeshed
 [11]: https://github.com/web-platform-tests/wpt
 [12]: https://github.com/web-platform-tests/wpt/issues/new
@@ -88,3 +76,5 @@ Per the [`LICENSE.md`](LICENSE.md) file:
 [18]: https://immersive-web.github.io/homepage/code-of-conduct.html
 [19]: https://github.com/immersive-web/proposals
 [20]: https://lists.w3.org/Archives/Public/public-immersive-web/
+[21]: https://immersive-web.github.io/webxr-ar-module
+[22]: https://github.com/immersive-web/webxr-ar-module/issues
