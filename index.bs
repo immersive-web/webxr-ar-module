@@ -3,10 +3,8 @@ Shortname: webxr-ar-module
 Title: WebXR Augmented Reality Module - Level 1
 Group: immersivewebwg
 Status: ED
-TR: https://www.w3.org/TR/webxr-ar-module/
 ED: https://immersive-web.github.io/webxr-ar-module/
-Previous Version: https://www.w3.org/TR/2019/WD-webxr-20190521/
-Repository: immersive-web/webxr
+Repository: immersive-web/webxr-ar-module
 Level: 1
 Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web/
 
@@ -22,7 +20,7 @@ Abstract: This specification describes support for accessing virtual reality (VR
 Warning: custom
 Custom Warning Title: Unstable API
 Custom Warning Text:
-  <b>The API represented in this document is incomplete and may change at any time.</b>
+  <b>The API represented in this document is under development and may change at any time.</b>
   <p>For additional context on the use of this API please reference the <a href="https://github.com/immersive-web/webxr-ar-module/blob/master/ar-module-explainer.md">WebXR Augmented Reality Module Explainer</a>.</p>
 </pre>
 
@@ -33,9 +31,24 @@ spec:infra;
 
 <pre class="anchors">
 spec: WebXR Device API - Level 1; urlPrefix: https://www.w3.org/TR/webxr/#
-  type: enum; text: XRSessionMode; url: enumdef-xrsessionmode
-  type: dfn; text: inline session; url: inline-session
-  type: dfn; text: immersive session; url: immersive-session
+    type: interface; text: XRSession; url: xrsession-interface
+    type: interface; text: XRRigidTransform; url: xrrigidtransform-interface
+    type: attribute; text: environmentBlendMode; for: XRSession; url: dom-xrsession-environmentblendmode
+    type: attribute; text: matrix; for: XRRigidTransform; url: dom-xrrigidtransform-matrix
+    type: enum; text: XRSessionMode; url: enumdef-xrsessionmode
+    type: enum-value; text: additive; for: XREnvironmentBlendMode; url: dom-xrenvironmentblendmode-additive
+    type: enum-value; text: alpha-blend; for: XREnvironmentBlendMode; url: dom-xrenvironmentblendmode-alpha-blend
+    type: dfn; text: exclusive access; url: exclusive-access
+    type: dfn; text: immersive XR device; for: XR; url: xr-immersive-xr-device
+    type: dfn; text: XR device; for: XRSession; url: xrsession-xr-device
+    type: dfn; text: mode; for: XRSession; url: xrsession-mode
+    type: dfn; text: environment blending mode; url: xrsession-environment-blending-mode
+    type: dfn; text: inline session; url: inline-session
+    type: dfn; text: immersive session; url: immersive-session
+    type: dfn; text: matrix; url: matrix
+    type: dfn; text: normalize; url: normalize
+spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
+    type: method; text: IsDetachedBuffer; url: sec-isdetachedbuffer
 </pre>
 
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -125,7 +138,7 @@ can be created as either [=inline sessions=] or [=immersive sessions=]. This mod
 XRSessionMode {#xrsessionmode-enum}
 -------------
 
-As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> categorizes {{XRSessions}} based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
+As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
 
 <pre class="idl">
 enum XRSessionMode {
@@ -137,7 +150,7 @@ enum XRSessionMode {
 
 A session mode of <dfn enum-value for="XRSessionMode">immersive-ar</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR/immersive XR device=] display and that content <b>is</b> intended to be integrated with the user's environment.
 
-The definition of [=immersive session=] is also expanded to include sessions with a {{XRSession/mode}} of {{XRSessionMode/"immersive-ar"}}.
+The definition of [=immersive session=] is also expanded to include sessions with a [=XRSession/mode=] of {{XRSessionMode/"immersive-ar"}}.
 
 <div class="example">
 The following code checks to see if {{immersive-ar}} sessions are supported.
@@ -168,7 +181,12 @@ The <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> defines each
 
 Augmented Reality devices that use transparent optical elements frequently exhibit {{XREnvironmentBlendMode/"additive"}} blending behavior even for {{XRSessionMode/"immersive-vr"}} sessions.
 
-The {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{immersive-ar}} sessions. When an [=xr device=] [=performs automatic composition=] using a passthrough camera in an {{XRSessionMode/"immerseive-ar"}} session, it MUST report {{XREnvironmentBlendMode/"alpha-blend"}} blending behavior.
+The {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{immersive-ar}} sessions. When an [=xr device=] [=performs automatic composition=] using a passthrough camera in an {{XRSessionMode/"immersive-ar"}} session, it MUST report {{XREnvironmentBlendMode/"alpha-blend"}} blending behavior.
+
+Automatic composition {#automatic-composition}
+---------
+<dfn>performs automatic composition</dfn>
+TODO add explanation here.
 
 Geometric Primitives {#geometric-primitives}
 ====================
@@ -243,7 +261,7 @@ Note: The {{XRRay}}'s {{XRRay/matrix}} can be used to easily position graphical 
 To <dfn for=XRRay>obtain the matrix</dfn> for a given {{XRRay}} |ray|
 
   1. If |ray|'s [=XRRay/internal matrix=] is not <code>null</code>, perform the following steps:
-    1. If the operation {{IsDetachedBuffer}} on [=XRRay/internal matrix=] is <code>false</code>, return |ray|'s [=XRRigidTransform/internal matrix=].
+    1. If the operation {{IsDetachedBuffer}} on [=XRRay/internal matrix=] is <code>false</code>, return |ray|'s [=XRRay/internal matrix=].
   1. Let |z| be the vector <code>[0, 0, -1]</code>
   1. Let |axis| be the vector cross product of |z| and |ray|'s {{XRRay/direction}}, <code>z × direction</code>
   1. Let |cos_angle| be the scalar dot product of |z| and |ray|'s {{XRRay/direction}}, <code>z · direction</code>
@@ -266,56 +284,11 @@ To <dfn for=XRRay>obtain the matrix</dfn> for a given {{XRRay}} |ray|
 Security, Privacy, and Comfort Considerations {#security}
 =============================================
 
-The WebXR Device API provides powerful new features which bring with them several unique privacy, security, and comfort risks that user agents must take steps to mitigate.
-
-Sensitive Information {#sensitive-information-header}
----------------------
-
-In the context of XR, <dfn>sensitive information</dfn> includes, but is not limited to, user configurable data such as interpupillary distance (IPD) and sensor-based data such as {{XRPose}}s. All {{XRSessionMode/"immersive-vr"}} and {{XRSessionMode/"immersive-ar"}} sessions will expose some amount of sensitive data, due to the user's pose being necessary to render anything. However, in some cases, the same sensitive information will also be exposed via {{XRSessionMode/"inline"}} sessions.
-
-### Active and focused document ### {#active-and-focused-document}
-A document MUST be [=active and focused=] at the time that [=sensitive information=] is requested.
-
-<div class="algorithm" data-algorithm="document-is-active-and-focused">
-
-To determine if a given {{Document}} |document| is <dfn>active and focused</dfn> the user agent MUST run the following steps:
-
-  1. If the [=currently focused area=] does not belong to |document|, return <code>false</code>
-  1. If |document| is not of the [=same origin-domain=] as the [=active document=], return <code>false</code>
-  1. Return <code>true</code>
-
-</div>
-
-### Trustworthy documents and origins ### {#trustworthy-documents}
-In order to expose any [=sensitive information=] the requesting document MUST be considered [=trustworthy=].
-
-<div class="algorithm" data-algorithm="document-is-trustworthy">
-
-To determine if a given {{Document}} |document| is <dfn>trustworthy</dfn> the user agent MUST run the following steps:
-
-  1. If |document| is not a [=responsible=] document, return <code>false</code>
-  1. If |document| is not [=active and focused=], return <code>false</code>
-  1. If |document|'s origin is not allowed to use the WebXR [[#feature-policy|feature policy]], return <code>false</code>
-  1. Return <code>true</code>
-
-</div>
-
 Protected functionality {#protected-functionality}
 -----------------------
 
 <section class="unstable">
-The [=sensitive information=] exposed by the API can be divided into categories that share threat profiles and necessary protections against those threats.
-
 TODO add information about new threats and mitigations introduced by AR functionality
-</section>
-
-Integrations {#integrations}
-============
-
-WebXR Device API {#webxr-device-api-integration}
---------------
-<section class="unstable">
-TODO
 </section>
 
 Acknowledgements {#ack}
