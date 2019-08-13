@@ -199,7 +199,7 @@ Each {{XRSession}} has an <dfn for="XRSession">environment blending mode</dfn> v
 
 The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=].
 
-Note: Most Virtual Reality devices are only capable of exhibiting {{XREnvironmentBlendMode/"opaque"}} blending behavior. Augmented Reality devices "additive light" displays frequently exhibit {{XREnvironmentBlendMode/"additive"}} blending behavior even for {{XRSessionMode/"immersive-vr"}} sessions.
+Note: Most Virtual Reality devices are only capable of exhibiting {{XREnvironmentBlendMode/"opaque"}} blending behavior. Augmented Reality devices with "additive light" displays frequently exhibit {{XREnvironmentBlendMode/"additive"}} blending behavior even for {{XRSessionMode/"immersive-vr"}} sessions.
 
 ISSUE: Clarify the behavior of inline sessions
 
