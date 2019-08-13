@@ -1,6 +1,6 @@
 {
-  "name": "webxr",
-  "description": "WebXR Device API Specification",
+  "name": "webxr-ar-module",
+  "description": "WebXR Augmented Reality Module",
   "version": "0.0.1",
   "devDependencies": {
     "browser-sync": "^2.18.8"
