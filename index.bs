@@ -174,7 +174,7 @@ navigator.xr.requestSession("immersive-ar").then((session) => {
 
 Environment blend mode {#environment-blend-mode}
 ---------
-When rendering XR content, it is often useful to how the rendered pixels will be blended against the user's environment. For example, some AR devices have transparent optical displays, also known as "additive light" or "see-through" displays. On this hardware, the user may be able to see through to the real world environment in all session types. Other AR devices which use a camera stream to [=performs automatic composition|compose with the real world=] are known as "pass-through" displays and may behave differently in each {{XRSessionMode}}. Most Virtual Reality devices are not capable of [=performs automatic composition|blending rendered pixels with the real world=] capable of exhibiting {{XREnvironmentBlendMode/"opaque"}} blending behavior.
+When rendering XR content, it is often useful to how the rendered pixels will be blended against the user's environment. For example, some AR devices have transparent optical displays, also known as "additive light" or "see-through" displays. On this hardware, the user may be able to see through to the real world environment in all session types. Other AR devices which use a camera stream to [=performs automatic composition|compose with the real world=] are known as "pass-through" displays and may behave differently in each {{XRSessionMode}}. Most Virtual Reality devices are not capable of [=performs automatic composition|blending rendered pixels with the real world=] and exhibit {{XREnvironmentBlendMode/"opaque"}} blending behavior.
 
 <pre class="idl">
 enum XREnvironmentBlendMode {
