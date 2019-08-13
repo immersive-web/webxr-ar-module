@@ -33,16 +33,13 @@ spec:infra;
 spec: WebXR Device API - Level 1; urlPrefix: https://www.w3.org/TR/webxr/#
     type: interface; text: XRSession; url: xrsession-interface
     type: interface; text: XRRigidTransform; url: xrrigidtransform-interface
-    type: attribute; text: environmentBlendMode; for: XRSession; url: dom-xrsession-environmentblendmode
     type: attribute; text: matrix; for: XRRigidTransform; url: dom-xrrigidtransform-matrix
+    type: attribute; text: baseLayer; for: XRRenderState; url: dom-xrrenderstateinit-baselayer
     type: enum; text: XRSessionMode; url: enumdef-xrsessionmode
-    type: enum-value; text: additive; for: XREnvironmentBlendMode; url: dom-xrenvironmentblendmode-additive
-    type: enum-value; text: alpha-blend; for: XREnvironmentBlendMode; url: dom-xrenvironmentblendmode-alpha-blend
     type: dfn; text: exclusive access; url: exclusive-access
     type: dfn; text: immersive XR device; for: XR; url: xr-immersive-xr-device
     type: dfn; text: XR device; for: XRSession; url: xrsession-xr-device
     type: dfn; text: mode; for: XRSession; url: xrsession-mode
-    type: dfn; text: environment blending mode; url: xrsession-environment-blending-mode
     type: dfn; text: inline session; url: inline-session
     type: dfn; text: immersive session; url: immersive-session
     type: dfn; text: matrix; url: matrix
@@ -153,7 +150,7 @@ A session mode of <dfn enum-value for="XRSessionMode">immersive-ar</dfn> indicat
 The definition of [=immersive session=] is also expanded to include sessions with a [=XRSession/mode=] of {{XRSessionMode/"immersive-ar"}}.
 
 <div class="example">
-The following code checks to see if {{immersive-ar}} sessions are supported.
+The following code checks to see if {{XRSessionMode/"immersive-ar"}} sessions are supported.
 
 <pre highlight="js">
 navigator.xr.supportsSession('immersive-ar').then(() => {
@@ -164,7 +161,7 @@ navigator.xr.supportsSession('immersive-ar').then(() => {
 </div>
 
 <div class="example">
-The following code attempts to retrieve an {{immersive-ar}} {{XRSession}}.
+The following code attempts to retrieve an {{XRSessionMode/"immersive-ar"}} {{XRSession}}.
 
 <pre highlight="js">
 let xrSession;
@@ -177,22 +174,48 @@ navigator.xr.requestSession("immersive-ar").then((session) => {
 
 Environment blend mode {#environment-blend-mode}
 ---------
-The <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> defines each {{XRSession}} has having an [=environment blending mode=] describing the behavior of imagery rendered by the session in relation to the user's surrounding environment.
+When rendering XR content, it is often useful to how the rendered pixels will be blended against the user's environment. For example, some AR devices have transparent optical displays, also known as "additive light" or "see-through" displays. On this hardware, the user may be able to see through to the real world environment in all session types. Other AR devices which use a camera stream to [=performs automatic composition|compose with the real world=] are known as "pass-through" displays and may behave differently in each {{XRSessionMode}}. Most Virtual Reality devices are not capable of [=performs automatic composition|blending rendered pixels with the real world=] capable of exhibiting {{XREnvironmentBlendMode/"opaque"}} blending behavior.
 
-Augmented Reality devices that use transparent optical elements frequently exhibit {{XREnvironmentBlendMode/"additive"}} blending behavior even for {{XRSessionMode/"immersive-vr"}} sessions.
+<pre class="idl">
+enum XREnvironmentBlendMode {
+  "opaque",
+  "additive",
+  "alpha-blend",
+};
 
-The {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{immersive-ar}} sessions. When an [=xr device=] [=performs automatic composition=] using a passthrough camera in an {{XRSessionMode/"immersive-ar"}} session, it MUST report {{XREnvironmentBlendMode/"alpha-blend"}} blending behavior.
+partial interface XRSession {
+  // Attributes
+  readonly attribute XREnvironmentBlendMode environmentBlendMode;
+};
+</pre>
+
+Each {{XRSession}} has an <dfn for="XRSession">environment blending mode</dfn> value, which is an enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user's surrounding environment.
+
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> indicates that the user's surrounding environment is not visible at all. Alpha values in the {{XRRenderState/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. The {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{XRSessionMode/"immersive-ar"}} sessions.
+
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">additive</dfn> indicates that the user's surrounding environment is visible and the {{XRRenderState/baseLayer}} will be shown additively against it. Alpha values in the {{XRRenderState/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. When this blend mode is in use black pixels will appear fully transparent, and there is no way to make a pixel appear fully opaque.
+
+  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn> indicates that the user's surrounding environment is visible and the {{XRRenderState/baseLayer}} will be blended with it according to the alpha values of each pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent.  When an [=xr device=] [=performs automatic composition=] using a passthrough camera in an {{XRSessionMode/"immersive-ar"}} session, it MUST report {{XREnvironmentBlendMode/"alpha-blend"}} blending behavior.
+
+The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=].
+
+Note: Most Virtual Reality devices are only capable of exhibiting {{XREnvironmentBlendMode/"opaque"}} blending behavior. Augmented Reality devices "additive light" displays frequently exhibit {{XREnvironmentBlendMode/"additive"}} blending behavior even for {{XRSessionMode/"immersive-vr"}} sessions.
+
+ISSUE: Clarify the behavior of inline sessions
 
 Automatic composition {#automatic-composition}
 ---------
 <dfn>performs automatic composition</dfn>
-TODO add explanation here.
+
+ISSUE: Add explanation here
 
 Geometric Primitives {#geometric-primitives}
 ====================
 
 XRRay {#xrray-interface}
 -----
+
+ISSUE: Find the correct spec home for this type
 
 An {{XRRay}} is a geometric ray described by an {{XRRay/origin}} point and {{XRRay/direction}} vector.
 
@@ -281,14 +304,16 @@ To <dfn for=XRRay>obtain the matrix</dfn> for a given {{XRRay}} |ray|
 
 </div>
 
+<section class="unstable">
+
 Security, Privacy, and Comfort Considerations {#security}
 =============================================
 
 Protected functionality {#protected-functionality}
 -----------------------
 
-<section class="unstable">
-TODO add information about new threats and mitigations introduced by AR functionality
+ISSUE: add information about new threats and mitigations introduced by functionality in this module
+
 </section>
 
 Acknowledgements {#ack}

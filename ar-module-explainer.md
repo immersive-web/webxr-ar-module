@@ -45,8 +45,30 @@ This provides a session that behaves much like the immersive VR sessions describ
 
 The UA may choose to present the immersive AR session's content via any type of display, including dedicated XR hardware (for devices like HoloLens or Magic Leap) or 2D screens (for APIs like [ARKit](https://developer.apple.com/arkit/) and [ARCore](https://developers.google.com/ar/)). In all cases the session takes exclusive control of the display, hiding the rest of the page if necessary. On a phone screen, for example, this would mean that the session's content should be displayed in a mode that is distinct from standard page viewing, similar to the transition that happens when invoking the `requestFullscreen` API. The UA must also provide a way of exiting that mode and returning to the normal view of the page, at which point the immersive AR session must end.
 
+### Handling non-opaque displays
 
-#### Rays
+Some devices which support the WebXR Device API may use displays that are not fully opaque, or otherwise show your surrounding environment in some capacity. To determine how the display will blend rendered content with the real world, check the `XRSession`'s `environmentBlendMode` attribute. It may currently be one of three values, and more may be added in the future if new display technology necessitates it:
+
+  - `opaque`: The environment is not visible at all through this display. Transparent pixels in the `baseLayer` will appear black. This is the expected mode for most VR headsets. Alpha values will be ignored, with the compositor treating all alpha values as 1.0.
+  - `additive`: The environment is visible through the display and pixels in the `baseLayer` will be shown additively against it. Black pixels will appear fully transparent, and there is typically no way to make a pixel fully opaque. Alpha values will be ignored, with the compositor treating all alpha values as 1.0. This is the expected mode for devices like HoloLens or Magic Leap.
+  - `alpha-blend`: The environment is visible through the display and pixels in the `baseLayer` will be blended with it according to the alpha value of the pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent. This is the expected mode for devices which use passthrough video to show the environment such as ARCore or ARKit enabled phones, as well as headsets that utilize passthrough video for AR like the Vive Pro.
+
+When rendering content it's important to know how the content will appear on the display, as that may affect the techniques you use to render. For example, on an `additive` display is used that can only render additive light. This means that the color black appears as fully transparent and expensive graphical effects like shadows may not show up at all. Similarly, if the developer knows that the environment will be visible they may choose to not render an opaque background.
+
+```js
+function drawScene() {
+  renderer.enableShadows(xrSession.environmentBlendMode != 'additive');
+
+  // Only draw a background for the scene if the environment is not visible.
+  if (xrSession.environmentBlendMode == 'opaque') {
+    renderer.drawSkybox();
+  }
+
+  // Draw the reset of the scene.
+}
+```
+
+### Rays
 An `XRRay` object includes both an `origin` and `direction`, both given as `DOMPointReadOnly`s. The `origin` represents a 3D coordinate in space with a `w` component that must be 1, and the `direction` represents a normalized 3D directional vector with a `w` component that must be 0. The `XRRay` also defines a `matrix` which represents the transform from a ray originating at `[0, 0, 0]` and extending down the negative Z axis to the ray described by the `XRRay`'s `origin` and `direction`. This is useful for positioning graphical representations of the ray.
 
 
@@ -61,5 +83,15 @@ enum XRSessionMode {
   "inline",
   "immersive-vr",
   "immersive-ar"
+}
+
+enum XREnvironmentBlendMode {
+  "opaque",
+  "additive",
+  "alpha-blend",
+};
+
+partial interface XRSession {
+  readonly attribute XREnvironmentBlendMode environmentBlendMode;
 }
 ```
