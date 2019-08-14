@@ -44,6 +44,7 @@ spec: WebXR Device API - Level 1; urlPrefix: https://www.w3.org/TR/webxr/#
     type: dfn; text: immersive session; url: immersive-session
     type: dfn; text: matrix; url: matrix
     type: dfn; text: normalize; url: normalize
+    type: dfn; text: xr compositor; url: xr-compositor
 spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
     type: method; text: IsDetachedBuffer; url: sec-isdetachedbuffer
 </pre>
@@ -174,7 +175,7 @@ navigator.xr.requestSession("immersive-ar").then((session) => {
 
 Environment blend mode {#environment-blend-mode}
 ---------
-When rendering XR content, it is often useful to understand how the rendered pixels will be blended against the user's environment. For example, some AR devices have transparent optical displays, also known as "additive light" or "see-through" displays. On this hardware, the user may be able to see through to the real world environment in all session types. Other AR devices use a camera stream to [=performs automatic composition|compose rendered content with the real world=]. These devices are known as "pass-through" displays and may behave differently in each {{XRSessionMode}}. Most Virtual Reality devices are not capable of [=performs automatic composition|blending rendered pixels with the real world=] and exhibit {{XREnvironmentBlendMode/"opaque"}} blending behavior.
+When rendering XR content, it is often useful to understand how the rendered pixels will be blended against the user's environment. For example, some AR devices have transparent optical displays, also known as "additive light" or "see-through" displays. On this hardware, the user may be able to see through to the real world environment in all session types. Other AR devices use a camera stream to [=perform automatic composition|compose rendered content with the real world=]. These devices are known as "pass-through" displays and may behave differently in each {{XRSessionMode}}. Most Virtual Reality devices are not capable of [=performs automatic composition|blending rendered pixels with the real world=] and exhibit {{XREnvironmentBlendMode/"opaque"}} blending behavior.
 
 <pre class="idl">
 enum XREnvironmentBlendMode {
@@ -205,9 +206,14 @@ ISSUE: Clarify the behavior of inline sessions
 
 Automatic composition {#automatic-composition}
 ---------
-<dfn>performs automatic composition</dfn>
 
-ISSUE: Add explanation here
+An [=xr device=] will have its [=xr compositor=] <dfn>perform automatic composition</dfn> by drawing the rendered scene on top of the real-world background. Such a process MUST NOT grant the page access to any information about the real world, like camera data or geometry.
+
+In case the [=xr device=] is using a passthrough camera, it MUST use alpha-blending to deal with any transparent pixels in the rendered scene, and MUST have an {{XRSession/environmentBlendMode}} of {{alpha-blend}}. If it is an additive light device where the real-world background is visible through the device's transparent display, it MUST ignore alpha values when performing automatic composition, instead, it MUST treat black pixels as transparent.
+
+Automatic composition is not responsible for dealing with occlusion, the rendered scene will always compose on top of the real-world background regardless of the actual geometry.
+
+NOTE: Future real-world-understanding extensions to this spec will allow authors to perform occlusion on their own if they wish to.
 
 Geometric Primitives {#geometric-primitives}
 ====================
