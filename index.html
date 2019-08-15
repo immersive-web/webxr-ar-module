@@ -1528,13 +1528,14 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Augmented Reality Module - Level 1</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2019-08-13">13 August 2019</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2019-08-15">15 August 2019</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
      <dd><a class="u-url" href="https://immersive-web.github.io/webxr-ar-module/">https://immersive-web.github.io/webxr-ar-module/</a>
      <dt>Issue Tracking:
      <dd><a href="https://github.com/immersive-web/webxr-ar-module/issues/">GitHub</a>
+     <dd><a href="#issues-index">Inline In Spec</a>
      <dt class="editor">Editors:
      <dd class="editor p-author h-card vcard" data-editor-id="87824"><a class="p-name fn u-email email" href="mailto:bajones@google.com">Brandon Jones</a> (<a class="p-org org" href="http://google.com/">Google</a>)
      <dd class="editor p-author h-card vcard" data-editor-id="93109"><a class="p-name fn u-email email" href="mailto:nhw@amazon.com">Nell Waliczek</a> (<a class="p-org org" href="https://amazon.com/">Amazon [Microsoft until 2018]</a>)
@@ -1620,6 +1621,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
      </ol>
     <li><a href="#idl-index"><span class="secno"></span> <span class="content">IDL Index</span></a>
+    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ol>
   </nav>
   <main>
@@ -1651,16 +1653,16 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
 </pre>
    <p>A session mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XRSessionMode" data-dfn-type="enum-value" data-export id="dom-xrsessionmode-immersive-ar"><code>immersive-ar</code></dfn> indicates that the session’s output will be given <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#exclusive-access" id="ref-for-exclusive-access">exclusive access</a> to the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-immersive-xr-device" id="ref-for-xr-immersive-xr-device">immersive XR device</a> display and that content <b>is</b> intended to be integrated with the user’s environment.</p>
    <p>The definition of <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#immersive-session" id="ref-for-immersive-session①">immersive session</a> is also expanded to include sessions with a <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-mode" id="ref-for-xrsession-mode">mode</a> of <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar②">"immersive-ar"</a></code>.</p>
-   <div class="example" id="example-265b6f70">
-    <a class="self-link" href="#example-265b6f70"></a> The following code checks to see if <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar③">immersive-ar</a></code> sessions are supported. 
+   <div class="example" id="example-080291e0">
+    <a class="self-link" href="#example-080291e0"></a> The following code checks to see if <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar③">"immersive-ar"</a></code> sessions are supported. 
 <pre class="highlight">navigator<c- p>.</c->xr<c- p>.</c->supportsSession<c- p>(</c-><c- t>'immersive-ar'</c-><c- p>).</c->then<c- p>(()</c-> <c- p>=></c-> <c- p>{</c->
   <c- c1>// 'immersive-ar' sessions are supported.</c->
   <c- c1>// Page should advertise AR support to the user.</c->
 <c- p>}</c->
 </pre>
    </div>
-   <div class="example" id="example-865527a1">
-    <a class="self-link" href="#example-865527a1"></a> The following code attempts to retrieve an <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar④">immersive-ar</a></code> <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface①">XRSession</a></code>. 
+   <div class="example" id="example-eded3767">
+    <a class="self-link" href="#example-eded3767"></a> The following code attempts to retrieve an <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar④">"immersive-ar"</a></code> <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface①">XRSession</a></code>. 
 <pre class="highlight"><c- a>let</c-> xrSession<c- p>;</c->
 
 navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar"</c-><c- p>).</c->then<c- p>((</c->session<c- p>)</c-> <c- p>=></c-> <c- p>{</c->
@@ -1669,13 +1671,36 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
 </pre>
    </div>
    <h3 class="heading settled" data-level="2.2" id="environment-blend-mode"><span class="secno">2.2. </span><span class="content">Environment blend mode</span><a class="self-link" href="#environment-blend-mode"></a></h3>
-    The <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> defines each <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface②">XRSession</a></code> has having an <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-environment-blending-mode" id="ref-for-xrsession-environment-blending-mode">environment blending mode</a> describing the behavior of imagery rendered by the session in relation to the user’s surrounding environment. 
-   <p>Augmented Reality devices that use transparent optical elements frequently exhibit <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrenvironmentblendmode-additive" id="ref-for-dom-xrenvironmentblendmode-additive">"additive"</a></code> blending behavior even for <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-vr" id="ref-for-dom-xrsessionmode-immersive-vr">"immersive-vr"</a></code> sessions.</p>
-   <p>The <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrsession-environmentblendmode" id="ref-for-dom-xrsession-environmentblendmode">environmentBlendMode</a></code> MUST NOT be <code class="idl"><a data-link-type="idl" href="https://fetch.spec.whatwg.org/#dom-responsetype-opaque" id="ref-for-dom-responsetype-opaque">opaque</a></code> for <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑤">immersive-ar</a></code> sessions. When an <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device">xr device</a> <a data-link-type="dfn" href="#performs-automatic-composition" id="ref-for-performs-automatic-composition">performs automatic composition</a> using a passthrough camera in an <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑥">"immersive-ar"</a></code> session, it MUST report <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrenvironmentblendmode-alpha-blend" id="ref-for-dom-xrenvironmentblendmode-alpha-blend">"alpha-blend"</a></code> blending behavior.</p>
+    When rendering XR content, it is often useful to understand how the rendered pixels will be blended against the user’s environment. For example, some AR devices have transparent optical displays, also known as "additive light" or "see-through" displays. On this hardware, the user may be able to see through to the real world environment in all session types. Other AR devices use a camera stream to <a data-link-type="dfn" href="#performs-automatic-composition" id="ref-for-performs-automatic-composition">compose rendered content with the real world</a>. These devices are known as "pass-through" displays and may behave differently in each <code class="idl"><a data-link-type="idl" href="#enumdef-xrsessionmode" id="ref-for-enumdef-xrsessionmode②">XRSessionMode</a></code>. Most Virtual Reality devices are not capable of <a data-link-type="dfn" href="#performs-automatic-composition" id="ref-for-performs-automatic-composition①">blending rendered pixels with the real world</a> and exhibit <code class="idl"><a data-link-type="idl" href="#dom-xrenvironmentblendmode-opaque" id="ref-for-dom-xrenvironmentblendmode-opaque">"opaque"</a></code> blending behavior. 
+<pre class="idl highlight def"><c- b>enum</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="enum" data-export id="enumdef-xrenvironmentblendmode"><code><c- g>XREnvironmentBlendMode</c-></code></dfn> {
+  <a class="idl-code" data-link-type="enum-value" href="#dom-xrenvironmentblendmode-opaque" id="ref-for-dom-xrenvironmentblendmode-opaque①"><c- s>"opaque"</c-></a>,
+  <a class="idl-code" data-link-type="enum-value" href="#dom-xrenvironmentblendmode-additive" id="ref-for-dom-xrenvironmentblendmode-additive"><c- s>"additive"</c-></a>,
+  <a class="idl-code" data-link-type="enum-value" href="#dom-xrenvironmentblendmode-alpha-blend" id="ref-for-dom-xrenvironmentblendmode-alpha-blend"><c- s>"alpha-blend"</c-></a>,
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface②"><c- g>XRSession</c-></a> {
+  // Attributes
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="n" data-link-type="idl-name" href="#enumdef-xrenvironmentblendmode" id="ref-for-enumdef-xrenvironmentblendmode"><c- n>XREnvironmentBlendMode</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="XREnvironmentBlendMode" href="#dom-xrsession-environmentblendmode" id="ref-for-dom-xrsession-environmentblendmode"><c- g>environmentBlendMode</c-></a>;
+};
+</pre>
+   <p>Each <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface③">XRSession</a></code> has an <dfn class="dfn-paneled" data-dfn-for="XRSession" data-dfn-type="dfn" data-noexport id="xrsession-environment-blending-mode">environment blending mode</dfn> value, which is an enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user’s surrounding environment.</p>
+   <ul>
+    <li data-md>
+     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export id="dom-xrenvironmentblendmode-opaque"><code>opaque</code></dfn> indicates that the user’s surrounding environment is not visible at all. Alpha values in the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer" id="ref-for-dom-xrrenderstateinit-baselayer">baseLayer</a></code> will be ignored, with the compositor treating all alpha values as 1.0. The <code class="idl"><a data-link-type="idl" href="#dom-xrsession-environmentblendmode" id="ref-for-dom-xrsession-environmentblendmode①">environmentBlendMode</a></code> MUST NOT be <code class="idl"><a data-link-type="idl" href="#dom-xrenvironmentblendmode-opaque" id="ref-for-dom-xrenvironmentblendmode-opaque②">opaque</a></code> for <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑤">"immersive-ar"</a></code> sessions.</p>
+    <li data-md>
+     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export id="dom-xrenvironmentblendmode-additive"><code>additive</code></dfn> indicates that the user’s surrounding environment is visible and the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer" id="ref-for-dom-xrrenderstateinit-baselayer①">baseLayer</a></code> will be shown additively against it. Alpha values in the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer" id="ref-for-dom-xrrenderstateinit-baselayer②">baseLayer</a></code> will be ignored, with the compositor treating all alpha values as 1.0. When this blend mode is in use black pixels will appear fully transparent, and there is no way to make a pixel appear fully opaque.</p>
+    <li data-md>
+     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export id="dom-xrenvironmentblendmode-alpha-blend"><code>alpha-blend</code></dfn> indicates that the user’s surrounding environment is visible and the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer" id="ref-for-dom-xrrenderstateinit-baselayer③">baseLayer</a></code> will be blended with it according to the alpha values of each pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent.  When an <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device">xr device</a> <a data-link-type="dfn" href="#performs-automatic-composition" id="ref-for-performs-automatic-composition②">performs automatic composition</a> using a passthrough camera in an <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑥">"immersive-ar"</a></code> session, it MUST report <code class="idl"><a data-link-type="idl" href="#dom-xrenvironmentblendmode-alpha-blend" id="ref-for-dom-xrenvironmentblendmode-alpha-blend①">"alpha-blend"</a></code> blending behavior.</p>
+   </ul>
+   <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export id="dom-xrsession-environmentblendmode"><code>environmentBlendMode</code></dfn> attribute returns the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface④">XRSession</a></code>'s <a data-link-type="dfn" href="#xrsession-environment-blending-mode" id="ref-for-xrsession-environment-blending-mode">environment blending mode</a>.</p>
+   <p class="note" role="note"><span>Note:</span> Most Virtual Reality devices are only capable of exhibiting <code class="idl"><a data-link-type="idl" href="#dom-xrenvironmentblendmode-opaque" id="ref-for-dom-xrenvironmentblendmode-opaque③">"opaque"</a></code> blending behavior. Augmented Reality devices with "additive light" displays frequently exhibit <code class="idl"><a data-link-type="idl" href="#dom-xrenvironmentblendmode-additive" id="ref-for-dom-xrenvironmentblendmode-additive①">"additive"</a></code> blending behavior even for <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-vr" id="ref-for-dom-xrsessionmode-immersive-vr">"immersive-vr"</a></code> sessions.</p>
+   <p class="issue" id="issue-ecb1065f"><a class="self-link" href="#issue-ecb1065f"></a> Clarify the behavior of inline sessions</p>
    <h3 class="heading settled" data-level="2.3" id="automatic-composition"><span class="secno">2.3. </span><span class="content">Automatic composition</span><a class="self-link" href="#automatic-composition"></a></h3>
-    <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="performs-automatic-composition">performs automatic composition</dfn> TODO add explanation here. 
+    <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="performs-automatic-composition">performs automatic composition</dfn> 
+   <p class="issue" id="issue-1c5c8084"><a class="self-link" href="#issue-1c5c8084"></a> Add explanation here</p>
    <h2 class="heading settled" data-level="3" id="geometric-primitives"><span class="secno">3. </span><span class="content">Geometric Primitives</span><a class="self-link" href="#geometric-primitives"></a></h2>
    <h3 class="heading settled" data-level="3.1" id="xrray-interface"><span class="secno">3.1. </span><span class="content">XRRay</span><a class="self-link" href="#xrray-interface"></a></h3>
+   <p class="issue" id="issue-d6b651cc"><a class="self-link" href="#issue-d6b651cc"></a> Find the correct spec home for this type</p>
    <p>An <code class="idl"><a data-link-type="idl" href="#xrray" id="ref-for-xrray">XRRay</a></code> is a geometric ray described by an <code class="idl"><a data-link-type="idl" href="#dom-xrray-origin" id="ref-for-dom-xrray-origin">origin</a></code> point and <code class="idl"><a data-link-type="idl" href="#dom-xrray-direction" id="ref-for-dom-xrray-direction">direction</a></code> vector.</p>
    <p>An <code class="idl"><a data-link-type="idl" href="#xrray" id="ref-for-xrray①">XRRay</a></code> contains an <dfn class="dfn-paneled" data-dfn-for="XRRay" data-dfn-type="dfn" data-noexport id="xrray-internal-matrix">internal matrix</dfn> which is a <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#matrix" id="ref-for-matrix">matrix</a>.</p>
 <pre class="idl highlight def">[<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->,
@@ -1774,9 +1799,11 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
       <p>Return <var>matrix</var></p>
     </ol>
    </div>
-   <h2 class="heading settled" data-level="4" id="security"><span class="secno">4. </span><span class="content">Security, Privacy, and Comfort Considerations</span><a class="self-link" href="#security"></a></h2>
-   <h3 class="heading settled" data-level="4.1" id="protected-functionality"><span class="secno">4.1. </span><span class="content">Protected functionality</span><a class="self-link" href="#protected-functionality"></a></h3>
-   <section class="unstable"> TODO add information about new threats and mitigations introduced by AR functionality </section>
+   <section class="unstable">
+    <h2 class="heading settled" data-level="4" id="security"><span class="secno">4. </span><span class="content">Security, Privacy, and Comfort Considerations</span><a class="self-link" href="#security"></a></h2>
+    <h3 class="heading settled" data-level="4.1" id="protected-functionality"><span class="secno">4.1. </span><span class="content">Protected functionality</span><a class="self-link" href="#protected-functionality"></a></h3>
+    <p class="issue" id="issue-6ece0a93"><a class="self-link" href="#issue-6ece0a93"></a> add information about new threats and mitigations introduced by functionality in this module</p>
+   </section>
    <h2 class="heading settled" data-level="5" id="ack"><span class="secno">5. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
    <p>The following individuals have contributed to the design of the WebXR Device API specification:</p>
    <ul>
@@ -1796,15 +1823,21 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
+   <li><a href="#dom-xrenvironmentblendmode-additive">additive</a><span>, in §2.2</span>
+   <li><a href="#dom-xrenvironmentblendmode-alpha-blend">alpha-blend</a><span>, in §2.2</span>
    <li><a href="#dom-xrray-direction">direction</a><span>, in §3.1</span>
+   <li><a href="#xrsession-environment-blending-mode">environment blending mode</a><span>, in §2.2</span>
+   <li><a href="#dom-xrsession-environmentblendmode">environmentBlendMode</a><span>, in §2.2</span>
    <li><a href="#dom-xrsessionmode-immersive-ar">immersive-ar</a><span>, in §2.1</span>
    <li><a href="#dom-xrsessionmode-immersive-vr">"immersive-vr"</a><span>, in §2.1</span>
    <li><a href="#dom-xrsessionmode-inline">"inline"</a><span>, in §2.1</span>
    <li><a href="#xrray-internal-matrix">internal matrix</a><span>, in §3.1</span>
    <li><a href="#dom-xrray-matrix">matrix</a><span>, in §3.1</span>
    <li><a href="#xrray-obtain-the-matrix">obtain the matrix</a><span>, in §3.1</span>
+   <li><a href="#dom-xrenvironmentblendmode-opaque">opaque</a><span>, in §2.2</span>
    <li><a href="#dom-xrray-origin">origin</a><span>, in §3.1</span>
    <li><a href="#performs-automatic-composition">performs automatic composition</a><span>, in §2.3</span>
+   <li><a href="#enumdef-xrenvironmentblendmode">XREnvironmentBlendMode</a><span>, in §2.2</span>
    <li><a href="#xrray">XRRay</a><span>, in §3.1</span>
    <li><a href="#dom-xrray-xrray">XRRay(origin, direction)</a><span>, in §3.1</span>
    <li><a href="#dom-xrray-xrray-transform">XRRay(transform)</a><span>, in §3.1</span>
@@ -1814,12 +1847,6 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <a href="https://tc39.github.io/ecma262/#sec-isdetachedbuffer">https://tc39.github.io/ecma262/#sec-isdetachedbuffer</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-sec-isdetachedbuffer">3.1. XRRay</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-responsetype-opaque">
-   <a href="https://fetch.spec.whatwg.org/#dom-responsetype-opaque">https://fetch.spec.whatwg.org/#dom-responsetype-opaque</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-responsetype-opaque">2.2. Environment blend mode</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-dictdef-dompointinit">
@@ -1892,31 +1919,13 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <a href="https://www.w3.org/TR/webxr/#xrsession-interface">https://www.w3.org/TR/webxr/#xrsession-interface</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-xrsession-interface">2.1. XRSessionMode</a> <a href="#ref-for-xrsession-interface①">(2)</a>
-    <li><a href="#ref-for-xrsession-interface②">2.2. Environment blend mode</a>
+    <li><a href="#ref-for-xrsession-interface②">2.2. Environment blend mode</a> <a href="#ref-for-xrsession-interface③">(2)</a> <a href="#ref-for-xrsession-interface④">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-xrenvironmentblendmode-additive">
-   <a href="https://www.w3.org/TR/webxr/#dom-xrenvironmentblendmode-additive">https://www.w3.org/TR/webxr/#dom-xrenvironmentblendmode-additive</a><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="term-for-dom-xrrenderstateinit-baselayer">
+   <a href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer">https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-dom-xrenvironmentblendmode-additive">2.2. Environment blend mode</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-xrenvironmentblendmode-alpha-blend">
-   <a href="https://www.w3.org/TR/webxr/#dom-xrenvironmentblendmode-alpha-blend">https://www.w3.org/TR/webxr/#dom-xrenvironmentblendmode-alpha-blend</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrenvironmentblendmode-alpha-blend">2.2. Environment blend mode</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="term-for-xrsession-environment-blending-mode">
-   <a href="https://www.w3.org/TR/webxr/#xrsession-environment-blending-mode">https://www.w3.org/TR/webxr/#xrsession-environment-blending-mode</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-xrsession-environment-blending-mode">2.2. Environment blend mode</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-xrsession-environmentblendmode">
-   <a href="https://www.w3.org/TR/webxr/#dom-xrsession-environmentblendmode">https://www.w3.org/TR/webxr/#dom-xrsession-environmentblendmode</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-dom-xrsession-environmentblendmode">2.2. Environment blend mode</a>
+    <li><a href="#ref-for-dom-xrrenderstateinit-baselayer">2.2. Environment blend mode</a> <a href="#ref-for-dom-xrrenderstateinit-baselayer①">(2)</a> <a href="#ref-for-dom-xrrenderstateinit-baselayer②">(3)</a> <a href="#ref-for-dom-xrrenderstateinit-baselayer③">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-exclusive-access">
@@ -1976,11 +1985,6 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
      <li><span class="dfn-paneled" id="term-for-sec-isdetachedbuffer" style="color:initial">IsDetachedBuffer</span>
     </ul>
    <li>
-    <a data-link-type="biblio">[FETCH]</a> defines the following terms:
-    <ul>
-     <li><span class="dfn-paneled" id="term-for-dom-responsetype-opaque" style="color:initial">"opaque"</span>
-    </ul>
-   <li>
     <a data-link-type="biblio">[geometry-1]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-dictdef-dompointinit" style="color:initial">DOMPointInit</span>
@@ -2003,10 +2007,7 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
     <ul>
      <li><span class="dfn-paneled" id="term-for-xrrigidtransform-interface" style="color:initial">XRRigidTransform</span>
      <li><span class="dfn-paneled" id="term-for-xrsession-interface" style="color:initial">XRSession</span>
-     <li><span class="dfn-paneled" id="term-for-dom-xrenvironmentblendmode-additive" style="color:initial">additive</span>
-     <li><span class="dfn-paneled" id="term-for-dom-xrenvironmentblendmode-alpha-blend" style="color:initial">alpha-blend</span>
-     <li><span class="dfn-paneled" id="term-for-xrsession-environment-blending-mode" style="color:initial">environment blending mode</span>
-     <li><span class="dfn-paneled" id="term-for-dom-xrsession-environmentblendmode" style="color:initial">environmentBlendMode</span>
+     <li><span class="dfn-paneled" id="term-for-dom-xrrenderstateinit-baselayer" style="color:initial">baseLayer</span>
      <li><span class="dfn-paneled" id="term-for-exclusive-access" style="color:initial">exclusive access</span>
      <li><span class="dfn-paneled" id="term-for-immersive-session" style="color:initial">immersive session</span>
      <li><span class="dfn-paneled" id="term-for-xr-immersive-xr-device" style="color:initial">immersive xr device</span>
@@ -2022,8 +2023,6 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
   <dl>
    <dt id="biblio-ecmascript">[ECMASCRIPT]
    <dd><a href="https://tc39.github.io/ecma262/">ECMAScript Language Specification</a>. URL: <a href="https://tc39.github.io/ecma262/">https://tc39.github.io/ecma262/</a>
-   <dt id="biblio-fetch">[FETCH]
-   <dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/">Fetch Standard</a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-geometry-1">[GEOMETRY-1]
    <dd>Simon Pieters; Chris Harrelson. <a href="https://www.w3.org/TR/geometry-1/">Geometry Interfaces Module Level 1</a>. 4 December 2018. CR. URL: <a href="https://www.w3.org/TR/geometry-1/">https://www.w3.org/TR/geometry-1/</a>
    <dt id="biblio-webidl">[WebIDL]
@@ -2036,6 +2035,17 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
   <a class="idl-code" data-link-type="enum-value" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar①①"><c- s>"immersive-ar"</c-></a>
 };
 
+<c- b>enum</c-> <a href="#enumdef-xrenvironmentblendmode"><code><c- g>XREnvironmentBlendMode</c-></code></a> {
+  <a class="idl-code" data-link-type="enum-value" href="#dom-xrenvironmentblendmode-opaque" id="ref-for-dom-xrenvironmentblendmode-opaque①①"><c- s>"opaque"</c-></a>,
+  <a class="idl-code" data-link-type="enum-value" href="#dom-xrenvironmentblendmode-additive" id="ref-for-dom-xrenvironmentblendmode-additive②"><c- s>"additive"</c-></a>,
+  <a class="idl-code" data-link-type="enum-value" href="#dom-xrenvironmentblendmode-alpha-blend" id="ref-for-dom-xrenvironmentblendmode-alpha-blend②"><c- s>"alpha-blend"</c-></a>,
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://www.w3.org/TR/webxr/#xrsession-interface" id="ref-for-xrsession-interface②①"><c- g>XRSession</c-></a> {
+  // Attributes
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="n" data-link-type="idl-name" href="#enumdef-xrenvironmentblendmode" id="ref-for-enumdef-xrenvironmentblendmode①"><c- n>XREnvironmentBlendMode</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="XREnvironmentBlendMode" href="#dom-xrsession-environmentblendmode" id="ref-for-dom-xrsession-environmentblendmode②"><c- g>environmentBlendMode</c-></a>;
+};
+
 [<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①"><c- g>Exposed</c-></a>=<c- n>Window</c->,
  <a class="idl-code" data-link-type="constructor" href="#dom-xrray-xrray" id="ref-for-dom-xrray-xrray①"><c- g>Constructor</c-></a>(<c- b>optional</c-> <a class="n" data-link-type="idl-name" href="https://drafts.fxtf.org/geometry-1/#dictdef-dompointinit" id="ref-for-dictdef-dompointinit④"><c- n>DOMPointInit</c-></a> <a href="#dom-xrray-xrray-origin-direction-origin"><code><c- g>origin</c-></code></a>, <c- b>optional</c-> <a class="n" data-link-type="idl-name" href="https://drafts.fxtf.org/geometry-1/#dictdef-dompointinit" id="ref-for-dictdef-dompointinit①①"><c- n>DOMPointInit</c-></a> <a href="#dom-xrray-xrray-origin-direction-direction"><code><c- g>direction</c-></code></a>),
  <a class="idl-code" data-link-type="constructor" href="#dom-xrray-xrray-transform" id="ref-for-dom-xrray-xrray-transform①"><c- g>Constructor</c-></a>(<a class="n" data-link-type="idl-name" href="https://www.w3.org/TR/webxr/#xrrigidtransform-interface" id="ref-for-xrrigidtransform-interface①"><c- n>XRRigidTransform</c-></a> <a href="#dom-xrray-xrray-transform-transform"><code><c- g>transform</c-></code></a>)]
@@ -2046,10 +2056,18 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
 };
 
 </pre>
+  <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
+  <div style="counter-reset:issue">
+   <div class="issue"> Clarify the behavior of inline sessions<a href="#issue-ecb1065f"> ↵ </a></div>
+   <div class="issue"> Add explanation here<a href="#issue-1c5c8084"> ↵ </a></div>
+   <div class="issue"> Find the correct spec home for this type<a href="#issue-d6b651cc"> ↵ </a></div>
+   <div class="issue"> add information about new threats and mitigations introduced by functionality in this module<a href="#issue-6ece0a93"> ↵ </a></div>
+  </div>
   <aside class="dfn-panel" data-for="enumdef-xrsessionmode">
    <b><a href="#enumdef-xrsessionmode">#enumdef-xrsessionmode</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-enumdef-xrsessionmode">2.1. XRSessionMode</a> <a href="#ref-for-enumdef-xrsessionmode①">(2)</a>
+    <li><a href="#ref-for-enumdef-xrsessionmode②">2.2. Environment blend mode</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrsessionmode-immersive-vr">
@@ -2065,10 +2083,46 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
     <li><a href="#ref-for-dom-xrsessionmode-immersive-ar⑤">2.2. Environment blend mode</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar⑥">(2)</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="enumdef-xrenvironmentblendmode">
+   <b><a href="#enumdef-xrenvironmentblendmode">#enumdef-xrenvironmentblendmode</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-enumdef-xrenvironmentblendmode">2.2. Environment blend mode</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="xrsession-environment-blending-mode">
+   <b><a href="#xrsession-environment-blending-mode">#xrsession-environment-blending-mode</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-xrsession-environment-blending-mode">2.2. Environment blend mode</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrenvironmentblendmode-opaque">
+   <b><a href="#dom-xrenvironmentblendmode-opaque">#dom-xrenvironmentblendmode-opaque</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrenvironmentblendmode-opaque">2.2. Environment blend mode</a> <a href="#ref-for-dom-xrenvironmentblendmode-opaque①">(2)</a> <a href="#ref-for-dom-xrenvironmentblendmode-opaque②">(3)</a> <a href="#ref-for-dom-xrenvironmentblendmode-opaque③">(4)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrenvironmentblendmode-additive">
+   <b><a href="#dom-xrenvironmentblendmode-additive">#dom-xrenvironmentblendmode-additive</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrenvironmentblendmode-additive">2.2. Environment blend mode</a> <a href="#ref-for-dom-xrenvironmentblendmode-additive①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrenvironmentblendmode-alpha-blend">
+   <b><a href="#dom-xrenvironmentblendmode-alpha-blend">#dom-xrenvironmentblendmode-alpha-blend</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrenvironmentblendmode-alpha-blend">2.2. Environment blend mode</a> <a href="#ref-for-dom-xrenvironmentblendmode-alpha-blend①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrsession-environmentblendmode">
+   <b><a href="#dom-xrsession-environmentblendmode">#dom-xrsession-environmentblendmode</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrsession-environmentblendmode">2.2. Environment blend mode</a> <a href="#ref-for-dom-xrsession-environmentblendmode①">(2)</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="performs-automatic-composition">
    <b><a href="#performs-automatic-composition">#performs-automatic-composition</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-performs-automatic-composition">2.2. Environment blend mode</a>
+    <li><a href="#ref-for-performs-automatic-composition">2.2. Environment blend mode</a> <a href="#ref-for-performs-automatic-composition①">(2)</a> <a href="#ref-for-performs-automatic-composition②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="xrray-internal-matrix">
