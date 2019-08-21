@@ -35,6 +35,7 @@ spec: WebXR Device API - Level 1; urlPrefix: https://www.w3.org/TR/webxr/#
     type: attribute; text: baseLayer; for: XRRenderState; url: dom-xrrenderstateinit-baselayer
     type: enum; text: XRSessionMode; url: enumdef-xrsessionmode
     type: dfn; text: exclusive access; url: exclusive-access
+    type: dfn; text: eye; url: dom-xrview-eye
     type: dfn; text: immersive XR device; for: XR; url: xr-immersive-xr-device
     type: dfn; text: XR device; for: XRSession; url: xrsession-xr-device
     type: dfn; text: mode; for: XRSession; url: xrsession-mode
@@ -44,6 +45,9 @@ spec: WebXR Device API - Level 1; urlPrefix: https://www.w3.org/TR/webxr/#
     type: dfn; text: view; url: view
 spec: ECMAScript; urlPrefix: https://tc39.github.io/ecma262/#
     type: method; text: IsDetachedBuffer; url: sec-isdetachedbuffer
+spec: CSS Compositing level 1; urlPrefix: https://www.w3.org/TR/compositing-1
+    type: dfn; text: source-over; url: porterduffcompositingoperators_srcover
+type: dfn; text: lighter; url: porterduffcompositingoperators_plus
 </pre>
 
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -187,13 +191,15 @@ partial interface XRSession {
 };
 </pre>
 
-Each {{XRSession}} has an <dfn for="XRSession">environment blending mode</dfn> value, which is an enum which MUST be set to whichever of the following values best matches the behavior of imagery rendered by the session in relation to the user's surrounding environment.
+Each {{XRSession}} has an <dfn for="XRSession">environment blending mode</dfn> value, which is an enum which MUST be set to whichever of the following values best matches the behavior of imagery presented by the session to the user.
 
-  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> indicates that the user's surrounding environment is not visible at all. Alpha values in the {{XRRenderState/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. The {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{XRSessionMode/"immersive-ar"}} sessions.
+  - If the pixels of the {{XRRenderState/baseLayer}} are composited using <a>source-over</a> blending with an opaque black color, the blend mode MUST indicate of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn>. {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{XRSessionMode/"immersive-ar"}} sessions.
 
-  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">additive</dfn> indicates that the user's surrounding environment is visible and the {{XRRenderState/baseLayer}} will be shown additively against it on the device's primary displays. On those displays, alpha values in the {{XRRenderState/baseLayer}} will be ignored, with the compositor treating all alpha values as 1.0. This means that black pixels will appear fully transparent, and there is no way to make a pixel appear fully opaque. Secondary system usage of the app's views, such as a photo capture or video capture stream, MAY make use of the alpha channel.
+  - If the pixels of the {{XRRenderState/baseLayer}} are composited using <a>lighter</a> blending with the <a>user's environment</a>, the blend mode MUST indicate <dfn enum-value for="XREnvironmentBlendMode">additive</dfn>.
 
-  - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn> indicates that the user's surrounding environment is visible and the {{XRRenderState/baseLayer}} will be blended with it according to the alpha values of each pixel. Pixels with an alpha value of 1.0 will be fully opaque and pixels with an alpha value of 0.0 will be fully transparent.  When an [=xr device=] [=perform automatic composition=] using a [=passthrough camera=] in an {{XRSessionMode/"immersive-ar"}} session, it MUST report {{XREnvironmentBlendMode/"alpha-blend"}} blending behavior.
+  - If the pixels of the {{XRRenderState/baseLayer}} are composited using <a>source-over</a> blending with the <a>user's environment</a>, the blend mode MUST indicate <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn>.
+
+The <dfn>user's environment</dfn> is an opaque buffer that contains a pixel representation of the current world. If the device renders in stereo, this buffer SHOULD be the world representation with reference to the <a>eye</a>.
 
 The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=].
 
