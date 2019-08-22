@@ -195,11 +195,15 @@ partial interface XRSession {
 
 Each {{XRSession}} MUST have an <dfn for="XRSession">environment blending mode</dfn> value, which is an enum which is set to whichever of the following values best matches the behavior of imagery presented by the session to the user.
 
-- A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> MUST be reported if the pixels of the {{XRRenderState/baseLayer}} are composited using [=source-over=] blending with an opaque black color. {{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{XRSessionMode/"immersive-ar"}} sessions.
+- A blend mode of <dfn enum-value for="XREnvironmentBlendMode">opaque</dfn> MUST be reported if the pixels of the {{XRRenderState/baseLayer}} are composited using [=source-over=] blending with an opaque black color. <br>{{XRSession/environmentBlendMode}} MUST NOT be {{opaque}} for {{XRSessionMode/"immersive-ar"}} sessions.
 
 - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">additive</dfn> MUST be reported if the pixels of the {{XRRenderState/baseLayer}} are composited using [=lighter=] blending during [=perform automatic composition|automatic-composition=].
 
+    NOTE: typically this mode is returned for "additive light" displays.
+
 - A blend mode of <dfn enum-value for="XREnvironmentBlendMode">alpha-blend</dfn> MUST be reported if the pixels of the {{XRRenderState/baseLayer}} are composited using [=source-over=] during [=perform automatic composition|automatic-composition=].
+
+    NOTE: typically this mode is returned for "pass-through" displays
 
 The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute returns the {{XRSession}}'s [=environment blending mode=].
 
@@ -208,7 +212,7 @@ Note: Most Virtual Reality devices are only capable of exhibiting {{XREnvironmen
 ISSUE: Clarify the behavior of inline sessions
 
 Automatic composition {#automatic-composition}
----------
+---------------------
 
 An [=xr device=] during an {{XRSessionMode/"immersive-ar"}} session will have its [=xr compositor=] <dfn>perform automatic composition</dfn> by drawing the rendered scene on top of the [=aligned real-world background|real-world background=].
 
@@ -216,12 +220,14 @@ Automatic composition MUST NOT automatically grant the page access to any additi
 
 NOTE: It is not possible for the user to perform computer vision based on automatic composition. Future modules may enable such functionality.
 
+ISSUE: Should the preceding paragraph move to the security section?
+
 Automatic composition MAY make additional color or pixel adjustments to optimize the experience but MUST NOT perform occlusion based on pixel depth relative to real-world geometry; only rendered content MUST be composed on top of the real-world background.
 
 NOTE: Future modules, such as those that may provide access to real world geometry data, might extend this behavior to allow for automatic pixel occlusion or possibly to enable developers to perform this occlusion manually.
 
-During automatic composition the [=xr device=] MUST HAVE the capability of producing an [=aligned real-world background=] for each [=view=].
-An [=xr device=] MUST capture the <dfn>aligned real-world background</dfn> in such a way that it is aligned with the pixels of the {{XRRenderState/baseLayer}}.
+During automatic composition the [=xr device=] MUST have the capability of producing an [=aligned real-world background=] for each [=view=].
+An [=xr device=] MUST capture the <dfn>aligned real-world background</dfn> in such a way that it can be aligned with the pixels of the {{XRRenderState/baseLayer}}.
 
 Security, Privacy, and Comfort Considerations {#security}
 =============================================
