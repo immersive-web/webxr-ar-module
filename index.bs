@@ -117,7 +117,7 @@ Introduction {#intro}
 
 <section class="non-normative">
 
-Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications are now broadly available to consumers, offering an immersive computing platform with both new opportunities and challenges. The ability to interact directly with immersive hardware is critical to ensuring that the web is well equipped to operate as a first-class citizen in this environment. The WebXR Augmented Reality module expands the functionality available to developers when their code is running running on AR hardware.
+Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications are now broadly available to consumers, offering an immersive computing platform with both new opportunities and challenges. The ability to interact directly with immersive hardware is critical to ensuring that the web is well equipped to operate as a first-class citizen in this environment. The WebXR Augmented Reality module expands the functionality available to developers when their code is running on AR hardware.
 
 </section>
 
