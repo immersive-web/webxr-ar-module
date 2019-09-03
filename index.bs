@@ -136,7 +136,7 @@ WebXR Device API Integration {#webxr-device-api-integration}
 XRSessionMode {#xrsessionmode-enum}
 -------------
 
-As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
+As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
 
 <pre class="idl">
 enum XRSessionMode {
