@@ -15,7 +15,7 @@ Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web
 Editor: Brandon Jones 87824, Google http://google.com/, bajones@google.com
 Editor: Nell Waliczek 93109, Amazon [Microsoft until 2018] https://amazon.com/, nhw@amazon.com
 
-Abstract: This specification describes support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web.
+Abstract: The WebXR Augmented Reality module expands the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> with the functionality available on AR hardware.
 
 Warning: custom
 Custom Warning Title: Unstable API
@@ -117,7 +117,7 @@ Introduction {#intro}
 
 <section class="non-normative">
 
-Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications are now broadly available to consumers, offering an immersive computing platform with both new opportunities and challenges. The ability to interact directly with immersive hardware is critical to ensuring that the web is well equipped to operate as a first-class citizen in this environment. The WebXR Augmented Reality module expands the functionality available to developers when their code is running running on AR hardware.
+Hardware that enables Virtual Reality (VR) and Augmented Reality (AR) applications are now broadly available to consumers, offering an immersive computing platform with both new opportunities and challenges. The ability to interact directly with immersive hardware is critical to ensuring that the web is well equipped to operate as a first-class citizen in this environment. The WebXR Augmented Reality module expands the functionality available to developers when their code is running on AR hardware.
 
 </section>
 
@@ -136,7 +136,7 @@ WebXR Device API Integration {#webxr-device-api-integration}
 XRSessionMode {#xrsessionmode-enum}
 -------------
 
-As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
+As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
 
 <pre class="idl">
 enum XRSessionMode {
