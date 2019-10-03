@@ -1213,7 +1213,7 @@ Possible extra rowspan handling
 	}
 </style>
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet" type="text/css">
-  <meta content="Bikeshed version e86d5b1b47a216fa66165c234892adc259212183" name="generator">
+  <meta content="Bikeshed version c80088ef848c5e5446a2eaced80623027d194593" name="generator">
   <link href="https://immersive-web.github.io/webxr-ar-module/" rel="canonical">
   <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
   <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
@@ -1517,7 +1517,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Augmented Reality Module - Level 1</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2019-09-30">30 September 2019</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2019-10-03">3 October 2019</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1528,6 +1528,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      <dt class="editor">Editors:
      <dd class="editor p-author h-card vcard" data-editor-id="87824"><a class="p-name fn u-email email" href="mailto:bajones@google.com">Brandon Jones</a> (<a class="p-org org" href="http://google.com/">Google</a>)
      <dd class="editor p-author h-card vcard" data-editor-id="93109"><a class="p-name fn u-email email" href="mailto:nhw@amazon.com">Nell Waliczek</a> (<a class="p-org org" href="https://amazon.com/">Amazon [Microsoft until 2018]</a>)
+     <dd class="editor p-author h-card vcard" data-editor-id="109489"><a class="p-name fn u-email email" href="mailto:manish@mozilla.com">Manish Goregaokar</a> (<a class="p-org org" href="http://mozilla.org/">Mozilla</a>)
      <dd class="editor p-author h-card vcard"><span class="p-name fn"></span>
      <dt>Participate:
      <dd><a href="https://github.com/immersive-web/webxr-ar-module/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/webxr-ar-module/issues">open issues</a>)
@@ -1665,11 +1666,11 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <p>The <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="attribute" data-export id="dom-xrsession-environmentblendmode"><code>environmentBlendMode</code></dfn> attribute MUST report the <code class="idl"><a data-link-type="idl" href="#enumdef-xrenvironmentblendmode" id="ref-for-enumdef-xrenvironmentblendmode①">XREnvironmentBlendMode</a></code> value that matches <a data-link-type="dfn" href="#blend-technique" id="ref-for-blend-technique①">blend technique</a> currently being performed by the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor①">XR Compositor</a>.</p>
    <ul>
     <li data-md>
-     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export id="dom-xrenvironmentblendmode-opaque"><code>opaque</code></dfn> MUST be reported if the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor②">XR Compositor</a> is using <a data-link-type="dfn" href="#opaque-environment-blending" id="ref-for-opaque-environment-blending">opaque environment blending</a>.</p>
+     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export data-lt="&quot;opaque&quot;|opaque" id="dom-xrenvironmentblendmode-opaque"><code>opaque</code></dfn> MUST be reported if the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor②">XR Compositor</a> is using <a data-link-type="dfn" href="#opaque-environment-blending" id="ref-for-opaque-environment-blending">opaque environment blending</a>.</p>
     <li data-md>
-     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export id="dom-xrenvironmentblendmode-alpha-blend"><code>alpha-blend</code></dfn> MUST be reported if the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor③">XR Compositor</a> is using <a data-link-type="dfn" href="#alpha-blend-environment-blending" id="ref-for-alpha-blend-environment-blending">alpha-blend environment blending</a>.</p>
+     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export data-lt="&quot;alpha-blend&quot;|alpha-blend" id="dom-xrenvironmentblendmode-alpha-blend"><code>alpha-blend</code></dfn> MUST be reported if the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor③">XR Compositor</a> is using <a data-link-type="dfn" href="#alpha-blend-environment-blending" id="ref-for-alpha-blend-environment-blending">alpha-blend environment blending</a>.</p>
     <li data-md>
-     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export id="dom-xrenvironmentblendmode-additive"><code>additive</code></dfn> MUST be reported if the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor④">XR Compositor</a> is using <a data-link-type="dfn" href="#additive-environment-blending" id="ref-for-additive-environment-blending">additive environment blending</a>.</p>
+     <p>A blend mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XREnvironmentBlendMode" data-dfn-type="enum-value" data-export data-lt="&quot;additive&quot;|additive" id="dom-xrenvironmentblendmode-additive"><code>additive</code></dfn> MUST be reported if the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor④">XR Compositor</a> is using <a data-link-type="dfn" href="#additive-environment-blending" id="ref-for-additive-environment-blending">additive environment blending</a>.</p>
    </ul>
    <h3 class="heading settled" data-level="2.3" id="xr-compositor-behaviors"><span class="secno">2.3. </span><span class="content">XR Compositor Behaviors</span><a class="self-link" href="#xr-compositor-behaviors"></a></h3>
    <p>When presenting content to the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device">XR device</a>, the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor⑤">XR Compositor</a> MUST apply the appropriate <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="blend-technique">blend technique</dfn> to combine virtual pixels with the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment⑦">real-world environment</a>. The appropriate technique is determined based on the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device①">XR device</a>'s <a data-link-type="dfn" href="#display-technology" id="ref-for-display-technology">display technology</a> and the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-mode" id="ref-for-xrsession-mode①">mode</a>.</p>
@@ -1708,9 +1709,11 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
    <li><a href="#dom-xrenvironmentblendmode-additive">additive</a><span>, in §2.2</span>
+   <li><a href="#dom-xrenvironmentblendmode-additive">"additive"</a><span>, in §2.2</span>
    <li><a href="#additive-environment-blending">additive environment blending</a><span>, in §2.3</span>
    <li><a href="#additive-light">additive light</a><span>, in §1.1</span>
    <li><a href="#dom-xrenvironmentblendmode-alpha-blend">alpha-blend</a><span>, in §2.2</span>
+   <li><a href="#dom-xrenvironmentblendmode-alpha-blend">"alpha-blend"</a><span>, in §2.2</span>
    <li><a href="#alpha-blend-environment-blending">alpha-blend environment blending</a><span>, in §2.3</span>
    <li><a href="#blend-technique">blend technique</a><span>, in §2.3</span>
    <li><a href="#display-technology">display technology</a><span>, in §1.1</span>
@@ -1724,6 +1727,7 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
      <li><a href="#opaque">definition of</a><span>, in §1.1</span>
      <li><a href="#dom-xrenvironmentblendmode-opaque">enum-value for XREnvironmentBlendMode</a><span>, in §2.2</span>
     </ul>
+   <li><a href="#dom-xrenvironmentblendmode-opaque">"opaque"</a><span>, in §2.2</span>
    <li><a href="#opaque-environment-blending">opaque environment blending</a><span>, in §2.3</span>
    <li><a href="#pass-through">pass-through</a><span>, in §1.1</span>
    <li><a href="#real-world-environment">real-world environment</a><span>, in §1.1</span>
