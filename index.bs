@@ -215,6 +215,8 @@ When presenting content to the [=XR device=], the [=XR Compositor=] MUST apply t
 
 - When performing <dfn>additive environment blending</dfn>, the rendered buffers obtained by the [=XR Compositor=] are composited using [=lighter=] blending before being presented on the [=XR device=]. This technique MUST be applied on [=additive light=] displays, regardless of the [=XRSession/mode=].
 
+NOTE: When using a device that performs [=alpha-blend environment blending=], use of a {{XRRenderState/baseLayer}} with no alpha channel will result in the [=real-world environment=] being completely obscured. It should be assumed that this is intentional on the part of developer, and the user agent may wish to suspend compositing of [=real-world environment=] as an optimization in such cases.
+
 The [=XR Compositor=] MAY make additional color or pixel adjustments to optimize the experience. The timing of composition MUST NOT depend on the [=blend technique=] or source of the [=real-world environment=]. but MUST NOT perform occlusion based on pixel depth relative to real-world geometry; only rendered content MUST be composed on top of the real-world background.
 
 NOTE: Future modules may enable automatic or manual pixel occlusion with the [=real-world environment=].
