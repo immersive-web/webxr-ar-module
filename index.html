@@ -1213,7 +1213,7 @@ Possible extra rowspan handling
 	}
 </style>
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-WD" rel="stylesheet" type="text/css">
-  <meta content="Bikeshed version ab064036f6954708ab86ed349b68bf5950f5dceb" name="generator">
+  <meta content="Bikeshed version 7e430f4a6cb4a7616872addf238a902c73553f9d" name="generator">
   <link href="https://www.w3.org/TR/webxr-ar-module-1/" rel="canonical">
   <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
   <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
@@ -1681,10 +1681,11 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
     <li data-md>
      <p>When performing <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="additive-environment-blending">additive environment blending</dfn>, the rendered buffers obtained by the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor⑧">XR Compositor</a> are composited using <a data-link-type="dfn" href="https://www.w3.org/TR/compositing-1#porterduffcompositingoperators_plus" id="ref-for-porterduffcompositingoperators_plus">lighter</a> blending before being presented on the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device⑥">XR device</a>. This technique MUST be applied on <a data-link-type="dfn" href="#additive-light" id="ref-for-additive-light">additive light</a> displays, regardless of the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-mode" id="ref-for-xrsession-mode⑥">mode</a>.</p>
    </ul>
-   <p>The <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor⑨">XR Compositor</a> MAY make additional color or pixel adjustments to optimize the experience. The timing of composition MUST NOT depend on the <a data-link-type="dfn" href="#blend-technique" id="ref-for-blend-technique②">blend technique</a> or source of the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment⑨">real-world environment</a>. but MUST NOT perform occlusion based on pixel depth relative to real-world geometry; only rendered content MUST be composed on top of the real-world background.</p>
-   <p class="note" role="note"><span>NOTE:</span> Future modules may enable automatic or manual pixel occlusion with the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①⓪">real-world environment</a>.</p>
+   <p class="note" role="note"><span>NOTE:</span> When using a device that performs <a data-link-type="dfn" href="#alpha-blend-environment-blending" id="ref-for-alpha-blend-environment-blending①">alpha-blend environment blending</a>, use of a <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer" id="ref-for-dom-xrrenderstateinit-baselayer">baseLayer</a></code> with no alpha channel will result in the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment⑨">real-world environment</a> being completely obscured. It should be assumed that this is intentional on the part of developer, and the user agent may wish to suspend compositing of <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①⓪">real-world environment</a> as an optimization in such cases.</p>
+   <p>The <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor⑨">XR Compositor</a> MAY make additional color or pixel adjustments to optimize the experience. The timing of composition MUST NOT depend on the <a data-link-type="dfn" href="#blend-technique" id="ref-for-blend-technique②">blend technique</a> or source of the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①①">real-world environment</a>. but MUST NOT perform occlusion based on pixel depth relative to real-world geometry; only rendered content MUST be composed on top of the real-world background.</p>
+   <p class="note" role="note"><span>NOTE:</span> Future modules may enable automatic or manual pixel occlusion with the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①②">real-world environment</a>.</p>
    <p>The <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xr-compositor" id="ref-for-xr-compositor①⓪">XR Compositor</a> MUST NOT automatically grant the page access to any additional information such as camera intrinsics, media streams, real-world geometry, etc.</p>
-   <p class="note" role="note"><span>NOTE:</span> Developers may request access to an <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device⑦">XR Device</a>'s camera, should one be exposed through the existing [Media Capture and Streams](https://www.w3.org/TR/mediacapture-streams/) specification. However, doing so does not provide a mechanism to query the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrrigidtransform-interface" id="ref-for-xrrigidtransform-interface">XRRigidTransform</a></code> between the camera’s location and the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrspace-native-origin" id="ref-for-xrspace-native-origin">native origin</a> of the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-viewer-reference-space" id="ref-for-xrsession-viewer-reference-space">viewer reference space</a>. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①①">real-world environment</a>. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.</p>
+   <p class="note" role="note"><span>NOTE:</span> Developers may request access to an <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-xr-device" id="ref-for-xrsession-xr-device⑦">XR Device</a>'s camera, should one be exposed through the existing [Media Capture and Streams](https://www.w3.org/TR/mediacapture-streams/) specification. However, doing so does not provide a mechanism to query the <code class="idl"><a data-link-type="idl" href="https://www.w3.org/TR/webxr/#xrrigidtransform-interface" id="ref-for-xrrigidtransform-interface">XRRigidTransform</a></code> between the camera’s location and the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrspace-native-origin" id="ref-for-xrspace-native-origin">native origin</a> of the <a data-link-type="dfn" href="https://www.w3.org/TR/webxr/#xrsession-viewer-reference-space" id="ref-for-xrsession-viewer-reference-space">viewer reference space</a>. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①③">real-world environment</a>. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.</p>
    <h2 class="heading settled" data-level="3" id="security"><span class="secno">3. </span><span class="content">Security, Privacy, and Comfort Considerations</span><a class="self-link" href="#security"></a></h2>
    <h3 class="heading settled" data-level="3.1" id="protected-functionality"><span class="secno">3.1. </span><span class="content">Protected functionality</span><a class="self-link" href="#protected-functionality"></a></h3>
    <p class="issue" id="issue-6ece0a93"><a class="self-link" href="#issue-6ece0a93"></a> add information about new threats and mitigations introduced by functionality in this module</p>
@@ -1764,6 +1765,12 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
     <li><a href="#ref-for-xrsession-interface②">2.2. XREnvironmentBlendMode</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-dom-xrrenderstateinit-baselayer">
+   <a href="https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer">https://www.w3.org/TR/webxr/#dom-xrrenderstateinit-baselayer</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrrenderstateinit-baselayer">2.3. XR Compositor Behaviors</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-exclusive-access">
    <a href="https://www.w3.org/TR/webxr/#exclusive-access">https://www.w3.org/TR/webxr/#exclusive-access</a><b>Referenced in:</b>
    <ul>
@@ -1840,6 +1847,7 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
      <li><span class="dfn-paneled" id="term-for-xrframe-interface" style="color:initial">XRFrame</span>
      <li><span class="dfn-paneled" id="term-for-xrrigidtransform-interface" style="color:initial">XRRigidTransform</span>
      <li><span class="dfn-paneled" id="term-for-xrsession-interface" style="color:initial">XRSession</span>
+     <li><span class="dfn-paneled" id="term-for-dom-xrrenderstateinit-baselayer" style="color:initial">baseLayer</span>
      <li><span class="dfn-paneled" id="term-for-exclusive-access" style="color:initial">exclusive access</span>
      <li><span class="dfn-paneled" id="term-for-immersive-session" style="color:initial">immersive session</span>
      <li><span class="dfn-paneled" id="term-for-xr-immersive-xr-device" style="color:initial">immersive xr device</span>
@@ -1881,7 +1889,7 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
     <li><a href="#ref-for-real-world-environment">1.1. Terminology</a> <a href="#ref-for-real-world-environment①">(2)</a> <a href="#ref-for-real-world-environment②">(3)</a> <a href="#ref-for-real-world-environment③">(4)</a> <a href="#ref-for-real-world-environment④">(5)</a>
     <li><a href="#ref-for-real-world-environment⑤">2.1. XRSessionMode</a>
     <li><a href="#ref-for-real-world-environment⑥">2.2. XREnvironmentBlendMode</a>
-    <li><a href="#ref-for-real-world-environment⑦">2.3. XR Compositor Behaviors</a> <a href="#ref-for-real-world-environment⑧">(2)</a> <a href="#ref-for-real-world-environment⑨">(3)</a> <a href="#ref-for-real-world-environment①⓪">(4)</a> <a href="#ref-for-real-world-environment①①">(5)</a>
+    <li><a href="#ref-for-real-world-environment⑦">2.3. XR Compositor Behaviors</a> <a href="#ref-for-real-world-environment⑧">(2)</a> <a href="#ref-for-real-world-environment⑨">(3)</a> <a href="#ref-for-real-world-environment①⓪">(4)</a> <a href="#ref-for-real-world-environment①①">(5)</a> <a href="#ref-for-real-world-environment①②">(6)</a> <a href="#ref-for-real-world-environment①③">(7)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="display-technology">
@@ -1983,6 +1991,7 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <b><a href="#alpha-blend-environment-blending">#alpha-blend-environment-blending</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-alpha-blend-environment-blending">2.2. XREnvironmentBlendMode</a>
+    <li><a href="#ref-for-alpha-blend-environment-blending①">2.3. XR Compositor Behaviors</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="additive-environment-blending">
