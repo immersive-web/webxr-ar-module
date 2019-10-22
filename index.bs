@@ -32,6 +32,9 @@ Status Text: This WebXR Augmented Reality Module is designed as a module to be i
 spec:infra;
     type:dfn; text:string
 spec: webxr-1;
+    type:enum-value; text:"immersive-vr"
+    type:enum-value; text:"inline"
+    type: enum; text: XRSessionMode
     type: dfn; text: exclusive access
     type: dfn; text: immersive xr device; for: XR
     type: dfn; text: xr device; for: /
@@ -131,19 +134,11 @@ WebXR Device API Integration {#webxr-device-api-integration}
 XRSessionMode {#xrsessionmode-enum}
 -------------
 
-As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module expands the allowable values of the {{XRSessionMode}} enum to include {{XRSessionMode/"immersive-ar"}}. 
-
-<pre class="idl">
-enum XRSessionMode {
-  "inline",
-  "immersive-vr",
-  "immersive-ar"
-};
-</pre>
+As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module enables use of the {{XRSessionMode/"immersive-ar"}} {{XRSessionMode}} enum.
 
 A session mode of <dfn enum-value for="XRSessionMode">"immersive-ar"</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR/immersive XR device=] display and that content <b>is</b> intended to be [=blend technique|blended=] with the [=real-world environment=].
 
-The definition of [=immersive session=] is also expanded to include sessions with a [=XRSession/mode=] of {{XRSessionMode/"immersive-ar"}}. On compatible hardware, user agents MAY support {{XRSessionMode/"immersive-vr"}} sessions, {{XRSessionMode/"immersive-ar"}} sessions, or both.  Supporting for the additional {{XRSessionMode/"immersive-ar"}} session mode, does not change the requirement that user agents MUST support {{XRSessionMode/"inline"}} sessions.
+On compatible hardware, user agents MAY support {{XRSessionMode/"immersive-vr"}} sessions, {{XRSessionMode/"immersive-ar"}} sessions, or both. Supporting the additional {{XRSessionMode/"immersive-ar"}} session mode, does not change the requirement that user agents MUST support {{XRSessionMode/"inline"}} sessions.
 
 NOTE: This means that {{XRSessionMode/"immersive-ar"}} sessions support all the features and reference spaces that {{XRSessionMode/"immersive-vr"}} sessions do, since both are [=immersive sessions=].
 
