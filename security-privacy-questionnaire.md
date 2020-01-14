@@ -10,13 +10,13 @@ and for what purposes is that exposure necessary?**
 This API doesn't give any new information to web sites compared to the WebXR
 specification it is extending. It allows web sites to start a XR session as
 "immersive-ar" which blends the real world behind the XR scene. The web sites
-does not have access to the real world information (camera) and can only affect
-how the blending is done.
+does not have access to the real world information (camera) but knows how the
+XR scene will be rendered on top of the real world (blend mode).
 
 **Is this specification exposing the minimum amount of information necessary to
 power the feature?**
 
-N/A (not exposing new information)
+Yes.
 
 **How does this specification deal with personal information or
 personally-identifiable information or information derived thereof?**
