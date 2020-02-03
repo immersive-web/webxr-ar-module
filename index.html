@@ -1222,7 +1222,7 @@ Possible extra rowspan handling
 	}
 </style>
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet" type="text/css">
-  <meta content="Bikeshed version 2a881f0ee698433d75c6a1555514334adb37d8c7" name="generator">
+  <meta content="Bikeshed version 8bc2fccb49a45a0af18c5e75ce18049d75f824b6" name="generator">
   <link href="https://www.w3.org/TR/webxr-ar-module-1/" rel="canonical">
   <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
   <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
@@ -1526,7 +1526,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Augmented Reality Module - Level 1</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-15">15 January 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-02-03">3 February 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1537,7 +1537,6 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      <dd><a href="https://www.w3.org/TR/2019/WD-webxr-ar-module-1-20191010/" rel="prev">https://www.w3.org/TR/2019/WD-webxr-ar-module-1-20191010/</a>
      <dt>Issue Tracking:
      <dd><a href="https://github.com/immersive-web/webxr-ar-module/issues/">GitHub</a>
-     <dd><a href="#issues-index">Inline In Spec</a>
      <dt class="editor">Editors:
      <dd class="editor p-author h-card vcard" data-editor-id="87824"><a class="p-name fn u-email email" href="mailto:bajones@google.com">Brandon Jones</a> (<a class="p-org org" href="http://google.com/">Google</a>)
      <dd class="editor p-author h-card vcard" data-editor-id="93109"><a class="p-name fn u-email email" href="mailto:nhw@amazon.com">Nell Waliczek</a> (<a class="p-org org" href="https://amazon.com/">Amazon [Microsoft until 2018]</a>)
@@ -1602,11 +1601,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li><a href="#xrenvironmentblendmode-enum"><span class="secno">2.2</span> <span class="content">XREnvironmentBlendMode</span></a>
       <li><a href="#xr-compositor-behaviors"><span class="secno">2.3</span> <span class="content">XR Compositor Behaviors</span></a>
      </ol>
-    <li>
-     <a href="#security"><span class="secno">3</span> <span class="content">Security, Privacy, and Comfort Considerations</span></a>
-     <ol class="toc">
-      <li><a href="#protected-functionality"><span class="secno">3.1</span> <span class="content">Protected functionality</span></a>
-     </ol>
+    <li><a href="#privacy-security"><span class="secno">3</span> <span class="content">Privacy &amp; Security Considerations</span></a>
     <li><a href="#ack"><span class="secno">4</span> <span class="content">Acknowledgements</span></a>
     <li>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
@@ -1620,7 +1615,6 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
      </ol>
     <li><a href="#idl-index"><span class="secno"></span> <span class="content">IDL Index</span></a>
-    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ol>
   </nav>
   <main>
@@ -1699,9 +1693,16 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <p class="note" role="note"><span>NOTE:</span> Future modules may enable automatic or manual pixel occlusion with the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①②">real-world environment</a>.</p>
    <p>The <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xr-compositor" id="ref-for-xr-compositor①⓪">XR Compositor</a> MUST NOT automatically grant the page access to any additional information such as camera intrinsics, media streams, real-world geometry, etc.</p>
    <p class="note" role="note"><span>NOTE:</span> Developers may request access to an <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xr-device" id="ref-for-xr-device⑦">XR Device</a>'s camera, should one be exposed through the existing [Media Capture and Streams](https://www.w3.org/TR/mediacapture-streams/) specification. However, doing so does not provide a mechanism to query the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrrigidtransform" id="ref-for-xrrigidtransform">XRRigidTransform</a></code> between the camera’s location and the <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xrspace-native-origin" id="ref-for-xrspace-native-origin">native origin</a> of the <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xrsession-viewer-reference-space" id="ref-for-xrsession-viewer-reference-space">viewer reference space</a>. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①③">real-world environment</a>. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.</p>
-   <h2 class="heading settled" data-level="3" id="security"><span class="secno">3. </span><span class="content">Security, Privacy, and Comfort Considerations</span><a class="self-link" href="#security"></a></h2>
-   <h3 class="heading settled" data-level="3.1" id="protected-functionality"><span class="secno">3.1. </span><span class="content">Protected functionality</span><a class="self-link" href="#protected-functionality"></a></h3>
-   <p class="issue" id="issue-6ece0a93"><a class="self-link" href="#issue-6ece0a93"></a> add information about new threats and mitigations introduced by functionality in this module</p>
+   <h2 class="heading settled" data-level="3" id="privacy-security"><span class="secno">3. </span><span class="content">Privacy &amp; Security Considerations</span><a class="self-link" href="#privacy-security"></a></h2>
+   <section class="non-normative">
+    <p>The AR Module does not provide new information compared to the WebXR Device API
+specification it is extending. It allows websites to start an XR session as <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑧">"immersive-ar"</a></code> which blends the real world behind the XR
+scene. The website does not have access to the real world information (camera
+images) but knows how the XR scene will be composited on top of the real world
+(blend mode).</p>
+    <p>Even if this module does not allow websites to access the camera images, it may
+not be obvious to end users and user agents may want to clarify this.</p>
+   </section>
    <h2 class="heading settled" data-level="4" id="ack"><span class="secno">4. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
    <p>The following individuals have contributed to the design of the WebXR Device API specification:</p>
    <ul>
@@ -1913,10 +1914,6 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
 };
 
 </pre>
-  <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
-  <div style="counter-reset:issue">
-   <div class="issue"> add information about new threats and mitigations introduced by functionality in this module<a href="#issue-6ece0a93"> ↵ </a></div>
-  </div>
   <aside class="dfn-panel" data-for="real-world-environment">
    <b><a href="#real-world-environment">#real-world-environment</a></b><b>Referenced in:</b>
    <ul>
@@ -1955,6 +1952,7 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <ul>
     <li><a href="#ref-for-dom-xrsessionmode-immersive-ar">2.1. XRSessionMode</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar①">(2)</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar②">(3)</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar③">(4)</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar④">(5)</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar⑤">(6)</a>
     <li><a href="#ref-for-dom-xrsessionmode-immersive-ar⑥">2.3. XR Compositor Behaviors</a> <a href="#ref-for-dom-xrsessionmode-immersive-ar⑦">(2)</a>
+    <li><a href="#ref-for-dom-xrsessionmode-immersive-ar⑧">3. Privacy &amp; Security Considerations</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="enumdef-xrenvironmentblendmode">
