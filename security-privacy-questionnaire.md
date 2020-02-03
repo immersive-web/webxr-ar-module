@@ -90,7 +90,7 @@ This specification does not mandate a difference in behaviour.
 **Does this specification have a "Security Considerations" and "Privacy
 Considerations" section?**
 
-Yes. It is WIP as of answering this questionnaire.
+Yes.
 
 **Does this specification allow downgrading default security characteristics?**
 
