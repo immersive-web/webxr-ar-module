@@ -206,15 +206,15 @@ enum XRInteractionSpace {
 
 partial interface XRSession {
   // Attributes
-  readonly attribute XRInteractionSpace interactionSpace;
+  readonly attribute XRInteractionSpace interactionMode;
 };
 </pre>
 
-The <dfn attribute for="XRSession">interactionSpace</dfn> attribute describes the best space (according to the user agent) for the application to draw interactive UI for the current session.
+The <dfn attribute for="XRSession">interactionMode</dfn> attribute describes the best space (according to the user agent) for the application to draw interactive UI for the current session.
 
- - An {{XRSession/interactionSpace}} value of {{XRInteractionSpace/"screen-space"}} indicates that the UI should be drawn directly to the screen without projection. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"screen"}}.
+ - An {{XRSession/interactionMode}} value of {{XRInteractionSpace/"screen-space"}} indicates that the UI should be drawn directly to the screen without projection. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"screen"}}.
 
- - An {{XRSession/interactionSpace}} value of {{XRInteractionSpace/"world-space"}} indicates that the UI should be drawn in the world, some distance from the user, so that they may interact with it using controllers. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"tracked-pointer"}} or {{XRTargetRayMode/"gaze"}}.
+ - An {{XRSession/interactionMode}} value of {{XRInteractionSpace/"world-space"}} indicates that the UI should be drawn in the world, some distance from the user, so that they may interact with it using controllers. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"tracked-pointer"}} or {{XRTargetRayMode/"gaze"}}.
 
 Note: The <a href="https://immersive-web.github.io/dom-overlays/">WebXR DOM Overlays module</a>, if supported, can be used in some of these cases instead.
 
