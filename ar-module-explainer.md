@@ -68,6 +68,39 @@ function drawScene() {
 }
 ```
 
+### Drawing UI elements
+
+The AR module supports a variety of device form factors, including "handheld" phone AR as well as "headworn" glasses-style AR. If the application wishes to show UI elements to the user, it needs to be done differently based on the form factor. This information is exposed through `XRSession`'s `interactionMode` attribute.
+
+For handheld devices, the UI elements probably should be drawn directly to the screen in screen-space coordinates, without applying any projections. In such a case, `interactionMode` will report `"screen-space"`.
+ 
+For headworn devices, the UI elements probably should be drawn in the world space, perhaps at some distance from the user's head so that they may easily interact with it. In such a case, `interactionMode` will report `"world-space"`.
+
+The <a href="https://immersive-web.github.io/dom-overlays/">WebXR DOM Overlays module</a>, if implemented for the device, is able to automatically place UI for both handheld and headworn sessions. However, it is only useful if you wish to do your UI as DOM elements as opposed to using graphics primitives and input source selection events.
+
+```js
+function drawScene() {
+  // draw the rest of the scene
+
+  if (xrSession.interactionMode == "world-space") {
+    // Add UI elements to actual scene
+  } else {
+    // Draw UI elements directly to screen
+  }
+}
+
+xrSession.onselect = function(e) {
+  if (xrSession.interactionMode == "world-space") {
+    // intersect the target ray with the UI elements in world space
+    // to determine which UI element, if any, was selected
+  } else {
+    // determine the screen-space coordinates of the select event and
+    // see which UI element, if any, was selected
+  }
+}
+
+```
+
 ## Appendix B: Proposed IDL
 
 ```webidl
@@ -87,7 +120,13 @@ enum XREnvironmentBlendMode {
   "alpha-blend",
 };
 
+enum XRInteractionSpace {
+    "screen-space",
+    "world-space",
+};
+
 partial interface XRSession {
   readonly attribute XREnvironmentBlendMode environmentBlendMode;
+  readonly attribute XRInteractionSpace interactionMode;
 }
 ```
