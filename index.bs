@@ -193,28 +193,28 @@ The <dfn attribute for="XRSession">environmentBlendMode</dfn> attribute MUST rep
 
 
 
-XRInteractionSpace {#xrinteractionspace-enum}
+XRInteractionMode {#xrinteractionmode-enum}
 ----------------------
 
 Sometimes the application will wish to draw UI that the user may interact with. WebXR allows for a variety of form factors, including both handheld phone AR and head-worn AR. For different form factors, the UIs will belong in different spaces to facilitate smooth interaction, for example the UI for handheld phone AR will likely be drawn directly on the screen without projection, but the UI for headworn AR will likely be drawn a small distance from the head so that users may use their controllers to interact with it.
 
 <pre class="idl">
-enum XRInteractionSpace {
+enum XRInteractionMode {
     "screen-space",
     "world-space",
 };
 
 partial interface XRSession {
   // Attributes
-  readonly attribute XRInteractionSpace interactionMode;
+  readonly attribute XRInteractionMode interactionMode;
 };
 </pre>
 
 The <dfn attribute for="XRSession">interactionMode</dfn> attribute describes the best space (according to the user agent) for the application to draw interactive UI for the current session.
 
- - An {{XRSession/interactionMode}} value of {{XRInteractionSpace/"screen-space"}} indicates that the UI should be drawn directly to the screen without projection. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"screen"}}.
+ - An {{XRSession/interactionMode}} value of {{XRInteractionMode/"screen-space"}} indicates that the UI should be drawn directly to the screen without projection. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"screen"}}.
 
- - An {{XRSession/interactionMode}} value of {{XRInteractionSpace/"world-space"}} indicates that the UI should be drawn in the world, some distance from the user, so that they may interact with it using controllers. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"tracked-pointer"}} or {{XRTargetRayMode/"gaze"}}.
+ - An {{XRSession/interactionMode}} value of {{XRInteractionMode/"world-space"}} indicates that the UI should be drawn in the world, some distance from the user, so that they may interact with it using controllers. Typically in this scenario, {{select!!event}} events are triggered with {{XRInputSourceEvent/inputSource}}s having an {{XRInputSource/targetRayMode}} of {{XRTargetRayMode/"tracked-pointer"}} or {{XRTargetRayMode/"gaze"}}.
 
 Note: The <a href="https://immersive-web.github.io/dom-overlays/">WebXR DOM Overlays module</a>, if supported, can be used in some of these cases instead.
 

@@ -120,13 +120,13 @@ enum XREnvironmentBlendMode {
   "alpha-blend",
 };
 
-enum XRInteractionSpace {
+enum XRInteractionMode {
     "screen-space",
     "world-space",
 };
 
 partial interface XRSession {
   readonly attribute XREnvironmentBlendMode environmentBlendMode;
-  readonly attribute XRInteractionSpace interactionMode;
+  readonly attribute XRInteractionMode interactionMode;
 }
 ```
