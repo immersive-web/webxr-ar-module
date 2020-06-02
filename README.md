@@ -61,7 +61,7 @@ Per the [`LICENSE.md`](LICENSE.md) file:
 [1]: https://immersive-web.github.io/webxr/
 [2]: https://immersive-web.github.io/webvr/
 [3]: https://www.w3.org/community/webvr/
-[4]: https://www.w3.org/2018/09/immersive-web-wg-charter.html
+[4]: https://www.w3.org/2020/05/immersive-web-wg-charter.html
 [5]: https://w3c.github.io/gamepad/
 [6]: https://w3c.github.io/gamepad/extensions.html
 [7]: https://lists.w3.org/Archives/Public/public-webvr/
