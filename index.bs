@@ -44,6 +44,9 @@ spec: webxr-1;
     type: dfn; text: xr compositor
     type: dfn; text: native origin
     type: dfn; text: viewer reference space
+    type: dfn; text: feature descriptor
+    type: dfn; text: view
+    type: dfn; text: eye; for: view
 </pre>
 
 <pre class="anchors">
@@ -238,6 +241,18 @@ NOTE: Future modules may enable automatic or manual pixel occlusion with the [=r
 The [=XR Compositor=] MUST NOT automatically grant the page access to any additional information such as camera intrinsics, media streams, real-world geometry, etc.
 
 NOTE: Developers may request access to an [=/XR Device=]'s camera, should one be exposed through the existing [[mediacapture-streams|Media Capture and Streams]] specification. However, doing so does not provide a mechanism to query the {{XRRigidTransform}} between the camera's location and the [=native origin=] of the [=viewer reference space=]. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the [=real-world environment=]. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.
+
+First Person Observer Views {#first-person-observer}
+--------------------------------
+
+Many AR devices have a camera, however the camera is typically not aligned with the eyes. When doing video capture of the session for streaming or saving to a file, it is suboptimal to simply composite this camera feed with one of the rendered eye feeds as there will be an internal offset. Devices may use reprojection or other tricks to fix up the stream, but some may expose a third [=view=], the <dfn>first-person observer view</dfn>, which has an [=view/eye=] of {{XREye/"none"}}.
+
+Most content will not expect more than two [=view=]s, and content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling a "<dfn>first-person-observer</dfn>" [=feature descriptor=].
+
+Note: We recommend content use {{XRSessionInit/optionalFeatures}} to enable this feature to ensure maximum compatibility.
+
+Enabling the "[=first-person-observer=]" feature for a session SHOULD NOT enable [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on. If the  [=first-person observer view=] has a lower native frame rate than that of the device, the user-agent MAY choose to surface the [=first-person observer view=] in the {{XRViewerPose/views}} array every other frame, or at whatever rate it wishes. Content that enables "[=first-person-observer=]" is expected to be able to handle changes in the size of {{XRViewerPose/views}} from frame to frame.
+
 
 Privacy & Security Considerations {#privacy-security}
 =================================
