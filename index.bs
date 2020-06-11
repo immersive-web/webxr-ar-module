@@ -253,6 +253,18 @@ Note: We recommend content use {{XRSessionInit/optionalFeatures}} to enable this
 
 Enabling the "[=first-person-observer=]" feature for a session SHOULD NOT enable [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on. If the  [=first-person observer view=] has a lower native frame rate than that of the device, the user-agent MAY choose to surface the [=first-person observer view=] in the {{XRViewerPose/views}} array every other frame, or at whatever rate it wishes. Content that enables "[=first-person-observer=]" is expected to be able to handle changes in the size of {{XRViewerPose/views}} from frame to frame.
 
+[=First-person observer views=] MAY use a different [=blend technique=] over the primary [=views=]. In such a case, this [=blend technique=] MAY be exposed on the {{XRView}} through {{XRView/overrideBlendMode}}.
+
+The <dfn attribute for=XRView>overrideBlendMode</dfn> attribute is <code>null</code> for all primary [=views=], and is the [=view=]'s [=blend technique=] for [=views=] where the [=blend technique=] differs from the {{XRSession/environmentBlendMode}}.
+
+Note: Content should not use the {{XRView/overrideBlendMode}} to determine whether or not to do things like rendering a background, rather it should use it to tweak how rendering is done to better produce an equivalent-looking rendering.
+
+<pre class="idl">
+partial interface XRView {
+  readonly attribute XREnvironmentBlendMode? overrideBlendMode;
+};
+</pre>
+
 
 Privacy & Security Considerations {#privacy-security}
 =================================
