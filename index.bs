@@ -47,6 +47,7 @@ spec: webxr-1;
     type: dfn; text: feature descriptor
     type: dfn; text: view
     type: dfn; text: eye; for: view
+    type: dfn; text: additional-views
 </pre>
 
 <pre class="anchors">
@@ -247,21 +248,17 @@ First Person Observer Views {#first-person-observer}
 
 Many AR devices have a camera, however the camera is typically not aligned with the eyes. When doing video capture of the session for streaming or saving to a file, it is suboptimal to simply composite this camera feed with one of the rendered eye feeds as there will be an internal offset. Devices may use reprojection or other tricks to fix up the stream, but some may expose a third [=view=], the <dfn>first-person observer view</dfn>, which has an [=view/eye=] of {{XREye/"none"}}.
 
-Most content will not expect more than two [=view=]s, and content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling a "<dfn>first-person-observer</dfn>" [=feature descriptor=].
+Content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling the "[=additional-views=]" [=feature descriptor=].
 
-Note: We recommend content use {{XRSessionInit/optionalFeatures}} to enable this feature to ensure maximum compatibility.
+Enabling the "[=additional-views=]" feature for a session that supports  [=first-person observer views=] SHOULD NOT enable the [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on.
 
-Enabling the "[=first-person-observer=]" feature for a session SHOULD NOT enable [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on. If the  [=first-person observer view=] has a lower native frame rate than that of the device, the user-agent MAY choose to surface the [=first-person observer view=] in the {{XRViewerPose/views}} array every other frame, or at whatever rate it wishes. Content that enables "[=first-person-observer=]" is expected to be able to handle changes in the size of {{XRViewerPose/views}} from frame to frame.
+While the {{XRSession}} has a [=blend technique=] exposed by the {{XRSession/environmentBlendMode}}, [=first-person observer views=] always use [=alpha-blend environment blending=].
 
-[=First-person observer views=] MAY use a different [=blend technique=] over the primary [=views=]. In such a case, this [=blend technique=] MAY be exposed on the {{XRView}} through {{XRView/overrideBlendMode}}.
-
-The <dfn attribute for=XRView>overrideBlendMode</dfn> attribute is <code>null</code> for all primary [=views=], and is the [=view=]'s [=blend technique=] for [=views=] where the [=blend technique=] differs from the {{XRSession/environmentBlendMode}}.
-
-Note: Content should not use the {{XRView/overrideBlendMode}} to determine whether or not to do things like rendering a background, rather it should use it to tweak how rendering is done to better produce an equivalent-looking rendering.
+Content may wish to know which view is the [=first-person observer view=] so that it can account for the different [=blend technique=], or choose to render UI elements differently. {{XRView}} objects that correspond to the [=first-person observer view=] have their {{isFirstPersonObserver}} attribute returning <code>true</code>.
 
 <pre class="idl">
 partial interface XRView {
-  readonly attribute XREnvironmentBlendMode? overrideBlendMode;
+  readonly attribute boolean isFirstPersonObserver;
 };
 </pre>
 
