@@ -246,11 +246,11 @@ NOTE: Developers may request access to an [=/XR Device=]'s camera, should one be
 First Person Observer Views {#first-person-observer}
 --------------------------------
 
-Many AR devices have a camera, however the camera is typically not aligned with the eyes. When doing video capture of the session for streaming or saving to a file, it is suboptimal to simply composite this camera feed with one of the rendered eye feeds as there will be an internal offset. Devices may use reprojection or other tricks to fix up the stream, but some may expose a third [=view=], the <dfn>first-person observer view</dfn>, which has an [=view/eye=] of {{XREye/"none"}}.
+Many AR devices have a camera, however the camera is typically not aligned with the eyes. When doing video capture of the session for streaming or saving to a file, it is suboptimal to simply composite this camera feed with one of the rendered eye feeds as there will be an internal offset. Devices may use reprojection or other tricks to fix up the stream, but some may expose a [=secondary view=], the <dfn>first-person observer view</dfn>, which has an [=view/eye=] of {{XREye/"none"}}.
 
-Content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling the "[=additional-views=]" [=feature descriptor=].
+Content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling the "[=secondary view/secondary-views=]" [=feature descriptor=].
 
-Enabling the "[=additional-views=]" feature for a session that supports  [=first-person observer views=] SHOULD NOT enable the [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on.
+Enabling the "[=secondary view/secondary-views=]" feature for a session that supports  [=first-person observer views=] SHOULD NOT enable the [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on.
 
 While the {{XRSession}} has a [=blend technique=] exposed by the {{XRSession/environmentBlendMode}}, [=first-person observer views=] always use [=alpha-blend environment blending=].
 
