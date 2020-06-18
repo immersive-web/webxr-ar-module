@@ -1222,7 +1222,7 @@ Possible extra rowspan handling
 	}
 </style>
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet" type="text/css">
-  <meta content="Bikeshed version bcf9ed33, updated Fri May 29 18:11:07 2020 -0700" name="generator">
+  <meta content="Bikeshed version 40de15f9, updated Thu Jun 11 17:47:04 2020 -0700" name="generator">
   <link href="https://www.w3.org/TR/webxr-ar-module-1/" rel="canonical">
   <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
   <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
@@ -1526,7 +1526,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Augmented Reality Module - Level 1</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-06-02">2 June 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-06-18">18 June 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1601,6 +1601,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li><a href="#xrenvironmentblendmode-enum"><span class="secno">2.2</span> <span class="content">XREnvironmentBlendMode</span></a>
       <li><a href="#xrinteractionmode-enum"><span class="secno">2.3</span> <span class="content">XRInteractionMode</span></a>
       <li><a href="#xr-compositor-behaviors"><span class="secno">2.4</span> <span class="content">XR Compositor Behaviors</span></a>
+      <li><a href="#first-person-observer"><span class="secno">2.5</span> <span class="content">First Person Observer Views</span></a>
      </ol>
     <li><a href="#privacy-security"><span class="secno">3</span> <span class="content">Privacy &amp; Security Considerations</span></a>
     <li><a href="#ack"><span class="secno">4</span> <span class="content">Acknowledgements</span></a>
@@ -1715,6 +1716,16 @@ navigator<c- p>.</c->xr<c- p>.</c->requestSession<c- p>(</c-><c- u>"immersive-ar
    <p class="note" role="note"><span>NOTE:</span> Future modules may enable automatic or manual pixel occlusion with the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①②">real-world environment</a>.</p>
    <p>The <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xr-compositor" id="ref-for-xr-compositor①⓪">XR Compositor</a> MUST NOT automatically grant the page access to any additional information such as camera intrinsics, media streams, real-world geometry, etc.</p>
    <p class="note" role="note"><span>NOTE:</span> Developers may request access to an <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xr-device" id="ref-for-xr-device⑦">XR Device</a>'s camera, should one be exposed through the existing <a data-link-type="biblio" href="#biblio-mediacapture-streams">Media Capture and Streams</a> specification. However, doing so does not provide a mechanism to query the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrrigidtransform" id="ref-for-xrrigidtransform">XRRigidTransform</a></code> between the camera’s location and the <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xrspace-native-origin" id="ref-for-xrspace-native-origin">native origin</a> of the <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xrsession-viewer-reference-space" id="ref-for-xrsession-viewer-reference-space">viewer reference space</a>. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment①③">real-world environment</a>. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.</p>
+   <h3 class="heading settled" data-level="2.5" id="first-person-observer"><span class="secno">2.5. </span><span class="content">First Person Observer Views</span><a class="self-link" href="#first-person-observer"></a></h3>
+   <p>Many AR devices have a camera, however the camera is typically not aligned with the eyes. When doing video capture of the session for streaming or saving to a file, it is suboptimal to simply composite this camera feed with one of the rendered eye feeds as there will be an internal offset. Devices may use reprojection or other tricks to fix up the stream, but some may expose a <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#secondary-view" id="ref-for-secondary-view">secondary view</a>, the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="first-person-observer-view">first-person observer view</dfn>, which has an <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#view-eye" id="ref-for-view-eye">eye</a> of <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xreye-none" id="ref-for-dom-xreye-none">"none"</a></code>.</p>
+   <p>Content MUST explicitly opt-in to receiving a <a data-link-type="dfn" href="#first-person-observer-view" id="ref-for-first-person-observer-view">first-person observer view</a> by enabling the "<a data-link-type="dfn">secondary-views</a>" <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#feature-descriptor" id="ref-for-feature-descriptor">feature descriptor</a>.</p>
+   <p>Enabling the "<a data-link-type="dfn">secondary-views</a>" feature for a session that supports <a data-link-type="dfn" href="#first-person-observer-view" id="ref-for-first-person-observer-view①">first-person observer views</a> SHOULD NOT enable the <a data-link-type="dfn" href="#first-person-observer-view" id="ref-for-first-person-observer-view②">first-person observer view</a> unconditionally on every frame of the session, rather it will only expose this view in the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrviewerpose-views" id="ref-for-dom-xrviewerpose-views①">views</a></code> array for frames when capture is going on.</p>
+   <p>While the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession④">XRSession</a></code> has a <a data-link-type="dfn" href="#blend-technique" id="ref-for-blend-technique③">blend technique</a> exposed by the <code class="idl"><a data-link-type="idl" href="#dom-xrsession-environmentblendmode" id="ref-for-dom-xrsession-environmentblendmode①">environmentBlendMode</a></code>, <a data-link-type="dfn" href="#first-person-observer-view" id="ref-for-first-person-observer-view③">first-person observer views</a> always use <a data-link-type="dfn" href="#alpha-blend-environment-blending" id="ref-for-alpha-blend-environment-blending②">alpha-blend environment blending</a>.</p>
+   <p>Content may wish to know which view is the <a data-link-type="dfn" href="#first-person-observer-view" id="ref-for-first-person-observer-view④">first-person observer view</a> so that it can account for the different <a data-link-type="dfn" href="#blend-technique" id="ref-for-blend-technique④">blend technique</a>, or choose to render UI elements differently. <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrview" id="ref-for-xrview">XRView</a></code> objects that correspond to the <a data-link-type="dfn" href="#first-person-observer-view" id="ref-for-first-person-observer-view⑤">first-person observer view</a> have their <code class="idl"><a data-link-type="idl" href="#dom-xrview-isfirstpersonobserver" id="ref-for-dom-xrview-isfirstpersonobserver">isFirstPersonObserver</a></code> attribute returning <code>true</code>.</p>
+<pre class="idl highlight def"><c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrview" id="ref-for-xrview①"><c- g>XRView</c-></a> {
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean" id="ref-for-idl-boolean"><c- b>boolean</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRView" data-dfn-type="attribute" data-export data-readonly data-type="boolean" id="dom-xrview-isfirstpersonobserver"><code><c- g>isFirstPersonObserver</c-></code></dfn>;
+};
+</pre>
    <h2 class="heading settled" data-level="3" id="privacy-security"><span class="secno">3. </span><span class="content">Privacy &amp; Security Considerations</span><a class="self-link" href="#privacy-security"></a></h2>
    <section class="non-normative">
     <p>The AR Module does not provide new information compared to the WebXR Device API
@@ -1754,8 +1765,10 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <li><a href="#blend-technique">blend technique</a><span>, in §2.4</span>
    <li><a href="#display-technology">display technology</a><span>, in §1.1</span>
    <li><a href="#dom-xrsession-environmentblendmode">environmentBlendMode</a><span>, in §2.2</span>
+   <li><a href="#first-person-observer-view">first-person observer view</a><span>, in §2.5</span>
    <li><a href="#dom-xrsessionmode-immersive-ar">"immersive-ar"</a><span>, in §2.1</span>
    <li><a href="#dom-xrsession-interactionmode">interactionMode</a><span>, in §2.3</span>
+   <li><a href="#dom-xrview-isfirstpersonobserver">isFirstPersonObserver</a><span>, in §2.5</span>
    <li><a href="#dom-xrenvironmentblendmode-opaque">"opaque"</a><span>, in §2.2</span>
    <li>
     opaque
@@ -1789,6 +1802,12 @@ not be obvious to end users and user agents may want to clarify this.</p>
     <li><a href="#ref-for-event-select">2.3. XRInteractionMode</a> <a href="#ref-for-event-select①">(2)</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-idl-boolean">
+   <a href="https://heycam.github.io/webidl/#idl-boolean">https://heycam.github.io/webidl/#idl-boolean</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-idl-boolean">2.5. First Person Observer Views</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-dom-xrtargetraymode-gaze">
    <a href="https://immersive-web.github.io/webxr/#dom-xrtargetraymode-gaze">https://immersive-web.github.io/webxr/#dom-xrtargetraymode-gaze</a><b>Referenced in:</b>
    <ul>
@@ -1807,6 +1826,12 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <ul>
     <li><a href="#ref-for-dom-xrsessionmode-inline">2.1. XRSessionMode</a>
     <li><a href="#ref-for-dom-xrsessionmode-inline①">2.4. XR Compositor Behaviors</a> <a href="#ref-for-dom-xrsessionmode-inline②">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-dom-xreye-none">
+   <a href="https://immersive-web.github.io/webxr/#dom-xreye-none">https://immersive-web.github.io/webxr/#dom-xreye-none</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xreye-none">2.5. First Person Observer Views</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-dom-xrtargetraymode-screen">
@@ -1839,12 +1864,19 @@ not be obvious to end users and user agents may want to clarify this.</p>
     <li><a href="#ref-for-xrsession">2.1. XRSessionMode</a> <a href="#ref-for-xrsession①">(2)</a>
     <li><a href="#ref-for-xrsession②">2.2. XREnvironmentBlendMode</a>
     <li><a href="#ref-for-xrsession③">2.3. XRInteractionMode</a>
+    <li><a href="#ref-for-xrsession④">2.5. First Person Observer Views</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-enumdef-xrsessionmode">
    <a href="https://immersive-web.github.io/webxr/#enumdef-xrsessionmode">https://immersive-web.github.io/webxr/#enumdef-xrsessionmode</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-enumdef-xrsessionmode">2.1. XRSessionMode</a> <a href="#ref-for-enumdef-xrsessionmode①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-xrview">
+   <a href="https://immersive-web.github.io/webxr/#xrview">https://immersive-web.github.io/webxr/#xrview</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-xrview">2.5. First Person Observer Views</a> <a href="#ref-for-xrview①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-dom-xrrenderstate-baselayer">
@@ -1857,6 +1889,18 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <a href="https://immersive-web.github.io/webxr/#exclusive-access">https://immersive-web.github.io/webxr/#exclusive-access</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-exclusive-access">2.1. XRSessionMode</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-view-eye">
+   <a href="https://immersive-web.github.io/webxr/#view-eye">https://immersive-web.github.io/webxr/#view-eye</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-view-eye">2.5. First Person Observer Views</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-feature-descriptor">
+   <a href="https://immersive-web.github.io/webxr/#feature-descriptor">https://immersive-web.github.io/webxr/#feature-descriptor</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-feature-descriptor">2.5. First Person Observer Views</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-immersive-session">
@@ -1889,6 +1933,12 @@ not be obvious to end users and user agents may want to clarify this.</p>
     <li><a href="#ref-for-xrspace-native-origin">2.4. XR Compositor Behaviors</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-secondary-view">
+   <a href="https://immersive-web.github.io/webxr/#secondary-view">https://immersive-web.github.io/webxr/#secondary-view</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-secondary-view">2.5. First Person Observer Views</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-dom-xrinputsource-targetraymode">
    <a href="https://immersive-web.github.io/webxr/#dom-xrinputsource-targetraymode">https://immersive-web.github.io/webxr/#dom-xrinputsource-targetraymode</a><b>Referenced in:</b>
    <ul>
@@ -1911,6 +1961,7 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <a href="https://immersive-web.github.io/webxr/#dom-xrviewerpose-views">https://immersive-web.github.io/webxr/#dom-xrviewerpose-views</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrviewerpose-views">2.4. XR Compositor Behaviors</a>
+    <li><a href="#ref-for-dom-xrviewerpose-views①">2.5. First Person Observer Views</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-xr-compositor">
@@ -1940,24 +1991,34 @@ not be obvious to end users and user agents may want to clarify this.</p>
      <li><span class="dfn-paneled" id="term-for-event-select" style="color:initial">select</span>
     </ul>
    <li>
+    <a data-link-type="biblio">[WebIDL]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="term-for-idl-boolean" style="color:initial">boolean</span>
+    </ul>
+   <li>
     <a data-link-type="biblio">[webxr]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-dom-xrtargetraymode-gaze" style="color:initial">"gaze"</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrsessionmode-immersive-vr" style="color:initial">"immersive-vr"</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrsessionmode-inline" style="color:initial">"inline"</span>
+     <li><span class="dfn-paneled" id="term-for-dom-xreye-none" style="color:initial">"none"</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrtargetraymode-screen" style="color:initial">"screen"</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrtargetraymode-tracked-pointer" style="color:initial">"tracked-pointer"</span>
      <li><span class="dfn-paneled" id="term-for-xrframe" style="color:initial">XRFrame</span>
      <li><span class="dfn-paneled" id="term-for-xrrigidtransform" style="color:initial">XRRigidTransform</span>
      <li><span class="dfn-paneled" id="term-for-xrsession" style="color:initial">XRSession</span>
      <li><span class="dfn-paneled" id="term-for-enumdef-xrsessionmode" style="color:initial">XRSessionMode</span>
+     <li><span class="dfn-paneled" id="term-for-xrview" style="color:initial">XRView</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrrenderstate-baselayer" style="color:initial">baseLayer</span>
      <li><span class="dfn-paneled" id="term-for-exclusive-access" style="color:initial">exclusive access</span>
+     <li><span class="dfn-paneled" id="term-for-view-eye" style="color:initial">eye</span>
+     <li><span class="dfn-paneled" id="term-for-feature-descriptor" style="color:initial">feature descriptor</span>
      <li><span class="dfn-paneled" id="term-for-immersive-session" style="color:initial">immersive session</span>
      <li><span class="dfn-paneled" id="term-for-xr-immersive-xr-device" style="color:initial">immersive xr device</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrinputsourceevent-inputsource" style="color:initial">inputSource</span>
      <li><span class="dfn-paneled" id="term-for-xrsession-mode" style="color:initial">mode</span>
      <li><span class="dfn-paneled" id="term-for-xrspace-native-origin" style="color:initial">native origin</span>
+     <li><span class="dfn-paneled" id="term-for-secondary-view" style="color:initial">secondary view</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrinputsource-targetraymode" style="color:initial">targetRayMode</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrview-transform" style="color:initial">transform</span>
      <li><span class="dfn-paneled" id="term-for-xrsession-viewer-reference-space" style="color:initial">viewer reference space</span>
@@ -1973,6 +2034,8 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <dd>Rik Cabanier; Nikos Andronikos. <a href="https://www.w3.org/TR/compositing-1/">Compositing and Blending Level 1</a>. 13 January 2015. CR. URL: <a href="https://www.w3.org/TR/compositing-1/">https://www.w3.org/TR/compositing-1/</a>
    <dt id="biblio-html">[HTML]
    <dd>Anne van Kesteren; et al. <a href="https://html.spec.whatwg.org/multipage/">HTML Standard</a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+   <dt id="biblio-webidl">[WebIDL]
+   <dd>Boris Zbarsky. <a href="https://heycam.github.io/webidl/">Web IDL</a>. 15 December 2016. ED. URL: <a href="https://heycam.github.io/webidl/">https://heycam.github.io/webidl/</a>
    <dt id="biblio-webxr">[WEBXR]
    <dd>Brandon Jones; Nell Waliczek. <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a>. 10 October 2019. WD. URL: <a href="https://www.w3.org/TR/webxr/">https://www.w3.org/TR/webxr/</a>
   </dl>
@@ -2001,6 +2064,10 @@ not be obvious to end users and user agents may want to clarify this.</p>
 <c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrsession"><c- g>XRSession</c-></a> {
   // Attributes
   <c- b>readonly</c-> <c- b>attribute</c-> <a class="n" data-link-type="idl-name" href="#enumdef-xrinteractionmode"><c- n>XRInteractionMode</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="XRInteractionMode" href="#dom-xrsession-interactionmode"><c- g>interactionMode</c-></a>;
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrview"><c- g>XRView</c-></a> {
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-boolean"><c- b>boolean</c-></a> <a data-readonly data-type="boolean" href="#dom-xrview-isfirstpersonobserver"><code><c- g>isFirstPersonObserver</c-></code></a>;
 };
 
 </pre>
@@ -2055,6 +2122,7 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <b><a href="#dom-xrsession-environmentblendmode">#dom-xrsession-environmentblendmode</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-xrsession-environmentblendmode">2.2. XREnvironmentBlendMode</a>
+    <li><a href="#ref-for-dom-xrsession-environmentblendmode①">2.5. First Person Observer Views</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="dom-xrenvironmentblendmode-opaque">
@@ -2105,6 +2173,7 @@ not be obvious to end users and user agents may want to clarify this.</p>
     <li><a href="#ref-for-blend-technique">2.1. XRSessionMode</a>
     <li><a href="#ref-for-blend-technique①">2.2. XREnvironmentBlendMode</a>
     <li><a href="#ref-for-blend-technique②">2.4. XR Compositor Behaviors</a>
+    <li><a href="#ref-for-blend-technique③">2.5. First Person Observer Views</a> <a href="#ref-for-blend-technique④">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="opaque-environment-blending">
@@ -2118,12 +2187,25 @@ not be obvious to end users and user agents may want to clarify this.</p>
    <ul>
     <li><a href="#ref-for-alpha-blend-environment-blending">2.2. XREnvironmentBlendMode</a>
     <li><a href="#ref-for-alpha-blend-environment-blending①">2.4. XR Compositor Behaviors</a>
+    <li><a href="#ref-for-alpha-blend-environment-blending②">2.5. First Person Observer Views</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="additive-environment-blending">
    <b><a href="#additive-environment-blending">#additive-environment-blending</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-additive-environment-blending">2.2. XREnvironmentBlendMode</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="first-person-observer-view">
+   <b><a href="#first-person-observer-view">#first-person-observer-view</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-first-person-observer-view">2.5. First Person Observer Views</a> <a href="#ref-for-first-person-observer-view①">(2)</a> <a href="#ref-for-first-person-observer-view②">(3)</a> <a href="#ref-for-first-person-observer-view③">(4)</a> <a href="#ref-for-first-person-observer-view④">(5)</a> <a href="#ref-for-first-person-observer-view⑤">(6)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="dom-xrview-isfirstpersonobserver">
+   <b><a href="#dom-xrview-isfirstpersonobserver">#dom-xrview-isfirstpersonobserver</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-xrview-isfirstpersonobserver">2.5. First Person Observer Views</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
