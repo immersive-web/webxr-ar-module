@@ -47,7 +47,8 @@ spec: webxr-1;
     type: dfn; text: feature descriptor
     type: dfn; text: view
     type: dfn; text: eye; for: view
-    type: dfn; text: additional-views
+    type: dfn; text: secondary view
+    type: dfn; text: secondary-views; for:secondary view
 </pre>
 
 <pre class="anchors">
