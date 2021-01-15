@@ -16,7 +16,7 @@ Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web
 
 Editor: Brandon Jones 87824, Google http://google.com/, bajones@google.com
 Editor: Nell Waliczek 93109, Amazon [Microsoft until 2018] https://amazon.com/, nhw@amazon.com
-Editor: Manish Goregaokar 109489, Invited Expert [Mozilla until 2020], manishsmail@gmail.com
+Editor: Manish Goregaokar 109489, Google [Mozilla until 2020], manishearth@google.com
 
 Abstract: The WebXR Augmented Reality module expands the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> with the functionality available on AR hardware.
 
