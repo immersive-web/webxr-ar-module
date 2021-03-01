@@ -267,19 +267,14 @@ partial interface XRView {
 Privacy & Security Considerations {#privacy-security}
 =================================
 
-<section class="non-normative">
+Implementations of the AR Module MUST NOT expose camera images to the content, rather they MUST handle any compositing with the real world in their own implementations. Further extensions to this module MAY expose real-world information (like raw camera frames or lighting estimation), however they MUST gate this behavior on an additional [=feature descriptor=] that requires user consent.
 
-The AR Module does not provide new information compared to the WebXR Device API
-specification it is extending. It allows websites to start an XR session as
+Compared to the WebXR Device API it extends, the AR module only provides some additional details about the nature of the device it is running on via the {{XRSession/environmentBlendMode}} and {{XRSession/interactionMode}} attributes. It allows websites to start an XR session as
 {{XRSessionMode/"immersive-ar"}} which blends the real world behind the XR
-scene. The website does not have access to the real world information (camera
-images) but knows how the XR scene will be composited on top of the real world
-(blend mode).
+scene.
 
 Even if this module does not allow websites to access the camera images, it may
-not be obvious to end users and user agents may want to clarify this.
-
-</section>
+not be obvious to end users and user agents SHOULD clarify this.
 
 Acknowledgements {#ack}
 ================
