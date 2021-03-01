@@ -249,13 +249,13 @@ First Person Observer Views {#first-person-observer}
 
 Many AR devices have a camera, however the camera is typically not aligned with the eyes. When doing video capture of the session for streaming or saving to a file, it is suboptimal to simply composite this camera feed with one of the rendered eye feeds as there will be an internal offset. Devices may use reprojection or other tricks to fix up the stream, but some may expose a [=secondary view=], the <dfn>first-person observer view</dfn>, which has an [=view/eye=] of {{XREye/"none"}}.
 
-Content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling the "[=secondary view/secondary-views=]" [=feature descriptor=].
+Site content MUST explicitly opt-in to receiving a [=first-person observer view=] by enabling the "[=secondary view/secondary-views=]" [=feature descriptor=].
 
 Enabling the "[=secondary view/secondary-views=]" feature for a session that supports  [=first-person observer views=] SHOULD NOT enable the [=first-person observer view=] unconditionally on every frame of the session, rather it will only expose this view in the {{XRViewerPose/views}} array for frames when capture is going on.
 
 While the {{XRSession}} has a [=blend technique=] exposed by the {{XRSession/environmentBlendMode}}, [=first-person observer views=] always use [=alpha-blend environment blending=].
 
-Content may wish to know which view is the [=first-person observer view=] so that it can account for the different [=blend technique=], or choose to render UI elements differently. {{XRView}} objects that correspond to the [=first-person observer view=] have their {{isFirstPersonObserver}} attribute returning <code>true</code>.
+Site content may wish to know which view is the [=first-person observer view=] so that it can account for the different [=blend technique=], or choose to render UI elements differently. {{XRView}} objects that correspond to the [=first-person observer view=] have their {{isFirstPersonObserver}} attribute returning <code>true</code>.
 
 <pre class="idl">
 partial interface XRView {
@@ -267,7 +267,7 @@ partial interface XRView {
 Privacy & Security Considerations {#privacy-security}
 =================================
 
-Implementations of the AR Module MUST NOT expose camera images to the content, rather they MUST handle any compositing with the real world in their own implementations. Further extensions to this module MAY expose real-world information (like raw camera frames or lighting estimation), however they MUST gate this behavior on an additional [=feature descriptor=] that requires user consent.
+Implementations of the AR Module MUST NOT expose camera images to the content, rather they MUST handle any compositing with the real world in their own implementations via the [=XR compositor=]. Further extensions to this module MAY expose real-world information (like raw camera frames or lighting estimation), however they MUST gate this behavior on an additional [=feature descriptor=] that requires user consent.
 
 Compared to the WebXR Device API it extends, the AR module only provides some additional details about the nature of the device it is running on via the {{XRSession/environmentBlendMode}} and {{XRSession/interactionMode}} attributes. It allows websites to start an XR session as
 {{XRSessionMode/"immersive-ar"}} which blends the real world behind the XR
