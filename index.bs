@@ -278,6 +278,37 @@ partial interface XRView {
 };
 </pre>
 
+<div class=example>
+For most programs, supporting secondary views is simply a matter of:
+
+- Including `"secondary-views"` as an optional feature in {{XRSystem/requestSession()}}
+- Ensuring that {{XRViewerPose/views}} is iterated over instead of just accessing the first two elements
+
+<pre highlight="js">
+
+let session = await navigator.xr.requestSession("immersive-ar", {optionalFeatures: ["secondary-views"]});
+let space = await session.requestReferenceSpace("local");
+// perform other set up
+let gl = /* obtain a graphics context */;
+
+session.requestAnimationFrame(function(frame) {
+  let views = frame.getViewerPose(space);
+
+  // IMPORTANT: use `view of views` here instead of
+  // directly indexing the first two or three elements
+  for (view of views) {
+    render(session, gl, view);
+  }
+});
+
+function render(session, gl, view) {
+  // render content to the view
+  // potentially use view.isFirstPersonObserver if necessary to
+  // distinguish between compositing info
+}
+</pre>
+
+</div>
 
 Privacy & Security Considerations {#privacy-security}
 =================================
