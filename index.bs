@@ -8,16 +8,16 @@ ED: https://immersive-web.github.io/webxr-ar-module/
 Previous Version: https://www.w3.org/TR/2019/WD-webxr-ar-module-1-20210824/
 Repository: immersive-web/webxr-ar-module
 Level: 1
-Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web/
+Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web-wg/
 
 !Participate: <a href="https://github.com/immersive-web/webxr-ar-module/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/webxr-ar-module/issues">open issues</a>)
-!Participate: <a href="https://lists.w3.org/Archives/Public/public-immersive-web/">Mailing list archive</a>
+!Participate: <a href="https://lists.w3.org/Archives/Public/public-immersive-web-wg/">Mailing list archive</a>
 !Participate: <a href="irc://irc.w3.org:6665/">W3C's #immersive-web IRC</a>
 
-Editor: Brandon Jones 87824, Google http://google.com/, bajones@google.com
+Editor: Brandon Jones 87824, Google https://google.com/, bajones@google.com
 Former Editor: Nell Waliczek 93109, Amazon [Microsoft until 2018] https://amazon.com/, nhw@amazon.com
 Editor: Manish Goregaokar 109489, Google [Mozilla until 2020], manishearth@google.com
-Editor: Rik Cabanier 106988, Facebook http://oculus.com, cabanier@fb.com
+Editor: Rik Cabanier 106988, Facebook https://oculus.com, cabanier@fb.com
 
 Abstract: The WebXR Augmented Reality module expands the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> with the functionality available on AR hardware.
 
