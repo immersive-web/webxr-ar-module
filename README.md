@@ -17,6 +17,7 @@ This repo is for the design of the [WebXR Augmented Reality Module][21] which ex
 ### Related specifications
 * [WebXR Device API - Level 1][1]: Main specification for JavaScript API for accessing VR and AR devices, including sensors and head-mounted displays.
 
+See also [list of all specifications with detailed status in Working Group and Community Group](https://www.w3.org/immersive-web/list_spec.html). 
 
 ## Relevant Links
 
