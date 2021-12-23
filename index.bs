@@ -37,7 +37,7 @@ spec: webxr-1;
     type:enum-value; text:"inline"
     type: enum; text: XRSessionMode
     type: dfn; text: exclusive access
-    type: dfn; text: immersive xr device; for: XR
+    type: dfn; text: immersive xr device
     type: dfn; text: xr device; for: /
     type: dfn; text: mode; for: XRSession
     type: dfn; text: inline session
@@ -50,6 +50,7 @@ spec: webxr-1;
     type: dfn; text: eye; for: view
     type: dfn; text: secondary view
     type: dfn; text: secondary-views; for:secondary view
+    type: event; text:select
 </pre>
 
 <pre class="anchors">
@@ -157,7 +158,7 @@ XRSessionMode {#xrsessionmode-enum}
 
 As defined in the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> categorizes {{XRSession}}s based on their {{XRSessionMode}}.  This module enables use of the {{XRSessionMode/"immersive-ar"}} {{XRSessionMode}} enum.
 
-A session mode of <dfn enum-value for="XRSessionMode">"immersive-ar"</dfn> indicates that the session's output will be given [=exclusive access=] to the [=XR/immersive XR device=] display and that content <b>is</b> intended to be [=blend technique|blended=] with the [=real-world environment=].
+A session mode of <dfn enum-value for="XRSessionMode">"immersive-ar"</dfn> indicates that the session's output will be given [=exclusive access=] to the [=immersive XR device=] display and that content <b>is</b> intended to be [=blend technique|blended=] with the [=real-world environment=].
 
 On compatible hardware, user agents MAY support {{XRSessionMode/"immersive-vr"}} sessions, {{XRSessionMode/"immersive-ar"}} sessions, or both. Supporting the additional {{XRSessionMode/"immersive-ar"}} session mode, does not change the requirement that user agents MUST support {{XRSessionMode/"inline"}} sessions.
 
