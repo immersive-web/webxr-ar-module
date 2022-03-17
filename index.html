@@ -6,9 +6,9 @@
   <meta content="ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
-  <meta content="Bikeshed version 2e3c4c68b, updated Fri Jan 14 14:49:00 2022 -0800" name="generator">
+  <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/webxr-ar-module-1/" rel="canonical">
-  <meta content="80a32f80b6a83228c21e48f36386ccb4ff9fcae2" name="document-revision">
+  <meta content="db45893727f16f56ede1cddc8a8d8345b4838617" name="document-revision">
   <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
   <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
 <style>
@@ -691,7 +691,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Augmented Reality Module - Level 1</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-02-03">3 February 2022</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-03-17">17 March 2022</time></p>
    <details open>
     <summary>More details about this document</summary>
     <div data-fill-with="spec-metadata">
@@ -828,9 +828,10 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p>A session mode of <dfn class="dfn-paneled idl-code" data-dfn-for="XRSessionMode" data-dfn-type="enum-value" data-export id="dom-xrsessionmode-immersive-ar"><code>"immersive-ar"</code></dfn> indicates that the session’s output will be given <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#exclusive-access" id="ref-for-exclusive-access">exclusive access</a> to the <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#immersive-xr-device" id="ref-for-immersive-xr-device">immersive XR device</a> display and that content <b>is</b> intended to be <a data-link-type="dfn" href="#blend-technique" id="ref-for-blend-technique">blended</a> with the <a data-link-type="dfn" href="#real-world-environment" id="ref-for-real-world-environment⑤">real-world environment</a>.</p>
    <p>On compatible hardware, user agents MAY support <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessionmode-immersive-vr" id="ref-for-dom-xrsessionmode-immersive-vr">"immersive-vr"</a></code> sessions, <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar②">"immersive-ar"</a></code> sessions, or both. Supporting the additional <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar③">"immersive-ar"</a></code> session mode, does not change the requirement that user agents MUST support <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessionmode-inline" id="ref-for-dom-xrsessionmode-inline">"inline"</a></code> sessions.</p>
    <p class="note" role="note"><span>NOTE:</span> This means that <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar④">"immersive-ar"</a></code> sessions support all the features and reference spaces that <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessionmode-immersive-vr" id="ref-for-dom-xrsessionmode-immersive-vr①">"immersive-vr"</a></code> sessions do, since both are <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#immersive-session" id="ref-for-immersive-session">immersive sessions</a>.</p>
-   <div class="example" id="example-080291e0">
-    <a class="self-link" href="#example-080291e0"></a> The following code checks to see if <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑤">"immersive-ar"</a></code> sessions are supported. 
-<pre class="highlight">navigator<c- p>.</c->xr<c- p>.</c->supportsSession<c- p>(</c-><c- t>'immersive-ar'</c-><c- p>).</c->then<c- p>(()</c-> <c- p>=></c-> <c- p>{</c->
+   <div class="example" id="example-9df4486d">
+    <a class="self-link" href="#example-9df4486d"></a> The following code checks to see if <code class="idl"><a data-link-type="idl" href="#dom-xrsessionmode-immersive-ar" id="ref-for-dom-xrsessionmode-immersive-ar⑤">"immersive-ar"</a></code> sessions are supported. 
+<pre class="highlight">navigator<c- p>.</c->xr<c- p>.</c->isSessionSupported<c- p>(</c-><c- t>'immersive-ar'</c-><c- p>).</c->then<c- p>((</c->supported<c- p>)</c-> <c- p>=></c-> <c- p>{</c->
+  <c- k>if</c-> <c- p>(</c-><c- o>!</c->supported<c- p>)</c-> <c- p>{</c-> <c- k>return</c-><c- p>;</c-> <c- p>}</c->
   <c- c1>// 'immersive-ar' sessions are supported.</c->
   <c- c1>// Page should advertise AR support to the user.</c->
 <c- p>}</c->
@@ -1345,12 +1346,12 @@ not be obvious to end users and user agents SHOULD clarify this.</p>
    <dt id="biblio-webidl">[WEBIDL]
    <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
    <dt id="biblio-webxr">[WEBXR]
-   <dd>Brandon Jones; Manish Goregaokar; Rik Cabanier. <a href="https://www.w3.org/TR/webxr/"><cite>WebXR Device API</cite></a>. 5 January 2022. WD. URL: <a href="https://www.w3.org/TR/webxr/">https://www.w3.org/TR/webxr/</a>
+   <dd>Brandon Jones; Manish Goregaokar; Rik Cabanier. <a href="https://www.w3.org/TR/webxr/"><cite>WebXR Device API</cite></a>. 14 March 2022. WD. URL: <a href="https://www.w3.org/TR/webxr/">https://www.w3.org/TR/webxr/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-mediacapture-streams">[MEDIACAPTURE-STREAMS]
-   <dd>Cullen Jennings; et al. <a href="https://www.w3.org/TR/mediacapture-streams/"><cite>Media Capture and Streams</cite></a>. 20 January 2022. CR. URL: <a href="https://www.w3.org/TR/mediacapture-streams/">https://www.w3.org/TR/mediacapture-streams/</a>
+   <dd>Cullen Jennings; et al. <a href="https://www.w3.org/TR/mediacapture-streams/"><cite>Media Capture and Streams</cite></a>. 10 March 2022. CR. URL: <a href="https://www.w3.org/TR/mediacapture-streams/">https://www.w3.org/TR/mediacapture-streams/</a>
   </dl>
   <h2 class="no-num no-ref heading settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
 <pre class="idl highlight def"><c- b>enum</c-> <a href="#enumdef-xrenvironmentblendmode"><code><c- g>XREnvironmentBlendMode</c-></code></a> {
