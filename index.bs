@@ -162,7 +162,8 @@ NOTE: This means that {{XRSessionMode/"immersive-ar"}} sessions support all the 
 The following code checks to see if {{XRSessionMode/"immersive-ar"}} sessions are supported.
 
 <pre highlight="js">
-navigator.xr.supportsSession('immersive-ar').then(() => {
+navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+  if (!supported) { return; }
   // 'immersive-ar' sessions are supported.
   // Page should advertise AR support to the user.
 }
