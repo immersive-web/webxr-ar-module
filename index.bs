@@ -2,12 +2,17 @@
 Shortname: webxr-ar-module
 Title: WebXR Augmented Reality Module - Level 1
 Group: immersivewebwg
-Status: ED
+Status: CR
 TR: https://www.w3.org/TR/webxr-ar-module-1/
 ED: https://immersive-web.github.io/webxr-ar-module/
 Repository: immersive-web/webxr-ar-module
 Level: 1
 Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web-wg/
+
+Date: 2022-11-01
+Deadline: 2022-11-29
+Implementation Report: https://wpt.fyi/results/webxr/ar-module?label=experimental&label=master&aligned
+WPT Path Prefix: webxr/ar-module
 
 !Participate: <a href="https://github.com/immersive-web/webxr-ar-module/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/webxr-ar-module/issues">open issues</a>)
 !Participate: <a href="https://lists.w3.org/Archives/Public/public-immersive-web-wg/">Mailing list archive</a>
