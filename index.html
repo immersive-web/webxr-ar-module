@@ -6,9 +6,9 @@
   <meta content="ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
-  <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
+  <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/webxr-ar-module-1/" rel="canonical">
-  <meta content="04e08c1afec6a1366cb86934885845025130b95b" name="document-revision">
+  <meta content="64f89af5d5e7dc67ca333ea6973e3dd478387a83" name="document-revision">
   <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
   <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
 <style>
@@ -327,61 +327,226 @@ a[href].issue-return {
     margin-bottom: 0;
 }</style>
 <style>/* style-mdn-anno */
-
-            @media (max-width: 767px) { .mdn-anno { opacity: .1 } }
-            .mdn-anno { font: 1em sans-serif; padding: 0.3em; position: absolute; z-index: 8; right: 0.3em; background: #EEE; color: black; box-shadow: 0 0 3px #999; overflow: hidden; border-collapse: initial; border-spacing: initial; min-width: 9em; max-width: min-content; white-space: nowrap; word-wrap: normal; hyphens: none}
-            .mdn-anno:not(.wrapped) { opacity: 1}
-            .mdn-anno:hover { z-index: 9 }
-            .mdn-anno.wrapped { min-width: 0 }
-            .mdn-anno.wrapped > :not(button) { display: none; }
-            .mdn-anno > .mdn-anno-btn { cursor: pointer; border: none; color: #000; background: transparent; margin: -8px; float: right; padding: 10px 8px 8px 8px; outline: none; }
-            .mdn-anno > .mdn-anno-btn > .less-than-two-engines-flag { color: red; padding-right: 2px; }
-            .mdn-anno > .mdn-anno-btn > .all-engines-flag { color: green; padding-right: 2px; }
-            .mdn-anno > .mdn-anno-btn > span { color: #fff; background-color: #000; font-weight: normal; font-family: zillaslab, Palatino, "Palatino Linotype", serif; padding: 2px 3px 0px 3px; line-height: 1.3em; vertical-align: top; }
-            .mdn-anno > .feature { margin-top: 20px; }
-            .mdn-anno > .feature:not(:first-of-type) { border-top: 1px solid #999; margin-top: 6px; padding-top: 2px; }
-            .mdn-anno > .feature > .less-than-two-engines-text { color: red }
-            .mdn-anno > .feature > .all-engines-text { color: green }
-            .mdn-anno > .feature > p { font-size: .75em; margin-top: 6px; margin-bottom: 0; }
-            .mdn-anno > .feature > p + p { margin-top: 3px; }
-            .mdn-anno > .feature > .support { display: block; font-size: 0.6em; margin: 0; padding: 0; margin-top: 2px }
-            .mdn-anno > .feature > .support + div { padding-top: 0.5em; }
-            .mdn-anno > .feature > .support > hr { display: block; border: none; border-top: 1px dotted #999; padding: 3px 0px 0px 0px; margin: 2px 3px 0px 3px; }
-            .mdn-anno > .feature > .support > hr::before { content: ""; }
-            .mdn-anno > .feature > .support > span { padding: 0.2em 0; display: block; display: table; }
-            .mdn-anno > .feature > .support > span.no { color: #CCCCCC; filter: grayscale(100%); }
-            .mdn-anno > .feature > .support > span.no::before { opacity: 0.5; }
-            .mdn-anno > .feature > .support > span:first-of-type { padding-top: 0.5em; }
-            .mdn-anno > .feature > .support > span > span { padding: 0 0.5em; display: table-cell; }
-            .mdn-anno > .feature > .support > span > span:first-child { width: 100%; }
-            .mdn-anno > .feature > .support > span > span:last-child { width: 100%; white-space: pre; padding: 0; }
-            .mdn-anno > .feature > .support > span::before { content: ' '; display: table-cell; min-width: 1.5em; height: 1.5em; background: no-repeat center center; background-size: contain; text-align: right; font-size: 0.75em; font-weight: bold; }
-            .mdn-anno > .feature > .support > .chrome_android::before { background-image: url(https://resources.whatwg.org/browser-logos/chrome.svg); }
-            .mdn-anno > .feature > .support > .firefox_android::before { background-image: url(https://resources.whatwg.org/browser-logos/firefox.png); }
-            .mdn-anno > .feature > .support > .chrome::before { background-image: url(https://resources.whatwg.org/browser-logos/chrome.svg); }
-            .mdn-anno > .feature > .support > .edge_blink::before { background-image: url(https://resources.whatwg.org/browser-logos/edge.svg); }
-            .mdn-anno > .feature > .support > .edge::before { background-image: url(https://resources.whatwg.org/browser-logos/edge_legacy.svg); }
-            .mdn-anno > .feature > .support > .firefox::before { background-image: url(https://resources.whatwg.org/browser-logos/firefox.png); }
-            .mdn-anno > .feature > .support > .ie::before { background-image: url(https://resources.whatwg.org/browser-logos/ie.png); }
-            .mdn-anno > .feature > .support > .safari_ios::before { background-image: url(https://resources.whatwg.org/browser-logos/safari-ios.svg); }
-            .mdn-anno > .feature > .support > .nodejs::before { background-image: url(https://nodejs.org/static/images/favicons/favicon.ico); }
-            .mdn-anno > .feature > .support > .opera_android::before { background-image: url(https://resources.whatwg.org/browser-logos/opera.svg); }
-            .mdn-anno > .feature > .support > .opera::before { background-image: url(https://resources.whatwg.org/browser-logos/opera.svg); }
-            .mdn-anno > .feature > .support > .safari::before { background-image: url(https://resources.whatwg.org/browser-logos/safari.png); }
-            .mdn-anno > .feature > .support > .samsunginternet_android::before { background-image: url(https://resources.whatwg.org/browser-logos/samsung.svg); }
-            .mdn-anno > .feature > .support > .webview_android::before { background-image: url(https://resources.whatwg.org/browser-logos/android-webview.png); }
-            .name-slug-mismatch { color: red }
-            .caniuse-status:hover { z-index: 9; }
-
-            /* dt, li, .issue, .note, and .example are "position: relative", so to put annotation at right margin, must move to right of containing block */
-            .h-entry:not(.status-LS) dt > .mdn-anno, .h-entry:not(.status-LS) li > .mdn-anno, .h-entry:not(.status-LS) .issue > .mdn-anno, .h-entry:not(.status-LS) .note > .mdn-anno, .h-entry:not(.status-LS) .example > .mdn-anno { right: -6.7em; }
-            .h-entry p + .mdn-anno { margin-top: 0; }
-            h2 + .mdn-anno.after { margin: -48px 0 0 0; }
-            h3 + .mdn-anno.after { margin: -46px 0 0 0; }
-            h4 + .mdn-anno.after { margin: -42px 0 0 0; }
-            h5 + .mdn-anno.after { margin: -40px 0 0 0; }
-            h6 + .mdn-anno.after { margin: -40px 0 0 0; }
-            </style>
+@media (max-width: 767px) {
+	.mdn-anno {
+		opacity: .1;
+	}
+}
+:root {
+	--mdn-bg: #EEE;
+	--mdn-shadow: #999;
+	--mdn-nosupport-text: #ccc;
+}
+.mdn-anno {
+	font: 1em sans-serif;
+	padding: 0.3em;
+	position: absolute;
+	z-index: 8;
+	right: 0.3em;
+	background: var(--mdn-bg, #EEE);
+	color: var(--text, black);
+	box-shadow: 0 0 3px var(--mdn-shadow, #999);
+	overflow: hidden;
+	border-collapse: initial;
+	border-spacing: initial;
+	min-width: 9em;
+	max-width: min-content;
+	white-space: nowrap;
+	word-wrap: normal;
+	hyphens: none;
+	border-radius: .25em;
+}
+.mdn-anno:not(.wrapped) {
+	opacity: 1;
+	z-index: 9;
+}
+.mdn-anno.wrapped {
+	min-width: 0;
+}
+.mdn-anno.wrapped > :not(button) {
+	display: none;
+}
+.mdn-anno:hover {
+	outline: var(--text, black) 1px solid;
+}
+.mdn-anno > .mdn-anno-btn {
+	cursor: pointer;
+	border: none;
+	color: #000;
+	background: transparent;
+	margin: -8px;
+	float: right;
+	padding: 10px 8px 8px 8px;
+	outline: none;
+}
+.mdn-anno > .mdn-anno-btn > .less-than-two-engines-flag {
+	color: red;
+	padding-right: 2px;
+}
+.mdn-anno > .mdn-anno-btn > .all-engines-flag {
+	color: green;
+	padding-right: 2px;
+}
+.mdn-anno > .mdn-anno-btn > span {
+	color: #fff;
+	background-color: #000;
+	font-weight: normal;
+	font-family: zillaslab, Palatino, "Palatino Linotype", serif;
+	padding: 2px 3px 0px 3px;
+	line-height: 1.3em;
+	vertical-align: top;
+}
+.mdn-anno > .feature {
+	margin-top: 20px;
+}
+.mdn-anno > .feature:not(:first-of-type) {
+	border-top: 1px solid #999;
+	margin-top: 6px;
+	padding-top: 2px;
+}
+.mdn-anno > .feature > .less-than-two-engines-text {
+	color: red;
+}
+.mdn-anno > .feature > .all-engines-text {
+	color: green;
+}
+.mdn-anno > .feature > p {
+	font-size: .75em;
+	margin-top: 6px;
+	margin-bottom: 0;
+}
+.mdn-anno > .feature > p + p {
+	margin-top: 3px;
+}
+.mdn-anno > .feature > .support {
+	display: block;
+	font-size: 0.6em;
+	margin: 0;
+	padding: 0;
+	margin-top: 2px;
+}
+.mdn-anno > .feature > .support + div {
+	padding-top: 0.5em;
+}
+.mdn-anno > .feature > .support > hr {
+	display: block;
+	border: none;
+	border-top: 1px dotted #999;
+	padding: 3px 0px 0px 0px;
+	margin: 2px 3px 0px 3px;
+}
+.mdn-anno > .feature > .support > hr::before {
+	content: "";
+}
+.mdn-anno > .feature > .support > span {
+	padding: 0.2em 0;
+	display: block;
+	display: table;
+}
+.mdn-anno > .feature > .support > span.no {
+	color: var(--mdn-nosupport-text);
+	filter: grayscale(100%);
+}
+.mdn-anno > .feature > .support > span.no::before {
+	opacity: 0.5;
+}
+.mdn-anno > .feature > .support > span:first-of-type {
+	padding-top: 0.5em;
+}
+.mdn-anno > .feature > .support > span > span {
+	padding: 0 0.5em;
+	display: table-cell;
+}
+.mdn-anno > .feature > .support > span > span:first-child {
+	width: 100%;
+}
+.mdn-anno > .feature > .support > span > span:last-child {
+	width: 100%;
+	white-space: pre;
+	padding: 0;
+}
+.mdn-anno > .feature > .support > span::before {
+	content: ' ';
+	display: table-cell;
+	min-width: 1.5em;
+	height: 1.5em;
+	background: no-repeat center center;
+	background-size: contain;
+	text-align: right;
+	font-size: 0.75em;
+	font-weight: bold;
+}
+.mdn-anno > .feature > .support > .chrome_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/chrome.svg);
+}
+.mdn-anno > .feature > .support > .firefox_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/firefox.png);
+}
+.mdn-anno > .feature > .support > .chrome::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/chrome.svg);
+}
+.mdn-anno > .feature > .support > .edge_blink::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/edge.svg);
+}
+.mdn-anno > .feature > .support > .edge::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/edge_legacy.svg);
+}
+.mdn-anno > .feature > .support > .firefox::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/firefox.png);
+}
+.mdn-anno > .feature > .support > .ie::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/ie.png);
+}
+.mdn-anno > .feature > .support > .safari_ios::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/safari-ios.svg);
+}
+.mdn-anno > .feature > .support > .nodejs::before {
+	background-image: url(https://nodejs.org/static/images/favicons/favicon.ico);
+}
+.mdn-anno > .feature > .support > .opera_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/opera.svg);
+}
+.mdn-anno > .feature > .support > .opera::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/opera.svg);
+}
+.mdn-anno > .feature > .support > .safari::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/safari.png);
+}
+.mdn-anno > .feature > .support > .samsunginternet_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/samsung.svg);
+}
+.mdn-anno > .feature > .support > .webview_android::before {
+	background-image: url(https://resources.whatwg.org/browser-logos/android-webview.png);
+}
+.name-slug-mismatch {
+	color: red;
+}
+.caniuse-status:hover {
+	z-index: 9;
+}
+/* dt, li, .issue, .note, and .example are "position: relative", so to put annotation at right margin, must move to right of containing block */;
+.h-entry:not(.status-LS) dt > .mdn-anno, .h-entry:not(.status-LS) li > .mdn-anno, .h-entry:not(.status-LS) .issue > .mdn-anno, .h-entry:not(.status-LS) .note > .mdn-anno, .h-entry:not(.status-LS) .example > .mdn-anno {
+	right: -6.7em;
+}
+.h-entry p + .mdn-anno {
+	margin-top: 0;
+}
+ h2 + .mdn-anno.after {
+	margin: -48px 0 0 0;
+}
+ h3 + .mdn-anno.after {
+	margin: -46px 0 0 0;
+}
+ h4 + .mdn-anno.after {
+	margin: -42px 0 0 0;
+}
+ h5 + .mdn-anno.after {
+	margin: -40px 0 0 0;
+}
+ h6 + .mdn-anno.after {
+	margin: -40px 0 0 0;
+}
+</style>
 <style>/* style-selflinks */
 
 :root {
@@ -408,6 +573,14 @@ a.self-link:hover {
 }
 .heading > a.self-link {
     font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
 }
 li > a.self-link {
     left: calc(-1 * (3.5rem - 26px) - 2em);
@@ -623,6 +796,12 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
         --dfnpanel-bg: #222;
         --dfnpanel-text: var(--text);
     }
+}@media (prefers-color-scheme: dark) {
+	:root {
+		--mdn-bg: #222;
+		--mdn-shadow: #444;
+		--mdn-nosupport-text: #666;
+	}
 }
 @media (prefers-color-scheme: dark) {
     .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
@@ -691,7 +870,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Augmented Reality Module - Level 1</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-04-26">26 April 2022</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-11-02">2 November 2022</time></p>
    <details open>
     <summary>More details about this document</summary>
     <div data-fill-with="spec-metadata">
@@ -700,6 +879,8 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <dd><a class="u-url" href="https://immersive-web.github.io/webxr-ar-module/">https://immersive-web.github.io/webxr-ar-module/</a>
       <dt>Latest published version:
       <dd><a href="https://www.w3.org/TR/webxr-ar-module-1/">https://www.w3.org/TR/webxr-ar-module-1/</a>
+      <dt>Implementation Report:
+      <dd><a href="https://wpt.fyi/results/webxr/ar-module?label=experimental&amp;label=master&amp;aligned">https://wpt.fyi/results/webxr/ar-module?label=experimental&amp;label=master&amp;aligned</a>
       <dt>Feedback:
       <dd><a href="https://github.com/immersive-web/webxr-ar-module/issues/">GitHub</a>
       <dt class="editor">Editors:
@@ -735,11 +916,11 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p> Publication as an Editors' Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may
     be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite
     this document as other than work in progress. </p>
-   <p> This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20170801/"> 1 August 2017 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="https://www.w3.org/groups/wg/immersive-web/ipr" rel="disclosure">public list of any
-    patent disclosures</a> made in connection with the deliverables of the group; that page also
-    includes instructions for disclosing a patent. An individual who has actual knowledge of a
-    patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20170801/#def-essential">Essential
-    Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20170801/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
+   <p> This document was produced by a group operating under the <a href="https://www.w3.org/Consortium/Patent-Policy/">W3C Patent Policy</a>.
+    W3C maintains a <a href="https://www.w3.org/groups/wg/immersive-web/ipr" rel="disclosure">public list of any patent
+    disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy/#def-essential">Essential
+    Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy/#sec-Disclosure">section
+    6 of the W3C Patent Policy</a>. </p>
    <p> This document is governed by the <a href="https://www.w3.org/2021/Process-20211102/" id="w3c_process_revision">2 November 2021 W3C Process Document</a>. </p>
    <p></p>
    <p>This WebXR Augmented Reality Module is designed as a module to be implemented in addition to <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a>, and is originally included in WebXR Device API which was divided into core and modules.</p>
@@ -1032,7 +1213,7 @@ not be obvious to end users and user agents SHOULD clarify this.</p>
     and are set apart from the normative text
     with <code>class="note"</code>,
     like this: </p>
-   <p class="note" role="note">Note, this is an informative note. </p>
+   <p class="note" role="note">Note, this is an informative note.</p>
    <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
    <p>Requirements phrased in the imperative as part of algorithms
     (such as "strip any leading space characters"
@@ -1291,7 +1472,7 @@ not be obvious to end users and user agents SHOULD clarify this.</p>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
-    <a data-link-type="biblio">[compositing-1]</a> defines the following terms:
+    <a data-link-type="biblio">[COMPOSITING-1]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-porterduffcompositingoperators_plus">lighter</span>
      <li><span class="dfn-paneled" id="term-for-porterduffcompositingoperators_srcover">source-over</span>
@@ -1302,7 +1483,7 @@ not be obvious to end users and user agents SHOULD clarify this.</p>
      <li><span class="dfn-paneled" id="term-for-idl-boolean">boolean</span>
     </ul>
    <li>
-    <a data-link-type="biblio">[webxr]</a> defines the following terms:
+    <a data-link-type="biblio">[WEBXR]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-dom-xrtargetraymode-gaze">"gaze"</span>
      <li><span class="dfn-paneled" id="term-for-dom-xrsessionmode-immersive-vr">"immersive-vr"</span>
@@ -1340,18 +1521,18 @@ not be obvious to end users and user agents SHOULD clarify this.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-compositing-1">[COMPOSITING-1]
-   <dd>Rik Cabanier; Nikos Andronikos. <a href="https://www.w3.org/TR/compositing-1/"><cite>Compositing and Blending Level 1</cite></a>. 13 January 2015. CR. URL: <a href="https://www.w3.org/TR/compositing-1/">https://www.w3.org/TR/compositing-1/</a>
+   <dd>Rik Cabanier; Nikos Andronikos. <a href="https://drafts.fxtf.org/compositing-1/"><cite>Compositing and Blending Level 1</cite></a>. URL: <a href="https://drafts.fxtf.org/compositing-1/">https://drafts.fxtf.org/compositing-1/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-webidl">[WEBIDL]
    <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
    <dt id="biblio-webxr">[WEBXR]
-   <dd>Brandon Jones; Manish Goregaokar; Rik Cabanier. <a href="https://www.w3.org/TR/webxr/"><cite>WebXR Device API</cite></a>. 31 March 2022. CR. URL: <a href="https://www.w3.org/TR/webxr/">https://www.w3.org/TR/webxr/</a>
+   <dd>Brandon Jones; Manish Goregaokar; Rik Cabanier. <a href="https://immersive-web.github.io/webxr/"><cite>WebXR Device API</cite></a>. URL: <a href="https://immersive-web.github.io/webxr/">https://immersive-web.github.io/webxr/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-mediacapture-streams">[MEDIACAPTURE-STREAMS]
-   <dd>Cullen Jennings; et al. <a href="https://www.w3.org/TR/mediacapture-streams/"><cite>Media Capture and Streams</cite></a>. 10 March 2022. CR. URL: <a href="https://www.w3.org/TR/mediacapture-streams/">https://www.w3.org/TR/mediacapture-streams/</a>
+   <dd>Cullen Jennings; et al. <a href="https://w3c.github.io/mediacapture-main/"><cite>Media Capture and Streams</cite></a>. URL: <a href="https://w3c.github.io/mediacapture-main/">https://w3c.github.io/mediacapture-main/</a>
   </dl>
   <h2 class="no-num no-ref heading settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
 <pre class="idl highlight def"><c- b>enum</c-> <a href="#enumdef-xrenvironmentblendmode"><code><c- g>XREnvironmentBlendMode</c-></code></a> {
@@ -1581,10 +1762,8 @@ document.body.addEventListener("click", function(e) {
 });
 </script>
 <script>/* script-mdn-anno */
-
-            document.body.addEventListener("click", (e) => {
-                if(e.target.closest(".mdn-anno-btn")) {
-                    e.target.closest(".mdn-anno").classList.toggle("wrapped");
-                }
-            });
-            </script>
+document.body.addEventListener("click", (e) => {
+    if(e.target.closest(".mdn-anno-btn")) {
+        e.target.closest(".mdn-anno").classList.toggle("wrapped");
+    }
+});</script>
