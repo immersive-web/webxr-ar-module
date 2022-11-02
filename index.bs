@@ -9,6 +9,9 @@ Repository: immersive-web/webxr-ar-module
 Level: 1
 Mailing List Archives: https://lists.w3.org/Archives/Public/public-immersive-web-wg/
 
+Implementation Report: https://wpt.fyi/results/webxr/ar-module?label=experimental&label=master&aligned
+WPT Path Prefix: webxr/ar-module
+
 !Participate: <a href="https://github.com/immersive-web/webxr-ar-module/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/webxr-ar-module/issues">open issues</a>)
 !Participate: <a href="https://lists.w3.org/Archives/Public/public-immersive-web-wg/">Mailing list archive</a>
 !Participate: <a href="irc://irc.w3.org:6665/">W3C's #immersive-web IRC</a>
