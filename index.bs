@@ -347,5 +347,4 @@ The following individuals have contributed to the design of the WebXR Device API
   * <a href="mailto:sebastian.sylvan@gmail.com">Sebastian Sylvan</a> (Formerly <a href="https://microsoft.com/">Microsoft</a>)
 
 And a special thanks to <a href="mailto:vladv@unity3d.com">Vladimir Vukicevic</a> (<a href="https://unity3d.com/">Unity</a>) for kick-starting this whole adventure!
-
 </section>
