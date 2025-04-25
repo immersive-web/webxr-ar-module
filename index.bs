@@ -29,28 +29,35 @@ Status Text: This WebXR Augmented Reality Module is designed as a module to be i
 <pre class="link-defaults">
 spec:infra;
     type:dfn; text:string
-spec: webxr-1;
-    type:enum-value; text:"immersive-vr"
-    type:enum-value; text:"inline"
-    type: enum; text: XRSessionMode
-    type: dfn; text: exclusive access
-    type: dfn; text: immersive xr device
-    type: dfn; text: xr device; for: /
-    type: dfn; text: mode; for: XRSession
-    type: dfn; text: inline session
-    type: dfn; text: immersive session
-    type: dfn; text: xr compositor
-    type: dfn; text: native origin
-    type: dfn; text: viewer reference space
-    type: dfn; text: feature descriptor
-    type: dfn; text: view
-    type: dfn; text: eye; for: view
-    type: dfn; text: secondary view
-    type: dfn; text: secondary-views; for:secondary view
-    type: event; text:select
 </pre>
 
 <pre class="anchors">
+spec: WebXR Device API - Level 1; urlPrefix: https://www.w3.org/TR/webxr/#
+    type: enum
+        text: XRSessionMode; url: dom-xrsessionmode
+    type:enum-value
+        for: XRSessionMode
+            text:"immersive-vr"; url: dom-xrsessionmode-immersive-vr
+            text:"inline"; url: dom-xrsessionmode-immersive-vr
+    type: dfn
+        text: exclusive access; url: exclusive-access
+        text: immersive xr device; url: immesive-xr-device
+        text: xr device; url: xr-device
+        text: mode; for: XRSession; url: xrsession-mode
+        text: inline session; url: inline-session
+        text: immersive session; url: immersive-session
+        text: xr compositor; url: xr-compositor
+        text: native origin; url: native-origin
+        text: viewer reference space; url: viewer-reference-space
+        text: feature descriptor; url: feature-descriptor
+        text: view; url: view
+        for: view
+            text: eye; url: view-eye
+        text: secondary view; url: secondary-view
+        for:secondary view
+            text: secondary-views; url: secondary-view-secondary-views
+    type: event;
+        text:select; url: eventdef-xrsession-select
 spec: compositing-1; urlPrefix: https://www.w3.org/TR/compositing-1
     type: dfn; text: source-over; url: porterduffcompositingoperators_srcover
     type: dfn; text: lighter; url: porterduffcompositingoperators_plus
@@ -241,13 +248,13 @@ Note: The <a href="https://immersive-web.github.io/dom-overlays/">WebXR DOM Over
 XR Compositor Behaviors {#xr-compositor-behaviors}
 ---------------------
 
-When presenting content to the [=/XR device=], the [=XR Compositor=] MUST apply the appropriate <dfn>blend technique</dfn> to combine virtual pixels with the [=real-world environment=]. The appropriate technique is determined based on the [=XR device=]'s [=display technology=] and the [=XRSession/mode=].
+When presenting content to the [=XR device=], the [=XR Compositor=] MUST apply the appropriate <dfn>blend technique</dfn> to combine virtual pixels with the [=real-world environment=]. The appropriate technique is determined based on the [=XR device=]'s [=display technology=] and the [=XRSession/mode=].
 
 - When performing <dfn>opaque environment blending</dfn>, the rendered buffers obtained by the [=XR Compositor=] are composited using [=source-over=] blending on top of buffers containing exclusively 100% opaque black pixels. The composited output is then presented on the [=XR device=]. This technique MUST be applied on [=opaque=] and [=pass-through=] displays when the [=XRSession/mode=] is set to either {{XRSessionMode/"immersive-vr"}} or {{XRSessionMode/"inline"}}. This technique MUST NOT be applied when the [=XRSession/mode=] is set to {{XRSessionMode/"immersive-ar"}}, regardless of the [=XR Device=]'s [=display technology=].
 
 - When performing <dfn>alpha-blend environment blending</dfn>, the rendered buffers obtained by the [=XR Compositor=] are composited using [=source-over=] blending on top of buffers containing pixel representations of the [=real-world environment=]. These pixel representations must be aligned on each {{XRFrame}} to the {{XRViewGeometry/transform}} of each view in {{XRViewerPose/views}}. The composited output is then presented on the [=XR device=]. This technique MUST be applied on [=pass-through=] displays when the [=XRSession/mode=] is set {{XRSessionMode/"immersive-ar"}}. This technique MUST NOT be applied when the [=XRSession/mode=] is set to {{XRSessionMode/"immersive-vr"}} or {{XRSessionMode/"inline"}} regardless of the [=XR Device=]'s [=display technology=].
 
-- When performing <dfn>additive environment blending</dfn>, the rendered buffers obtained by the [=XR Compositor=] are composited using [=lighter=] blending before being presented on the [=/XR device=]. This technique MUST be applied on [=additive light=] displays, regardless of the [=XRSession/mode=].
+- When performing <dfn>additive environment blending</dfn>, the rendered buffers obtained by the [=XR Compositor=] are composited using [=lighter=] blending before being presented on the [=XR device=]. This technique MUST be applied on [=additive light=] displays, regardless of the [=XRSession/mode=].
 
 NOTE: When using a device that performs [=alpha-blend environment blending=], use of a {{XRRenderState/baseLayer}} with no alpha channel will result in the [=real-world environment=] being completely obscured. It should be assumed that this is intentional on the part of developer, and the user agent may wish to suspend compositing of [=real-world environment=] as an optimization in such cases.
 
@@ -257,7 +264,7 @@ NOTE: Future modules may enable automatic or manual pixel occlusion with the [=r
 
 The [=XR Compositor=] MUST NOT automatically grant the page access to any additional information such as camera intrinsics, media streams, real-world geometry, etc.
 
-NOTE: Developers may request access to an [=/XR Device=]'s camera, should one be exposed through the existing [[mediacapture-streams|Media Capture and Streams]] specification. However, doing so does not provide a mechanism to query the {{XRRigidTransform}} between the camera's location and the [=native origin=] of the [=viewer reference space=]. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the [=real-world environment=]. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.
+NOTE: Developers may request access to an [=XR Device=]'s camera, should one be exposed through the existing [[mediacapture-streams|Media Capture and Streams]] specification. However, doing so does not provide a mechanism to query the {{XRRigidTransform}} between the camera's location and the [=native origin=] of the [=viewer reference space=]. It also does not provide a guaranteed way to determine the camera intrinsics necessary to match the view of the [=real-world environment=]. As such, performing effective computer vision algorithms wil be significantly hampered. Future modules or specifications may enable such functionality.
 
 First Person Observer Views {#first-person-observer}
 --------------------------------
@@ -339,6 +346,8 @@ Changes from the <a href="https://www.w3.org/TR/2019/WD-webxr-ar-module-1-201910
 Acknowledgements {#ack}
 ================
 
+<section class="non-normative">
+
 The following individuals have contributed to the design of the WebXR Device API specification:
 
   * <a href="mailto:cvan@mozilla.com">Chris Van Wiemeersch</a> (<a href="https://mozilla.org/">Mozilla</a>)
@@ -347,4 +356,5 @@ The following individuals have contributed to the design of the WebXR Device API
   * <a href="mailto:sebastian.sylvan@gmail.com">Sebastian Sylvan</a> (Formerly <a href="https://microsoft.com/">Microsoft</a>)
 
 And a special thanks to <a href="mailto:vladv@unity3d.com">Vladimir Vukicevic</a> (<a href="https://unity3d.com/">Unity</a>) for kick-starting this whole adventure!
+
 </section>
