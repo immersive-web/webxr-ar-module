@@ -176,7 +176,7 @@ navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
   if (!supported) { return; }
   // 'immersive-ar' sessions are supported.
   // Page should advertise AR support to the user.
-}
+});
 </pre>
 </div>
 
