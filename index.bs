@@ -296,14 +296,14 @@ For most programs, supporting secondary views is simply a matter of:
 let session = await navigator.xr.requestSession("immersive-ar", {optionalFeatures: ["secondary-views"]});
 let space = await session.requestReferenceSpace("local");
 // perform other set up
-let gl = /* obtain a graphics context */;
+let gl; // Obtain a graphics context during setup.
 
-session.requestAnimationFrame(function(frame) {
-  let views = frame.getViewerPose(space);
+session.requestAnimationFrame(function(time, frame) {
+  const pose = frame.getViewerPose(space);
+  if (!pose) return;
 
-  // IMPORTANT: use `view of views` here instead of
-  // directly indexing the first two or three elements
-  for (view of views) {
+  // Iterate over every view, including any secondary views.
+  for (const view of pose.views) {
     render(session, gl, view);
   }
 });
